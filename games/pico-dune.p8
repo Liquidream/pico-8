@@ -1,7 +1,327 @@
 pico-8 cartridge // http://www.pico-8.com
 version 16
 __lua__
---
+-- pico-dune
+-- by paul nicholas
+-- (with support from my patrons)
+
+-- globals
+debug_mode=true
+debug_collision=false
+
+-- modes
+title_mode=1     -- title/start screen
+instruct_mode=2  -- showing instructions
+game_mode=3      -- actual game mode
+success_mode=4   -- showing level complete
+gameover_mode=5 -- showing game over screen
+
+
+
+--p8 functions
+--------------------------------
+
+function _init()
+ -- custom menu
+ -- menuitem(1, 'quit to title', function()
+ --  reset_game_state()
+ --  level_init()
+ -- end)
+ -- menuitem(2, 'restart level', function()
+ --  level_init()
+ -- end)
+
+ cartdata("pn_picodune") 
+
+ -- reset game + stats
+ --reset_game_state()
+ 
+ -- init the game/title
+ --level_init()
+end
+
+
+
+function _update60()  --game_update
+ --
+ -- in title/menu/instructions mode?
+ --
+ if curr_mode==title_mode 
+ or curr_mode==instruct_mode then
+  -- only update title-related stuff
+  
+ end
+
+ --
+ -- game mode
+ --
+ if curr_mode==game_mode then
+  ticks+=1
+
+  p1:update()
+  sound_monitor:update()
+  collisions()
+  curr_level:update()
+  update_snow()
+  cam:update()
+ end
+
+ --
+ -- game over mode
+ --
+ if curr_mode==gameover_mode then
+  -- wait for player to skip stats
+  if btnp"5" 
+   and screen_cooldown <=0 then
+
+   sfx(-1,2) -- stop sfx
+   curr_mode=game_mode
+   level_init()
+  end
+ end
+
+end
+
+
+
+function _draw()
+	cls"1"
+ --draw_snow()
+
+	--camera(cam:cam_pos())
+
+ -- in title/menu mode?
+ if curr_mode==title_mode then
+  camera(0,0)
+  --print_outline_scaled(title_text1,29,15,3,1,11,0)
+
+  if (alternate()) printc("press ❎ to start",63,75,10,0,1)
+
+ -- in title/menu mode?
+ elseif curr_mode==instruct_mode then
+  camera(0,0)
+  printc("to deliver all of the presents",64,desc_y+14,desc_col1,desc_col2,0)
+  printc("without making too much noise",64,desc_y+21,desc_col1,desc_col2,0)
+  
+  
+ -- game mode
+ else
+  palt()
+  --p1:draw()
+  pal()
+  --hud
+  camera(0,0)
+  -- ui
+  --draw_ui()
+
+  if (debug_mode) printo("cpu: "..flr(stat(1)*100).."%\nmem: "..(flr(stat(0)/2048*100)).."%\nfps: "..stat(7),1,1,8,0)
+ end
+
+end
+
+
+-- game flow / collisions
+--------------------------------
+
+
+
+-- check all collisions
+function collisions()
+ -- check player collisions
+ -- (objects)
+ -- for k,obj in pairs(curr_level.objects) do
+ --  --for obj in all(curr_level.objects) do
+ --   -- all objects
+ --   collide(p1,obj)
+ 
+ --   -- (camera cones)
+ --   if obj.type==type_camera then
+ --    obj:check_cone()
+ --   end
+ -- end
+ 
+ -- -- check ball > dog/wall collisions
+ -- --for k,ball in pairs(curr_level.balls) do
+ --  for k,ball in pairs(curr_level.balls) do
+ --   --for ball in all(curr_level.balls) do
+ --    for k,obj in pairs(curr_level.objects) do
+ --    --for obj in all(curr_level.objects) do
+ --     if obj.type==type_dog then
+ --      collide(ball,obj)
+ --     end
+ --    end
+ --   end
+  
+ --   -- check item_obj collisions
+ --   if p1.item_obj then
+ --    for k,obj in pairs(curr_level.objects) do
+ --    --for obj in all(curr_level.objects) do
+ --     -- all objects
+ --     collide(p1.item_obj,obj)
+ --    end
+ --   end
+end
+
+
+
+function collide_event(o1, o2)
+ 
+ -- player collisions
+ -- if o1.type==type_player then
+  
+ --  -- player touching laser?
+ --  if (o2.type==type_laser 
+ --   or (o2.type==type_pressure_pad and p1.grounded))
+ --   and not o2.triggered 
+ --   and not o2.done then
+ --   -- trigger alarm
+ --   sfx(63,2) --alarm
+ --   o2.triggered=true
+ --   o2.alarm_cooldown=100
+ --   -- noise
+ --   sound_monitor:add_noise(40)
+
+ --  -- player on stairs?
+ --  elseif o2.type==type_stairs then
+ --   o1.close_object=o2
+  
+ --  -- player in front of present drop?
+ --  elseif o2.type==type_present_drop 
+ --   and not o2.done then
+ --   o1.close_object=o2
+
+ --  end
+
+ -- -- ball collisions
+ -- elseif o1.type==type_ball then
+ --  if o2.type==type_dog then
+ --   --ball collided with dog
+ --   o2.done=true
+ --   o2.state=4
+ --   -- kill ball
+ --   del(curr_level.objects,o1)
+ --   del(curr_level.balls,o1)
+ --  end
+ 
+ -- --snow spray collisions
+ -- elseif o1.type==type_snowspray then
+ --  if o2.type==type_camera
+ --   and p1.flipx==(o2.spr==49) then
+ --   o2.done=true
+ --  end
+
+ -- --snow globe collisions
+ -- elseif o1.type==type_snowglobe then
+ --  if o2.type==type_laser 
+ --   and (o2.spr==23 or o2.spr==26)
+ --   and not o2.done then
+ --   o2:deactivate()
+ --   sfx(55,3)
+ --  end
+
+ -- end
+
+end
+
+
+
+-- object shared methods
+--------------------------------
+function _set_anim(self,anim)
+ if(anim==self.curanim)return--early out.
+ local a=self.anims[anim]
+ self.animtick=a.ticks--ticks count down.
+ self.curanim=anim
+ self.curframe=1
+end
+
+function _update_anim(self)
+--anim tick
+ self.animtick-=1
+ if self.animtick<=0 then
+  self.curframe+=1
+  local a=self.anims[self.curanim]
+  self.animtick=a.ticks--reset timer
+  if self.curframe>#a.frames then
+   self.curframe=1--loop
+  end
+  -- store the spr frame
+  self.spr=a.frames[self.curframe]
+  
+ end
+end
+
+--other helper functions
+--------------------------------
+
+--print string with outline.
+function printo(str,startx,
+ starty,col,
+ col_bg)
+ for xx = -1, 1 do
+ for yy = -1, 1 do
+ print(str, startx+xx, starty+yy, col_bg)
+ end
+ end
+ print(str,startx,starty,col)
+end
+
+function m_anim_obj(x,y,anims,curanim)
+ return {
+  x=x,
+  y=y,
+  z=1, -- defaults
+  w=8, -- 
+  h=8, --
+  spr_w=1, -- defaults
+  spr_h=1, --
+  anims=anims, --animation definitions.
+  curanim=curanim,--currently playing animation
+		curframe=1,--curent frame of animation.
+		animtick=0,--ticks until next frame should show.
+  set_anim=_set_anim,
+  update_anim=_update_anim,
+  get_hitbox=function(self)
+   return {
+    x=self.x+2,
+    y=self.y+2,
+    w=self.w-5,
+    h=self.h-5
+   }
+  end
+ }
+end
+
+function collide(o1, o2)
+ local hb1=o1:get_hitbox()
+ local hb2=o2:get_hitbox()
+ 
+ if hb1.x < hb2.x + hb2.w and
+  hb1.x + hb1.w > hb2.x and
+  hb1.y < hb2.y + hb2.h and
+  hb1.y + hb1.h >hb2.y 
+ then
+  collide_event(o1, o2)
+ end
+end
+
+function alternate()
+ return flr(t())%2==0
+end
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 __gfx__
 fffffffffffffffff5d555d555d555d55d555d5fffffffff1d515555ffffffff99f99999ffffffffffffffff9f99f9f9ff9f999955d555d555d555d555d555d5
 fffffffffff77fff1555515d15555155d51555515dfffd5f5155d55dffff9fff9f9999f9fff9fffffffffffff99f99f999f99899155551551555515515555155
