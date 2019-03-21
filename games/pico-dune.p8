@@ -122,6 +122,9 @@ end
 path  = "init"
 goal  = {x=14, y=2}
 
+cor = nil
+count=0
+
 function _draw()
 	cls"1"
  --draw_snow()
@@ -163,30 +166,55 @@ function _draw()
   -- debug pathfinding
   -- debug pathfinding
   start = {x=7, y=5}
-  -- mouse  
-  local mposx,mposy = flr((camx+cursx)/8), flr((camy+cursy)/8)
-  if (not fget(mget(mposx,mposy), 0)) 
-  then
-   goal.x, goal.y = mposx,mposy
+  
+
+  if count==0 then--if btnp(5) then
+   path="init"
+   -- mouse  
+   local mposx,mposy = flr((camx+cursx)/8), flr((camy+cursy)/8)
+   if (not fget(mget(mposx,mposy), 0)) 
+   then
+    goal.x, goal.y = mposx,mposy
+   end
+
+   printh("goal="..goal.x..","..goal.y)
+
+   cor = cocreate(findpath_cor)
   end
 
-  printh("goal="..goal.x..","..goal.y)
+  count+=1
+  count%=500
+  
+  if cor and costatus(cor) != 'dead' then
+    coresume(cor)
+  else
+    cor = nil
+  end
 
-  path = find_path(start, goal,
+  -- path = find_path(start, goal,
+  --                  manhattan_distance,
+  --                  flag_cost,
+  --                  map_neighbors,
+  --                  function (node) return shl(node.y, 8) + node.x end,
+  --                  nil)  
+  if path != nil and path != "init" then
+   draw_path(path, 1, 1)
+   draw_path(path, 0, 12)
+  end
+
+  printh("cpu: "..flr(stat(1)*100).."% mem: "..(flr(stat(0)/2048*100)).."% fps: "..stat(7))--,2,109,8,0)
+  if (debug_mode) printo("cpu: "..flr(stat(1)*100).."%\nmem: "..(flr(stat(0)/2048*100)).."%\nfps: "..stat(7),2,109,8,0)
+ end
+
+end
+
+function findpath_cor()
+ path = find_path(start, goal,
                    manhattan_distance,
                    flag_cost,
                    map_neighbors,
                    function (node) return shl(node.y, 8) + node.x end,
                    nil)  
-  if path then
-   draw_path(path, 1, 1)
-   draw_path(path, 0, 12)
-  end
-
-
-  --if (debug_mode) printo("cpu: "..flr(stat(1)*100).."%\nmem: "..(flr(stat(0)/2048*100)).."%\nfps: "..stat(7),2,109,8,0)
- end
-
 end
 
 function draw_path(path, dy, clr)
@@ -578,6 +606,8 @@ function find_path
     end -- if
    end -- for each neighbor
    
+   yield()
+
   end -- while frontier not empty
  
   -- unreachable, so implicitly
@@ -627,10 +657,10 @@ ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
 ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff00000000000000000000000000000000
 d66dddddddd6fffdddd776ddddddddddddddddddddd666dddddddddd000000000000000000000000000000000000000000000000000000000000000000000000
 76665555551ffff1d576dc65d5577655d5555555d5766665d5555555000000000000000000000000000000000000000000000000000000000000000000000000
-76668055555f4441d76dccc5d576dc65d5556555d5766665d5888885000000000000000000000000000000000000000000000000000000000000000000000000
-177220555d5ffff1d66d11c5d76dccc5d5576655d5677725d5555555000000000000000000000000000000000000000000000000000000000000000000000000
-d1d55055555f1011d66d01c5d66d11c5d55d7d55d566dd25d5522255000000000000000000000000000000000000000000000000000000000000000000000000
-6555505515df1001d66d0c55d66d01c5d55ddd55d566dd25d5555555000000000000000000000000000000000000000000000000000000000000000000000000
+76665805555f4441d76dccc5d576dc65d5556555d5766665d5888885000000000000000000000000000000000000000000000000000000000000000000000000
+177d22055d5ffff1d66d11c5d76dccc5d5576655d5677725d5555555000000000000000000000000000000000000000000000000000000000000000000000000
+d1d55505555f1011d66d01c5d66d11c5d55d7d55d566dd25d5522255000000000000000000000000000000000000000000000000000000000000000000000000
+6555550515df1001d66d0c55d66d01c5d55ddd55d566dd25d5555555000000000000000000000000000000000000000000000000000000000000000000000000
 d6d6d55555551005d56dd555d66d0c55d555d555d556dd55d5552555000000000000000000000000000000000000000000000000000000000000000000000000
 d6d6d555d55d5555d5555555d56dd555d5555555d5555555d5522255000000000000000000000000000000000000000000000000000000000000000000000000
 dddddddd55d555d5ddddd776ddddddddddd666dddddddddddddddddd000000000000000000000000000000000000000000000000000000000000000000000000
