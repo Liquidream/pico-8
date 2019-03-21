@@ -168,7 +168,8 @@ function _draw()
   start = {x=7, y=5}
   
 
-  if count==0 then--if btnp(5) then
+  --if count==0 then--
+   if btnp(5) then
    path="init"
    -- mouse  
    local mposx,mposy = flr((camx+cursx)/8), flr((camy+cursy)/8)
@@ -182,8 +183,7 @@ function _draw()
    cor = cocreate(findpath_cor)
   end
 
-  count+=1
-  count%=500
+
   
   if cor and costatus(cor) != 'dead' then
     coresume(cor)
@@ -606,7 +606,13 @@ function find_path
     end -- if
    end -- for each neighbor
    
-   yield()
+   count+=1
+   if count>10 then
+    count=1
+    yield()
+   end
+   --count%=100
+   --yield()
 
   end -- while frontier not empty
  
