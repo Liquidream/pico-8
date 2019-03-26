@@ -19,6 +19,7 @@ goal  = {x=14, y=2}
 
 cor = nil
 count=0
+unit = {}
 
 
 --p8 functions
@@ -58,14 +59,64 @@ function _init()
 
  -- test pathfinding data
  start = {x=7, y=5}
+
+ unit = {
+  spr=130,
+  x=7 *8,
+  y=5 *8
+ }
 end
 
 
 
 function _update60()  --game_update
 
+ update_level()
+ 
+ end
+
+ --
+ -- game over mode
+ --
+ -- if curr_mode==gameover_mode then
+ --  -- wait for player to skip stats
+ --  if btnp"5" 
+ --   and screen_cooldown <=0 then
+
+ --   sfx(-1,2) -- stop sfx
+ --   curr_mode=game_mode
+ --   level_init()
+ --  end
+ -- 
+
+function _draw()
+ -- draw the map, objects - everything except ui
+ draw_level()
+ -- draw score, mouse, etc.
+ draw_ui()
+
+  -- debug pathfinding
+  if (debug_mode) draw_pathfinding()
+
+  --printh("cpu: "..flr(stat(1)*100).."% mem: "..(flr(stat(0)/2048*100)).."% fps: "..stat(7))--,2,109,8,0)
+  if (debug_mode) printo("cpu: "..flr(stat(1)*100).."%\nmem: "..(flr(stat(0)/2048*100)).."%\nfps: "..stat(7),2,109,8,0)
+
+end
+
+
+-- init related
+--------------------------------
+function level_init()
+ -- todo: parse map data into objects
+end
+
+
+-- update related
+--------------------------------
+function update_level()
+ 
  -- player input
- if btnp(5) then
+ if btnp(4) then
   path="init"
   -- mouse  
   local mposx,mposy = flr((camx+cursx)/8), flr((camy+cursy)/8)
@@ -76,6 +127,7 @@ function _update60()  --game_update
 
   printh("goal="..goal.x..","..goal.y)
 
+  -- create co-routine to find path (over number of cycles)
   cor = cocreate(findpath_cor)
  end
 
@@ -112,97 +164,8 @@ function _update60()  --game_update
  -- cam:update()
 
   ticks+=1
- end
-
- --
- -- game over mode
- --
- -- if curr_mode==gameover_mode then
- --  -- wait for player to skip stats
- --  if btnp"5" 
- --   and screen_cooldown <=0 then
-
- --   sfx(-1,2) -- stop sfx
- --   curr_mode=game_mode
- --   level_init()
- --  end
- -- 
-
-function _draw()
- -- draw the map, objects - everything except ui
- draw_level()
- -- draw score, mouse, etc.
- draw_ui()
-
-
-	-- cls"1"
- -- --draw_snow()
-
-	-- camera(camx,camy)
-
- -- in title/menu mode?
- -- if curr_mode==title_mode then  
- --  --print_outline_scaled(title_text1,29,15,3,1,11,0)
-
- --  if (alternate()) printc("press ❎ to start",63,75,10,0,1)
-
- -- -- in title/menu mode?
- -- elseif curr_mode==instruct_mode then
- --  camera(0,0)
- --  printc("to deliver all of the presents",64,desc_y+14,desc_col1,desc_col2,0)
- --  printc("without making too much noise",64,desc_y+21,desc_col1,desc_col2,0)
-  
-  
- -- -- game mode
- -- else
- 
-  
-  --hud
-  -- camera(0,0)
-  -- -- ui
-  -- pal()
-  -- palt(11,true)
-  -- spr(0,cursx,cursy)
-  --draw_ui()
-
-  -- debug pathfinding
-  if (debug_mode) draw_pathfinding()
-
-  -- path = find_path(start, goal,
-  --                  manhattan_distance,
-  --                  flag_cost,
-  --                  map_neighbors,
-  --                  function (node) return shl(node.y, 8) + node.x end,
-  --                  nil)  
-  -- if path != nil and path != "init" then
-  --  draw_path(path, 1, 1)
-  --  draw_path(path, 0, 12)
-  -- end
-
-  --printh("cpu: "..flr(stat(1)*100).."% mem: "..(flr(stat(0)/2048*100)).."% fps: "..stat(7))--,2,109,8,0)
-  if (debug_mode) printo("cpu: "..flr(stat(1)*100).."%\nmem: "..(flr(stat(0)/2048*100)).."%\nfps: "..stat(7),2,109,8,0)
-
 end
 
-function findpath_cor()
- path = find_path(start, goal,
-                   manhattan_distance,
-                   flag_cost,
-                   map_neighbors,
-                   function (node) return shl(node.y, 8) + node.x end,
-                   nil)  
-end
-
-
--- init related
---------------------------------
-function level_init()
- -- todo: parse map data into objects
-end
-
-
--- update related
---------------------------------
 function update_pathfinding()
  if cor and costatus(cor) != 'dead' then
    coresume(cor)
@@ -225,10 +188,14 @@ function draw_level()
  pal()
 
  -- temp fudge
- palt(0,false)
+ palt(0,false) 
  pal(11,15)
  
  map(0,0)
+
+ -- draw units
+ palt(11,true)
+ spr(unit.spr, unit.x, unit.y)
 
 end
 
@@ -450,8 +417,43 @@ function alternate()
 end
 
 
--- pathfinding-related
 
+--
+-- pathfinding-related
+--
+
+-- function for co-routine call
+ function findpath_cor()
+  start = {
+   x = unit.x/8, 
+   y = unit.y/8
+  }
+  path = find_path(start, goal,
+                    manhattan_distance,
+                    flag_cost,
+                    map_neighbors,
+                    function (node) return shl(node.y, 8) + node.x end,
+                    nil)  
+
+  -- now auto-move to path
+  cor = cocreate(movepath_cor)
+ end
+ 
+ function movepath_cor()
+  -- loop all path nodes...
+  for i=#path,1,-1 do
+   local node=path[i]
+   
+   -- fake delay
+   for sleep=1,10 do
+    yield()
+   end
+
+   -- move to new position
+   unit.x,unit.y = node.x*8, node.y*8
+ end
+end
+ 
 
 -- makes the cost of entering a
 -- node 4 if flag 1 is set on
@@ -510,7 +512,6 @@ end
 function manhattan_distance(a, b)
  return abs(a.x - b.x) + abs(a.y - b.y)
 end
-
 
 
 -- pathfinder
@@ -795,9 +796,9 @@ __map__
 0809000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 0808090213141604000000000000000000000000000001010000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 08080c0a0a090000000000004243000000000101010101000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
-080808080b000081008200005253000001010101010100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
-080b0b1801000011110000040400000001000000000000000000000000010000000000000000000000000000000000000000060006000006000600000600000600060600000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
-0000000101000083124445460000000000000000000000000000010101000000000000000000000000000000000000000606000000000000000000000000000000000006000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+080808080b000081008300005253000001010101010100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+080b0b1801000000000000040400000001000000000000000000000000010000000000000000000000000000000000000000060006000006000600000600000600060600000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+0000000101000000004445460000000000000000000000000000010101000000000000000000000000000000000000000606000000000000000000000000000000000006000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 0001010101000000025455560080000000020505000000000000010000000000000000000000000000000000000000060000000000000000000000000000000000000000000000000000000000000000000000000000000000001e1e1e1e1e1e1e1e1e001e000000000000000000000606060606060606000000000000000000
 0001010101000000001040410000000005030d0f05000000000101000000000000000000001e1e0000000000000006000000000000000000000000000000000000000000000000000000000000000000000000000000000000001e000000000000000000001e001e1e0000000000000000000000000000060000000000000000
 00010101010000000000505100000000030d1e1f030000000001000000000000000000001e1e1e0000000600060000000000000000000000000000000000000000000000001e1e000000000000000000000000000000000006001e06060000000000000000000000000000000000000000000000000000000600000000000000
