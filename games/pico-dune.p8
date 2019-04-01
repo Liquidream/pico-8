@@ -64,7 +64,7 @@ function _init()
   spr=130,
   x=7 *8,
   y=5 *8,
-  a=0
+  r=0
  }
 end
 
@@ -95,10 +95,7 @@ function _draw()
  draw_level()
  -- draw score, mouse, etc.
  draw_ui()
-
-  -- debug pathfinding
-  if (debug_mode) draw_pathfinding()
-
+  
   --printh("cpu: "..flr(stat(1)*100).."% mem: "..(flr(stat(0)/2048*100)).."% fps: "..stat(7))--,2,109,8,0)
   if (debug_mode) printo("cpu: "..flr(stat(1)*100).."%\nmem: "..(flr(stat(0)/2048*100)).."%\nfps: "..stat(7),2,109,8,0)
 
@@ -194,9 +191,13 @@ function draw_level()
  
  map(0,0)
 
+ -- debug pathfinding
+ if (debug_mode) draw_pathfinding()
+
+
  -- draw units
  palt(11,true)
- rspr(16,64,unit.x, unit.y, .25-unit.a, 1, 11) 
+ rspr(16,64,unit.x, unit.y, .25-unit.r, 1, 11)
  --rspr(16,64,unit.x, unit.y, t()/4, 1, 11)
  --spr(unit.spr, unit.x, unit.y)
 
@@ -209,8 +210,6 @@ function draw_ui()
  pal()
  palt(11,true)
  spr(0,cursx,cursy)
-
- pset(cursx,cursy,8)
 end
 
 function draw_pathfinding()
@@ -221,11 +220,11 @@ function draw_pathfinding()
  end
 
  -- debug target angle
- local dx=(unit.x+4)-(camx+cursx)
- local dy=(unit.y+4)-(camy+cursy)
- local a=atan2(dx,dy)
- printh("angle="..a)
- unit.a=a
+ -- local dx=(unit.x+4)-(camx+cursx)
+ -- local dy=(unit.y+4)-(camy+cursy)
+ -- local a=atan2(dx,dy)
+ -- printh("angle="..a)
+ -- unit.r=a
 
 end
 
@@ -494,11 +493,69 @@ end
     yield()
    end
 
+   -- rotate to angle   
+   local dx=(unit.x)-(node.x*8)
+   local dy=(unit.y)-(node.y*8)
+   local a=atan2(dx,dy)
+   printh("angle="..a)
+   while (unit.r != a) do
+    turntowardtarget(unit, a)
+   end
+
    -- move to new position
    unit.x,unit.y = node.x*8, node.y*8
  end
 end
- 
+
+
+-- rotate to next path node
+-- function rotatetoangle_cor()
+--  -- get next node pos
+--  local node=path[i]
+--  turntowardtarget(unit, targetangle)
+--  --cor = cocreate(movepath_cor)
+-- end
+
+pi = 3.14159
+turnspeed = .25 * (pi/180)
+
+function turntowardtarget(unit, targetangle)
+   diff = targetangle-unit.r
+   printh("diff="..diff)
+   -- Never turn more than 180
+   if diff > pi then
+    diff -= pi*2
+   elseif diff < -pi then
+    diff += pi*2
+   end
+
+   -- fake delay
+   -- for sleep=1,20 do
+   --  yield()
+   -- end
+
+   if diff > turnspeed then
+    unit.r += turnspeed
+   elseif diff < -turnspeed then
+    unit.r -= turnspeed
+   else
+    -- we're already very close
+    unit.r = targetangle
+   end
+
+   -- make sure that our rotation value always stays within a "one-cycle" range
+   if (unit.r > pi) unit.r-=2*pi
+   if (unit.r < -pi) unit.r+=2*pi
+   
+   -- fake delay
+   --for sleep=1,20 do
+    yield()
+   --end
+end
+
+
+
+
 
 -- makes the cost of entering a
 -- node 4 if flag 1 is set on
