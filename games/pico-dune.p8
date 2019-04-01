@@ -198,6 +198,8 @@ function draw_level()
  -- draw units
  palt(11,true)
  rspr(16,64,unit.x, unit.y, .25-unit.r, 1, 11)
+ --printh("r="..unit.r)
+ --stop()
  --rspr(16,64,unit.x, unit.y, t()/4, 1, 11)
  --spr(unit.spr, unit.x, unit.y)
 
@@ -484,8 +486,9 @@ end
  end
  
  function movepath_cor()
+  printh("-------------")
   -- loop all path nodes...
-  for i=#path,1,-1 do
+  for i=#path-1,1,-1 do
    local node=path[i]
    
    -- fake delay
@@ -494,17 +497,18 @@ end
    end
 
    -- rotate to angle   
-   local dx=(unit.x)-(node.x*8)
-   local dy=(unit.y)-(node.y*8)
+   local dx=(unit.x+4)-((node.x*8)+4)
+   local dy=(unit.y+4)-((node.y*8)+4)
    local a=atan2(dx,dy)
-   printh("angle="..a)
+   printh("  >> target angle="..a)
    while (unit.r != a) do
     turntowardtarget(unit, a)
    end
-
+   
    -- move to new position
    unit.x,unit.y = node.x*8, node.y*8
  end
+
 end
 
 
@@ -517,16 +521,24 @@ end
 -- end
 
 pi = 3.14159
-turnspeed = .25 * (pi/180)
+turnspeed = .5 * (pi/180)
+
 
 function turntowardtarget(unit, targetangle)
    diff = targetangle-unit.r
+   printh("unit.r="..unit.r)
+   printh("targetangle="..targetangle)
    printh("diff="..diff)
+   printh("turnspeed="..turnspeed)
+   printh("-")
+   
    -- Never turn more than 180
-   if diff > pi then
-    diff -= pi*2
-   elseif diff < -pi then
-    diff += pi*2
+   if diff > 0.5 then
+    printh("big angle 1")
+    diff -= 1
+   elseif diff < -0.5 then
+    printh("big angle 2")
+    diff += 1
    end
 
    -- fake delay
