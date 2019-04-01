@@ -63,7 +63,8 @@ function _init()
  unit = {
   spr=130,
   x=7 *8,
-  y=5 *8
+  y=5 *8,
+  a=0
  }
 end
 
@@ -195,7 +196,9 @@ function draw_level()
 
  -- draw units
  palt(11,true)
- spr(unit.spr, unit.x, unit.y)
+ rspr(16,64,unit.x, unit.y, .25-unit.a, 1, 11) 
+ --rspr(16,64,unit.x, unit.y, t()/4, 1, 11)
+ --spr(unit.spr, unit.x, unit.y)
 
 end
 
@@ -206,6 +209,8 @@ function draw_ui()
  pal()
  palt(11,true)
  spr(0,cursx,cursy)
+
+ pset(cursx,cursy,8)
 end
 
 function draw_pathfinding()
@@ -214,6 +219,14 @@ function draw_pathfinding()
   draw_path(path, 1, 1)
   draw_path(path, 0, 12)
  end
+
+ -- debug target angle
+ local dx=(unit.x+4)-(camx+cursx)
+ local dy=(unit.y+4)-(camy+cursy)
+ local a=atan2(dx,dy)
+ printh("angle="..a)
+ unit.a=a
+
 end
 
 function draw_path(path, dy, clr)
@@ -416,6 +429,38 @@ function alternate()
  return flr(t())%2==0
 end
 
+
+-- rotate sprite
+-- by freds72
+-- https://www.lexaloffle.com/bbs/?pid=52525#p52541
+local rspr_clear_col=0
+
+function rspr(sx,sy,x,y,a,w,trans)
+	local ca,sa=cos(a),sin(a)
+	local srcx,srcy,addr,pixel_pair
+	local ddx0,ddy0=ca,sa
+	local mask=shl(0xfff8,(w-1))
+	w*=4
+	ca*=w-0.5
+	sa*=w-0.5
+	local dx0,dy0=sa-ca+w,-ca-sa+w
+	w=2*w-1
+	for ix=0,w do
+		srcx,srcy=dx0,dy0
+		for iy=0,w do
+			if band(bor(srcx,srcy),mask)==0 then
+				local c=sget(sx+srcx,sy+srcy)
+				if (c!=trans) pset(x+ix,y+iy,c)
+			--else
+				--pset(x+ix,y+iy,rspr_clear_col)
+			end
+			srcx-=ddy0
+			srcy+=ddx0
+		end
+		dx0+=ddx0
+		dy0+=ddy0
+	end
+end
 
 
 --
