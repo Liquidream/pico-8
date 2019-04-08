@@ -19,7 +19,7 @@ goal  = {x=14, y=2}
 
 cor = nil
 count=0
-unit = {}
+units = {}
 
 
 --p8 functions
@@ -60,12 +60,12 @@ function _init()
  -- test pathfinding data
  start = {x=7, y=5}
 
- unit = {
+ add(units,{
   spr=130,
   x=7 *8,
   y=5 *8,
   r=0
- }
+ })
 end
 
 
@@ -197,9 +197,9 @@ function draw_level()
 
  -- draw units
  palt(11,true)
- rspr(16,64,unit.x, unit.y, .25-unit.r, 1, 11)
- --rspr(16,64,unit.x, unit.y, t()/4, 1, 11)
- --spr(unit.spr, unit.x, unit.y)
+ for _,unit in pairs(units) do
+  rspr(16,64,unit.x, unit.y, .25-unit.r, 1, 11)
+ end
 
 end
 
@@ -467,12 +467,12 @@ end
 --
 
 -- function for co-routine call
- function findpath_cor()
+ function findpath_cor(unit,tx,ty)
   start = {
    x = unit.x/8, 
    y = unit.y/8
   }
-  path = find_path(start, goal,
+  path = find_path(start, {tx,ty},
                     manhattan_distance,
                     flag_cost,
                     map_neighbors,
@@ -522,7 +522,7 @@ turnspeed = .25 * (pi/180)
 function turntowardtarget(unit, targetangle)
    diff = targetangle-unit.r
    printh("diff="..diff)
-   -- Never turn more than 180
+   -- never turn more than 180
    if diff > pi then
     diff -= pi*2
    elseif diff < -pi then
