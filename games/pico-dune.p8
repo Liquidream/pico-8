@@ -115,7 +115,7 @@ function update_level()
  
  -- player input
  if btnp(4) then
-  path="init"
+  units[1].path="init"
   -- mouse  
   local mposx,mposy = flr((camx+cursx)/8), flr((camy+cursy)/8)
   if (not fget(mget(mposx,mposy), 0)) 
@@ -125,8 +125,13 @@ function update_level()
 
   printh("goal="..goal.x..","..goal.y)
 
-  -- create co-routine to find path (over number of cycles)
-  cor = cocreate(findpath_cor)
+  -- create co-routine to find path (over number of cycles)  
+  units[1].tx = goal.x
+  units[1].ty = goal.y
+  -- 0=idle, 1=pathfinding, 2=moving, 3=attacking, 4=guarding?
+  units[1].prev_state = units[1].state
+  units[1].state = 1
+  units[1].cor = cocreate(findpath_cor)
  end
 
  -- mouse control
@@ -152,7 +157,8 @@ function update_level()
  --printh("cam="..camx..","..camy)
 
 
- update_pathfinding()
+ update_coroutines()
+ --update_pathfinding()
 
  -- p1:update()
  -- sound_monitor:update()
@@ -164,13 +170,24 @@ function update_level()
   ticks+=1
 end
 
-function update_pathfinding()
- if cor and costatus(cor) != 'dead' then
-   coresume(cor)
- else
-   cor = nil
+function update_coroutines()
+ -- update all unit coroutines (pathfinding, moving, attacking, etc.)
+ for _,unit in pairs(units) do 
+  if unit.cor and costatus(unit.cor) != 'dead' then
+   assert(coresume(unit.cor, unit))
+  else
+    unit.cor = nil
+  end
  end
 end
+
+-- function update_pathfinding()
+--  if cor and costatus(cor) != 'dead' then
+--    coresume(cor)
+--  else
+--    cor = nil
+--  end
+-- end
 
 -- draw related
 --------------------------------
@@ -470,27 +487,34 @@ end
 --
 
 -- function for co-routine call
- function findpath_cor(unit,tx,ty)
-  start = {
-   x = unit.x/8, 
-   y = unit.y/8
-  }
-  path = find_path(start, {tx,ty},
+ function findpath_cor(unit)
+  -- start = {
+  --  x = unit.x/8, 
+  --  y = unit.y/8
+  -- }
+  unit.path = find_path(
+                    { x = unit.x/8, y = unit.y/8 },
+                    { x = unit.tx, y = unit.ty},
                     manhattan_distance,
                     flag_cost,
                     map_neighbors,
                     function (node) return shl(node.y, 8) + node.x end,
                     nil)  
+  
+  -- todo: check path valid???
 
-  -- now auto-move to path
-  cor = cocreate(movepath_cor)
+  -- now auto-move to path 
+  -- 0=idle, 1=pathfinding, 2=moving, 3=attacking, 4=guarding?
+  unit.prev_state = unit.state
+  unit.state = 2
+  unit.cor = cocreate(movepath_cor)
  end
  
- function movepath_cor()
+ function movepath_cor(unit)
   printh("-------------")
   -- loop all path nodes...
-  for i=#path-1,1,-1 do
-   local node=path[i]
+  for i=#unit.path-1,1,-1 do
+   local node=unit.path[i]
    
    -- fake delay
   --  for sleep=1,10 do
