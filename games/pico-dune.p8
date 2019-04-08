@@ -493,7 +493,7 @@ end
   --  y = unit.y/8
   -- }
   unit.path = find_path(
-                    { x = unit.x/8, y = unit.y/8 },
+                    { x = flr(unit.x/8), y = flr(unit.y/8) },
                     { x = unit.tx, y = unit.ty},
                     manhattan_distance,
                     flag_cost,
