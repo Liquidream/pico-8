@@ -56,16 +56,18 @@ function _init()
  --level_init()
  ticks=0
 
+ -- create cursor ui "object" (for collisions)
+ cursor = m_obj(0,0,0)
+
 
  -- test pathfinding data
- start = {x=7, y=5}
+ --start = {x=7, y=5}
 
- add(units,{
-  spr=130,
-  x=7 *8,
-  y=5 *8,
-  r=0
- })
+ -- add test unit
+ local unit = m_obj(7*8, 5*8, 130)
+ unit.r=0
+ add(units,unit)
+
 end
 
 
@@ -140,6 +142,10 @@ function update_level()
  if (mouse_x != last_mouse_x) cursx = mid(0,mouse_x,127) -- mouse xpos
  if (mouse_y != last_mouse_y) cursy = mid(0,mouse_y,127) -- mouse ypos
 
+ -- update cursor pos
+ cursor.x = cursx
+ cursor.y = cursy
+
  --
  -- game mode
  --
@@ -162,7 +168,7 @@ function update_level()
 
  -- p1:update()
  -- sound_monitor:update()
- -- collisions()
+ collisions()
  -- curr_level:update()
  -- update_snow()
  -- cam:update()
@@ -218,8 +224,11 @@ function draw_level()
  -- draw units
  palt(11,true)
  for _,unit in pairs(units) do 
-  rspr(16,64,unit.x, unit.y, .25-unit.r, 1, 11)
+  unit:draw()
+  --rspr(16,64,unit.x, unit.y, .25-unit.r, 1, 11)
+  if (debug_mode) draw_hitbox(unit)
  end
+
 
 end
 
@@ -229,7 +238,9 @@ function draw_ui()
  -- ui
  pal()
  palt(11,true)
- spr(0,cursx,cursy)
+ 
+ cursor:draw()
+ --spr(0,cursx,cursy)
 end
 
 function draw_pathfinding()
@@ -267,6 +278,10 @@ end
 -- check all collisions
 function collisions()
  -- check player collisions
+
+ if collide(cursor, units[1]) then
+  printh("hover!!!!")
+ end
  -- (objects)
  -- for k,obj in pairs(curr_level.objects) do
  --  --for obj in all(curr_level.objects) do
@@ -405,28 +420,45 @@ function printo(str,startx,
  print(str,startx,starty,col)
 end
 
-function m_anim_obj(x,y,anims,curanim)
+function m_obj(x,y,sprnum)
  return {
   x=x,
   y=y,
   z=1, -- defaults
-  w=8, -- 
+  w=8, -- pixel dimensions
   h=8, --
-  spr_w=1, -- defaults
-  spr_h=1, --
-  anims=anims, --animation definitions.
-  curanim=curanim,--currently playing animation
-		curframe=1,--curent frame of animation.
-		animtick=0,--ticks until next frame should show.
-  set_anim=_set_anim,
-  update_anim=_update_anim,
+  spr=sprnum,
+  -- spr_w=1, -- defaults
+  -- spr_h=1, --
+  --anims=anims, --animation definitions.
+  --curanim=curanim,--currently playing animation
+		--curframe=1,--curent frame of animation.
+		--animtick=0,--ticks until next frame should show.
+  --set_anim=_set_anim,
+  --update_anim=_update_anim,
   get_hitbox=function(self)
    return {
-    x=self.x+2,
-    y=self.y+2,
-    w=self.w-5,
-    h=self.h-5
+    x=self.x,
+    y=self.y,
+    w=self.w-1,
+    h=self.h-1
    }
+  end,
+  draw=function(self)
+    -- if p1_goggles_enabled then
+    --  pal(12,11)
+    -- end
+    if self.r then
+     rspr(16,64,self.x, self.y, .25-self.r, 1, 11)
+    else
+     spr(self.spr, self.x, self.y, self.w/8, self.h/8)
+    end
+     -- spr(self.spr,
+    --  self.x-(self.w/2),
+    --  self.y-(self.h/2),
+    --  self.w/8,self.h/8,
+    --  self.flipx,
+    --  false)
   end
  }
 end
@@ -440,8 +472,18 @@ function collide(o1, o2)
   hb1.y < hb2.y + hb2.h and
   hb1.y + hb1.h >hb2.y 
  then
-  collide_event(o1, o2)
+  return true
+  --collide_event(o1, o2)
+ else
+  return false
  end
+end
+
+function draw_hitbox(obj)
+ --reset_draw_pal()
+ local hb=obj:get_hitbox()
+ rect(hb.x,hb.y,hb.x+hb.w,hb.y+hb.h,8)
+ --set_goggle_pal()
 end
 
 function alternate()
@@ -486,63 +528,63 @@ end
 -- pathfinding-related
 --
 
--- function for co-routine call
- function findpath_cor(unit)
-  -- start = {
-  --  x = unit.x/8, 
-  --  y = unit.y/8
-  -- }
-  unit.path = find_path(
-                    { x = flr(unit.x/8), y = flr(unit.y/8) },
-                    { x = unit.tx, y = unit.ty},
-                    manhattan_distance,
-                    flag_cost,
-                    map_neighbors,
-                    function (node) return shl(node.y, 8) + node.x end,
-                    nil)  
+-- func for co-routine call
+function findpath_cor(unit)
+ -- start = {
+ --  x = unit.x/8, 
+ --  y = unit.y/8
+ -- }
+ unit.path = find_path(
+                   { x = flr(unit.x/8), y = flr(unit.y/8) },
+                   { x = unit.tx, y = unit.ty},
+                   manhattan_distance,
+                   flag_cost,
+                   map_neighbors,
+                   function (node) return shl(node.y, 8) + node.x end,
+                   nil)  
+ 
+ -- todo: check path valid???
+
+ -- now auto-move to path 
+ -- 0=idle, 1=pathfinding, 2=moving, 3=attacking, 4=guarding?
+ unit.prev_state = unit.state
+ unit.state = 2
+ unit.cor = cocreate(movepath_cor)
+end
+ 
+function movepath_cor(unit)
+ printh("-------------")
+ -- loop all path nodes...
+ for i=#unit.path-1,1,-1 do
+  local node=unit.path[i]
   
-  -- todo: check path valid???
+  -- fake delay
+ --  for sleep=1,10 do
+ --   yield()
+ --  end
 
-  -- now auto-move to path 
-  -- 0=idle, 1=pathfinding, 2=moving, 3=attacking, 4=guarding?
-  unit.prev_state = unit.state
-  unit.state = 2
-  unit.cor = cocreate(movepath_cor)
- end
- 
- function movepath_cor(unit)
-  printh("-------------")
-  -- loop all path nodes...
-  for i=#unit.path-1,1,-1 do
-   local node=unit.path[i]
-   
-   -- fake delay
-  --  for sleep=1,10 do
-  --   yield()
-  --  end
-
-   -- rotate to angle   
-   local dx=unit.x-(node.x*8)
-   local dy=unit.y-(node.y*8)
-   local a=atan2(dx,dy)
-   printh("  >> target angle="..a)
-   while (unit.r != a) do
-    turntowardtarget(unit, a)
-   end
-   
-   -- move to new position
-   local scaled_speed = 1
-   local distance = sqrt((node.x*8 - unit.x) ^ 2 + (node.y*8 - unit.y) ^ 2)
-   local step_x = scaled_speed * (node.x*8 - unit.x) / distance
-   local step_y = scaled_speed * (node.y*8 - unit.y) / distance 
-   for i = 0, distance/scaled_speed-1 do
-    unit.x+=step_x
-    unit.y+=step_y
-    yield()
-   end
-   unit.x,unit.y = node.x*8, node.y*8
- 
+  -- rotate to angle   
+  local dx=unit.x-(node.x*8)
+  local dy=unit.y-(node.y*8)
+  local a=atan2(dx,dy)
+  printh("  >> target angle="..a)
+  while (unit.r != a) do
+   turntowardtarget(unit, a)
   end
+  
+  -- move to new position
+  local scaled_speed = 1
+  local distance = sqrt((node.x*8 - unit.x) ^ 2 + (node.y*8 - unit.y) ^ 2)
+  local step_x = scaled_speed * (node.x*8 - unit.x) / distance
+  local step_y = scaled_speed * (node.y*8 - unit.y) / distance 
+  for i = 0, distance/scaled_speed-1 do
+   unit.x+=step_x
+   unit.y+=step_y
+   yield()
+  end
+  unit.x,unit.y = node.x*8, node.y*8
+
+ end
 
 end
 
@@ -567,7 +609,7 @@ function turntowardtarget(unit, targetangle)
    printh("turnspeed="..turnspeed)
    printh("-")
    
-   -- Never turn more than 180
+   -- never turn more than 180
    if diff > 0.5 then
     printh("big angle 1")
     diff -= 1
