@@ -12,7 +12,7 @@ debug_collision=false
 -- fields
 camx,camy=0,0
 cursx,cursy=0,0
-
+selected_obj=nil
 
 path  = "init"
 goal  = {x=14, y=2}
@@ -29,10 +29,11 @@ function _init()
  -- enable mouse
  poke(0x5f2d, 1)
 
- mouse_x = stat(32)-1
- mouse_y = stat(33)-1
- last_mouse_x = mouse_x
- last_mouse_y = mouse_y
+ -- mouse_x = stat(32)---1
+ -- mouse_y = stat(33)---1
+ -- mouse_btn = stat(34)
+ -- last_mouse_x = mouse_x
+ -- last_mouse_y = mouse_y
  
  -- custom menu
  -- menuitem(1, 'quit to title', function()
@@ -60,10 +61,10 @@ function _init()
  cursor = m_obj(0,0,0)
  cursor.get_hitbox=function(self)
    return {
-    x=self.x-1,
-    y=self.y-1,
-    w=1,
-    h=1
+    x=self.x+camx,
+    y=self.y+camy,
+    w=0,
+    h=0
    }
   end
 
@@ -144,8 +145,10 @@ function update_level()
  end
 
  -- mouse control
- mouse_x = stat(32)-1
- mouse_y = stat(33)-1
+ mouse_x = stat(32)
+ mouse_y = stat(33)
+ mouse_btn = stat(34)
+ mouse_clicked = (mouse_btn>0 and last_mouse_btn != mouse_btn)
  if (mouse_x != last_mouse_x) cursx = mid(0,mouse_x,127) -- mouse xpos
  if (mouse_y != last_mouse_y) cursy = mid(0,mouse_y,127) -- mouse ypos
 
@@ -181,6 +184,8 @@ function update_level()
  -- cam:update()
 
   ticks+=1
+  last_mouse_btn = mouse_btn
+  last_selected_obj = selected_obj
 end
 
 function update_coroutines()
@@ -284,13 +289,26 @@ end
 
 -- check all collisions
 function collisions()
- -- check player collisions
-
- if collide(cursor, units[1]) then
-  units[1].hover = true--printh("hover!!!!")
- else
-  units[1].hover = false
+ 
+ local clickedSomething=false
+ -- check cursor/ui collisions
+ 
+ for _,unit in pairs(units) do 
+  -- hover
+  unit.hover = collide(cursor, units[1])
+  if mouse_btn==1 and unit.hover then
+   selected_obj = unit
+   if (mouse_clicked) clickedSomething=true
+  end
  end
+
+-- deselect?
+if (mouse_clicked) 
+and not clickedSomething 
+ then
+ selected_obj=nil
+end 
+
  -- (objects)
  -- for k,obj in pairs(curr_level.objects) do
  --  --for obj in all(curr_level.objects) do
@@ -491,7 +509,7 @@ end
 function draw_hitbox(obj)
  --reset_draw_pal()
  local hb=obj:get_hitbox()
- rect(hb.x,hb.y,hb.x+hb.w,hb.y+hb.h,obj.hover and 11 or 8)
+ rect(hb.x,hb.y,hb.x+hb.w,hb.y+hb.h,selected_obj==obj and 7 or obj.hover and 11 or 8)
  --set_goggle_pal()
 end
 
