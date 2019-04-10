@@ -58,7 +58,14 @@ function _init()
 
  -- create cursor ui "object" (for collisions)
  cursor = m_obj(0,0,0)
-
+ cursor.get_hitbox=function(self)
+   return {
+    x=self.x-1,
+    y=self.y-1,
+    w=1,
+    h=1
+   }
+  end
 
  -- test pathfinding data
  --start = {x=7, y=5}
@@ -280,7 +287,9 @@ function collisions()
  -- check player collisions
 
  if collide(cursor, units[1]) then
-  printh("hover!!!!")
+  units[1].hover = true--printh("hover!!!!")
+ else
+  units[1].hover = false
  end
  -- (objects)
  -- for k,obj in pairs(curr_level.objects) do
@@ -482,7 +491,7 @@ end
 function draw_hitbox(obj)
  --reset_draw_pal()
  local hb=obj:get_hitbox()
- rect(hb.x,hb.y,hb.x+hb.w,hb.y+hb.h,8)
+ rect(hb.x,hb.y,hb.x+hb.w,hb.y+hb.h,obj.hover and 11 or 8)
  --set_goggle_pal()
 end
 
