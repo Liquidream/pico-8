@@ -112,7 +112,7 @@ function _draw()
  -- draw score, mouse, etc.
  draw_ui()
   
-  printh("cpu: "..flr(stat(1)*100).."% mem: "..(flr(stat(0)/2048*100)).."% fps: "..stat(7))--,2,109,8,0)
+  --printh("cpu: "..flr(stat(1)*100).."% mem: "..(flr(stat(0)/2048*100)).."% fps: "..stat(7))--,2,109,8,0)
   if (debug_mode) printo("cpu: "..flr(stat(1)*100).."%\nmem: "..(flr(stat(0)/2048*100)).."%\nfps: "..stat(7),2,109,8,0)
 
 end
@@ -133,14 +133,14 @@ function update_obj_tiles()
  object_tiles={}
  -- clear the tiles
  -- (The pico-8 map is a 128x32 (or 128x64 using shared space))
- for x=0,127 do
-  object_tiles[x]={}
-  for y=0,127 do
-   object_tiles[x][y]=0
-  end
- end
+ -- for x=0,127 do
+ --  object_tiles[x]={}
+ --  for y=0,127 do
+ --   object_tiles[x][y]=0
+ --  end
+ -- end
  for _,unit in pairs(units) do  
-  object_tiles[flr(unit.x/8)][flr(unit.y/8)]=1
+  object_tiles[flr(unit.x/8)..","..flr(unit.y/8)]=1
  end
 end
 
@@ -198,7 +198,7 @@ function move_unit_pos(unit,x,y)
     
   -- check target valid
   if fget(mget(x,y), 0) 
-   or object_tiles[x][y]!=0 then
+   or object_tiles[x..","..y] then
    -- abort as target invalid
    printh("aborting pathfinding - invalid target")
    return
@@ -756,7 +756,7 @@ function maybe_add(nx, ny, ntable)
  printh("testing:"..nx..","..ny)
  if (
   not fget(mget(nx,ny), 0) 
-  and object_tiles[nx][ny]==0
+  and object_tiles[nx..","..ny]==nil
  )
 
   -- todo:: parse entire map into chunks of higher-level connected regions
