@@ -20,6 +20,7 @@ goal  = {x=14, y=2}
 --cor=nil
 count=0
 units={}
+object_tiles={}
 buildings={}
 
 
@@ -78,6 +79,8 @@ cursor.draw=function(self)
  unit.r=0.5
  add(units,unit)
  
+ -- test 
+ update_obj_tiles()
 end
 
 
@@ -123,6 +126,22 @@ end
 
 -- update related
 --------------------------------
+
+function update_obj_tiles()
+ object_tiles={}
+ -- clear the tiles
+ -- (The pico-8 map is a 128x32 (or 128x64 using shared space))
+ for x=0,127 do
+  object_tiles[x]={}
+  for y=0,127 do
+   object_tiles[x][y]=0
+  end
+ end
+ for _,unit in pairs(units) do  
+  object_tiles[flr(unit.x/8)][flr(unit.y/8)]=1
+ end
+end
+
 function update_level()
  
  -- player input
@@ -231,15 +250,7 @@ function draw_level()
   spr(144, path[1].x*8, path[1].y*8)
  end
 
- -- draw units
- palt(11,true)
- for _,unit in pairs(units) do 
-  unit:draw()  
-  --if (debug_mode) draw_hitbox(unit)
-  -- draw selected reticule
-  if (unit == selected_obj) spr(145, selected_obj.x, selected_obj.y)
- end
-
+ -- buildings
  for _,building in pairs(buildings) do 
   building:draw()  
   --if (debug_mode) draw_hitbox(unit)
@@ -248,11 +259,22 @@ function draw_level()
    rect(selected_obj.x, selected_obj.y, 
         selected_obj.x+selected_obj.w, selected_obj.y+selected_obj.h, 
         7)
-   --spr(145, selected_obj.x, selected_obj.y)
+  end
+ end
+ -- draw units
+ palt(11,true)
+ for _,unit in pairs(units) do 
+  unit:draw()  
+  --if (debug_mode) draw_hitbox(unit)
+  -- draw selected reticule
+  if (unit == selected_obj) then   
+   spr(145, selected_obj.x, selected_obj.y)
   end
  end
 
 end
+
+
 
 function draw_ui()
  -- score, mouse, etc...
@@ -265,31 +287,22 @@ function draw_ui()
  --spr(0,cursx,cursy)
 end
 
-function draw_pathfinding()
- -- debug pathfinding 
- if path != nil and path != "init" then
-  draw_path(path, 1, 1)
-  draw_path(path, 0, 12)
- end
+-- function draw_pathfinding()
+--  -- debug pathfinding 
+--  if path != nil and path != "init" then
+--   draw_path(path, 1, 1)
+--   draw_path(path, 0, 12)
+--  end
+-- end
 
- -- debug target angle
- -- local dx=(unit.x+4)-(camx+cursx)
- -- local dy=(unit.y+4)-(camy+cursy)
- -- local a=atan2(dx,dy)
- -- printh("angle="..a)
- -- unit.r=a
-
-end
-
-function draw_path(path, dy, clr)
- local p = path[1]
- for i = 2, #path do
-  local n = path[i]
-  --line(p.x * 8 + 4 + dy, p.y * 8 + 4 + dy, n.x * 8 + 4 + dy, n.y * 8 + 4 + dy, clr)
-  line(p.x * 8 + 4 + dy - camx, p.y * 8 + 4 + dy - camy, n.x * 8 + 4 + dy - camx, n.y * 8 + 4 + dy - camy, clr)
-  p = n
- end
-end
+-- function draw_path(path, dy, clr)
+--  local p = path[1]
+--  for i = 2, #path do
+--   local n = path[i]
+--    line(p.x * 8 + 4 + dy - camx, p.y * 8 + 4 + dy - camy, n.x * 8 + 4 + dy - camx, n.y * 8 + 4 + dy - camy, clr)
+--   p = n
+--  end
+-- end
 
 
 -- game flow / collisions
@@ -612,12 +625,6 @@ function movepath_cor(unit)
  -- loop all path nodes...
  for i=#unit.path-1,1,-1 do
   local node=unit.path[i]
-  
-  -- fake delay
- --  for sleep=1,10 do
- --   yield()
- --  end
-
   -- rotate to angle   
   local dx=unit.x-(node.x*8)
   local dy=unit.y-(node.y*8)
@@ -638,9 +645,11 @@ function movepath_cor(unit)
    yield()
   end
   unit.x,unit.y = node.x*8, node.y*8
-
  end
 
+ -- arrived?
+
+ -- todo: set map/path data that tile is now occupied
 end
 
 
@@ -733,7 +742,9 @@ end
 -- maybe adds the node to neighbors table
 -- (if flag zero is unset at this position)
 function maybe_add(nx, ny, ntable)
- if (not fget(mget(nx,ny), 0))
+ if (
+  not fget(mget(nx,ny), 0) 
+  and object_tiles[nx][ny]==0)
 
   -- todo:: parse entire map into chunks of higher-level connected regions
   --        - each chunk represents 16x16 tiles
