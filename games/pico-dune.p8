@@ -79,8 +79,7 @@ cursor.draw=function(self)
  unit.r=0.5
  add(units,unit)
  
- -- test 
- update_obj_tiles()
+ 
 end
 
 
@@ -89,6 +88,8 @@ function _update60()  --game_update
 
  update_level()
  
+ -- update positions of pathfinding "blocker" objects
+ if (t()%1==0) update_obj_tiles()
 end
 
  --
@@ -111,7 +112,7 @@ function _draw()
  -- draw score, mouse, etc.
  draw_ui()
   
-  --printh("cpu: "..flr(stat(1)*100).."% mem: "..(flr(stat(0)/2048*100)).."% fps: "..stat(7))--,2,109,8,0)
+  printh("cpu: "..flr(stat(1)*100).."% mem: "..(flr(stat(0)/2048*100)).."% fps: "..stat(7))--,2,109,8,0)
   if (debug_mode) printo("cpu: "..flr(stat(1)*100).."%\nmem: "..(flr(stat(0)/2048*100)).."%\nfps: "..stat(7),2,109,8,0)
 
 end
@@ -128,6 +129,7 @@ end
 --------------------------------
 
 function update_obj_tiles()
+ printh("update_obj_tiles()...")
  object_tiles={}
  -- clear the tiles
  -- (The pico-8 map is a 128x32 (or 128x64 using shared space))
@@ -193,7 +195,16 @@ end
 function move_unit_pos(unit,x,y)
   unit.path="init"
   -- mouse  
-  
+    
+  -- check target valid
+  if fget(mget(x,y), 0) 
+   or object_tiles[x][y]!=0 then
+   -- abort as target invalid
+   printh("aborting pathfinding - invalid target")
+   return
+  end
+
+
   --printh("goal="..goal.x..","..goal.y)
 
   -- create co-routine to find path (over number of cycles)  
@@ -742,9 +753,11 @@ end
 -- maybe adds the node to neighbors table
 -- (if flag zero is unset at this position)
 function maybe_add(nx, ny, ntable)
+ printh("testing:"..nx..","..ny)
  if (
   not fget(mget(nx,ny), 0) 
-  and object_tiles[nx][ny]==0)
+  and object_tiles[nx][ny]==0
+ )
 
   -- todo:: parse entire map into chunks of higher-level connected regions
   --        - each chunk represents 16x16 tiles
@@ -760,6 +773,7 @@ function maybe_add(nx, ny, ntable)
   then 
    add(ntable, {x=nx, y=ny}) 
  end
+ printh("test passed.")
 end
 
 -- estimates the cost from a to
