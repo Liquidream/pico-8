@@ -289,9 +289,13 @@ function draw_ui()
  -- selected objects?
  palt(0,false)
  if selected_obj and selected_obj.type==2 then
-  selected_obj:draw(110,20,true)  
+  selected_obj:draw(109,20,true)  
  end
  
+ -- radar
+ 
+ rectfill(94, 94, 125, 125, 0)
+
  -- score
  printo(credits, 103,2, 7)
  
