@@ -69,10 +69,10 @@ cursor.draw=function(self)
 --  local refinary=m_obj(9*8,5*8, 2, 68, 3,2, 140)
 --  add(buildings,refinary)
  --
- local constyard=m_obj(10*8,7*8, 2, 64, 2,2, 142)
- constyard.can_build=true
+ local constyard=m_obj(10*8,7*8, 2, 64, 2,2)
  constyard.health=75
- constyard.default_build=m_obj(109,44,2,0,2,2,168,true)
+ constyard.ico_obj=m_obj(109,20,2, 142, 2,2)
+ constyard.build_obj=m_obj(109,44,2, 168, 2,2)
  add(buildings,constyard)
 
  -- add test units
@@ -290,9 +290,17 @@ function draw_ui()
  pal()
  -- selected objects?
  palt(0,false)
- if selected_obj and selected_obj.type==2 then
-  selected_obj:draw(109,20,true)  
+ 
+ if selected_obj and selected_obj.ico_obj then
+  selected_obj.ico_obj:draw(109,20,true)  
+  if selected_obj.build_obj then
+    selected_obj.build_obj:draw(109,44,true)  
+   end
  end
+ 
+--  if selected_obj and selected_obj==2 then
+--   selected_obj:draw(109,20,true)  
+--  end
  
  -- radar
  
@@ -332,27 +340,35 @@ end
 -- check all collisions
 function collisions()
  
- local clickedsomething=false
+ clickedsomething=false
  -- check cursor/ui collisions
  
  -- unit collisions
  for _,unit in pairs(units) do 
+  check_hover_select(unit)
   -- hover
-  unit.hover = collide(cursor, unit)
-  if left_button_clicked and unit.hover then
-   selected_obj = unit
-   clickedsomething=true
-  end
+  --unit.hover = collide(cursor, unit)
+  -- if left_button_clicked and unit.hover then
+  --  selected_obj = unit
+  --  clickedsomething=true
+  -- end
  end
 
  -- building collisions 
  for _,building in pairs(buildings) do 
+  check_hover_select(building)
   -- hover
-  building.hover = collide(cursor, building)
-  if left_button_clicked and building.hover then
-   selected_obj = building
-   clickedsomething=true
-  end
+  -- building.hover = collide(cursor, building)
+  -- if left_button_clicked and building.hover then
+  --  selected_obj = building
+  --  clickedsomething=true
+  -- end
+ end
+
+ -- selected obj ui collision
+ if selected_obj then
+  if (selected_obj.ico_obj) check_hover_select(selected_obj.ico_obj)
+  if (selected_obj.build_obj) check_hover_select(selected_obj.build_obj)
  end
 
  -- deselect?
@@ -368,7 +384,13 @@ function collisions()
 
 end
 
-
+function check_hover_select(obj)
+  obj.hover = collide(cursor, obj)
+  if left_button_clicked and obj.hover then
+   selected_obj = obj   
+   clickedsomething=true
+  end
+end
 
 function collide_event(o1, o2)
  
@@ -472,7 +494,7 @@ function printo(str,startx,
  print(str,startx,starty,col)
 end
 
-function m_obj(x,y,type,sprnum,w,h,iconum,build_option)
+function m_obj(x,y,type,sprnum,w,h,build_option)
  return {
   x=x,
   y=y,
@@ -481,13 +503,12 @@ function m_obj(x,y,type,sprnum,w,h,iconum,build_option)
   h=(h or 1)*8, --
   type=type, -- 1=unit, 2=structure, 3=worm
   spr=sprnum,
-  spr_icon=iconum,
+  --spr_icon=iconum,
   build_option=build_option or false,
   ai=false,
   spr_w=w or 1, -- defaults
   spr_h=h or 1, --
   health=build_option and 0 or 100,
-  can_build=false,
 
   get_hitbox=function(self)
    return {
@@ -498,26 +519,26 @@ function m_obj(x,y,type,sprnum,w,h,iconum,build_option)
    }
   end,
   draw=function(self, x,y, icon_mode)    
-    -- icon mode?
-    if icon_mode then
-     rectfill(x-1,y-1,x+16,y+19,0)
-     spr(self.spr_icon, x, y, 2, 2)  
-     -- draw health
-     rectfill(x,y+17,x+(15*self.health/100),y+18,self.health<33 and 8 or self.health<66 and 10 or 11)
-
-      -- can it build?
-      if self.can_build then
-        -- draw most-recent/default build option
-        local item=self.last_build or self.default_build
-        item:draw(x,y+24,true)
-      end
-
     -- rotating obj?
-    elseif self.r then
+    if self.r then
      rspr(self.spr%16*8,flr(self.spr/16)*8, self.x, self.y, .25-self.r, 1, 11)      
     -- norm sprite
     else
      spr(self.spr, self.x, self.y, self.w/8, self.h/8)
+
+      -- icon mode?
+      if icon_mode then
+        rect(x-1,y-1,x+16,y+19,0)
+        --spr(self.spr, x, y, 2, 2)  
+        -- draw health
+        rectfill(x,y+17,x+(15*self.health/100),y+18,self.health<33 and 8 or self.health<66 and 10 or 11)
+
+        -- can it build?
+        -- if self.build_obj then
+        --   -- draw most-recent/default build option
+        --   self.build_obj:draw(x,y+24,true)
+        -- end
+      end
     end
 
     if (debug_collision) draw_hitbox(self)
