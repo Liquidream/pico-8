@@ -7,7 +7,7 @@ __lua__
 
 -- global flags
 debug_mode=true
-debug_collision=false
+debug_collision=true
 
 -- fields
 camx,camy=0,0
@@ -71,7 +71,8 @@ cursor.draw=function(self)
  --
  local constyard=m_obj(10*8,7*8, 2, 64, 2,2, 142)
  constyard.can_build=true
- constyard.health=75 
+ constyard.health=75
+ constyard.default_build=m_obj(109,44,2,0,2,2,168,true)
  add(buildings,constyard)
 
  -- add test units
@@ -123,8 +124,7 @@ end
 -- update related
 --------------------------------
 
-function update_obj_tiles()
- printh("update_obj_tiles()...")
+function update_obj_tiles() 
  object_tiles={}
  -- (The pico-8 map is a 128x32 (or 128x64 using shared space))
  for _,unit in pairs(units) do  
@@ -262,20 +262,18 @@ function draw_level()
 
  -- buildings
  for _,building in pairs(buildings) do 
-  building:draw()  
-  --if (debug_collision) draw_hitbox(building)
+  building:draw()
   -- draw selected reticule
   if (building == selected_obj) then 
    rect(selected_obj.x, selected_obj.y, 
-        selected_obj.x+selected_obj.w, selected_obj.y+selected_obj.h, 
+        selected_obj.x+selected_obj.w-1, selected_obj.y+selected_obj.h-1, 
         7)
   end
  end
  -- draw units
  palt(11,true)
  for _,unit in pairs(units) do 
-  unit:draw()  
-  --if (debug_collision) draw_hitbox(unit)
+  unit:draw()
   -- draw selected reticule
   if (unit == selected_obj) then   
    spr(145, selected_obj.x, selected_obj.y)
@@ -305,8 +303,8 @@ function draw_ui()
  
  palt(11,true)
  cursor:draw()
- --if (debug_collision) draw_hitbox(cursor)
 end
+
 
 -- function draw_pathfinding()
 --  -- debug pathfinding 
@@ -474,7 +472,7 @@ function printo(str,startx,
  print(str,startx,starty,col)
 end
 
-function m_obj(x,y,type,sprnum,w,h,iconum)
+function m_obj(x,y,type,sprnum,w,h,iconum,build_option)
  return {
   x=x,
   y=y,
@@ -484,10 +482,11 @@ function m_obj(x,y,type,sprnum,w,h,iconum)
   type=type, -- 1=unit, 2=structure, 3=worm
   spr=sprnum,
   spr_icon=iconum,
+  build_option=build_option or false,
   ai=false,
   spr_w=w or 1, -- defaults
   spr_h=h or 1, --
-  health=100,
+  health=build_option and 0 or 100,
   can_build=false,
 
   get_hitbox=function(self)
@@ -506,6 +505,13 @@ function m_obj(x,y,type,sprnum,w,h,iconum)
      -- draw health
      rectfill(x,y+17,x+(15*self.health/100),y+18,self.health<33 and 8 or self.health<66 and 10 or 11)
 
+      -- can it build?
+      if self.can_build then
+        -- draw most-recent/default build option
+        local item=self.last_build or self.default_build
+        item:draw(x,y+24,true)
+      end
+
     -- rotating obj?
     elseif self.r then
      rspr(self.spr%16*8,flr(self.spr/16)*8, self.x, self.y, .25-self.r, 1, 11)      
@@ -513,6 +519,8 @@ function m_obj(x,y,type,sprnum,w,h,iconum)
     else
      spr(self.spr, self.x, self.y, self.w/8, self.h/8)
     end
+
+    if (debug_collision) draw_hitbox(self)
   end
  }
 end
