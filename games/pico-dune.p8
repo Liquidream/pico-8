@@ -63,26 +63,39 @@ cursor.draw=function(self)
  end
 
  -- add test buldings
- local windfarm=m_obj(12*8,2*8, 2, 66, 2,2)
+ local windfarm=m_obj(12*8,2*8, 2, 66, nil, 2,2)
  windfarm.life=50
- windfarm.ico_obj=m_obj(109,20,2, 138, 2,2, windfarm, function(self)
+ windfarm.ico_obj=m_obj(109,20,2, 138, nil, 2,2, windfarm, function(self)
     printh("todo: fix windfarm?...")
   end)
+  windfarm.col_cycle = {
+    {14,12},
+    {14,12},
+    {14,12},
+    {14,12},
+    {14,13},
+    {14,1},
+    {14,1},
+    {14,1},
+    {14,1},
+    {14,13},
+  }
+  windfarm.framecount=10
  add(buildings,windfarm)
  --
- local refinary=m_obj(9*8,5*8, 2, 68, 3,2)
+ local refinary=m_obj(9*8,5*8, 2, 68, nil, 3,2)
  refinary.life=10
- refinary.ico_obj=m_obj(109,20,2, 140, 2,2, refinary, function(self)
+ refinary.ico_obj=m_obj(109,20,2, 140, nil, 2,2, refinary, function(self)
     printh("todo: fix refinary?...")
   end)
  add(buildings,refinary)
  --
- local constyard=m_obj(10*8,7*8, 2, 64, 2,2)
+ local constyard=m_obj(10*8,7*8, 2, 64, nil, 2,2)
  constyard.life=75
- constyard.ico_obj=m_obj(109,20,2, 142, 2,2, constyard, function(self)
+ constyard.ico_obj=m_obj(109,20,2, 142, nil, 2,2, constyard, function(self)
     printh("todo: load construction yard menu...")
   end)
- constyard.build_obj=m_obj(109,44,2, 168, 2,2, nil, function(self)
+ constyard.build_obj=m_obj(109,44,2, 168, nil, 2,2, nil, function(self)
     printh("todo: build slab...")
     self.build_step=0.5
     self.cor=cocreate(function(self)
@@ -96,15 +109,15 @@ cursor.draw=function(self)
  add(buildings,constyard)
 
  -- add test units
- local unit = m_obj(7*8, 5*8, 1, 130)
+ local unit = m_obj(7*8, 5*8, 1, 130, 11)
  unit.r=0
  add(units,unit)
  --
- local unit = m_obj(7*8, 3*8, 1, 129)
+ local unit = m_obj(7*8, 3*8, 1, 129, 11)
  unit.r=0.25
  add(units,unit)
  --
- unit = m_obj(9*8, 3*8, 1, 131)
+ unit = m_obj(9*8, 3*8, 1, 131, 11)
  unit.r=0.5
  add(units,unit)
  
@@ -287,6 +300,7 @@ function draw_level()
 
  -- buildings
  for _,building in pairs(buildings) do 
+  building:update()
   building:draw()
   -- draw selected reticule
   if (building == selected_obj) then 
@@ -297,7 +311,8 @@ function draw_level()
  end
  -- draw units
  palt(11,true)
- for _,unit in pairs(units) do 
+ for _,unit in pairs(units) do
+  unit:update()
   unit:draw()
   -- draw selected reticule
   if (unit == selected_obj) then   
@@ -507,7 +522,7 @@ function printo(str,startx,
  print(str,startx,starty,col)
 end
 
-function m_obj(x,y,type,sprnum,w,h,parent,func_onclick)
+function m_obj(x,y,type,sprnum,trans_col,w,h,parent,func_onclick)
  return {
   x=x,
   y=y,
@@ -517,12 +532,16 @@ function m_obj(x,y,type,sprnum,w,h,parent,func_onclick)
   h=(h or 1)*8, --
   parent=parent,
   spr=sprnum,
-  --spr_icon=iconum,
+  trans_col=trans_col,
   func_onclick=func_onclick,
   ai=false,
   spr_w=w or 1, -- defaults
   spr_h=h or 1, --
   life=0,
+  -- color cycling/anim
+  frame=0,
+  framecount=0,
+  col_cycle_pos=1,
 
   get_hitbox=function(self)
    return {
@@ -532,7 +551,15 @@ function m_obj(x,y,type,sprnum,w,h,parent,func_onclick)
     h=self.h-1
    }
   end,
-  draw=function(self, x,y, icon_mode)    
+  draw=function(self, x,y, icon_mode) 
+    pal()
+    palt(0,false)
+    if (self.trans_col) palt(self.trans_col,true)
+    -- colour anim?
+    if self.col_cycle then
+      pal(self.col_cycle[self.col_cycle_pos][1],
+          self.col_cycle[self.col_cycle_pos][2])
+    end
     -- rotating obj?
     if self.r then
      rspr(self.spr%16*8,flr(self.spr/16)*8, self.x, self.y, .25-self.r, 1, 11)      
@@ -544,13 +571,24 @@ function m_obj(x,y,type,sprnum,w,h,parent,func_onclick)
         -- draw health/progress
         local this=self.parent or self
         local col = this.build_step and 12 or (this.life<33 and 8 or this.life<66 and 10 or 11)
-        rectfill(x,y+17,x+(15*this.life/100),y+18,col)
+        if (this.life>0) rectfill(x,y+17,x+(15*this.life/100),y+18,col)
       end
-
+      -- non-rotational sprite
       spr(self.spr, self.x, self.y, self.w/8, self.h/8)
     end
 
     if (debug_collision) draw_hitbox(self)
+  end,
+  update=function(self)
+    -- default functionality?
+    if self.col_cycle then
+      self.frame+=1
+      if (self.frame > self.framecount) then
+        self.frame=0
+        self.col_cycle_pos+=1
+        if (self.col_cycle_pos>#self.col_cycle) self.col_cycle_pos=1
+      end
+    end
   end
  }
 end
@@ -979,19 +1017,19 @@ ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
 ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff00000000000000000000000000000000
 ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff00000000000000000000000000000000
 d66dddddddd6fffdddd776ddddddddddddddddddddd666dddddddddd000000000000000000000000000000000000000000000000000000000000000000000000
-76665555551ffff1d576dc65d5577655d5555555d5766665d5555555000000000000000000000000000000000000000000000000000000000000000000000000
-76665805555f4441d76dccc5d576dc65d5556555d5766665d5888885000000000000000000000000000000000000000000000000000000000000000000000000
-177d22055d5ffff1d66d11c5d76dccc5d5576655d5677725d5555555000000000000000000000000000000000000000000000000000000000000000000000000
-d1d55505555f1011d66d01c5d66d11c5d55d7d55d566dd25d5522255000000000000000000000000000000000000000000000000000000000000000000000000
-6555550515df1001d66d0c55d66d01c5d55ddd55d566dd25d5555555000000000000000000000000000000000000000000000000000000000000000000000000
-d6d6d55555551005d56dd555d66d0c55d555d555d556dd55d5552555000000000000000000000000000000000000000000000000000000000000000000000000
+76665555551ffff1d576de65d5577655d5555555d5766665d5555555000000000000000000000000000000000000000000000000000000000000000000000000
+76665805555f4441d76deee5d576de65d5556555d5766665d5888885000000000000000000000000000000000000000000000000000000000000000000000000
+177d22055d5ffff1d66d11e5d76deee5d5576655d5677725d5555555000000000000000000000000000000000000000000000000000000000000000000000000
+d1d55505555f1011d66d01e5d66d11e5d55d7d55d566dd25d5522255000000000000000000000000000000000000000000000000000000000000000000000000
+6555550515df1001d66d0e55d66d01e5d55ddd55d566dd25d5555555000000000000000000000000000000000000000000000000000000000000000000000000
+d6d6d55555551005d56dd555d66d0e55d555d555d556dd55d5552555000000000000000000000000000000000000000000000000000000000000000000000000
 d6d6d555d55d5555d5555555d56dd555d5555555d5555555d5522255000000000000000000000000000000000000000000000000000000000000000000000000
 dddddddd55d555d5ddddd776ddddddddddd666dddddddddddddddddd000000000000000000000000000000000000000000000000000000000000000000000000
-d555555515555155d55576dc65555555d5766665d5555555d5522255000000000000000000000000000000000000000000000000000000000000000000000000
-d555555a5d55d555d5576dccc5558055d5766665d5556555d5552555000000000000000000000000000000000000000000000000000000000000000000000000
-d5aaa99a55515d5dd5566d11c5522055d5677725d5576655d5555555000000000000000000000000000000000000000000000000000000000000000000000000
-d5aaa55ad5555555d5566d01c5555055d566dd25d55d7d55d5522255000000000000000000000000000000000000000000000000000000000000000000000000
-d5a1199a55d51555d5566d0cd5555055d566dd25d55ddd55d5555555000000000000000000000000000000000000000000000000000000000000000000000000
+d555555515555155d55576de65555555d5766665d5555555d5522255000000000000000000000000000000000000000000000000000000000000000000000000
+d555555a5d55d555d5576deee5558055d5766665d5556555d5552555000000000000000000000000000000000000000000000000000000000000000000000000
+d5aaa99a55515d5dd5566d11e5522055d5677725d5576655d5555555000000000000000000000000000000000000000000000000000000000000000000000000
+d5aaa55ad5555555d5566d01e5555055d566dd25d55d7d55d5522255000000000000000000000000000000000000000000000000000000000000000000000000
+d5a1199a55d51555d5566d0ed5555055d566dd25d55ddd55d5555555000000000000000000000000000000000000000000000000000000000000000000000000
 d544445a15555515d5556dd5d5555555d556dd55d555d555d5888885000000000000000000000000000000000000000000000000000000000000000000000000
 d5151515555d5555d5555555d5555555d5555555d5555555d5555555000000000000000000000000000000000000000000000000000000000000000000000000
 77777777000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
