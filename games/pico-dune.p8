@@ -7,7 +7,7 @@ __lua__
 
 -- global flags
 debug_mode=true
-debug_collision=true
+debug_collision=false
 
 -- fields
 camx,camy=0,0
@@ -70,12 +70,20 @@ cursor.draw=function(self)
 --  add(buildings,refinary)
  --
  local constyard=m_obj(10*8,7*8, 2, 64, 2,2)
- constyard.health=75
- constyard.ico_obj=m_obj(109,20,2, 142, 2,2, function(self)
+ constyard.life=75
+ constyard.ico_obj=m_obj(109,20,2, 142, 2,2, constyard, function(self)
     printh("todo: load construction yard menu...")
   end)
- constyard.build_obj=m_obj(109,44,2, 168, 2,2, function(self)
+ constyard.build_obj=m_obj(109,44,2, 168, 2,2, nil, function(self)
     printh("todo: build slab...")
+    self.build_step=0.5
+    self.cor=cocreate(function(self)
+        -- build slab
+        while self.life<100 do
+          self.life+=self.build_step
+         yield()
+        end
+      end)
   end)
  add(buildings,constyard)
 
@@ -220,23 +228,28 @@ function move_unit_pos(unit,x,y)
 end
 
 function update_coroutines()
- -- update all unit coroutines (pathfinding, moving, attacking, etc.)
+ -- update all unit coroutines 
+ -- (pathfinding, moving, attacking, etc.)
  for _,unit in pairs(units) do 
-  if unit.cor and costatus(unit.cor) != 'dead' then
-   assert(coresume(unit.cor, unit))
-  else
-    unit.cor = nil
-  end
+  update_cor(unit)
+ end
+ -- update all building coroutines
+ -- (building, repairing, etc.)
+ for _,building in pairs(buildings) do 
+  update_cor(building)
+  update_cor(building.build_obj)
  end
 end
 
--- function update_pathfinding()
---  if cor and costatus(cor) != 'dead' then
---    coresume(cor)
---  else
---    cor = nil
---  end
--- end
+function update_cor(obj)
+ if obj then
+  if obj.cor and costatus(obj.cor) != 'dead' then
+    assert(coresume(obj.cor, obj))
+  else
+    obj.cor = nil
+  end
+ end
+end
 
 -- draw related
 --------------------------------
@@ -363,11 +376,11 @@ function collisions()
  if left_button_clicked then
   if clickedsomething then
     -- button?
-    if (selected_obj.func_onclick) selected_obj:func_onclick()    
+    if (selected_obj.func_onclick) selected_obj:func_onclick() selected_obj=last_selected_obj
   -- deselect?
   else 
     -- do we have a unit selected?
-    if selected_obj then
+    if selected_obj and selected_obj.type==1 then
       move_unit_pos(selected_obj, flr((camx+cursx)/8), flr((camy+cursy)/8))
     end
     selected_obj=nil
@@ -486,22 +499,22 @@ function printo(str,startx,
  print(str,startx,starty,col)
 end
 
-function m_obj(x,y,type,sprnum,w,h,func_onclick)
+function m_obj(x,y,type,sprnum,w,h,parent,func_onclick)
  return {
   x=x,
   y=y,
   z=1, -- defaults
+  type=type, -- 1=unit, 2=structure, 3=worm
   w=(w or 1)*8, -- pixel dimensions
   h=(h or 1)*8, --
-  type=type, -- 1=unit, 2=structure, 3=worm
+  parent=parent,
   spr=sprnum,
   --spr_icon=iconum,
   func_onclick=func_onclick,
   ai=false,
   spr_w=w or 1, -- defaults
   spr_h=h or 1, --
-  health=100,
-  build_amount=0,
+  life=0,
 
   get_hitbox=function(self)
    return {
@@ -522,15 +535,10 @@ function m_obj(x,y,type,sprnum,w,h,func_onclick)
       -- icon mode?
       if icon_mode then
         rect(x-1,y-1,x+16,y+19,0)
-        --spr(self.spr, x, y, 2, 2)  
-        -- draw health
-        rectfill(x,y+17,x+(15*self.health/100),y+18,self.health<33 and 8 or self.health<66 and 10 or 11)
-
-        -- can it build?
-        -- if self.build_obj then
-        --   -- draw most-recent/default build option
-        --   self.build_obj:draw(x,y+24,true)
-        -- end
+        -- draw health/progress
+        local this=self.parent or self
+        local col = this.build_step and 12 or (this.life<33 and 8 or this.life<66 and 10 or 11)
+        rectfill(x,y+17,x+(15*this.life/100),y+18,col)
       end
     end
 
@@ -1199,8 +1207,8 @@ __map__
 080b0b1801000000000000020400000001000000000000000000000000010000000000000000000000000000000000000000030303030303030303030303030095959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595
 0000000101000000000203040000000000000000000000000000010101000000000000000000000000000000000000000000000003000000000303030303030095959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595
 0001010101000000020303040080000000020505000000000000010000000000000000000000030303030303030303030000000000000000000003030303030095959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595
-0001010101000000000603040000000005030d0f0500000000010100000000000000000000030303030d0e0e030303030303000000000000000003030303030095959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595
-00010101010000000000040400000000030d1e1f030000000001000000000000000000000003030d0e1e1e1e0f0303030303000000000000000000030303030095959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595
+0001010101000000000611110000000005030d0f0500000000010100000000000000000000030303030d0e0e030303030303000000000000000003030303030095959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595
+00010101010000000000111100000000030d1e1f030000000001000000000000000000000003030d0e1e1e1e0f0303030303000000000000000000030303030095959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595
 00010100010000000000000605050500032d2e2f030000000000000000000000000000000003031d1e1e1e1e1e0e0e0e0e03030000000000000000000303030095959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595
 0000000001000000000000000002060006030303030000000000000000000001000000000303031d1e2f0303030303030303030300000003030303030303000095959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595
 000000010100000000000000000000000006060606000000000000000000000100000000030303031e030303030303030300000000000000030303030303030095959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595
