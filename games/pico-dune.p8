@@ -71,8 +71,12 @@ cursor.draw=function(self)
  --
  local constyard=m_obj(10*8,7*8, 2, 64, 2,2)
  constyard.health=75
- constyard.ico_obj=m_obj(109,20,2, 142, 2,2)
- constyard.build_obj=m_obj(109,44,2, 168, 2,2)
+ constyard.ico_obj=m_obj(109,20,2, 142, 2,2, function(self)
+    printh("todo: load construction yard menu...")
+  end)
+ constyard.build_obj=m_obj(109,44,2, 168, 2,2, function(self)
+    printh("todo: build slab...")
+  end)
  add(buildings,constyard)
 
  -- add test units
@@ -341,29 +345,13 @@ end
 function collisions()
  
  clickedsomething=false
+
  -- check cursor/ui collisions
  
  -- unit collisions
- for _,unit in pairs(units) do 
-  check_hover_select(unit)
-  -- hover
-  --unit.hover = collide(cursor, unit)
-  -- if left_button_clicked and unit.hover then
-  --  selected_obj = unit
-  --  clickedsomething=true
-  -- end
- end
-
+ foreach(units, check_hover_select)
  -- building collisions 
- for _,building in pairs(buildings) do 
-  check_hover_select(building)
-  -- hover
-  -- building.hover = collide(cursor, building)
-  -- if left_button_clicked and building.hover then
-  --  selected_obj = building
-  --  clickedsomething=true
-  -- end
- end
+ foreach(buildings, check_hover_select)
 
  -- selected obj ui collision
  if selected_obj then
@@ -371,16 +359,20 @@ function collisions()
   if (selected_obj.build_obj) check_hover_select(selected_obj.build_obj)
  end
 
- -- deselect?
- if (left_button_clicked) 
- and not clickedsomething 
-  then
-   -- do we have a unit selected?
-   if selected_obj then
-    move_unit_pos(selected_obj, flr((camx+cursx)/8), flr((camy+cursy)/8))
-   end
-  selected_obj=nil
- end 
+ -- clicked something?
+ if left_button_clicked then
+  if clickedsomething then
+    -- button?
+    if (selected_obj.func_onclick) selected_obj:func_onclick()    
+  -- deselect?
+  else 
+    -- do we have a unit selected?
+    if selected_obj then
+      move_unit_pos(selected_obj, flr((camx+cursx)/8), flr((camy+cursy)/8))
+    end
+    selected_obj=nil
+  end 
+ end
 
 end
 
@@ -494,7 +486,7 @@ function printo(str,startx,
  print(str,startx,starty,col)
 end
 
-function m_obj(x,y,type,sprnum,w,h,build_option)
+function m_obj(x,y,type,sprnum,w,h,func_onclick)
  return {
   x=x,
   y=y,
@@ -504,11 +496,12 @@ function m_obj(x,y,type,sprnum,w,h,build_option)
   type=type, -- 1=unit, 2=structure, 3=worm
   spr=sprnum,
   --spr_icon=iconum,
-  build_option=build_option or false,
+  func_onclick=func_onclick,
   ai=false,
   spr_w=w or 1, -- defaults
   spr_h=h or 1, --
-  health=build_option and 0 or 100,
+  health=100,
+  build_amount=0,
 
   get_hitbox=function(self)
    return {
