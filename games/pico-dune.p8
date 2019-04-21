@@ -23,17 +23,44 @@ units={}
 object_tiles={}
 buildings={}
 
+_g={}
+_g.update_bld=function(self)
+ printh("hello building!!!")
+ printh("hello "..self.name)
+end
 
 -- building data
-obj_data={
-  { "construction yard",
-  },
-}
+-- [id|name|obj_spr|ico_spr|type?|w|h|trans_col|cost|description|update()|draw()]
+obj_data=[[Construction Yard|64|142|2|2|2|n|100|Construction Yard is required to build any new structures. It contains all materials required for building structures on Dune.|n|
+Wind Trap|66|138|2|2|2|n|120|The Wind Traps provide power and water to an installation. Large, above-ground ducts funnel wind underground into turbines which power the generators and humidity extractors.|draw_windtrap|update_bld]]
+
 
 --p8 functions
 --------------------------------
 
 function _init()
+
+
+ local a=split(obj_data,"|","\n")
+printh("------------------")
+printh("test 1:"..#a)
+printh("test 2:"..#a[1])
+printh("test 3:"..#a[2])
+
+printh("test 4:"..a[1][1])
+printh("test 5:"..a[2][1])
+printh("test 5.1:"..a[2][11])
+
+--test 6
+--_g[a[2][11]]()
+
+--test 7
+new_obj={
+  name="test obj",
+  draw=_g[a[2][11]]
+}
+new_obj:draw()
+
  -- enable mouse
  poke(0x5f2d, 1)
 
@@ -61,6 +88,9 @@ cursor.draw=function(self)
   spr((selected_obj and (selected_obj.type==1)) and 146 or self.spr, 
    self.x, self.y, self.w/8, self.h/8)
  end
+
+
+
 
  -- add test buldings
  local windfarm=m_obj(12*8,2*8, 2, 66, nil, 2,2)
@@ -654,6 +684,35 @@ function alternate()
  return flr(t())%2==0
 end
 
+
+-- split string
+-- https://www.lexaloffle.com/bbs/?tid=32520
+ function split(str,d,dd)
+ local a={}
+ local c=0
+ local s=''
+ local tk=''
+ 
+ if dd~=nil then str=split(str,dd) end
+ while #str>0 do
+  if type(str)=='table' then
+   s=str[1]
+   add(a,split(s,d))
+   del(str,s)
+  else
+   s=sub(str,1,1)
+   str=sub(str,2)
+   if s==d then 
+    add(a,tk)
+    tk=''
+   else
+    tk=tk..s
+   end
+  end
+ end
+ add(a,tk)
+ return a
+ end
 
 -- rotate sprite
 -- by freds72
