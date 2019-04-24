@@ -52,7 +52,7 @@ Quad
 Combat Tank
 Missile Tank
 Siege Tank
-]]
+]]..
 -- other
 [[
  Sand Worm
