@@ -31,9 +31,24 @@ end
 
 -- building data
 -- [id|name|obj_spr|ico_spr|type?|w|h|trans_col|cost|description|update()|draw()]
-obj_data=[[Construction Yard|64|142|2|2|2|n|100|Construction Yard is required to build any new structures. It contains all materials required for building structures on Dune.|n|
-Wind Trap|66|138|2|2|2|n|120|The Wind Traps provide power and water to an installation. Large, above-ground ducts funnel wind underground into turbines which power the generators and humidity extractors.|draw_windtrap|update_bld]]
+obj_data=
+[[Construction Yard|64|142|2|2|2|n|100|Construction Yard: All structures are built by the construction yard.|n|
+Small Concrete Slab
+Windtrap|66|138|2|2|2|n|120|Windtrap: The windtrap supplies power to your base. Without power your structures will decay.|draw_windtrap|update_bld
 
+Spice Refinery: The Refinery converts spice into credits.
+Radar Outpost: The Outpost provides radar and aids control of distant vehicles.
+Spice Storage Silo: 
+WOR Trooper Facility: WOR is used to train your Heavy infantry.
+Light Vehicle Factory: The Light Factory produces light attack vehicles.
+]]
+
+--[[
+  ## messages ##
+There isn't enough open concrete to place this structure. You may proceed, but without enough concrete the building will need repairs.
+
+
+]]
 
 --p8 functions
 --------------------------------
@@ -44,8 +59,6 @@ function _init()
  local a=split(obj_data,"|","\n")
 printh("------------------")
 printh("test 1:"..#a)
-printh("test 2:"..#a[1])
-printh("test 3:"..#a[2])
 
 printh("test 4:"..a[1][1])
 printh("test 5:"..a[2][1])
