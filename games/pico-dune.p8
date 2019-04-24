@@ -32,15 +32,30 @@ end
 -- building data
 -- [id|name|obj_spr|ico_spr|type?|w|h|trans_col|cost|description|update()|draw()]
 obj_data=
+-- buildings
 [[Construction Yard|64|142|2|2|2|n|100|Construction Yard: All structures are built by the construction yard.|n|
-Small Concrete Slab
 Windtrap|66|138|2|2|2|n|120|Windtrap: The windtrap supplies power to your base. Without power your structures will decay.|draw_windtrap|update_bld
-
+Small Concrete Slab: Use concrete to make a sturdy foundation for your structures.
 Spice Refinery: The Refinery converts spice into credits.
 Radar Outpost: The Outpost provides radar and aids control of distant vehicles.
-Spice Storage Silo: 
+Spice Storage Silo: The Spice silo is used to store refined spice.
+Barracks: The Barracks is used to train your Light infantry.
 WOR Trooper Facility: WOR is used to train your Heavy infantry.
-Light Vehicle Factory: The Light Factory produces light attack vehicles.
+Light Vehicle Factory: The Light Factory produces light attack vehicles.]]..
+-- vehicles
+[[
+Harvester  (speed=medium)
+Infantry (x3)
+Troopers (x3)
+Trike
+Quad
+Combat Tank
+Missile Tank
+Siege Tank
+]]
+-- other
+[[
+ Sand Worm
 ]]
 
 --[[
@@ -603,7 +618,7 @@ function m_obj(x,y,type,sprnum,trans_col,w,h,parent,func_onclick)
   x=x,
   y=y,
   z=1, -- defaults
-  type=type, -- 1=unit, 2=structure, 3=worm
+  type=type, -- 1=unit, 2=structure, 3=production, 4=worm
   w=(w or 1)*8, -- pixel dimensions
   h=(h or 1)*8, --
   parent=parent,
