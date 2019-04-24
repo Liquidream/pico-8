@@ -30,33 +30,31 @@ _g.update_bld=function(self)
 end
 
 -- building data
--- [id|name|obj_spr|ico_spr|type?|w|h|trans_col|cost|description|update()|draw()]
+-- [id|name|obj_spr|ico_spr|type?|w|h|trans_col|req_power|cost|description|update()|draw()]
 obj_data=
--- buildings
-[[Construction Yard|64|142|2|2|2|n|100|Construction Yard: All structures are built by the construction yard.|n|
-Windtrap|66|138|2|2|2|n|120|Windtrap: The windtrap supplies power to your base. Without power your structures will decay.|draw_windtrap|update_bld
-Small Concrete Slab: Use concrete to make a sturdy foundation for your structures.
-Spice Refinery: The Refinery converts spice into credits.
-Radar Outpost: The Outpost provides radar and aids control of distant vehicles.
-Spice Storage Silo: The Spice silo is used to store refined spice.
-Barracks: The Barracks is used to train your Light infantry.
-WOR Trooper Facility: WOR is used to train your Heavy infantry.
-Light Vehicle Factory: The Light Factory produces light attack vehicles.]]..
+-- buildings (http://wiki.dune2k.com/Dune_II_buildings)
+[[Construction Yard|64|142|2|2|2|n|100|All structures are built by the construction yard.|n|
+Windtrap|66|138|2|2|2|n|300|Windtrap: The windtrap supplies power to your base. Without power your structures will decay.|draw_windtrap|update_bld
+Small Concrete Slab| 5|Use concrete to make a sturdy foundation for your structures.
+Large Concrete Slab| 20|Use concrete to make a sturdy foundation for your structures.
+Spice Refinery| 400|The Refinery converts spice into credits.
+Radar Outpost| The Outpost provides radar and aids control of distant vehicles.
+Spice Storage Silo| The Spice silo is used to store refined spice.
+Barracks| The Barracks is used to train your Light infantry.
+WOR Trooper Facility| WOR is used to train your Heavy infantry.
+Light Vehicle Factory| The Light Factory produces light attack vehicles.
+Defensive Wall| 50|The Wall is used for passive defense.]]..
 -- vehicles
-[[
-Harvester  (speed=medium)
+[[Harvester  (speed=medium)
 Infantry (x3)
 Troopers (x3)
 Trike
 Quad
 Combat Tank
 Missile Tank
-Siege Tank
-]]..
+Siege Tank]]..
 -- other
-[[
- Sand Worm
-]]
+[[Sand Worm]]
 
 --[[
   ## messages ##
