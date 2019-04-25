@@ -30,24 +30,32 @@ _g.update_bld=function(self)
 end
 
 -- building data
--- [id|name|obj_spr|ico_spr|type?|w|h|trans_col|req_power|cost|description|update()|draw()]
+-- [id|name|obj_spr|ico_spr|type?|w|h|trans_col|req_power|req_id|req_level|cost|description|update()|draw()]
 obj_data=
 -- buildings (http://wiki.dune2k.com/Dune_II_buildings)
-[[Construction Yard|64|142|2|2|2|n|100|All structures are built by the construction yard.|n|
-Windtrap|66|138|2|2|2|n|300|Windtrap: The windtrap supplies power to your base. Without power your structures will decay.|draw_windtrap|update_bld
-Small Concrete Slab| 5|Use concrete to make a sturdy foundation for your structures.
-Large Concrete Slab| 20|Use concrete to make a sturdy foundation for your structures.
-Spice Refinery| 400|The Refinery converts spice into credits.
-Radar Outpost| The Outpost provides radar and aids control of distant vehicles.
-Spice Storage Silo| The Spice silo is used to store refined spice.
-Barracks| The Barracks is used to train your Light infantry.
-WOR Trooper Facility| WOR is used to train your Heavy infantry.
-Light Vehicle Factory| The Light Factory produces light attack vehicles.
-Defensive Wall| 50|The Wall is used for passive defense.]]..
+[[1|Construction Yard|64|142|2|2|2|n|100|All structures are built by the construction yard.|n|
+2|Windtrap|66|138|2|2|2|n|300|Windtrap: The windtrap supplies power to your base. Without power your structures will decay.|draw_windtrap|update_bld
+3|Small Concrete Slab| 5|Use concrete to make a sturdy foundation for your structures.
+4|Large Concrete Slab| 20|Use concrete to make a sturdy foundation for your structures.
+5|Defensive Wall| 50|The Wall is used for passive defense.
+6|Spice Refinery| 400|The Refinery converts spice into credits.
+7|Radar Outpost| 400| The Outpost provides radar and aids control of distant vehicles.
+8|Spice Storage Silo| 150| The Spice silo is used to store refined spice.
+9|Barracks| 300| The Barracks is used to train your Light infantry.
+10|WOR Trooper Facility| WOR is used to train your Heavy infantry.
+11|Light Vehicle Factory| 400| The Light Factory produces light attack vehicles.
+12|Heavy Vehicle Factory| 600| The Heavy Factory produces heavy attack vehicles.
+13|Hi-Tech Factory| 500| (mission 6)
+14|Cannon Turret| 125| (mission 5)
+15|Rocket Turret| 250| 
+16|Repair Facility| 700
+17|Starport| 500
+18|House of IX| 500|
+19|Palace| 999|]]..
 -- vehicles
 [[Harvester  (speed=medium)
-Infantry (x3)
-Troopers (x3)
+Light Infantry (x3)
+Heavy Troopers (x3)
 Trike
 Quad
 Combat Tank
