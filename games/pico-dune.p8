@@ -24,7 +24,7 @@ object_tiles={}
 buildings={}
 
 _g={}
-_g.update_bld=function(self)
+_g.draw_windtrap=function(self)
  printh("hello building!!!")
  printh("hello "..self.name)
 end
@@ -32,7 +32,7 @@ end
 -- building data
 -- [id|name|obj_spr|ico_spr|type?|w|h|trans_col|req_power|req_id|req_level|cost|description|update()|draw()]
 obj_data=
--- buildings (http://wiki.dune2k.com/Dune_II_buildings)
+-- buildings
 [[1|Construction Yard|64|142|2|2|2|n|100|All structures are built by the construction yard.|n|
 2|Windtrap|66|138|2|2|2|n|300|Windtrap: The windtrap supplies power to your base. Without power your structures will decay.|draw_windtrap|update_bld
 3|Small Concrete Slab| 5|Use concrete to make a sturdy foundation for your structures.
@@ -624,7 +624,7 @@ function m_obj(x,y,type,sprnum,trans_col,w,h,parent,func_onclick)
   x=x,
   y=y,
   z=1, -- defaults
-  type=type, -- 1=unit, 2=structure, 3=production, 4=worm
+  type=type, -- 1=unit, 2=structure, 3=worm
   w=(w or 1)*8, -- pixel dimensions
   h=(h or 1)*8, --
   parent=parent,
