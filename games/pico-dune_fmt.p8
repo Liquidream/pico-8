@@ -1,1136 +1,615 @@
 pico-8 cartridge // http://www.pico-8.com
-version 18
+version 8
 __lua__
--- pico-dune
--- by paul nicholas
--- (with support from my patrons)
-
--- global flags
-debug_mode=true
-debug_collision=false
-
--- fields
-camx,camy=0,0
-cursx,cursy=0,0
-keyx,keyy=0,0
-selected_obj=nil
-credits=2335
-
-
---cor=nil
+a=true
+b=false
+c,d=0,0
+e,f=0,0
+g,h=0,0
+i=nil
+j=2335
 count=0
-units={}
-object_tiles={}
-buildings={}
-
-_g={}
-_g.draw_windtrap=function(self)
- printh("hello building!!!")
- printh("hello "..self.name)
+k={}
+l={}
+m={}
+n={}
+n.o=function(self)
+printh("hello building!!!")
+printh("hello "..self.p)
 end
-
--- building data
--- [ID|Name|obj_spr|ico_spr|type|w|h|trans_col|parent|req_id|req_level|req_faction|cost|power|arms|hitpoint|speed|range|description|update()|draw()]
-obj_data=
--- buildings
-[[1|cONSTRUCTION yARD|64|128|2|2|2|nil|nil|nil|1||100|nil||400|||aLL STRUCTURES ARE BUILT BY THE CONSTRUCTION YARD.||
-2|wINDTRAP|66|130|2|2|2|nil|1|1|1||300|100||200|||tHE WINDTRAP SUPPLIES POWER TO YOUR BASE. wITHOUT POWER YOUR STRUCTURES WILL DECAY.|draw_windtrap|update_bld
-3|sMALL cONCRETE sLAB|||2|1|1|nil|1|1|1||5|nil||0|||uSE CONCRETE TO MAKE A STURDY FOUNDATION FOR YOUR STRUCTURES.||
-4|lARGE cONCRETE sLAB|||2|2|2|nil|1|1|4||20|nil||0|||uSE CONCRETE TO MAKE A STURDY FOUNDATION FOR YOUR STRUCTURES.||
-5|dEFENSIVE wALL|||2|1|1|nil|1|7|4||50|nil||50|||tHE wALL IS USED FOR PASSIVE DEFENSE.||
-6|sPICE rEFINERY|68|132|2|3|2|nil|1|2|1||400|30||450|||tHE rEFINERY CONVERTS SPICE INTO CREDITS.||
-7|rADAR oUTPOST|||2|2|2|nil|1|2|2||400|30||500|||tHE oUTPOST PROVIDES RADAR AND AIDS CONTROL OF DISTANT VEHICLES.||
-8|sPICE sTORAGE sILO|||2|2|2|nil|1|6|2||150|5||150|||tHE sPICE SILO IS USED TO STORE REFINED SPICE.||
-9|bARRACKS|||2|2|2|nil|1|7|2||300|10||300|||tHE bARRACKS IS USED TO TRAIN YOUR lIGHT INFANTRY.||
-10|wor tROOPER fACILITY|||2|2|2|nil|1|7|2||400|10||400|||wor IS USED TO TRAIN YOUR hEAVY INFANTRY.||
-11|lIGHT vEHICLE fACTORY|||2|2|2|nil|1|6|2||400|20||350|||tHE lIGHT fACTORY PRODUCES LIGHT ATTACK VEHICLES.||
-12|hEAVY vEHICLE fACTORY|||2|3|2|nil|1|6|3||600|20||200|||tHE hEAVY fACTORY PRODUCES HEAVY ATTACK VEHICLES.||
-13|hI-tECH fACTORY|||2|3|2|nil|1|7+12|5||500|35||400|||tHE hI-tECH fACTORY PRODUCES FLYING VEHICLES.||
-14|cANNON tURRET|||2|1|1|nil|1|7|5||125|10||200|||tHE cANNON tURRET IS USED FOR SHORT RANGE ACTIVE DEFENSE.||
-15|rOCKET tURRET|||2|1|1|nil|1|7|6||250|20||200|||tHE rOCKET/cANNON TURRET IS USED FOR BOTH SHORT AND MEDIUM RANGE ACTIVE DEFENSE.||
-16|rEPAIR fACILITY|||2|3|2|nil|1|7+12|5||700|20||200|||tHE rEPAIR fACILITY IS USED TO REPAIR YOUR VEHICLES.||
-17|sTARPORT|||2|3|3|nil|1|6|6||500|50||500|||tHE sTARPORT IS USED TO ORDER AND RECEIVED SHIPMENTS FROM c.h.o.a.m.||
-18|hOUSE OF ix|||2|2|2|nil|1|7+12|5||500|40||400|||tHE ix rESEARCH fACILITY ADVANCES YOUR hOUSE'S TECHNOLOGY.||
-19|pALACE|||2|3|3|nil|1|17|8||999|80||1000|||tHIS IS YOUR pALACE.||]]..
--- units
-[[20|lIGHT iNFANTRY (X3)|||1|1|1||9|9|2|AO|60||4|50|5|2|iNFANTRY ARE LIGHTLY ARMOURED FOOTSOLDIERS, WITH LIMITED FIRING RANGE AND SPEED.||
-21|hEAVY tROOPERS (X3)|||1|1|1||10|9|3|HO|100||8|110|10|3|tROOPERS ARE HEAVILY ARMOURED FOOTSOLDIERS, WITH IMPROVED FIRING RANGE AND SPEED.||
-22|tRIKE|||1|1|1||11+17||2||150||8|100|60|3|tHE tRIKE IS A LIGHTLY-ARMOURED, 3-WHEELED VEHICLE, WITH LIMITED FIRING RANGE, BUT RAPID SPEED.||
-23|qUAD|||1|1|1||11+17||3||200||10|130|50|3|tHE qUAD IS A LIGHTLY-ARMOURED, 4-WHEELED VEHICLE. sLOWER THAN THE tRIKE, BUT STRONGER ARMOUR AND FIREPOWER.||
-24|cOMBAT tANK|||1|1|1||12+17|7|4||300||38|200|25|4|tHE cOMBAT tANK IS A MEDIUM ARMOURED TANK, FIRES HIGH-EXPLOSIVE ROUNDS.||
-25|sIEGE tANK|||1|1|1||12+17|7|6||600||45|300|20|5|tHE mISSILE tANK IS A MEDIUM ARMOURED TANK, WHICH FIRES MISSILES. lONG-RANGE, BUT INACCURATE.||
-26|rOCKET lAUNCHER|||1|1|1||12+17|7|5||450||112|100|30|9|tHE sIEGE tANK IS A HEAVY ARMOURED TANK, WHICH HAS DUAL CANNONS, BUT IS SLOW.||
-27|hARVESTER|||1|1|1||12+17||2||300||0|150|30|nil|tHE hARVESTER SEPARATES SPICE FROM THE SAND & RETURNS RAW SPICE TO THE rEFINERY FOR PROCESSING.||
-28|cARRYALL|||1|1|1||13|13|5||800||0|100|200|nil|tHE cARRYALL IS A LIGHTLY ARMOURED AIRCRAFT WITH NO WEAPONS. mAINLY USED TO LIFT+TRANSPORT hARVESTERS.||
-29|oRNITHOPTER|||1|1|1||13+17|13|7|AO|600||75|5|150|5|tHE oRNITHOPTER IS A LIGHTLY ARMOURED AIRCRAFT THAT FIRES ROCKETS. hIGHLY MANOUVERABLE + FASTED AIRCRAFT ON dUNE.||
-30|mcv (mOBILE CONSTRUCTION VEHICLE)|||1|2|1||12+17|7|4||900||0|150|0|nil|tHE mcv SCOUT VEHICLE IS USED TO FIND AND DEPLOY NEW BASE LOCATIONS.||
-31|sONIC tANK|||1|1|1||12|7|7|A|600||90|110|30|8|dEVELOPED BY THE aTREIDES, THIS ENHANCED TANK FIRES POWERFUL BLAST WAVES OF SONIC ENERGY.||
-32|fREMEN (X3)|||1|1|1||19||8|A|0||8|220|10|3|tHE fREMEN ARE NATIVE TO dUNE. eLITE FIGHTERS, IN ALLIANCE WITH THE aTREIDES.||
-33|dEVASTATOR|||1|1|1||12|13|8|H|800||60|400|10|7|tHE dEVESTATOR IS A hARKENNEN-DEVELOPED NUCKEAR-POWERED TANK, WHICH FIRES DUAL PLASMA CHARGES. mOST POWERFUL TANK ON dUNE, BUT POTENTIALLY UNSTABLE IN COMBAT.||
-34|dEATH hAND|||1|1|1||19||8|H|0||150|70|250|nil|tHE dEATH hAND IS A SPECIAL hARKONNEN pALACE WEAPON. aN INACCURATE, BUT VERY DESTRUCTIVE BALLISTIC MISSILE.||
-35|rAIDER|||1|1|1||11||2|O|150||8|80|75|3|tHE oRDOS rAIDER IS SIMILAR TO THE STANDARD tRIKE, BUT WITH LESS ARMOUR IN FAVOUR OF SPEED.||
-36|dEVIATOR|||1|1|1||12|13|7|O|750||0|120|30|7|tHE oRDOS dEVIATOR IS A STANDARD mISSILE tANK, WHICH FIRES UNIQUE NERVE GAS MISSILES THAT MAY TEMPORARILY CHANGE ENEMY LOYALTY.||
-37|sABOTEUR|||1|1|1||19||8|O|0||150|40|40|2|tHE sABOTEUR IS A SPECIAL MILITARY UNIT, TRAINED AT AN oRDOS pALACE. cAN DESTRY ALMOST ANY STRUCTURE OR VEHICLE.||]]..
+q=
+[[1|Construction Yard|64|128|2|2|2|nil|nil|nil|1||100|nil||400|||All structures are built by the construction yard.||
+2|Windtrap|66|130|2|2|2|nil|1|1|1||300|100||200|||The windtrap supplies power to your base. Without power your structures will decay.|draw_windtrap|update_bld
+3|Small Concrete Slab|||2|1|1|nil|1|1|1||5|nil||0|||Use concrete to make a sturdy foundation for your structures.||
+4|Large Concrete Slab|||2|2|2|nil|1|1|4||20|nil||0|||Use concrete to make a sturdy foundation for your structures.||
+5|Defensive Wall|||2|1|1|nil|1|7|4||50|nil||50|||The Wall is used for passive defense.||
+6|Spice Refinery|68|132|2|3|2|nil|1|2|1||400|30||450|||The Refinery converts spice into credits.||
+7|Radar Outpost|||2|2|2|nil|1|2|2||400|30||500|||The Outpost provides radar and aids control of distant vehicles.||
+8|Spice Storage Silo|||2|2|2|nil|1|6|2||150|5||150|||The Spice silo is used to store refined spice.||
+9|Barracks|||2|2|2|nil|1|7|2||300|10||300|||The Barracks is used to train your Light infantry.||
+10|WOR Trooper Facility|||2|2|2|nil|1|7|2||400|10||400|||WOR is used to train your Heavy infantry.||
+11|Light Vehicle Factory|||2|2|2|nil|1|6|2||400|20||350|||The Light Factory produces light attack vehicles.||
+12|Heavy Vehicle Factory|||2|3|2|nil|1|6|3||600|20||200|||The Heavy Factory produces heavy attack vehicles.||
+13|Hi-Tech Factory|||2|3|2|nil|1|7+12|5||500|35||400|||The Hi-Tech Factory produces flying vehicles.||
+14|Cannon Turret|||2|1|1|nil|1|7|5||125|10||200|||The Cannon Turret is used for short range active defense.||
+15|Rocket Turret|||2|1|1|nil|1|7|6||250|20||200|||The Rocket/Cannon turret is used for both short and medium range active defense.||
+16|Repair Facility|||2|3|2|nil|1|7+12|5||700|20||200|||The Repair Facility is used to repair your vehicles.||
+17|Starport|||2|3|3|nil|1|6|6||500|50||500|||The Starport is used to order and received shipments from C.H.O.A.M.||
+18|House of IX|||2|2|2|nil|1|7+12|5||500|40||400|||The IX Research Facility advances your House's technology.||
+19|Palace|||2|3|3|nil|1|17|8||999|80||1000|||This is your Palace.||]]..
+[[20|Light Infantry (x3)|||1|1|1||9|9|2|AO|60||4|50|5|2|Infantry are lightly armoured footsoldiers, with limited firing range and speed.||
+21|Heavy Troopers (x3)|||1|1|1||10|9|3|HO|100||8|110|10|3|Troopers are heavily armoured footsoldiers, with improved firing range and speed.||
+22|Trike|||1|1|1||11+17||2||150||8|100|60|3|The Trike is a lightly-armoured, 3-wheeled vehicle, with limited firing range, but rapid speed.||
+23|Quad|||1|1|1||11+17||3||200||10|130|50|3|The Quad is a lightly-armoured, 4-wheeled vehicle. Slower than the Trike, but stronger armour and firepower.||
+24|Combat Tank|||1|1|1||12+17|7|4||300||38|200|25|4|The Combat Tank is a medium armoured tank, fires high-explosive rounds.||
+25|Siege Tank|||1|1|1||12+17|7|6||600||45|300|20|5|The Missile Tank is a medium armoured tank, which fires missiles. Long-range, but inaccurate.||
+26|Rocket Launcher|||1|1|1||12+17|7|5||450||112|100|30|9|The Siege Tank is a heavy armoured tank, which has dual cannons, but is slow.||
+27|Harvester|||1|1|1||12+17||2||300||0|150|30|nil|The Harvester separates spice from the sand & returns raw spice to the Refinery for processing.||
+28|Carryall|||1|1|1||13|13|5||800||0|100|200|nil|The Carryall is a lightly armoured aircraft with no weapons. Mainly used to lift+transport Harvesters.||
+29|Ornithopter|||1|1|1||13+17|13|7|AO|600||75|5|150|5|The Ornithopter is a lightly armoured aircraft that fires rockets. Highly manouverable + fasted aircraft on Dune.||
+30|MCV (Mobile construction vehicle)|||1|2|1||12+17|7|4||900||0|150|0|nil|The MCV scout vehicle is used to find and deploy new base locations.||
+31|Sonic Tank|||1|1|1||12|7|7|A|600||90|110|30|8|Developed by the Atreides, this enhanced tank fires powerful blast waves of sonic energy.||
+32|Fremen (x3)|||1|1|1||19||8|A|0||8|220|10|3|The Fremen are native to Dune. Elite fighters, in alliance with the Atreides.||
+33|Devastator|||1|1|1||12|13|8|H|800||60|400|10|7|The Devestator is a Harkennen-developed nuckear-powered tank, which fires dual plasma charges. Most powerful tank on Dune, but potentially unstable in combat.||
+34|Death Hand|||1|1|1||19||8|H|0||150|70|250|nil|The Death Hand is a special Harkonnen Palace weapon. An inaccurate, but very destructive ballistic missile.||
+35|Raider|||1|1|1||11||2|O|150||8|80|75|3|The Ordos Raider is similar to the standard Trike, but with less armour in favour of speed.||
+36|Deviator|||1|1|1||12|13|7|O|750||0|120|30|7|The Ordos Deviator is a standard Missile Tank, which fires unique nerve gas missiles that may temporarily change enemy loyalty.||
+37|Saboteur|||1|1|1||19||8|O|0||150|40|40|2|The Saboteur is a special military unit, trained at an Ordos Palace. Can destry almost any structure or vehicle.||
 -- other
-[[38|sARDAUKAR|||1|1|1||nil|nil|4||0||5|110|10|1|tHE sARDULAR ARE THE eMPEROR'S ELITE TROOPS. WITH SUPERIOR FIREPOWER AND ARMOUR.||
-39|sANDWORM|||1|1|1||nil|nil|3||0||300|1000|35|0|tHE sAND wORMS ARE INDIGEONOUS TO dUNE. aTTRACTED BY VIBRATIONS, ALMOST IMPOSSIBLE TO DESTROY, WILL CONSUME ANYTHING THAT MOVES.||]]
-
---[[
-  ## messages ##
-There isn't enough open concrete to place this structure. You may proceed, but without enough concrete the building will need repairs.
-
-You have successfully completed your mission.
-
-]]
-
---p8 functions
---------------------------------
-
+[[38|Sardaukar|||1|1|1||nil|nil|4||0||5|110|10|1|The Sardular are the Emperor's elite troops. with superior firepower and armour.||
+39|Sandworm|||1|1|1||nil|nil|3||0||300|1000|35|0|The Sand Worms are indigeonous to Dune. Attracted by vibrations, almost impossible to destroy, will consume anything that moves.||]]
 function _init()
-
-explode_data()
-
-
-
-
- -- enable mouse
- poke(0x5f2d, 1)
-
- cartdata("pn_picodune") 
-
- -- starting mode 
- -- (1=normal, 2=build menu, 3=???)
- curr_mode = 1
-
- -- init the game/title
- --level_init()
- ticks=0
-
- -- create cursor ui "object" (for collisions)
- cursor = m_obj(0,0,0)
- cursor.get_hitbox=function(self)
-   return {
-    x=self.x+(not ui_collision_mode and camx or 0)+2,
-    y=self.y+(not ui_collision_mode and camy or 0)+1,
-    w=1,
-    h=1
-   }
-  end
-cursor.draw=function(self)   
-  spr((selected_obj and (selected_obj.type==1)) and 1 or self.spr, 
-   self.x, self.y, self.w/8, self.h/8)
- end
-
-
-
-
- -- add test buldings
- local windfarm=m_obj(12*8,2*8, 2, 66, nil, 2,2)
- windfarm.life=50
- windfarm.ico_obj=m_obj(109,20,2, 138, nil, 2,2, windfarm, function(self)
-    printh("todo: fix windfarm?...")
-  end)
-  windfarm.col_cycle = {
-    {14,12},
-    {14,12},
-    {14,12},
-    {14,12},
-    {14,13},
-    {14,1},
-    {14,1},
-    {14,1},
-    {14,1},
-    {14,13},
-  }
-  windfarm.framecount=10
- add(buildings,windfarm)
- --
- local refinary=m_obj(9*8,5*8, 2, 68, nil, 3,2)
- refinary.life=10
- refinary.ico_obj=m_obj(109,20,2, 140, nil, 2,2, refinary, function(self)
-    printh("todo: fix refinary?...")
-  end)
- add(buildings,refinary)
- --
- local constyard=m_obj(10*8,7*8, 2, strArrays[1][3], nil, 2,2)
- constyard.life=75
- constyard.ico_obj=m_obj(109,20,2, 142, nil, 2,2, constyard, function(self)
-    printh("todo: load construction yard menu...")
-  end)
- constyard.build_obj=m_obj(109,44,2, 168, nil, 2,2, nil, function(self)
-    printh("todo: build slab...")
-    self.build_step=0.5
-    self.cor=cocreate(function(self)
-        -- build slab
-        while self.life<100 do
-          self.life+=self.build_step
-          credits-=.1
-         yield()
-        end
-      end)
-  end)
- add(buildings,constyard)
-
- -- add test units
- local unit = m_obj(7*8, 5*8, 1, 49, 11)
- unit.r=0
- add(units,unit)
- --
- local unit = m_obj(7*8, 3*8, 1, 50, 11)
- unit.r=0.25
- add(units,unit)
- --
- unit = m_obj(9*8, 3*8, 1, 51, 11)
- unit.r=0.5
- add(units,unit)
- 
- 
+local r=s(q,"|","\n")
+printh("------------------")
+printh("test 1:"..#r)
+printh("test 4:"..r[1][1])
+printh("test 5:"..r[2][1])
+printh("test 5.1:"..r[2][11])
+u={
+p="test obj",
+v=n[r[2][11]]
+}
+u:v()
+poke(0x5f2d,1)
+cartdata("pn_picodune")
+w=1
+x=0
+cursor=y(0,0,0)
+cursor.z=function(self)
+return{
+ba=self.ba+(not bb and c or 0)+2,
+bc=self.bc+(not bb and d or 0)+1,
+bd=1,
+be=1
+}
 end
-
-
-
-function _update60()  --game_update
-
- update_level()
- 
- -- update positions of pathfinding "blocker" objects
- if (t()%1==0) update_obj_tiles()
+cursor.v=function(self)
+spr((i and(i.type==1)) and 1 or self.spr,
+self.ba,self.bc,self.bd/8,self.be/8)
 end
-
-
+local bf=y(12*8,2*8,2,66,nil,2,2)
+bf.bg=50
+bf.bh=y(109,20,2,138,nil,2,2,bf,function(self)
+printh("todo: fix windfarm?...")
+end)
+bf.bi={
+{14,12},
+{14,12},
+{14,12},
+{14,12},
+{14,13},
+{14,1},
+{14,1},
+{14,1},
+{14,1},
+{14,13},
+}
+bf.bj=10
+add(m,bf)
+local bk=y(9*8,5*8,2,68,nil,3,2)
+bk.bg=10
+bk.bh=y(109,20,2,140,nil,2,2,bk,function(self)
+printh("todo: fix refinary?...")
+end)
+add(m,bk)
+local bl=y(10*8,7*8,2,64,nil,2,2)
+bl.bg=75
+bl.bh=y(109,20,2,142,nil,2,2,bl,function(self)
+printh("todo: load construction yard menu...")
+end)
+bl.bm=y(109,44,2,168,nil,2,2,nil,function(self)
+printh("todo: build slab...")
+self.bn=0.5
+self.bo=cocreate(function(self)
+while self.bg<100 do
+self.bg+=self.bn
+j-=.1
+yield()
+end
+end)
+end)
+add(m,bl)
+local bp=y(7*8,5*8,1,49,11)
+bp.bq=0
+add(k,bp)
+local bp=y(7*8,3*8,1,50,11)
+bp.bq=0.25
+add(k,bp)
+bp=y(9*8,3*8,1,51,11)
+bp.bq=0.5
+add(k,bp)
+end
+function _update60()
+br()
+if(t()%1==0) bs()
+end
 function _draw()
- -- draw the map, objects - everything except ui
- draw_level()
- -- draw score, mouse, etc.
- draw_ui()
-  
-  --printh("cpu: "..flr(stat(1)*100).."% mem: "..(flr(stat(0)/2048*100)).."% fps: "..stat(7))--,2,109,8,0)
-  if (debug_mode) printo("cpu: "..flr(stat(1)*100).."%\nmem: "..(flr(stat(0)/2048*100)).."%\nfps: "..stat(7),2,109,8,0)
-
- -- print(a[1][2],20,20,7)
+bt()
+bu()
+if(a) bv("cpu: "..flr(stat(1)*100).."%\nmem: "..(flr(stat(0)/2048*100)).."%\nfps: "..stat(7),2,109,8,0)
 end
-
-
--- init related
---------------------------------
-function level_init()
- -- todo: parse map data into objects
+function bw()
 end
-
-
--- update related
---------------------------------
-
-function update_obj_tiles() 
- object_tiles={}
- -- (The pico-8 map is a 128x32 (or 128x64 using shared space))
- for _,unit in pairs(units) do  
-  object_tiles[flr(unit.x/8)..","..flr(unit.y/8)]=1
- end
+function bs()
+l={}
+for bx,bp in pairs(k) do
+l[flr(bp.ba/8)..","..flr(bp.bc/8)]=1
 end
-
-function update_level()
- 
-  
-  -- mouse control
-  mouse_x = stat(32)
-  mouse_y = stat(33)
-  mouse_btn = stat(34)
-  left_button_clicked = (mouse_btn>0 and last_mouse_btn != mouse_btn) or btnp(4)
-  
-  --printh(tostr(left_button_clicked))
-
-  -- keyboard input
-  for k=0,1 do
-   if(btn(k))keyx+=k*2-1
-   if(btn(k+2))keyy+=k*2-1
-  end
-
- -- update cursor pos
- cursx = mid(0,mouse_x+keyx,127) -- mouse xpos
- cursy = mid(0,mouse_y+keyy,127) -- mouse ypos
-  
- cursor.x = cursx
- cursor.y = cursy
-
- --
- -- game mode
- --
-
- -- auto-scroll (pan) map
- if (cursx<8) camx-=2
- if (cursx>119) camx+=2
- if (cursy<8) camy-=2
- if (cursy>119) camy+=2
-
- -- lock cam to map
- camx=mid(camx,384)  --896
- camy=mid(camy,128)  --128
-
- --printh("cursor="..cursor.x..","..cursor.y)
-
-
- --printh("cam="..camx..","..camy)
-
-
- update_coroutines()
- --update_pathfinding()
-
- -- p1:update()
- -- sound_monitor:update()
- collisions()
- -- curr_level:update()
- -- update_snow()
- -- cam:update()
-
-  ticks+=1
-  last_mouse_btn = mouse_btn
-  last_selected_obj = selected_obj
 end
-
-function move_unit_pos(unit,x,y)
-  unit.path="init"
-  -- mouse  
-    
-  -- check target valid
-  if fget(mget(x,y), 0) 
-   or object_tiles[x..","..y] then
-   -- abort as target invalid
-   printh("aborting pathfinding - invalid target")
-   return
-  end
-
-
-  --printh("goal="..goal.x..","..goal.y)
-
-  -- create co-routine to find path (over number of cycles)  
-  unit.tx = x
-  unit.ty = y
-  -- 0=idle, 1=pathfinding, 2=moving, 3=attacking, 4=guarding?
-  unit.prev_state = unit.state
-  unit.state = 1
-  unit.cor = cocreate(findpath_cor)
+function br()
+by=stat(32)
+bz=stat(33)
+ca=stat(34)
+cb=(ca>0 and cc!=ca) or btnp(4)
+for ce=0,1 do
+if(btn(ce)) g+=ce*2-1
+if(btn(ce+2)) h+=ce*2-1
 end
-
-function update_coroutines()
- -- update all unit coroutines 
- -- (pathfinding, moving, attacking, etc.)
- for _,unit in pairs(units) do 
-  update_cor(unit)
- end
- -- update all building coroutines
- -- (building, repairing, etc.)
- for _,building in pairs(buildings) do 
-  update_cor(building)
-  update_cor(building.build_obj)
- end
+e=mid(0,by+g,127)
+f=mid(0,bz+h,127)
+cursor.ba=e
+cursor.bc=f
+if(e<8) c-=2
+if(e>119) c+=2
+if(f<8) d-=2
+if(f>119) d+=2
+c=mid(c,384)
+d=mid(d,128)
+cf()
+cg()
+x+=1
+cc=ca
+ch=i
 end
-
-function update_cor(obj)
- if obj then
-  if obj.cor and costatus(obj.cor) != 'dead' then
-    assert(coresume(obj.cor, obj))
-  else
-    obj.cor = nil
-  end
- end
+function ci(bp,ba,bc)
+bp.cj="init"
+if fget(mget(ba,bc),0)
+or l[ba..","..bc] then
+printh("aborting pathfinding - invalid target")
+return
 end
-
--- draw related
---------------------------------
-function draw_level()
- -- draw the map, objects - everything except ui
-	cls"15"
- --draw_sand?()
- 
- camera(camx,camy)
- 
- palt()
- --p1:draw()
- pal()
-
- -- temp fudge
- palt(0,false) 
- palt(11,true)
- 
- map(0,0)
-
- -- debug pathfinding
- --if (debug_mode) draw_pathfinding()
-
- if path != nil and path != "init" then
-  spr(144, path[1].x*8, path[1].y*8)
- end
-
- -- buildings
- for _,building in pairs(buildings) do 
-  building:update()
-  building:draw()
-  -- draw selected reticule
-  if (building == selected_obj) then 
-   rect(selected_obj.x, selected_obj.y, 
-        selected_obj.x+selected_obj.w-1, selected_obj.y+selected_obj.h-1, 
-        7)
-  end
- end
- -- draw units
- palt(11,true)
- for _,unit in pairs(units) do
-  unit:update()
-  unit:draw()
-  -- draw selected reticule
-  if (unit == selected_obj) then   
-   spr(16, selected_obj.x, selected_obj.y)
-  end
- end
-
+bp.ck=ba
+bp.cl=bc
+bp.cm=bp.cn
+bp.cn=1
+bp.bo=cocreate(co)
 end
-
-
-
-function draw_ui()
- -- ui (score, mouse, etc.)
- camera(0,0)
- pal()
- -- selected objects?
- palt(0,false) 
- -- object menu icon/buttons?
- if selected_obj and selected_obj.ico_obj then
-  selected_obj.ico_obj:draw(109,20,true)  
-  if selected_obj.build_obj then
-    selected_obj.build_obj:draw(109,44,true)  
-   end
- end
- 
---  if selected_obj and selected_obj==2 then
---   selected_obj:draw(109,20,true)  
---  end
- 
- -- radar 
---  rectfill(94, 94, 125, 125, 0)
---  rect(94, 94, 125, 125, 5)
-
- -- score
- printo("00"..flr(credits), 103,2, 7)
- 
- -- placement?
- if selected_obj 
-  and selected_obj.build_obj 
-  and selected_obj.build_obj.life>=100 then
-  -- draw placement!
- -- fillp(0b1110110110110111.1)
-  rectfill(flr(cursor.x/8)*8,flr(cursor.y/8)*8,
-           (flr(cursor.x/8)+2)*8,(flr(cursor.y/8)+2)*8,11)
-  --fillp()
- end
-
- -- cursor
- palt(11,true)
- cursor:draw()
+function cf()
+for bx,bp in pairs(k) do
+cp(bp)
 end
-
-
--- function draw_pathfinding()
---  -- debug pathfinding 
---  if path != nil and path != "init" then
---   draw_path(path, 1, 1)
---   draw_path(path, 0, 12)
---  end
--- end
-
--- function draw_path(path, dy, clr)
---  local p = path[1]
---  for i = 2, #path do
---   local n = path[i]
---    line(p.x * 8 + 4 + dy - camx, p.y * 8 + 4 + dy - camy, n.x * 8 + 4 + dy - camx, n.y * 8 + 4 + dy - camy, clr)
---   p = n
---  end
--- end
-
-
--- game flow / collisions
---------------------------------
-
-
-
--- check all collisions
-function collisions()
- 
- clickedsomething=false
-
- -- check cursor/ui collisions
- 
- -- unit collisions
- foreach(units, check_hover_select)
- -- building collisions 
- foreach(buildings, check_hover_select)
-
- -- selected obj ui collision
- if selected_obj then
-  ui_collision_mode=true
-  if (selected_obj.ico_obj) check_hover_select(selected_obj.ico_obj)
-  if (selected_obj.build_obj) check_hover_select(selected_obj.build_obj)
-  ui_collision_mode=false
- end
-
- -- clicked something?
- if left_button_clicked then
-  if clickedsomething then
-    -- button?
-    if (selected_obj.func_onclick) selected_obj:func_onclick() selected_obj=last_selected_obj
-  
-  -- deselect?
-  else 
-    -- do we have a unit selected?
-    if selected_obj and selected_obj.type==1 then
-      move_unit_pos(selected_obj, flr((camx+cursx)/8), flr((camy+cursy)/8))
-    end
-    
-    -- placement? (temp code!)
-    if selected_obj 
-     and selected_obj.build_obj 
-     and selected_obj.build_obj.life>=100 then
-      -- place object
-      local xpos=flr((cursor.x+camx)/8)
-      local ypos=flr((cursor.y+camy)/8)
-      mset(xpos,ypos,16)
-      mset(xpos+1,ypos,16)
-      mset(xpos,ypos+1,16)
-      mset(xpos+1,ypos+1,16)
-      -- reset build
-      selected_obj.build_obj.life=0
-
-    end
-
-    selected_obj=nil
-  end 
- end
-
+for bx,cq in pairs(m) do
+cp(cq)
+cp(cq.bm)
 end
-
-function check_hover_select(obj)
-  obj.hover = collide(cursor, obj)
-  if left_button_clicked and obj.hover then
-   selected_obj = obj   
-   clickedsomething=true
-  end
 end
-
-function collide_event(o1, o2)
- 
- -- player collisions
- -- if o1.type==type_player then
-  
- --  -- player touching laser?
- --  if (o2.type==type_laser 
- --   or (o2.type==type_pressure_pad and p1.grounded))
- --   and not o2.triggered 
- --   and not o2.done then
- --   -- trigger alarm
- --   sfx(63,2) --alarm
- --   o2.triggered=true
- --   o2.alarm_cooldown=100
- --   -- noise
- --   sound_monitor:add_noise(40)
-
- --  -- player on stairs?
- --  elseif o2.type==type_stairs then
- --   o1.close_object=o2
-  
- --  -- player in front of present drop?
- --  elseif o2.type==type_present_drop 
- --   and not o2.done then
- --   o1.close_object=o2
-
- --  end
-
- -- -- ball collisions
- -- elseif o1.type==type_ball then
- --  if o2.type==type_dog then
- --   --ball collided with dog
- --   o2.done=true
- --   o2.state=4
- --   -- kill ball
- --   del(curr_level.objects,o1)
- --   del(curr_level.balls,o1)
- --  end
- 
- -- --snow spray collisions
- -- elseif o1.type==type_snowspray then
- --  if o2.type==type_camera
- --   and p1.flipx==(o2.spr==49) then
- --   o2.done=true
- --  end
-
- -- --snow globe collisions
- -- elseif o1.type==type_snowglobe then
- --  if o2.type==type_laser 
- --   and (o2.spr==23 or o2.spr==26)
- --   and not o2.done then
- --   o2:deactivate()
- --   sfx(55,3)
- --  end
-
- -- end
-
+function cp(cr)
+if cr then
+if cr.bo and costatus(cr.bo)!='dead'then
+cs(coresume(cr.bo,cr))
+else
+cr.bo=nil
 end
-
-
-
--- object shared methods
---------------------------------
-function _set_anim(self,anim)
- if(anim==self.curanim)return--early out.
- local a=self.anims[anim]
- self.animtick=a.ticks--ticks count down.
- self.curanim=anim
- self.curframe=1
 end
-
-function _update_anim(self)
---anim tick
- self.animtick-=1
- if self.animtick<=0 then
-  self.curframe+=1
-  local a=self.anims[self.curanim]
-  self.animtick=a.ticks--reset timer
-  if self.curframe>#a.frames then
-   self.curframe=1--loop
-  end
-  -- store the spr frame
-  self.spr=a.frames[self.curframe]
-  
- end
 end
-
---other helper functions
---------------------------------
-
---print string with outline.
-function printo(str,startx,
- starty,col,
- col_bg)
- for xx = -1, 1 do
- for yy = -1, 1 do
- print(str, startx+xx, starty+yy, col_bg)
- end
- end
- print(str,startx,starty,col)
+function bt()
+cls"15"
+camera(c,d)
+palt()
+pal()
+palt(0,false)
+palt(11,true)
+map(0,0)
+if cj!=nil and cj!="init"then
+spr(144,cj[1].ba*8,cj[1].bc*8)
 end
-
-function m_obj(x,y,type,sprnum,trans_col,w,h,parent,func_onclick)
- return {
-  x=x,
-  y=y,
-  z=1, -- defaults
-  type=type, -- 1=unit, 2=structure, 3=worm
-  w=(w or 1)*8, -- pixel dimensions
-  h=(h or 1)*8, --
-  parent=parent,
-  spr=sprnum,
-  trans_col=trans_col,
-  func_onclick=func_onclick,
-  ai=false,
-  spr_w=w or 1, -- defaults
-  spr_h=h or 1, --
-  life=0,
-  -- color cycling/anim
-  frame=0,
-  framecount=0,
-  col_cycle_pos=1,
-
-  get_hitbox=function(self)
-   return {
-    x=self.x,
-    y=self.y,
-    w=self.w-1,
-    h=self.h-1
-   }
-  end,
-  draw=function(self, x,y, icon_mode) 
-    pal()
-    palt(0,false)
-    if (self.trans_col) palt(self.trans_col,true)
-    -- colour anim?
-    if self.col_cycle then
-      pal(self.col_cycle[self.col_cycle_pos][1],
-          self.col_cycle[self.col_cycle_pos][2])
-    end
-    -- rotating obj?
-    if self.r then
-     rspr(self.spr%16*8,flr(self.spr/16)*8, self.x, self.y, .25-self.r, 1, 11)      
-    -- norm sprite
-    else      
-      -- icon mode?
-      if icon_mode then
-        rectfill(x-1,y-1,x+16,y+19,0)
-        -- draw health/progress
-        local this=self.parent or self
-        local col = this.build_step and 12 or (this.life<33 and 8 or this.life<66 and 10 or 11)
-        if (this.life>0) rectfill(x,y+17,x+(15*this.life/100),y+18,col)
-      end
-      -- non-rotational sprite
-      spr(self.spr, self.x, self.y, self.w/8, self.h/8)
-    end
-
-    if (debug_collision) draw_hitbox(self)
-  end,
-  update=function(self)
-    -- default functionality?
-    if self.col_cycle then
-      self.frame+=1
-      if (self.frame > self.framecount) then
-        self.frame=0
-        self.col_cycle_pos+=1
-        if (self.col_cycle_pos>#self.col_cycle) self.col_cycle_pos=1
-      end
-    end
-  end
- }
+for bx,cq in pairs(m) do
+cq:ct()
+cq:v()
+if(cq==i) then
+rect(i.ba,i.bc,
+i.ba+i.bd-1,i.bc+i.be-1,
+7)
 end
-
-function collide(o1, o2)
- local hb1=o1:get_hitbox()
- local hb2=o2:get_hitbox()
- 
- if hb1.x < hb2.x + hb2.w and
-  hb1.x + hb1.w > hb2.x and
-  hb1.y < hb2.y + hb2.h and
-  hb1.y + hb1.h >hb2.y 
- then
-  return true
-  --collide_event(o1, o2)
- else
-  return false
- end
 end
-
-function draw_hitbox(obj)
- --reset_draw_pal()
- local hb=obj:get_hitbox()
- rect(hb.x,hb.y,hb.x+hb.w,hb.y+hb.h,obj.hover and 11 or 8)
- --rect(hb.x,hb.y,hb.x+hb.w,hb.y+hb.h,selected_obj==obj and 7 or obj.hover and 11 or 8)
- --set_goggle_pal()
+palt(11,true)
+for bx,bp in pairs(k) do
+bp:ct()
+bp:v()
+if(bp==i) then
+spr(16,i.ba,i.bc)
 end
-
-function alternate()
- return flr(t())%2==0
 end
-
-
--- explode object data
-function explode_data()
-  strArrays=split(obj_data,"|","\n")
-
-  printh("------------------")
-  printh("test 1:"..#strArrays)
-
-  printh("test 4:"..strArrays[1][1])
-  printh("test 5:"..strArrays[2][1])
-  printh("test 5.1:"..strArrays[2][11])
-
-  --test 6
-  --_g[a[2][11]]()
-
-  --test 7
-  new_obj={
-    name="test obj",
-    draw=_g[strArrays[2][20]]
-  }
-  new_obj:draw()
 end
-
-
--- split string
--- https://www.lexaloffle.com/bbs/?tid=32520
- function split(str,d,dd)
- local a={}
- local c=0
- local s=''
- local tk=''
- 
- if dd~=nil then str=split(str,dd) end
- while #str>0 do
-  if type(str)=='table' then
-   s=str[1]
-   add(a,split(s,d))
-   del(str,s)
-  else
-   s=sub(str,1,1)
-   str=sub(str,2)
-   if s==d then 
-    add(a,tk)
-    tk=''
-   else
-    tk=tk..s
-   end
-  end
- end
- add(a,tk)
- return a
- end
-
--- rotate sprite
--- by freds72
--- https://www.lexaloffle.com/bbs/?pid=52525#p52541
-local rspr_clear_col=0
-
-function rspr(sx,sy,x,y,a,w,trans)
-	local ca,sa=cos(a),sin(a)
-	local srcx,srcy,addr,pixel_pair
-	local ddx0,ddy0=ca,sa
-	local mask=shl(0xfff8,(w-1))
-	w*=4
-	ca*=w-0.5
-	sa*=w-0.5
-	local dx0,dy0=sa-ca+w,-ca-sa+w
-	w=2*w-1
-	for ix=0,w do
-		srcx,srcy=dx0,dy0
-		for iy=0,w do
-			if band(bor(srcx,srcy),mask)==0 then
-				local c=sget(sx+srcx,sy+srcy)
-				if (c!=trans) pset(x+ix,y+iy,c)
-			--else
-				--pset(x+ix,y+iy,rspr_clear_col)
-			end
-			srcx-=ddy0
-			srcy+=ddx0
-		end
-		dx0+=ddx0
-		dy0+=ddy0
-	end
+function bu()
+camera(0,0)
+pal()
+palt(0,false)
+if i and i.bh then
+i.bh:v(109,20,true)
+if i.bm then
+i.bm:v(109,44,true)
 end
-
-
---
--- pathfinding-related
---
-
--- func for co-routine call
-function findpath_cor(unit)
- -- start = {
- --  x = unit.x/8, 
- --  y = unit.y/8
- -- }
- unit.path = find_path(
-                   { x = flr(unit.x/8), y = flr(unit.y/8) },
-                   { x = unit.tx, y = unit.ty},
-                   manhattan_distance,
-                   flag_cost,
-                   map_neighbors,
-                   function (node) return shl(node.y, 8) + node.x end,
-                   nil)  
- 
- -- todo: check path valid???
-
- -- now auto-move to path 
- -- 0=idle, 1=pathfinding, 2=moving, 3=attacking, 4=guarding?
- unit.prev_state = unit.state
- unit.state = 2
- unit.cor = cocreate(movepath_cor)
 end
- 
-function movepath_cor(unit)
- printh("-------------")
- -- loop all path nodes...
- for i=#unit.path-1,1,-1 do
-  local node=unit.path[i]
-  -- rotate to angle   
-  local dx=unit.x-(node.x*8)
-  local dy=unit.y-(node.y*8)
-  local a=atan2(dx,dy)
-  printh("  >> target angle="..a)
-  while (unit.r != a) do
-   turntowardtarget(unit, a)
-  end
-  
-  -- move to new position
-  local scaled_speed = 1
-  local distance = sqrt((node.x*8 - unit.x) ^ 2 + (node.y*8 - unit.y) ^ 2)
-  local step_x = scaled_speed * (node.x*8 - unit.x) / distance
-  local step_y = scaled_speed * (node.y*8 - unit.y) / distance 
-  for i = 0, distance/scaled_speed-1 do
-   unit.x+=step_x
-   unit.y+=step_y
-   yield()
-  end
-  unit.x,unit.y = node.x*8, node.y*8
- end
-
- -- arrived?
-
- -- todo: set map/path data that tile is now occupied
+bv("00"..flr(j),103,2,7)
+if i
+and i.bm
+and i.bm.bg>=100 then
+rectfill(flr(cursor.ba/8)*8,flr(cursor.bc/8)*8,
+(flr(cursor.ba/8)+2)*8,(flr(cursor.bc/8)+2)*8,11)
 end
-
-
--- rotate to next path node
--- function rotatetoangle_cor()
---  -- get next node pos
---  local node=path[i]
---  turntowardtarget(unit, targetangle)
---  --cor = cocreate(movepath_cor)
--- end
-
-pi = 3.14159
-turnspeed = .5 * (pi/180)
-
-
-function turntowardtarget(unit, targetangle)
-   diff = targetangle-unit.r
-   printh("unit.r="..unit.r)
-   printh("targetangle="..targetangle)
-   printh("diff="..diff)
-   printh("turnspeed="..turnspeed)
-   printh("-")
-   
-   -- never turn more than 180
-   if diff > 0.5 then
-    printh("big angle 1")
-    diff -= 1
-   elseif diff < -0.5 then
-    printh("big angle 2")
-    diff += 1
-   end
-
-   -- fake delay
-   -- for sleep=1,20 do
-   --  yield()
-   -- end
-
-   if diff > turnspeed then
-    unit.r += turnspeed
-   elseif diff < -turnspeed then
-    unit.r -= turnspeed
-   else
-    -- we're already very close
-    unit.r = targetangle
-   end
-
-   -- make sure that our rotation value always stays within a "one-cycle" range
-   if (unit.r > pi) unit.r-=2*pi
-   if (unit.r < -pi) unit.r+=2*pi
-   
-   -- fake delay
-   --for sleep=1,20 do
-    yield()
-   --end
+palt(11,true)
+cursor:v()
 end
-
-
-
-
-
--- makes the cost of entering a
--- node 4 if flag 1 is set on
--- that map square and zero
--- otherwise
--- unless the new node is a 
--- diagonal, in which case
--- make it cost a bit more
-function flag_cost(from, node, graph)
- -- get the standard cost of the tile (grass vs. mud/water)
- local base_cost = fget(mget(node.x, node.y), 1) and 4 or 1
- -- make diagonals cost a little more than normal tiles
- -- (this helps negate "wiggling" in close quarters)
- if (from.x != node.x and from.y != node.y) return base_cost+1
- return base_cost
+function cg()
+cu=false
+foreach(k,cv)
+foreach(m,cv)
+if i then
+bb=true
+if(i.bh) cv(i.bh)
+if(i.bm) cv(i.bm)
+bb=false
 end
-
-
--- returns any neighbor map
--- position at which flag zero
--- is unset
-function map_neighbors(node, graph)
- local neighbors = {}
- for xx = -1, 1 do
-  for yy = -1, 1 do
-   if (xx!=0 or yy!=0) maybe_add(node.x+xx, node.y+yy, neighbors)
-  end
- end return neighbors
+if cb then
+if cu then
+if(i.cw) i:cw() i=ch
+else
+if i and i.type==1 then
+ci(i,flr((c+e)/8),flr((d+f)/8))
 end
-
--- maybe adds the node to neighbors table
--- (if flag zero is unset at this position)
-function maybe_add(nx, ny, ntable)
- printh("testing:"..nx..","..ny)
- if (
-  not fget(mget(nx,ny), 0) 
-  and object_tiles[nx..","..ny]==nil
- )
-
-  -- todo:: parse entire map into chunks of higher-level connected regions
-  --        - each chunk represents 16x16 tiles
-  --        - just need to check that there is a connection
-  --        - then use a* on the higher level to traverse longer than 1-screen
-  --        - use normal/detailed a* when traversing within each chunk 
-  --          (series of paths, joining a complete journey)
-
-  -- (tried capping max path, still uses a lot of cpu)
-  -- and nx>start.x-8 and nx<start.x+8
-  -- and ny>start.y-8 and ny<start.y+8
-
-  then 
-   add(ntable, {x=nx, y=ny}) 
- end
- printh("test passed.")
+if i
+and i.bm
+and i.bm.bg>=100 then
+local cx=flr((cursor.ba+c)/8)
+local cy=flr((cursor.bc+d)/8)
+mset(cx,cy,16)
+mset(cx+1,cy,16)
+mset(cx,cy+1,16)
+mset(cx+1,cy+1,16)
+i.bm.bg=0
 end
-
--- estimates the cost from a to
--- b by assuming that the graph
--- is a regular grid and all
--- steps cost 1.
-function manhattan_distance(a, b)
- return abs(a.x - b.x) + abs(a.y - b.y)
+i=nil
 end
-
-
--- pathfinder
--- by @casualeffects
-
--- i minimized the number of
--- tokens as far as possible
--- without hurting readability
--- or performance. you can save
--- another four tokens and a
--- lot of characters by
--- minifying if you don't care
--- about reading the code.
-
--- returns the shortest path, in
--- reverse order, or nil if the
--- goal is unreachable.
---
--- from the graphics codex
--- http://graphicscodex.com
-function find_path
- (start,
-  goal,
-  estimate,
-  edge_cost,
-  neighbors, 
-  node_to_id, 
-  graph)
-  
-  -- the final step in the
-  -- current shortest path
-  local shortest, 
-  -- maps each node to the step
-  -- on the best known path to
-  -- that node
-  best_table = {
-   last = start,
-   cost_from_start = 0,
-   cost_to_goal = estimate(start, goal, graph)
-  }, {}
- 
-  best_table[node_to_id(start, graph)] = shortest
- 
-  -- array of frontier paths each
-  -- represented by their last
-  -- step, used as a priority
-  -- queue. elements past
-  -- frontier_len are ignored
-  local frontier, frontier_len, goal_id, max_number = {shortest}, 1, node_to_id(goal, graph), 32767.99
- 
-  -- while there are frontier paths
-  while frontier_len > 0 do
- 
-   -- find and extract the shortest path
-   local cost, index_of_min = max_number
-   for i = 1, frontier_len do
-    local temp = frontier[i].cost_from_start + frontier[i].cost_to_goal
-    if (temp <= cost) index_of_min,cost = i,temp
-   end
-  
-   -- efficiently remove the path 
-   -- with min_index from the
-   -- frontier path set
-   shortest = frontier[index_of_min]
-   frontier[index_of_min], shortest.dead = frontier[frontier_len], true
-   frontier_len -= 1
- 
-   -- last node on the currently
-   -- shortest path
-   local p = shortest.last
-   
-   if node_to_id(p, graph) == goal_id then
-    -- we're done.  generate the
-    -- path to the goal by
-    -- retracing steps. reuse
-    -- 'p' as the path
-    p = {goal}
- 
-    while shortest.prev do
-     shortest = best_table[node_to_id(shortest.prev, graph)]
-     add(p, shortest.last)
-    end
- 
-    -- we've found the shortest path
-    return p
-   end -- if
- 
-   -- consider each neighbor n of
-   -- p which is still in the
-   -- frontier queue
-   for n in all(neighbors(p, graph)) do
-    -- find the current-best
-    -- known way to n (or
-    -- create it, if there isn't
-    -- one)
-    local id = node_to_id(n, graph)
-    local old_best, new_cost_from_start =
-     best_table[id],
-     shortest.cost_from_start + edge_cost(p, n, graph)
-    
-    if not old_best then
-     -- create an expensive
-     -- dummy path step whose
-     -- cost_from_start will
-     -- immediately be
-     -- overwritten
-     old_best = {
-      last = n,
-      cost_from_start = max_number,
-      cost_to_goal = estimate(n, goal, graph)
-     }
- 
-     -- insert into queue
-     frontier_len += 1
-     frontier[frontier_len], best_table[id] = old_best, old_best
-    end -- if old_best was nil
- 
-    -- have we discovered a new
-    -- best way to n?
-    if not old_best.dead and old_best.cost_from_start > new_cost_from_start then
-     -- update the step at this
-     -- node
-     old_best.cost_from_start, old_best.prev = new_cost_from_start, p
-    end -- if
-   end -- for each neighbor
-   
-   count+=1
-   if count>10 then
-    count=1
-    yield()
-   end
-   --count%=100
-   --yield()
-
-  end -- while frontier not empty
- 
-  -- unreachable, so implicitly
-  -- return nil
- end
- 
-
-
-
-
-
-
-
-
+end
+end
+function cv(cr)
+cr.cz=da(cursor,cr)
+if cb and cr.cz then
+i=cr
+cu=true
+end
+end
+function db(dc,dd)
+end
+function de(self,df)
+if(df==self.dg) return
+local r=self.dh[df]
+self.di=r.x
+self.dg=df
+self.dj=1
+end
+function dk(self)
+self.di-=1
+if self.di<=0 then
+self.dj+=1
+local r=self.dh[self.dg]
+self.di=r.x
+if self.dj>#r.dl then
+self.dj=1
+end
+self.spr=r.dl[self.dj]
+end
+end
+function bv(dm,dn,
+dp,dq,
+dr)
+for ds=-1,1 do
+for dt=-1,1 do
+print(dm,dn+ds,dp+dt,dr)
+end
+end
+print(dm,dn,dp,dq)
+end
+function y(ba,bc,type,du,dv,bd,be,dw,cw)
+return{
+ba=ba,
+bc=bc,
+dx=1,
+type=type,
+bd=(bd or 1)*8,
+be=(be or 1)*8,
+dw=dw,
+spr=du,
+dv=dv,
+cw=cw,
+dy=false,
+dz=bd or 1,
+ea=be or 1,
+bg=0,
+eb=0,
+bj=0,
+ec=1,
+z=function(self)
+return{
+ba=self.ba,
+bc=self.bc,
+bd=self.bd-1,
+be=self.be-1
+}
+end,
+v=function(self,ba,bc,ed)
+pal()
+palt(0,false)
+if(self.dv) palt(self.dv,true)
+if self.bi then
+pal(self.bi[self.ec][1],
+self.bi[self.ec][2])
+end
+if self.bq then
+ee(self.spr%16*8,flr(self.spr/16)*8,self.ba,self.bc,.25-self.bq,1,11)
+else
+if ed then
+rectfill(ba-1,bc-1,ba+16,bc+19,0)
+local ef=self.dw or self
+local dq=ef.bn and 12 or(ef.bg<33 and 8 or ef.bg<66 and 10 or 11)
+if(ef.bg>0) rectfill(ba,bc+17,ba+(15*ef.bg/100),bc+18,dq)
+end
+spr(self.spr,self.ba,self.bc,self.bd/8,self.be/8)
+end
+if(b) eg(self)
+end,
+ct=function(self)
+if self.bi then
+self.eb+=1
+if(self.eb>self.bj) then
+self.eb=0
+self.ec+=1
+if(self.ec>#self.bi) self.ec=1
+end
+end
+end
+}
+end
+function da(dc,dd)
+local eh=dc:z()
+local ei=dd:z()
+if eh.ba<ei.ba+ei.bd and
+eh.ba+eh.bd>ei.ba and
+eh.bc<ei.bc+ei.be and
+eh.bc+eh.be>ei.bc
+then
+return true
+else
+return false
+end
+end
+function eg(cr)
+local ej=cr:z()
+rect(ej.ba,ej.bc,ej.ba+ej.bd,ej.bc+ej.be,cr.cz and 11 or 8)
+end
+function ek()
+return flr(t())%2==0
+end
+function s(dm,el,em)
+local r={}
+local en=0
+local eo=''
+local ep=''
+if em~=nil then dm=s(dm,em) end
+while#dm>0 do
+if type(dm)=='table'then
+eo=dm[1]
+add(r,s(eo,el))
+del(dm,eo)
+else
+eo=sub(dm,1,1)
+dm=sub(dm,2)
+if eo==el then
+add(r,ep)
+ep=''
+else
+ep=ep..eo
+end
+end
+end
+add(r,ep)
+return r
+end
+local eq=0
+function ee(er,es,ba,bc,r,bd,et)
+local eu,ev=cos(r),sin(r)
+local ew,ex,ey,ez
+local fa,fb=eu,ev
+local fc=shl(0xfff8,(bd-1))
+bd*=4
+eu*=bd-0.5
+ev*=bd-0.5
+local fd,fe=ev-eu+bd,-eu-ev+bd
+bd=2*bd-1
+for ff=0,bd do
+ew,ex=fd,fe
+for fg=0,bd do
+if band(bor(ew,ex),fc)==0 then
+local en=sget(er+ew,es+ex)
+if(en!=et) pset(ba+ff,bc+fg,en)
+end
+ew-=fb
+ex+=fa
+end
+fd+=fa
+fe+=fb
+end
+end
+function co(bp)
+bp.cj=fh(
+{ba=flr(bp.ba/8),bc=flr(bp.bc/8)},
+{ba=bp.ck,bc=bp.cl},
+fi,
+fj,
+fk,
+function(fl) return shl(fl.bc,8)+fl.ba end,
+nil)
+bp.cm=bp.cn
+bp.cn=2
+bp.bo=cocreate(fm)
+end
+function fm(bp)
+printh("-------------")
+for fn=#bp.cj-1,1,-1 do
+local fl=bp.cj[fn]
+local fo=bp.ba-(fl.ba*8)
+local fp=bp.bc-(fl.bc*8)
+local r=atan2(fo,fp)
+printh("  >> target angle="..r)
+while(bp.bq!=r) do
+fq(bp,r)
+end
+local fr=1
+local fs=sqrt((fl.ba*8-bp.ba)^2+(fl.bc*8-bp.bc)^2)
+local ft=fr*(fl.ba*8-bp.ba)/fs
+local fu=fr*(fl.bc*8-bp.bc)/fs
+for fn=0,fs/fr-1 do
+bp.ba+=ft
+bp.bc+=fu
+yield()
+end
+bp.ba,bp.bc=fl.ba*8,fl.bc*8
+end
+end
+fv=3.14159
+fw=.5*(fv/180)
+function fq(bp,fx)
+fy=fx-bp.bq
+printh("unit.r="..bp.bq)
+printh("targetangle="..fx)
+printh("diff="..fy)
+printh("turnspeed="..fw)
+printh("-")
+if fy>0.5 then
+printh("big angle 1")
+fy-=1
+elseif fy<-0.5 then
+printh("big angle 2")
+fy+=1
+end
+if fy>fw then
+bp.bq+=fw
+elseif fy<-fw then
+bp.bq-=fw
+else
+bp.bq=fx
+end
+if(bp.bq>fv) bp.bq-=2*fv
+if(bp.bq<-fv) bp.bq+=2*fv
+yield()
+end
+function fj(fz,fl,ga)
+local gb=fget(mget(fl.ba,fl.bc),1) and 4 or 1
+if(fz.ba!=fl.ba and fz.bc!=fl.bc) return gb+1
+return gb
+end
+function fk(fl,ga)
+local gc={}
+for ds=-1,1 do
+for dt=-1,1 do
+if(ds!=0 or dt!=0) gd(fl.ba+ds,fl.bc+dt,gc)
+end
+end return gc
+end
+function gd(ge,gf,gg)
+printh("testing:"..ge..","..gf)
+if(
+not fget(mget(ge,gf),0)
+and l[ge..","..gf]==nil
+)
+then
+add(gg,{ba=ge,bc=gf})
+end
+printh("test passed.")
+end
+function fi(r,gh)
+return abs(r.ba-gh.ba)+abs(r.bc-gh.bc)
+end
+function fh
+(gi,
+gj,
+gk,
+gl,
+gc,
+gm,
+ga)
+local gn,
+go={
+gp=gi,
+gq=0,
+gr=gk(gi,gj,ga)
+},{}
+go[gm(gi,ga)]=gn
+local gs,gt,gu,gv={gn},1,gm(gj,ga),32767.99
+while gt>0 do
+local gw,gx=gv
+for fn=1,gt do
+local gy=gs[fn].gq+gs[fn].gr
+if(gy<=gw) gx,gw=fn,gy
+end
+gn=gs[gx]
+gs[gx],gn.gz=gs[gt],true
+gt-=1
+local ha=gn.gp
+if gm(ha,ga)==gu then
+ha={gj}
+while gn.hb do
+gn=go[gm(gn.hb,ga)]
+add(ha,gn.gp)
+end
+return ha
+end
+for hc in all(gc(ha,ga)) do
+local hd=gm(hc,ga)
+local he,hf=
+go[hd],
+gn.gq+gl(ha,hc,ga)
+if not he then
+he={
+gp=hc,
+gq=gv,
+gr=gk(hc,gj,ga)
+}
+gt+=1
+gs[gt],go[hd]=he,he
+end
+if not he.gz and he.gq>hf then
+he.gq,he.hb=hf,ha
+end
+end
+count+=1
+if count>10 then
+count=1
+yield()
+end
+end
+end
 __gfx__
 bbbbbbbbbbb1bbbbf5d555d555d555d55d555d5fffffffff1d515555ffffffff99f99999ffffffffffffffff9f99f9f9ff9f999955d555d555d555d555d555d5
 bb11bbbbbb171bbb1555515d15555155d51555515dfffd5f5155d55dffff9fff9f9999f9fff9fffffffffffff99f99f999f99899155551551555515515555155
@@ -1426,3 +905,134 @@ __map__
 0000000000000000000000000000000000000000000000000006060600000000000000000000000000000000000000000000000000000000000000000000000095959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595
 0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000095959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595
 0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000095959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595
+__sfx__
+000100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+001000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+001000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+001000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+001000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+001000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+001000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+001000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+001000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+001000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+001000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+001000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+001000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+001000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+001000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+001000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+001000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+001000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+001000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+001000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+001000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+001000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+001000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+001000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+001000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+001000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+001000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+001000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+001000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+001000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+001000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+001000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+001000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+001000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+001000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+001000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+001000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+001000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+001000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+001000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+001000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+001000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+001000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+001000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+001000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+001000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+001000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+001000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+001000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+001000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+001000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+001000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+001000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+001000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+001000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+001000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+001000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+001000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+001000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+001000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+001000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+001000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+001000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+001000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+__music__
+00 41424344
+00 41424344
+00 41424344
+00 41424344
+00 41424344
+00 41424344
+00 41424344
+00 41424344
+00 41424344
+00 41424344
+00 41424344
+00 41424344
+00 41424344
+00 41424344
+00 41424344
+00 41424344
+00 41424344
+00 41424344
+00 41424344
+00 41424344
+00 41424344
+00 41424344
+00 41424344
+00 41424344
+00 41424344
+00 41424344
+00 41424344
+00 41424344
+00 41424344
+00 41424344
+00 41424344
+00 41424344
+00 41424344
+00 41424344
+00 41424344
+00 41424344
+00 41424344
+00 41424344
+00 41424344
+00 41424344
+00 41424344
+00 41424344
+00 41424344
+00 41424344
+00 41424344
+00 41424344
+00 41424344
+00 41424344
+00 41424344
+00 41424344
+00 41424344
+00 41424344
+00 41424344
+00 41424344
+00 41424344
+00 41424344
+00 41424344
+00 41424344
+00 41424344
+00 41424344
+00 41424344
+00 41424344
+00 41424344
+00 41424344
+
