@@ -193,11 +193,13 @@ cursor.draw=function(self)
 end
 
 function reveal_fow(x,y)
- for xx=-3,3 do
-  for yy=-3,3 do
-   auto_tile(x+xx,y+yy)   
-  end
- end
+ fow[3][3]=16
+ auto_tile(3,3)   
+ --for xx=-3,3 do
+ -- for yy=-3,3 do
+   --auto_tile(x+xx,y+yy)   
+ -- end
+ --end
 end
 
 
