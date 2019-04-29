@@ -178,7 +178,7 @@ cursor.draw=function(self)
  -- test fog of war
  reveal_fow(unit.x,unit.y)
  --
- local unit = m_obj(7*8, 3*8, 1, 51, 11)
+ local unit = m_obj(7*8, 9*8, 1, 51, 11)
  unit.r=0.25
  add(units,unit)
  -- test fog of war
@@ -192,14 +192,15 @@ cursor.draw=function(self)
 
 end
 
-function reveal_fow(x,y)
- fow[3][3]=16
- auto_tile(3,3)   
- --for xx=-3,3 do
- -- for yy=-3,3 do
-   --auto_tile(x+xx,y+yy)   
- -- end
- --end
+function reveal_fow(x,y) 
+ for xx=-3,3 do
+  for yy=-3,3 do
+   local posx=mid(1, flr(x/8)+xx, #fow)
+   local posy=mid(1, flr(y/8)+yy, #fow)
+    fow[posx][posy]=16 
+    auto_tile(posx,posy)   
+  end
+ end
 end
 
 
@@ -232,9 +233,9 @@ function level_init()
 
  -- init fog of war?
  fow={}
- for i=0,15 do
+ for i=0,100 do
   fow[i]={}
-  for l=0,15 do
+  for l=0,100 do
    fow[i][l]=0
   end
  end
