@@ -193,10 +193,10 @@ cursor.draw=function(self)
 end
 
 function reveal_fow(x,y) 
- for xx=-3,3 do
-  for yy=-3,3 do
-   local posx=mid(1, flr(x/8)+xx, #fow)
-   local posy=mid(1, flr(y/8)+yy, #fow)
+ for xx=-2,2 do
+  for yy=-2,2 do
+   local posx=flr(x/8)+xx
+   local posy=flr(y/8)+yy
     fow[posx][posy]=16 
     auto_tile(posx,posy)   
   end
@@ -233,9 +233,9 @@ function level_init()
 
  -- init fog of war?
  fow={}
- for i=-1,64 do
+ for i=-2,66 do
   fow[i]={}
-  for l=-1,32 do
+  for l=-2,33 do
    fow[i][l]=0
   end
  end
@@ -934,6 +934,9 @@ function movepath_cor(unit)
    yield()
   end
   unit.x,unit.y = node.x*8, node.y*8
+
+  -- reveal fog?
+  reveal_fow(unit.x,unit.y)
  end
 
  -- arrived?
