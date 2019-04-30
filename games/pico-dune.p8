@@ -233,9 +233,9 @@ function level_init()
 
  -- init fog of war?
  fow={}
- for i=0,100 do
+ for i=-1,64 do
   fow[i]={}
-  for l=0,100 do
+  for l=-1,32 do
    fow[i][l]=0
   end
  end
@@ -248,13 +248,11 @@ function draw_fow()
  local mapy=flr(camy/8)
  for xx=mapx-1,mapx+16 do
   for yy=mapy-1,mapy+16 do
-   if xx>=0 and yy>=0 then
-    if fow[xx][yy]!=0 then
+    --if fow[xx][yy]!=0 then
      spr(fow[xx][yy]+32,xx*8,yy*8)
-    elseif fow[xx][yy]!=16 then
-     rectfill(xx*8, yy*8, xx*8+7, yy*8+7, 0)
-    end
-   end
+   -- elseif fow[xx][yy]!=16 then
+   --  rectfill(xx*8, yy*8, xx*8+7, yy*8+7, 0)
+   -- end
   end
  end
 end
