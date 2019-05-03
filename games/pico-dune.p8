@@ -198,12 +198,20 @@ end
 
 function reveal_fow(object)  
  local size = object.type==2 and 3 or 2
+ -- clear group of tiles
  for xx=-size,size do
   for yy=-size,size do
-   local posx=flr(object.x/8)+xx
-   local posy=flr(object.y/8)+yy
+    -- clear tile
+    local posx=flr(object.x/8)+xx
+    local posy=flr(object.y/8)+yy    
     fow[posx][posy]=16 
-    auto_tile(posx,posy)   
+    test_tile(posx,posy)
+    -- update neighborhood
+    for dy=-1,1 do
+        for dx=-1,1 do
+          test_tile(posx+dx,posy+dy)
+        end
+    end
   end
  end
 end
@@ -269,44 +277,27 @@ end
 
 
 -- https://www.lexaloffle.com/bbs/?tid=30902
-function auto_tile(x,y)
-	test_tile(x,y)
-	test_tile(x+1,y)
-	test_tile(x-1,y)
-	test_tile(x,y+1)
-	test_tile(x,y-1)
-end
-
 function test_tile(x,y) 
  
- -- bail
- if (x<0 or x>#fow or y<0 or y>#fow) printh("outside testtile bounds") return
+ -- bail (outside testtile bounds)
+ if (x<0 or x>#fow or y<0 or y>#fow) return
 	
   -- figure out bitmask
-  local mask = 0    
-
+  local mask = 0
 
 	if fow[x][y]!=0 then
   
-		if fow[x][y-1]>0 then
-      -- north has tile
-			mask+=1
-		end
+    -- north has tile?
+		if (fow[x][y-1]>0) mask+=1
 	
-		if fow[x-1][y]>0 then
-      -- east has tile
-			mask+=2
-		end
+    -- east has tile?
+		if (fow[x-1][y]>0) mask+=2
 	
-		if fow[x+1][y]>0 then
-      -- south has tile
-			mask+=4
-		end
+    -- south has tile?
+		if (fow[x+1][y]>0) mask+=4
 	
-		if fow[x][y+1]>0 then
-      -- west has tile
-	 	  mask+=8
-		end
+    -- west has tile?
+		if (fow[x][y+1]>0) mask+=8
 		
     fow[x][y]=1 + mask
 	end
