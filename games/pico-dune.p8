@@ -127,7 +127,7 @@ cursor.draw=function(self)
  -- add test buldings
  local windfarm=m_obj(12*8,2*8, 2, 66, nil, 2,2)
  windfarm.life=50
- windfarm.ico_obj=m_obj(109,20,2, 138, nil, 2,2, windfarm, function(self)
+ windfarm.ico_obj=m_obj(109,20,2, 130, nil, 2,2, windfarm, function(self)
     printh("todo: fix windfarm?...")
   end)
   windfarm.col_cycle = {
@@ -149,7 +149,7 @@ cursor.draw=function(self)
  --
  local refinary=m_obj(9*8,5*8, 2, 68, nil, 3,2)
  refinary.life=10
- refinary.ico_obj=m_obj(109,20,2, 140, nil, 2,2, refinary, function(self)
+ refinary.ico_obj=m_obj(109,20,2, 132, nil, 2,2, refinary, function(self)
     printh("todo: fix refinary?...")
   end)
  add(buildings,refinary)
@@ -157,10 +157,10 @@ cursor.draw=function(self)
  --
  local constyard=m_obj(10*8,7*8, 2, strArrays[1][3], nil, 2,2)
  constyard.life=75
- constyard.ico_obj=m_obj(109,20,2, 142, nil, 2,2, constyard, function(self)
+ constyard.ico_obj=m_obj(109,20,2, 128, nil, 2,2, constyard, function(self)
     printh("todo: load construction yard menu...")
   end)
- constyard.build_obj=m_obj(109,44,2, 168, nil, 2,2, nil, function(self)
+ constyard.build_obj=m_obj(109,44,2, 162, nil, 2,2, nil, function(self)
     printh("todo: build slab...")
     self.build_step=0.5
     self.cor=cocreate(function(self)
@@ -192,7 +192,7 @@ cursor.draw=function(self)
  unit.r=0.5
  add(units,unit)
  -- test fog of war
- reveal_fow(unit)--.x,unit.y)
+ reveal_fow(unit)
 
 end
 
@@ -507,10 +507,10 @@ function draw_ui()
   and selected_obj.build_obj 
   and selected_obj.build_obj.life>=100 then
   -- draw placement!
- -- fillp(0b1110110110110111.1)
+  fillp(0b1110110110110111.1)
   rectfill(flr(cursor.x/8)*8,flr(cursor.y/8)*8,
            (flr(cursor.x/8)+2)*8,(flr(cursor.y/8)+2)*8,11)
-  --fillp()
+  fillp()
  end
 
  -- cursor
@@ -582,10 +582,10 @@ function collisions()
       -- place object
       local xpos=flr((cursor.x+camx)/8)
       local ypos=flr((cursor.y+camy)/8)
-      mset(xpos,ypos,16)
-      mset(xpos+1,ypos,16)
-      mset(xpos,ypos+1,16)
-      mset(xpos+1,ypos+1,16)
+      mset(xpos,ypos,19)
+      mset(xpos+1,ypos,19)
+      mset(xpos,ypos+1,19)
+      mset(xpos+1,ypos+1,19)
       -- reset build
       selected_obj.build_obj.life=0
 
@@ -759,7 +759,7 @@ function m_obj(x,y,type,sprnum,trans_col,w,h,parent,func_onclick)
         if (this.life>0) rectfill(x,y+17,x+(15*this.life/100),y+18,col)
       end
       -- non-rotational sprite
-      spr(self.spr, self.x, self.y, self.w/8, self.h/8)
+      spr(self.spr, self.x or x, self.y or y, self.w/8, self.h/8)
     end
 
     if (debug_collision) draw_hitbox(self)
@@ -1304,22 +1304,22 @@ ccccccccccccccdccccc67111dcccccc11116666dc0157d7eeeeeeeeeeeeeeeeffffffffffffffff
 4554444544544454555555559999f9999944677667767698eeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeee
 54445544554545449f9999f9999999f99977777777679887eeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeee
 455454554555544599fffffff9f999994777776677988977eeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeee
-eeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffff
-eeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffff
-eeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffff
-eeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffff
-eeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffff
-eeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffff
-eeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffff
-eeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffff
-000000000bbbbbb000000000bbbbb1b1000000001b1bbbbb00000000bbbbbbbb0000000001bbbb1010000000bbbbbbb0000000010bbbbbbb00000000bbbbbbbb
-001bb1000bbbbbb0bbb1b000bbb1bb000000bbbb00bb1bbb1b1b1b1bbbbbbbbb000000000bbbbbb0b0000000bbbbb1000000000b00bbbbbbb000000bbbbbbbbb
-01bbbb100bbbbbb0bbbb1b00bb1b0000000b1bbb0001b1bbbbbbbbbbbbbbbbbb00b0b00001bbbb101b000000bbbb1b00000000b1001bbbbbb1b1b1bbbbbbbbbb
-0bbbbbb00b1b1b10bbb1b000b1b0000000b1bbbb00000b1bbbbbbbbbbbbbbbbb0b1b1b000bbbbbb0bb000000bbbbb100000001bb00b1bbbbbb1b1bbbbbbbbbbb
-0bbbbbb000b1b1b0bbbb1b00bb000000000b1bbb000001bbbbbbbbbbbbb1b1bb01b1b1b001bbbb10b1b00000bbbb1b0000000b1b001bbbbbbbbbbbbbbbbbbbbb
-01bbbb10000b0b00bbb1b0001b00000000b1bbbb000000b1bbbbbbbbbb1b1b1b0bbbbbb00bbbbbb0bb1b0000bbbbb1000001b1bb00b1bbbbbbbbbbbbbbbbbbbb
-001bb10000000000bbbb0000b0000000000b1bbb0000000b1b1b1b1bb000000b0bbbbbb001bbbb10bbb1bb00bbbbbb0000bb1bbb001bbbbbbbbbbbbbbbbbbbbb
-00000000000000000000000010000000000000000000000100000000000000000bbbbbb00bbbbbb0bbbbb1b1bbbbbbb01b1bbbbb0bbbbbbbbbbbbbbbbbbbbbbb
+ffffffffffffffffffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffff
+ffffffffffffffffffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffff
+ffffffffffffffffffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffff
+ffffffffffffffffffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffff
+ff77777777ffffffff77757777ffffffeeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffff
+ff766666666fffffff766657666fffffeeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffff
+ff7666666666ffffff5555565555ffffeeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffff
+f766666666666ffff777777577777fffeeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffff
+f7666666666666fff7666665766666ff000000001b1bbbbb00000000bbbbbbbb0000000001bbbb1010000000bbbbbbb0000000010bbbbbbb00000000bbbbbbbb
+f76666666666666ff76666665766666f0000bbbb00bb1bbb1b1b1b1bbbbbbbbb000000000bbbbbb0b0000000bbbbb1000000000b00bbbbbbb000000bbbbbbbbb
+f55555555555555ff55555555555555f000b1bbb0001b1bbbbbbbbbbbbbbbbbb00b0b00001bbbb101b000000bbbb1b00000000b1001bbbbbb1b1b1bbbbbbbbbb
+ffffffffffffffffffffffffffffffff00b1bbbb00000b1bbbbbbbbbbbbbbbbb0b1b1b000bbbbbb0bb000000bbbbb100000001bb00b1bbbbbb1b1bbbbbbbbbbb
+ffffffffffffffffffffffffffffffff000b1bbb000001bbbbbbbbbbbbb1b1bb01b1b1b001bbbb10b1b00000bbbb1b0000000b1b001bbbbbbbbbbbbbbbbbbbbb
+ffffffffffffffffffffffffffffffff00b1bbbb000000b1bbbbbbbbbb1b1b1b0bbbbbb00bbbbbb0bb1b0000bbbbb1000001b1bb00b1bbbbbbbbbbbbbbbbbbbb
+ffffffffffffffffffffffffffffffff000b1bbb0000000b1b1b1b1bb000000b0bbbbbb001bbbb10bbb1bb00bbbbbb0000bb1bbb001bbbbbbbbbbbbbbbbbbbbb
+ffffffffffffffffffffffffffffffff000000000000000100000000000000000bbbbbb00bbbbbb0bbbbb1b1bbbbbbb01b1bbbbb0bbbbbbbbbbbbbbbbbbbbbbb
 ffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeee
 ffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeee
 ffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeee
@@ -1484,7 +1484,7 @@ fffffffff7fffffff7fffffff7fffffff7ffffffffffffffffffffffffffffffffffffffffffffff
 
 __gff__
 0000020202020400000000000000000000000200010000010101010101010101010101010000000000000101010000000001010101000000000000000000000001010101010102000000000001010101010101010101020000000000010101010000000000000000000000000101010100000000000000010101010000000000
-0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000101010100000000000001010100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001010100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 __map__
 0809000000000000001616161600000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000015151500000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000151515
 0808090000000016161616000000000000000000000012120000000000000000000000000000000000121200000000121200000000000000000000000000000015000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000015
