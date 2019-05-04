@@ -18,81 +18,71 @@ printh("hello building!!!")
 printh("hello "..self.p)
 end
 q=
-[[1|Construction Yard|64|128|2|2|2|nil|nil|nil|1||100|nil||400|||All structures are built by the construction yard.||
-2|Windtrap|66|130|2|2|2|nil|1|1|1||300|100||200|||The windtrap supplies power to your base. Without power your structures will decay.|draw_windtrap|update_bld
-3|Small Concrete Slab|||2|1|1|nil|1|1|1||5|nil||0|||Use concrete to make a sturdy foundation for your structures.||
-4|Large Concrete Slab|||2|2|2|nil|1|1|4||20|nil||0|||Use concrete to make a sturdy foundation for your structures.||
-5|Defensive Wall|||2|1|1|nil|1|7|4||50|nil||50|||The Wall is used for passive defense.||
-6|Spice Refinery|68|132|2|3|2|nil|1|2|1||400|30||450|||The Refinery converts spice into credits.||
-7|Radar Outpost|||2|2|2|nil|1|2|2||400|30||500|||The Outpost provides radar and aids control of distant vehicles.||
-8|Spice Storage Silo|||2|2|2|nil|1|6|2||150|5||150|||The Spice silo is used to store refined spice.||
-9|Barracks|||2|2|2|nil|1|7|2||300|10||300|||The Barracks is used to train your Light infantry.||
-10|WOR Trooper Facility|||2|2|2|nil|1|7|2||400|10||400|||WOR is used to train your Heavy infantry.||
-11|Light Vehicle Factory|||2|2|2|nil|1|6|2||400|20||350|||The Light Factory produces light attack vehicles.||
-12|Heavy Vehicle Factory|||2|3|2|nil|1|6|3||600|20||200|||The Heavy Factory produces heavy attack vehicles.||
-13|Hi-Tech Factory|||2|3|2|nil|1|7+12|5||500|35||400|||The Hi-Tech Factory produces flying vehicles.||
-14|Cannon Turret|||2|1|1|nil|1|7|5||125|10||200|||The Cannon Turret is used for short range active defense.||
-15|Rocket Turret|||2|1|1|nil|1|7|6||250|20||200|||The Rocket/Cannon turret is used for both short and medium range active defense.||
-16|Repair Facility|||2|3|2|nil|1|7+12|5||700|20||200|||The Repair Facility is used to repair your vehicles.||
-17|Starport|||2|3|3|nil|1|6|6||500|50||500|||The Starport is used to order and received shipments from C.H.O.A.M.||
-18|House of IX|||2|2|2|nil|1|7+12|5||500|40||400|||The IX Research Facility advances your House's technology.||
-19|Palace|||2|3|3|nil|1|17|8||999|80||1000|||This is your Palace.||]]..
-[[20|Light Infantry (x3)|||1|1|1||9|9|2|AO|60||4|50|5|2|Infantry are lightly armoured footsoldiers, with limited firing range and speed.||
-21|Heavy Troopers (x3)|||1|1|1||10|9|3|HO|100||8|110|10|3|Troopers are heavily armoured footsoldiers, with improved firing range and speed.||
-22|Trike|||1|1|1||11+17||2||150||8|100|60|3|The Trike is a lightly-armoured, 3-wheeled vehicle, with limited firing range, but rapid speed.||
-23|Quad|||1|1|1||11+17||3||200||10|130|50|3|The Quad is a lightly-armoured, 4-wheeled vehicle. Slower than the Trike, but stronger armour and firepower.||
-24|Combat Tank|||1|1|1||12+17|7|4||300||38|200|25|4|The Combat Tank is a medium armoured tank, fires high-explosive rounds.||
-25|Siege Tank|||1|1|1||12+17|7|6||600||45|300|20|5|The Missile Tank is a medium armoured tank, which fires missiles. Long-range, but inaccurate.||
-26|Rocket Launcher|||1|1|1||12+17|7|5||450||112|100|30|9|The Siege Tank is a heavy armoured tank, which has dual cannons, but is slow.||
-27|Harvester|||1|1|1||12+17||2||300||0|150|30|nil|The Harvester separates spice from the sand & returns raw spice to the Refinery for processing.||
-28|Carryall|||1|1|1||13|13|5||800||0|100|200|nil|The Carryall is a lightly armoured aircraft with no weapons. Mainly used to lift+transport Harvesters.||
-29|Ornithopter|||1|1|1||13+17|13|7|AO|600||75|5|150|5|The Ornithopter is a lightly armoured aircraft that fires rockets. Highly manouverable + fasted aircraft on Dune.||
-30|MCV (Mobile construction vehicle)|||1|2|1||12+17|7|4||900||0|150|0|nil|The MCV scout vehicle is used to find and deploy new base locations.||
-31|Sonic Tank|||1|1|1||12|7|7|A|600||90|110|30|8|Developed by the Atreides, this enhanced tank fires powerful blast waves of sonic energy.||
-32|Fremen (x3)|||1|1|1||19||8|A|0||8|220|10|3|The Fremen are native to Dune. Elite fighters, in alliance with the Atreides.||
-33|Devastator|||1|1|1||12|13|8|H|800||60|400|10|7|The Devestator is a Harkennen-developed nuckear-powered tank, which fires dual plasma charges. Most powerful tank on Dune, but potentially unstable in combat.||
-34|Death Hand|||1|1|1||19||8|H|0||150|70|250|nil|The Death Hand is a special Harkonnen Palace weapon. An inaccurate, but very destructive ballistic missile.||
-35|Raider|||1|1|1||11||2|O|150||8|80|75|3|The Ordos Raider is similar to the standard Trike, but with less armour in favour of speed.||
-36|Deviator|||1|1|1||12|13|7|O|750||0|120|30|7|The Ordos Deviator is a standard Missile Tank, which fires unique nerve gas missiles that may temporarily change enemy loyalty.||
-37|Saboteur|||1|1|1||19||8|O|0||150|40|40|2|The Saboteur is a special military unit, trained at an Ordos Palace. Can destry almost any structure or vehicle.||
--- other
-[[38|Sardaukar|||1|1|1||nil|nil|4||0||5|110|10|1|The Sardular are the Emperor's elite troops. with superior firepower and armour.||
-39|Sandworm|||1|1|1||nil|nil|3||0||300|1000|35|0|The Sand Worms are indigeonous to Dune. Attracted by vibrations, almost impossible to destroy, will consume anything that moves.||]]
+[[1|cONSTRUCTION yARD|64|128|2|2|2|nil|nil|nil|1||100|nil||400|||aLL STRUCTURES ARE BUILT BY THE CONSTRUCTION YARD.||
+2|wINDTRAP|66|130|2|2|2|nil|1|1|1||300|100||200|||tHE WINDTRAP SUPPLIES POWER TO YOUR BASE. wITHOUT POWER YOUR STRUCTURES WILL DECAY.|draw_windtrap|update_bld
+3|sMALL cONCRETE sLAB|||2|1|1|nil|1|1|1||5|nil||0|||uSE CONCRETE TO MAKE A STURDY FOUNDATION FOR YOUR STRUCTURES.||
+4|lARGE cONCRETE sLAB|||2|2|2|nil|1|1|4||20|nil||0|||uSE CONCRETE TO MAKE A STURDY FOUNDATION FOR YOUR STRUCTURES.||
+5|dEFENSIVE wALL|||2|1|1|nil|1|7|4||50|nil||50|||tHE wALL IS USED FOR PASSIVE DEFENSE.||
+6|sPICE rEFINERY|68|132|2|3|2|nil|1|2|1||400|30||450|||tHE rEFINERY CONVERTS SPICE INTO CREDITS.||
+7|rADAR oUTPOST|||2|2|2|nil|1|2|2||400|30||500|||tHE oUTPOST PROVIDES RADAR AND AIDS CONTROL OF DISTANT VEHICLES.||
+8|sPICE sTORAGE sILO|||2|2|2|nil|1|6|2||150|5||150|||tHE sPICE SILO IS USED TO STORE REFINED SPICE.||
+9|bARRACKS|||2|2|2|nil|1|7|2||300|10||300|||tHE bARRACKS IS USED TO TRAIN YOUR lIGHT INFANTRY.||
+10|wor tROOPER fACILITY|||2|2|2|nil|1|7|2||400|10||400|||wor IS USED TO TRAIN YOUR hEAVY INFANTRY.||
+11|lIGHT vEHICLE fACTORY|||2|2|2|nil|1|6|2||400|20||350|||tHE lIGHT fACTORY PRODUCES LIGHT ATTACK VEHICLES.||
+12|hEAVY vEHICLE fACTORY|||2|3|2|nil|1|6|3||600|20||200|||tHE hEAVY fACTORY PRODUCES HEAVY ATTACK VEHICLES.||
+13|hI-tECH fACTORY|||2|3|2|nil|1|7+12|5||500|35||400|||tHE hI-tECH fACTORY PRODUCES FLYING VEHICLES.||
+14|cANNON tURRET|||2|1|1|nil|1|7|5||125|10||200|||tHE cANNON tURRET IS USED FOR SHORT RANGE ACTIVE DEFENSE.||
+15|rOCKET tURRET|||2|1|1|nil|1|7|6||250|20||200|||tHE rOCKET/cANNON TURRET IS USED FOR BOTH SHORT AND MEDIUM RANGE ACTIVE DEFENSE.||
+16|rEPAIR fACILITY|||2|3|2|nil|1|7+12|5||700|20||200|||tHE rEPAIR fACILITY IS USED TO REPAIR YOUR VEHICLES.||
+17|sTARPORT|||2|3|3|nil|1|6|6||500|50||500|||tHE sTARPORT IS USED TO ORDER AND RECEIVED SHIPMENTS FROM c.h.o.a.m.||
+18|hOUSE OF ix|||2|2|2|nil|1|7+12|5||500|40||400|||tHE ix rESEARCH fACILITY ADVANCES YOUR hOUSE'S TECHNOLOGY.||
+19|pALACE|||2|3|3|nil|1|17|8||999|80||1000|||tHIS IS YOUR pALACE.||]]..
+[[20|lIGHT iNFANTRY (X3)|||1|1|1||9|9|2|AO|60||4|50|5|2|iNFANTRY ARE LIGHTLY ARMOURED FOOTSOLDIERS, WITH LIMITED FIRING RANGE AND SPEED.||
+21|hEAVY tROOPERS (X3)|||1|1|1||10|9|3|HO|100||8|110|10|3|tROOPERS ARE HEAVILY ARMOURED FOOTSOLDIERS, WITH IMPROVED FIRING RANGE AND SPEED.||
+22|tRIKE|||1|1|1||11+17||2||150||8|100|60|3|tHE tRIKE IS A LIGHTLY-ARMOURED, 3-WHEELED VEHICLE, WITH LIMITED FIRING RANGE, BUT RAPID SPEED.||
+23|qUAD|||1|1|1||11+17||3||200||10|130|50|3|tHE qUAD IS A LIGHTLY-ARMOURED, 4-WHEELED VEHICLE. sLOWER THAN THE tRIKE, BUT STRONGER ARMOUR AND FIREPOWER.||
+24|cOMBAT tANK|||1|1|1||12+17|7|4||300||38|200|25|4|tHE cOMBAT tANK IS A MEDIUM ARMOURED TANK, FIRES HIGH-EXPLOSIVE ROUNDS.||
+25|sIEGE tANK|||1|1|1||12+17|7|6||600||45|300|20|5|tHE mISSILE tANK IS A MEDIUM ARMOURED TANK, WHICH FIRES MISSILES. lONG-RANGE, BUT INACCURATE.||
+26|rOCKET lAUNCHER|||1|1|1||12+17|7|5||450||112|100|30|9|tHE sIEGE tANK IS A HEAVY ARMOURED TANK, WHICH HAS DUAL CANNONS, BUT IS SLOW.||
+27|hARVESTER|||1|1|1||12+17||2||300||0|150|30|nil|tHE hARVESTER SEPARATES SPICE FROM THE SAND & RETURNS RAW SPICE TO THE rEFINERY FOR PROCESSING.||
+28|cARRYALL|||1|1|1||13|13|5||800||0|100|200|nil|tHE cARRYALL IS A LIGHTLY ARMOURED AIRCRAFT WITH NO WEAPONS. mAINLY USED TO LIFT+TRANSPORT hARVESTERS.||
+29|oRNITHOPTER|||1|1|1||13+17|13|7|AO|600||75|5|150|5|tHE oRNITHOPTER IS A LIGHTLY ARMOURED AIRCRAFT THAT FIRES ROCKETS. hIGHLY MANOUVERABLE + FASTED AIRCRAFT ON dUNE.||
+30|mcv (mOBILE CONSTRUCTION VEHICLE)|||1|2|1||12+17|7|4||900||0|150|0|nil|tHE mcv SCOUT VEHICLE IS USED TO FIND AND DEPLOY NEW BASE LOCATIONS.||
+31|sONIC tANK|||1|1|1||12|7|7|A|600||90|110|30|8|dEVELOPED BY THE aTREIDES, THIS ENHANCED TANK FIRES POWERFUL BLAST WAVES OF SONIC ENERGY.||
+32|fREMEN (X3)|||1|1|1||19||8|A|0||8|220|10|3|tHE fREMEN ARE NATIVE TO dUNE. eLITE FIGHTERS, IN ALLIANCE WITH THE aTREIDES.||
+33|dEVASTATOR|||1|1|1||12|13|8|H|800||60|400|10|7|tHE dEVESTATOR IS A hARKENNEN-DEVELOPED NUCKEAR-POWERED TANK, WHICH FIRES DUAL PLASMA CHARGES. mOST POWERFUL TANK ON dUNE, BUT POTENTIALLY UNSTABLE IN COMBAT.||
+34|dEATH hAND|||1|1|1||19||8|H|0||150|70|250|nil|tHE dEATH hAND IS A SPECIAL hARKONNEN pALACE WEAPON. aN INACCURATE, BUT VERY DESTRUCTIVE BALLISTIC MISSILE.||
+35|rAIDER|||1|1|1||11||2|O|150||8|80|75|3|tHE oRDOS rAIDER IS SIMILAR TO THE STANDARD tRIKE, BUT WITH LESS ARMOUR IN FAVOUR OF SPEED.||
+36|dEVIATOR|||1|1|1||12|13|7|O|750||0|120|30|7|tHE oRDOS dEVIATOR IS A STANDARD mISSILE tANK, WHICH FIRES UNIQUE NERVE GAS MISSILES THAT MAY TEMPORARILY CHANGE ENEMY LOYALTY.||
+37|sABOTEUR|||1|1|1||19||8|O|0||150|40|40|2|tHE sABOTEUR IS A SPECIAL MILITARY UNIT, TRAINED AT AN oRDOS pALACE. cAN DESTRY ALMOST ANY STRUCTURE OR VEHICLE.||]]..
+[[38|sARDAUKAR|||1|1|1||nil|nil|4||0||5|110|10|1|tHE sARDULAR ARE THE eMPEROR'S ELITE TROOPS. WITH SUPERIOR FIREPOWER AND ARMOUR.||
+39|sANDWORM|||1|1|1||nil|nil|3||0||300|1000|35|0|tHE sAND wORMS ARE INDIGEONOUS TO dUNE. aTTRACTED BY VIBRATIONS, ALMOST IMPOSSIBLE TO DESTROY, WILL CONSUME ANYTHING THAT MOVES.||]]
 function _init()
-local r=s(q,"|","\n")
-printh("------------------")
-printh("test 1:"..#r)
-printh("test 4:"..r[1][1])
-printh("test 5:"..r[2][1])
-printh("test 5.1:"..r[2][11])
-u={
-p="test obj",
-v=n[r[2][11]]
-}
-u:v()
+r()
 poke(0x5f2d,1)
 cartdata("pn_picodune")
-w=1
-x=0
-cursor=y(0,0,0)
-cursor.z=function(self)
+s=1
+u()
+v=0
+cursor=w(0,0,0)
+cursor.x=function(self)
 return{
-ba=self.ba+(not bb and c or 0)+2,
-bc=self.bc+(not bb and d or 0)+1,
-bd=1,
-be=1
+y=self.y+(not z and c or 0)+2,
+ba=self.ba+(not z and d or 0)+1,
+bb=1,
+bc=1
 }
 end
-cursor.v=function(self)
+cursor.bd=function(self)
 spr((i and(i.type==1)) and 1 or self.spr,
-self.ba,self.bc,self.bd/8,self.be/8)
+self.y,self.ba,self.bb/8,self.bc/8)
 end
-local bf=y(12*8,2*8,2,66,nil,2,2)
-bf.bg=50
-bf.bh=y(109,20,2,138,nil,2,2,bf,function(self)
+local be=w(12*8,4*8,2,66,nil,2,2)
+be.bf=50
+be.bg=w(109,20,2,130,nil,2,2,be,function(self)
 printh("todo: fix windfarm?...")
 end)
-bf.bi={
+be.bh={
 {14,12},
 {14,12},
 {14,12},
@@ -104,503 +94,599 @@ bf.bi={
 {14,1},
 {14,13},
 }
-bf.bj=10
-add(m,bf)
-local bk=y(9*8,5*8,2,68,nil,3,2)
-bk.bg=10
-bk.bh=y(109,20,2,140,nil,2,2,bk,function(self)
+be.bi=10
+add(m,be)
+bj(be)
+local bk=w(9*8,7*8,2,68,nil,3,2)
+bk.bf=10
+bk.bg=w(109,20,2,132,nil,2,2,bk,function(self)
 printh("todo: fix refinary?...")
 end)
 add(m,bk)
-local bl=y(10*8,7*8,2,64,nil,2,2)
-bl.bg=75
-bl.bh=y(109,20,2,142,nil,2,2,bl,function(self)
+bj(bk)
+local bl=w(10*8,9*8,2,bm[1][3],nil,2,2)
+bl.bf=75
+bl.bg=w(109,20,2,128,nil,2,2,bl,function(self)
 printh("todo: load construction yard menu...")
 end)
-bl.bm=y(109,44,2,168,nil,2,2,nil,function(self)
+bl.bn=w(109,44,2,162,nil,2,2,nil,function(self)
 printh("todo: build slab...")
-self.bn=0.5
-self.bo=cocreate(function(self)
-while self.bg<100 do
-self.bg+=self.bn
+self.bo=0.5
+self.bp=cocreate(function(self)
+while self.bf<100 do
+self.bf+=self.bo
 j-=.1
 yield()
 end
 end)
 end)
 add(m,bl)
-local bp=y(7*8,5*8,1,49,11)
-bp.bq=0
-add(k,bp)
-local bp=y(7*8,3*8,1,50,11)
-bp.bq=0.25
-add(k,bp)
-bp=y(9*8,3*8,1,51,11)
-bp.bq=0.5
-add(k,bp)
+bj(bl)
+local bq=w(5*8,3*8,1,50,11)
+bq.br=0
+bq.bg=w(109,20,2,198,nil,2,2,bq,nil)
+bq.bf=100
+add(k,bq)
+bj(bq)
+bq=w(7*8,9*8,1,51,11)
+bq.br=0.25
+bq.bg=w(109,20,2,196,nil,2,2,bq,nil)
+bq.bf=100
+add(k,bq)
+bj(bq)
+bq=w(14*8,6*8,1,49,11)
+bq.bg=w(109,20,2,192,nil,2,2,bq,nil)
+bq.br=0.75
+bq.bs=.25
+bq.bf=100
+add(k,bq)
+bj(bq)
+bq=w(9*8,3*8,1,62,11)
+bq.bg=w(109,20,2,194,nil,2,2,bq,nil)
+bq.bt=63
+bq.bi=10
+bq.bs=.15
+bq.bu=true
+bq.bf=100
+add(k,bq)
+bj(bq)
+c=15
+end
+function bj(bv)
+local bw=bv.type==2 and 3 or 2
+for bx=-bw,bw do
+for by=-bw,bw do
+local bz=flr(bv.y/8)+bx
+local ca=flr(bv.ba/8)+by
+cb[bz][ca]=16
+cc(bz,ca)
+for ce=-1,1 do
+for cf=-1,1 do
+cc(bz+cf,ca+ce)
+end
+end
+end
+end
 end
 function _update60()
-br()
-if(t()%1==0) bs()
+cg()
+if(t()%1==0) ch()
 end
 function _draw()
-bt()
-bu()
-if(a) bv("cpu: "..flr(stat(1)*100).."%\nmem: "..(flr(stat(0)/2048*100)).."%\nfps: "..stat(7),2,109,8,0)
+ci()
+cj()
+if(a) ck("cpu: "..flr(stat(1)*100).."%\nmem: "..(flr(stat(0)/2048*100)).."%\nfps: "..stat(7),2,109,8,0)
 end
-function bw()
+function u()
+cb={}
+for cl=-2,66 do
+cb[cl]={}
+for cm=-2,66 do
+cb[cl][cm]=0
 end
-function bs()
+end
+end
+function cn()
+local co=flr(c/8)
+local cp=flr(d/8)
+for bx=co-1,co+16 do
+for by=cp-1,cp+16 do
+if cb[bx][by]!=0 and cb[bx][by]!=16 then
+spr(cb[bx][by]+31,bx*8,by*8)
+elseif cb[bx][by]<16 then
+rectfill(bx*8,by*8,bx*8+7,by*8+7,0)
+end
+end
+end
+end
+function cc(y,ba)
+if(y<0 or y>#cb or ba<0 or ba>#cb) return
+local cq=0
+if cb[y][ba]!=0 then
+if(cb[y][ba-1]>0) cq+=1
+if(cb[y-1][ba]>0) cq+=2
+if(cb[y+1][ba]>0) cq+=4
+if(cb[y][ba+1]>0) cq+=8
+cb[y][ba]=1+cq
+end
+end
+function ch()
 l={}
-for bx,bp in pairs(k) do
-l[flr(bp.ba/8)..","..flr(bp.bc/8)]=1
+for cr,bq in pairs(k) do
+l[flr(bq.y/8)..","..flr(bq.ba/8)]=1
 end
 end
-function br()
-by=stat(32)
-bz=stat(33)
-ca=stat(34)
-cb=(ca>0 and cc!=ca) or btnp(4)
-for ce=0,1 do
-if(btn(ce)) g+=ce*2-1
-if(btn(ce+2)) h+=ce*2-1
+function cg()
+cs=stat(32)
+ct=stat(33)
+cu=stat(34)
+cv=(cu>0 and cw!=cu) or btnp(4)
+for cx=0,1 do
+if(btn(cx)) g+=cx*2-1
+if(btn(cx+2)) h+=cx*2-1
 end
-e=mid(0,by+g,127)
-f=mid(0,bz+h,127)
-cursor.ba=e
-cursor.bc=f
+e=mid(0,cs+g,127)
+f=mid(0,ct+h,127)
+cursor.y=e
+cursor.ba=f
 if(e<8) c-=2
 if(e>119) c+=2
 if(f<8) d-=2
 if(f>119) d+=2
 c=mid(c,384)
-d=mid(d,128)
-cf()
-cg()
-x+=1
-cc=ca
-ch=i
+d=mid(d,384)
+cy()
+cz()
+v+=1
+cw=cu
+da=i
 end
-function ci(bp,ba,bc)
-bp.cj="init"
-if fget(mget(ba,bc),0)
-or l[ba..","..bc] then
+function db(bq,y,ba)
+bq.dc="init"
+if fget(mget(y,ba),0)
+or l[y..","..ba] then
 printh("aborting pathfinding - invalid target")
 return
 end
-bp.ck=ba
-bp.cl=bc
-bp.cm=bp.cn
-bp.cn=1
-bp.bo=cocreate(co)
+bq.dd=y
+bq.de=ba
+bq.df=bq.dg
+bq.dg=1
+bq.bp=cocreate(dh)
 end
-function cf()
-for bx,bp in pairs(k) do
-cp(bp)
+function cy()
+for cr,bq in pairs(k) do
+di(bq)
 end
-for bx,cq in pairs(m) do
-cp(cq)
-cp(cq.bm)
+for cr,dj in pairs(m) do
+di(dj)
+di(dj.bn)
 end
 end
-function cp(cr)
-if cr then
-if cr.bo and costatus(cr.bo)!='dead'then
-cs(coresume(cr.bo,cr))
+function di(dk)
+if dk then
+if dk.bp and costatus(dk.bp)!='dead'then
+dl(coresume(dk.bp,dk))
 else
-cr.bo=nil
+dk.bp=nil
 end
 end
 end
-function bt()
+function ci()
 cls"15"
 camera(c,d)
 palt()
 pal()
 palt(0,false)
 palt(11,true)
-map(0,0)
-if cj!=nil and cj!="init"then
-spr(144,cj[1].ba*8,cj[1].bc*8)
+map(0,0,0,0,64,32)
+map(64,0,0,256,64,32)
+if dc!=nil and dc!="init"then
+spr(144,dc[1].y*8,dc[1].ba*8)
 end
-for bx,cq in pairs(m) do
-cq:ct()
-cq:v()
-if(cq==i) then
-rect(i.ba,i.bc,
-i.ba+i.bd-1,i.bc+i.be-1,
+for cr,dj in pairs(m) do
+dj:dm()
+dj:bd()
+if(dj==i) then
+rect(i.y,i.ba,
+i.y+i.bb-1,i.ba+i.bc-1,
 7)
 end
 end
 palt(11,true)
-for bx,bp in pairs(k) do
-bp:ct()
-bp:v()
-if(bp==i) then
-spr(16,i.ba,i.bc)
+for cr,bq in pairs(k) do
+bq:dm()
+bq:bd()
+if(bq==i) then
+spr(16,i.y,i.ba)
 end
 end
+cn()
 end
-function bu()
+function cj()
 camera(0,0)
 pal()
 palt(0,false)
-if i and i.bh then
-i.bh:v(109,20,true)
-if i.bm then
-i.bm:v(109,44,true)
+if i and i.bg then
+i.bg:bd(109,20,true)
+if i.bn then
+i.bn:bd(109,44,true)
 end
 end
-bv("00"..flr(j),103,2,7)
+ck("00"..flr(j),103,2,7)
 if i
-and i.bm
-and i.bm.bg>=100 then
-rectfill(flr(cursor.ba/8)*8,flr(cursor.bc/8)*8,
-(flr(cursor.ba/8)+2)*8,(flr(cursor.bc/8)+2)*8,11)
+and i.bn
+and i.bn.bf>=100 then
+rectfill(flr(cursor.y/8)*8,flr(cursor.ba/8)*8,
+(flr(cursor.y/8)+2)*8,(flr(cursor.ba/8)+2)*8,11)
 end
 palt(11,true)
-cursor:v()
+cursor:bd()
 end
-function cg()
-cu=false
-foreach(k,cv)
-foreach(m,cv)
+function cz()
+dn=false
+foreach(k,dp)
+foreach(m,dp)
 if i then
-bb=true
-if(i.bh) cv(i.bh)
-if(i.bm) cv(i.bm)
-bb=false
+z=true
+if(i.bg) dp(i.bg)
+if(i.bn) dp(i.bn)
+z=false
 end
-if cb then
-if cu then
-if(i.cw) i:cw() i=ch
+if cv then
+if dn then
+if(i.dq) i:dq() i=da
 else
 if i and i.type==1 then
-ci(i,flr((c+e)/8),flr((d+f)/8))
+db(i,flr((c+e)/8),flr((d+f)/8))
 end
 if i
-and i.bm
-and i.bm.bg>=100 then
-local cx=flr((cursor.ba+c)/8)
-local cy=flr((cursor.bc+d)/8)
-mset(cx,cy,16)
-mset(cx+1,cy,16)
-mset(cx,cy+1,16)
-mset(cx+1,cy+1,16)
-i.bm.bg=0
+and i.bn
+and i.bn.bf>=100 then
+local dr=flr((cursor.y+c)/8)
+local ds=flr((cursor.ba+d)/8)
+mset(dr,ds,19)
+mset(dr+1,ds,19)
+mset(dr,ds+1,19)
+mset(dr+1,ds+1,19)
+i.bn.bf=0
 end
 i=nil
 end
 end
 end
-function cv(cr)
-cr.cz=da(cursor,cr)
-if cb and cr.cz then
-i=cr
-cu=true
+function dp(dk)
+dk.dt=du(cursor,dk)
+if cv and dk.dt then
+i=dk
+dn=true
 end
 end
-function db(dc,dd)
+function dv(dw,dx)
 end
-function de(self,df)
-if(df==self.dg) return
-local r=self.dh[df]
-self.di=r.x
-self.dg=df
-self.dj=1
+function dy(self,dz)
+if(dz==self.ea) return
+local eb=self.ec[dz]
+self.ed=eb.v
+self.ea=dz
+self.ee=1
 end
-function dk(self)
-self.di-=1
-if self.di<=0 then
-self.dj+=1
-local r=self.dh[self.dg]
-self.di=r.x
-if self.dj>#r.dl then
-self.dj=1
+function ef(self)
+self.ed-=1
+if self.ed<=0 then
+self.ee+=1
+local eb=self.ec[self.ea]
+self.ed=eb.v
+if self.ee>#eb.eg then
+self.ee=1
 end
-self.spr=r.dl[self.dj]
-end
-end
-function bv(dm,dn,
-dp,dq,
-dr)
-for ds=-1,1 do
-for dt=-1,1 do
-print(dm,dn+ds,dp+dt,dr)
+self.spr=eb.eg[self.ee]
 end
 end
-print(dm,dn,dp,dq)
+function ck(eh,ei,
+ej,ek,
+el)
+for bx=-1,1 do
+for by=-1,1 do
+print(eh,ei+bx,ej+by,el)
 end
-function y(ba,bc,type,du,dv,bd,be,dw,cw)
+end
+print(eh,ei,ej,ek)
+end
+function w(y,ba,type,em,en,bb,bc,eo,dq)
 return{
+y=y,
 ba=ba,
-bc=bc,
-dx=1,
+ep=1,
 type=type,
-bd=(bd or 1)*8,
-be=(be or 1)*8,
-dw=dw,
-spr=du,
-dv=dv,
-cw=cw,
-dy=false,
-dz=bd or 1,
-ea=be or 1,
-bg=0,
-eb=0,
-bj=0,
-ec=1,
-z=function(self)
+bb=(bb or 1)*8,
+bc=(bc or 1)*8,
+eo=eo,
+spr=em,
+eq=em,
+en=en,
+dq=dq,
+er=false,
+es=bb or 1,
+et=bc or 1,
+bf=0,
+eu=0,
+bi=0,
+ev=1,
+dg=1,
+x=function(self)
 return{
+y=self.y,
 ba=self.ba,
-bc=self.bc,
-bd=self.bd-1,
-be=self.be-1
+bb=self.bb-1,
+bc=self.bc-1
 }
 end,
-v=function(self,ba,bc,ed)
+bd=function(self,y,ba,ew)
 pal()
 palt(0,false)
-if(self.dv) palt(self.dv,true)
-if self.bi then
-pal(self.bi[self.ec][1],
-self.bi[self.ec][2])
+if(self.en) palt(self.en,true)
+if self.bh then
+pal(self.bh[self.ev][1],
+self.bh[self.ev][2])
 end
-if self.bq then
-ee(self.spr%16*8,flr(self.spr/16)*8,self.ba,self.bc,.25-self.bq,1,11)
+if self.br then
+ex(self.spr%16*8,flr(self.spr/16)*8,self.y,self.ba,.25-self.br,1,11)
 else
-if ed then
-rectfill(ba-1,bc-1,ba+16,bc+19,0)
-local ef=self.dw or self
-local dq=ef.bn and 12 or(ef.bg<33 and 8 or ef.bg<66 and 10 or 11)
-if(ef.bg>0) rectfill(ba,bc+17,ba+(15*ef.bg/100),bc+18,dq)
+if ew then
+rectfill(y-1,ba-1,y+16,ba+19,0)
+local ey=self.eo or self
+local ek=ey.bo and 12 or(ey.bf<33 and 8 or ey.bf<66 and 10 or 11)
+if(ey.bf>0) rectfill(y,ba+17,y+(15*ey.bf/100),ba+18,ek)
 end
-spr(self.spr,self.ba,self.bc,self.bd/8,self.be/8)
+spr(self.spr,self.y or y,self.ba or ba,self.bb/8,self.bc/8)
 end
-if(b) eg(self)
+if(b) ez(self)
 end,
-ct=function(self)
-if self.bi then
-self.eb+=1
-if(self.eb>self.bj) then
-self.eb=0
-self.ec+=1
-if(self.ec>#self.bi) self.ec=1
+dm=function(self)
+self.eu+=1
+if(self.eu>self.bi) then
+self.eu=0
+if self.bt
+and self.dg==2 then
+self.spr=self.eq+(self.bt-self.spr)
+end
+if self.bh then
+self.ev+=1
+if(self.ev>#self.bh) self.ev=1
 end
 end
 end
 }
 end
-function da(dc,dd)
-local eh=dc:z()
-local ei=dd:z()
-if eh.ba<ei.ba+ei.bd and
-eh.ba+eh.bd>ei.ba and
-eh.bc<ei.bc+ei.be and
-eh.bc+eh.be>ei.bc
+function du(dw,dx)
+local fa=dw:x()
+local fb=dx:x()
+if fa.y<fb.y+fb.bb and
+fa.y+fa.bb>fb.y and
+fa.ba<fb.ba+fb.bc and
+fa.ba+fa.bc>fb.ba
 then
 return true
 else
 return false
 end
 end
-function eg(cr)
-local ej=cr:z()
-rect(ej.ba,ej.bc,ej.ba+ej.bd,ej.bc+ej.be,cr.cz and 11 or 8)
+function ez(dk)
+local fc=dk:x()
+rect(fc.y,fc.ba,fc.y+fc.bb,fc.ba+fc.bc,dk.dt and 11 or 8)
 end
-function ek()
+function fd()
 return flr(t())%2==0
 end
-function s(dm,el,em)
-local r={}
-local en=0
-local eo=''
-local ep=''
-if em~=nil then dm=s(dm,em) end
-while#dm>0 do
-if type(dm)=='table'then
-eo=dm[1]
-add(r,s(eo,el))
-del(dm,eo)
+function r()
+bm=fe(q,"|","\n")
+printh("------------------")
+printh("test 1:"..#bm)
+printh("test 4:"..bm[1][1])
+printh("test 5:"..bm[2][1])
+printh("test 5.1:"..bm[2][11])
+ff={
+p="test obj",
+bd=n[bm[2][20]]
+}
+ff:bd()
+end
+function fe(eh,fg,fh)
+local eb={}
+local fi=0
+local fj=''
+local fk=''
+if fh~=nil then eh=fe(eh,fh) end
+while#eh>0 do
+if type(eh)=='table'then
+fj=eh[1]
+add(eb,fe(fj,fg))
+del(eh,fj)
 else
-eo=sub(dm,1,1)
-dm=sub(dm,2)
-if eo==el then
-add(r,ep)
-ep=''
+fj=sub(eh,1,1)
+eh=sub(eh,2)
+if fj==fg then
+add(eb,fk)
+fk=''
 else
-ep=ep..eo
+fk=fk..fj
 end
 end
 end
-add(r,ep)
-return r
+add(eb,fk)
+return eb
 end
-local eq=0
-function ee(er,es,ba,bc,r,bd,et)
-local eu,ev=cos(r),sin(r)
-local ew,ex,ey,ez
-local fa,fb=eu,ev
-local fc=shl(0xfff8,(bd-1))
-bd*=4
-eu*=bd-0.5
-ev*=bd-0.5
-local fd,fe=ev-eu+bd,-eu-ev+bd
-bd=2*bd-1
-for ff=0,bd do
-ew,ex=fd,fe
-for fg=0,bd do
-if band(bor(ew,ex),fc)==0 then
-local en=sget(er+ew,es+ex)
-if(en!=et) pset(ba+ff,bc+fg,en)
+local fl=0
+function ex(fm,fn,y,ba,eb,bb,fo)
+local fp,fq=cos(eb),sin(eb)
+local fr,fs,ft,fu
+local fv,fw=fp,fq
+local cq=shl(0xfff8,(bb-1))
+bb*=4
+fp*=bb-0.5
+fq*=bb-0.5
+local fx,fy=fq-fp+bb,-fp-fq+bb
+bb=2*bb-1
+for fz=0,bb do
+fr,fs=fx,fy
+for ga=0,bb do
+if band(bor(fr,fs),cq)==0 then
+local fi=sget(fm+fr,fn+fs)
+if(fi!=fo) pset(y+fz,ba+ga,fi)
 end
-ew-=fb
-ex+=fa
+fr-=fw
+fs+=fv
 end
-fd+=fa
-fe+=fb
+fx+=fv
+fy+=fw
 end
 end
-function co(bp)
-bp.cj=fh(
-{ba=flr(bp.ba/8),bc=flr(bp.bc/8)},
-{ba=bp.ck,bc=bp.cl},
-fi,
-fj,
-fk,
-function(fl) return shl(fl.bc,8)+fl.ba end,
+function dh(bq)
+bq.dc=gb(
+{y=flr(bq.y/8),ba=flr(bq.ba/8)},
+{y=bq.dd,ba=bq.de},
+gc,
+gd,
+ge,
+function(gf) return shl(gf.ba,8)+gf.y end,
 nil)
-bp.cm=bp.cn
-bp.cn=2
-bp.bo=cocreate(fm)
+bq.df=bq.dg
+bq.dg=2
+bq.bp=cocreate(gg)
 end
-function fm(bp)
+function gg(bq)
 printh("-------------")
-for fn=#bp.cj-1,1,-1 do
-local fl=bp.cj[fn]
-local fo=bp.ba-(fl.ba*8)
-local fp=bp.bc-(fl.bc*8)
-local r=atan2(fo,fp)
-printh("  >> target angle="..r)
-while(bp.bq!=r) do
-fq(bp,r)
+bq.dg=2
+for cl=#bq.dc-1,1,-1 do
+local gf=bq.dc[cl]
+if not bq.bu then
+local cf=bq.y-(gf.y*8)
+local ce=bq.ba-(gf.ba*8)
+local eb=atan2(cf,ce)
+printh("  >> target angle="..eb)
+while(bq.br!=eb) do
+gh(bq,eb)
 end
-local fr=1
-local fs=sqrt((fl.ba*8-bp.ba)^2+(fl.bc*8-bp.bc)^2)
-local ft=fr*(fl.ba*8-bp.ba)/fs
-local fu=fr*(fl.bc*8-bp.bc)/fs
-for fn=0,fs/fr-1 do
-bp.ba+=ft
-bp.bc+=fu
+end
+local gi=bq.bs or .5
+local gj=sqrt((gf.y*8-bq.y)^2+(gf.ba*8-bq.ba)^2)
+local gk=gi*(gf.y*8-bq.y)/gj
+local gl=gi*(gf.ba*8-bq.ba)/gj
+for cl=0,gj/gi-1 do
+bq.y+=gk
+bq.ba+=gl
 yield()
 end
-bp.ba,bp.bc=fl.ba*8,fl.bc*8
+bq.y,bq.ba=gf.y*8,gf.ba*8
+bj(bq)
 end
+bq.dg=1
 end
-fv=3.14159
-fw=.5*(fv/180)
-function fq(bp,fx)
-fy=fx-bp.bq
-printh("unit.r="..bp.bq)
-printh("targetangle="..fx)
-printh("diff="..fy)
-printh("turnspeed="..fw)
+gm=3.14159
+gn=.5*(gm/180)
+function gh(bq,go)
+gp=go-bq.br
+printh("unit.r="..bq.br)
+printh("targetangle="..go)
+printh("diff="..gp)
+printh("turnspeed="..gn)
 printh("-")
-if fy>0.5 then
+if gp>0.5 then
 printh("big angle 1")
-fy-=1
-elseif fy<-0.5 then
+gp-=1
+elseif gp<-0.5 then
 printh("big angle 2")
-fy+=1
+gp+=1
 end
-if fy>fw then
-bp.bq+=fw
-elseif fy<-fw then
-bp.bq-=fw
+if gp>gn then
+bq.br+=gn
+elseif gp<-gn then
+bq.br-=gn
 else
-bp.bq=fx
+bq.br=go
 end
-if(bp.bq>fv) bp.bq-=2*fv
-if(bp.bq<-fv) bp.bq+=2*fv
+if(bq.br>gm) bq.br-=2*gm
+if(bq.br<-gm) bq.br+=2*gm
 yield()
 end
-function fj(fz,fl,ga)
-local gb=fget(mget(fl.ba,fl.bc),1) and 4 or 1
-if(fz.ba!=fl.ba and fz.bc!=fl.bc) return gb+1
-return gb
+function gd(gq,gf,gr)
+local gs=fget(mget(gf.y,gf.ba),1) and 4 or 1
+if(gq.y!=gf.y and gq.ba!=gf.ba) return gs+1
+return gs
 end
-function fk(fl,ga)
-local gc={}
-for ds=-1,1 do
-for dt=-1,1 do
-if(ds!=0 or dt!=0) gd(fl.ba+ds,fl.bc+dt,gc)
+function ge(gf,gr)
+local gt={}
+for bx=-1,1 do
+for by=-1,1 do
+if(bx!=0 or by!=0) gu(gf.y+bx,gf.ba+by,gt)
 end
-end return gc
+end return gt
 end
-function gd(ge,gf,gg)
-printh("testing:"..ge..","..gf)
+function gu(gv,gw,gx)
+printh("testing:"..gv..","..gw)
 if(
-not fget(mget(ge,gf),0)
-and l[ge..","..gf]==nil
+not fget(mget(gv,gw),0)
+and l[gv..","..gw]==nil
 )
 then
-add(gg,{ba=ge,bc=gf})
+add(gx,{y=gv,ba=gw})
 end
 printh("test passed.")
 end
-function fi(r,gh)
-return abs(r.ba-gh.ba)+abs(r.bc-gh.bc)
+function gc(eb,gy)
+return abs(eb.y-gy.y)+abs(eb.ba-gy.ba)
 end
-function fh
-(gi,
-gj,
-gk,
-gl,
-gc,
-gm,
-ga)
-local gn,
-go={
-gp=gi,
-gq=0,
-gr=gk(gi,gj,ga)
+function gb
+(gz,
+ha,
+hb,
+hc,
+gt,
+hd,
+gr)
+local he,
+hf={
+hg=gz,
+hh=0,
+hi=hb(gz,ha,gr)
 },{}
-go[gm(gi,ga)]=gn
-local gs,gt,gu,gv={gn},1,gm(gj,ga),32767.99
-while gt>0 do
-local gw,gx=gv
-for fn=1,gt do
-local gy=gs[fn].gq+gs[fn].gr
-if(gy<=gw) gx,gw=fn,gy
+hf[hd(gz,gr)]=he
+local hj,hk,hl,hm={he},1,hd(ha,gr),32767.99
+while hk>0 do
+local hn,ho=hm
+for cl=1,hk do
+local hp=hj[cl].hh+hj[cl].hi
+if(hp<=hn) ho,hn=cl,hp
 end
-gn=gs[gx]
-gs[gx],gn.gz=gs[gt],true
-gt-=1
-local ha=gn.gp
-if gm(ha,ga)==gu then
-ha={gj}
-while gn.hb do
-gn=go[gm(gn.hb,ga)]
-add(ha,gn.gp)
+he=hj[ho]
+hj[ho],he.hq=hj[hk],true
+hk-=1
+local hr=he.hg
+if hd(hr,gr)==hl then
+hr={ha}
+while he.hs do
+he=hf[hd(he.hs,gr)]
+add(hr,he.hg)
 end
-return ha
+return hr
 end
-for hc in all(gc(ha,ga)) do
-local hd=gm(hc,ga)
-local he,hf=
-go[hd],
-gn.gq+gl(ha,hc,ga)
-if not he then
-he={
-gp=hc,
-gq=gv,
-gr=gk(hc,gj,ga)
+for ht in all(gt(hr,gr)) do
+local hu=hd(ht,gr)
+local hv,hw=
+hf[hu],
+he.hh+hc(hr,ht,gr)
+if not hv then
+hv={
+hg=ht,
+hh=hm,
+hi=hb(ht,ha,gr)
 }
-gt+=1
-gs[gt],go[hd]=he,he
+hk+=1
+hj[hk],hf[hu]=hv,hv
 end
-if not he.gz and he.gq>hf then
-he.gq,he.hb=hf,ha
+if not hv.hq and hv.hh>hw then
+hv.hh,hv.hs=hw,hr
 end
 end
 count+=1
@@ -611,70 +697,70 @@ end
 end
 end
 __gfx__
-bbbbbbbbbbb1bbbbf5d555d555d555d55d555d5fffffffff1d515555ffffffff99f99999ffffffffffffffff9f99f9f9ff9f999955d555d555d555d555d555d5
-bb11bbbbbb171bbb1555515d15555155d51555515dfffd5f5155d55dffff9fff9f9999f9fff9fffffffffffff99f99f999f99899155551551555515515555155
-bb171bbbb1bbb1bb5d55d5515d55d555155d55d5d5155551555d5155ffff999999ff99999999ffffffffffff9f99f99f9f9989f95d55d55555dddd555d55d555
-bb1771bb17b1b71b55515d5555515d5d55d51555155d55d5d5555d55fff99f9f99999f99f9f99ffff9ffff9f999f999999f88899555155dddd4444ddddd15d5d
-bb17771bb1bbb1bbd55d5555d55555555555d55d55d5155555d155d5fffff9f9fff999999f9fffffff99f999f9ffff9f99998f99d555dd444444444444445555
-bb177771bb171bbb55d551d555d515555d155d555555d55d15555555ffff999999999f999999ffff999f99f9fffffffffff8999955d5d4444444444444444555
-bb17711bbbb1bbbb1555555515555515555555515d155d55f51ffd5ffff99f9f99fff9f9f9f99fff9f99f99fffffffff99999f99155d44444444444444444415
-bbb11bbbbbbbbbbbf55d5515555d55555155d55f55555551ffffffffffff99f9ff9f99999f99fffff99f99f9ffffffff99fff9f9555d44444444444444444455
-b7bbbb7bddddddddffffffffddddddddddddddddffffffffffffffffffffffffffffffffffffffffffffffffffffffff0000000055dd444444444444444444d5
-77bbbb77d5555555fff77fffd5555555d5555555ffffffffffffffffffffffffffffffffffffffffffffffffffffffff00000000155d44444444444444444455
-bbbbbbbbd5015515ff79ff7fd5555555d5015515ffffffffffffffffffffffffffffffffffffffffffffffffffffffff000000005dd444444444444444444445
-bbbbbbbbd5105555f79f779fd5555555d5105555ffffffffffffffffffffffffffffffffffffffffffffffffffffffff0000000055d44444444444444444444d
-bbbbbbbbd5555111fff799ffd5555555d5555111ffffffffffffffffffffffffffffffffffffffffffffffffffffffff00000000d5d444444444444444444445
-bbbbbbbbd1555101ff799fffd5555555d1555101ffffffffffffffffffffffffffffffffffffffffffffffffffffffff0000000055d444444444444444444445
-77bbbb77d5555111ff79ffffd5555555d5555111ffffffffffffffffffffffffffffffffffffffffffffffffffffffff00000000155d44444444444444444415
-b7bbbb7bd5515555f7ffffffd5555555d5515555ffffffffffffffffffffffffffffffffffffffffffffffffffffffff00000000555d44444444444444444455
-ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff0000000055dd444444444444444444d5
-ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff00000000155044444444444444444055
-ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff000000005d5104444444444444444155
-ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff00000000555114444444444444440d5d
-ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff00000000d55510044444444444401555
-ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff0000000055d515100044444000015555
-ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff00000000155555151100000111155515
-ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff00000000555d555555111115555d5555
-bbb22bbbbb8dd8bb62ddd26bb28882bbffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff00000000000000000000000000000000
-bb2882bbb8d66d8b6d666d6b2828282bffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff00000000000000000000000000000000
-b522225bb8d66d8b6d666d6b2868682bffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff00000000000000000000000000000000
-b028820bb8d66d8b68d6d86b2262622bffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff00000000000000000000000000000000
-bb2882bbb856658b6886886b2808082bffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff00000000000000000000000000000000
-b522225bb886688b6226226b2888882bffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff00000000000000000000000000000000
-b002200bb220022b50b0b05b00bbb00bffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff00000000000000000000000000000000
-bbbbbbbbb00bb00bbbbbbbbbbbbbbbbbffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff00000000000000000000000000000000
-d66dddddddd6fffdddd776ddddddddddddddddddddd666dddddddddd000000000000000000000000000000000000000000000000000000000000000000000000
-76665555551ffff1d576de65d5577655d5555555d5766665d5555555000000000000000000000000000000000000000000000000000000000000000000000000
-76665805555f4441d76deee5d576de65d5556555d5766665d5888885000000000000000000000000000000000000000000000000000000000000000000000000
-177d22055d5ffff1d66d11e5d76deee5d5576655d5677725d5555555000000000000000000000000000000000000000000000000000000000000000000000000
-d1d55505555f1011d66d01e5d66d11e5d55d7d55d566dd25d5522255000000000000000000000000000000000000000000000000000000000000000000000000
-6555550515df1001d66d0e55d66d01e5d55ddd55d566dd25d5555555000000000000000000000000000000000000000000000000000000000000000000000000
-d6d6d55555551005d56dd555d66d0e55d555d555d556dd55d5552555000000000000000000000000000000000000000000000000000000000000000000000000
-d6d6d555d55d5555d5555555d56dd555d5555555d5555555d5522255000000000000000000000000000000000000000000000000000000000000000000000000
-dddddddd55d555d5ddddd776ddddddddddd666dddddddddddddddddd000000000000000000000000000000000000000000000000000000000000000000000000
-d555555515555155d55576de65555555d5766665d5555555d5522255000000000000000000000000000000000000000000000000000000000000000000000000
-d555555a5d55d555d5576deee5558055d5766665d5556555d5552555000000000000000000000000000000000000000000000000000000000000000000000000
-d5aaa99a55515d5dd5566d11e5522055d5677725d5576655d5555555000000000000000000000000000000000000000000000000000000000000000000000000
-d5aaa55ad5555555d5566d01e5555055d566dd25d55d7d55d5522255000000000000000000000000000000000000000000000000000000000000000000000000
-d5a1199a55d51555d5566d0ed5555055d566dd25d55ddd55d5555555000000000000000000000000000000000000000000000000000000000000000000000000
-d544445a15555515d5556dd5d5555555d556dd55d555d555d5888885000000000000000000000000000000000000000000000000000000000000000000000000
-d5151515555d5555d5555555d5555555d5555555d5555555d5555555000000000000000000000000000000000000000000000000000000000000000000000000
-ffffffffffffffffffffffffffffffff000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
-ffffffffffffffffffffffffffffffff000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
-ffffffffffffffffffffffffffffffff000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
-ffffffffffffffffffffffffffffffff000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
-ff77777777ffffffff77757777ffffff000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
-ff766666666fffffff766657666fffff000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
-ff7666666666ffffff5555565555ffff000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
-f766666666666ffff777777577777fff000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
-f7666666666666fff7666665766666ff000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
-f76666666666666ff76666665766666f000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
-f55555555555555ff55555555555555f000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
-ffffffffffffffffffffffffffffffff000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
-ffffffffffffffffffffffffffffffff000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
-ffffffffffffffffffffffffffffffff000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
-ffffffffffffffffffffffffffffffff000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
-ffffffffffffffffffffffffffffffff000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+bbbbbbbbbbb1bbbbf5d555d555d555d55d555d5fffffffff1d515555ffffffff99f99999ffffffffffffffff9f99f9f9ff9f9999ffffffffffffffffffffffff
+bb11bbbbbb171bbb1555515d15555155d51555515dfffd5f5155d55dffff9fff9f9999f9fff9fffffffffffff99f99f999f99899ffffffffffffffffffffffff
+bb171bbbb1bbb1bb5d55d5515d55d555155d55d5d5155551555d5155ffff999999ff99999999ffffffffffff9f99f99f9f9989f9ffffffffffffffffffffffff
+bb1771bb17b1b71b55515d5555515d5d55d51555155d55d5d5555d55fff99f9f99999f99f9f99ffff9ffff9f999f999999f88899ffffffffffffffffffffffff
+bb17771bb1bbb1bbd55d5555d55555555555d55d55d5155555d155d5fffff9f9fff999999f9fffffff99f999f9ffff9f99998f99ffffffffffffffffffffffff
+bb177771bb171bbb55d551d555d515555d155d555555d55d15555555ffff999999999f999999ffff999f99f9fffffffffff89999ffffffffffffffffffffffff
+bb17711bbbb1bbbb1555555515555515555555515d155d55f51ffd5ffff99f9f99fff9f9f9f99fff9f99f99fffffffff99999f99ffffffffffffffffffffffff
+bbb11bbbbbbbbbbbf55d5515555d55555155d55f55555551ffffffffffff99f9ff9f99999f99fffff99f99f9ffffffff99fff9f9ffffffffffffffffffffffff
+b7bbbb7bffffffffffffffffddddddddddddddddffffffffffffffff55d555d555d555d555d555d555dd444444444444444444d555dd444444444444444444d5
+77bbbb77fffffffffff77fffd5555555d5555555f888888ff6ffffff155551551555515515555155155d44444444444444444455155044444444444444444055
+bbbbbbbbffffffffff79ff7fd5555555d5015515f8a8888fffffff6f5d55d55555dddd555d55d5555dd4444444444444444444455d5104444444444444444155
+bbbbbbbbfffffffff79f779fd5555555d5105555f888888fffffffff555155dddd4444ddddd15d5d55d44444444444444444444d555114444444444444440d5d
+bbbbbbbbfffffffffff799ffd5555555d5555111f888888fffffffffd555dd444444444444445555d5d444444444444444444445d55510044444444444401555
+bbbbbbbbffffffffff799fffd5555555d1555101f888888ffff6ffff55d5d444444444444444455555d44444444444444444444555d515100044444000015555
+77bbbb77ffffffffff79ffffd5555555d5555111f888888fffffffff155d44444444444444444415155d44444444444444444415155555151100000111155515
+b7bbbb7bfffffffff7ffffffd5555555d5515555ffffffffffffffff555d44444444444444444455555d44444444444444444455555d555555111115555d5555
+000000000bbbbbb000000000bbbbb1b1000000001b1bbbbb00000000bbbbbbbb0000000001bbbb1010000000bbbbbbb0000000010bbbbbbb00000000ffffffff
+001bb1000bbbbbb0bbb1b000bbb1bb000000bbbb00bb1bbb1b1b1b1bbbbbbbbb000000000bbbbbb0b0000000bbbbb1000000000b00bbbbbbb000000bffffffff
+01bbbb100bbbbbb0bbbb1b00bb1b0000000b1bbb0001b1bbbbbbbbbbbbbbbbbb00b0b00001bbbb101b000000bbbb1b00000000b1001bbbbbb1b1b1bbffffffff
+0bbbbbb00b1b1b10bbb1b000b1b0000000b1bbbb00000b1bbbbbbbbbbbbbbbbb0b1b1b000bbbbbb0bb000000bbbbb100000001bb00b1bbbbbb1b1bbbffffffff
+0bbbbbb000b1b1b0bbbb1b00bb000000000b1bbb000001bbbbbbbbbbbbb1b1bb01b1b1b001bbbb10b1b00000bbbb1b0000000b1b001bbbbbbbbbbbbbffffffff
+01bbbb10000b0b00bbb1b0001b00000000b1bbbb000000b1bbbbbbbbbb1b1b1b0bbbbbb00bbbbbb0bb1b0000bbbbb1000001b1bb00b1bbbbbbbbbbbbffffffff
+001bb10000000000bbbb0000b0000000000b1bbb0000000b1b1b1b1bb000000b0bbbbbb001bbbb10bbb1bb00bbbbbb0000bb1bbb001bbbbbbbbbbbbbffffffff
+00000000000000000000000010000000000000000000000100000000000000000bbbbbb00bbbbbb0bbbbb1b1bbbbbbb01b1bbbbb0bbbbbbbbbbbbbbbffffffff
+ffffffffbb2222bbbb8dd8bb62ddd26bb28882bbffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffb6bbb6bbb6bbb6bb
+ffffffffb088880bb8d66d8b6d666d6b2828282bffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffb8bbb8bbb8bbb8bb
+ffffffffb088880bb8d66d8b6d666d6b2868682bffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffb2bbb2bbb2bbb2bb
+ffffffffb288882bb8d66d8b68d6d86b2262622bffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffb0bbb0bb0b0b0b0b
+ffffffffb288882bb856658b6886886b2808082bffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffbbb6bbbbbbb6bbbb
+ffffffffb028820bb886688b6226226b2888882bffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffbbb8bbbbbbb8bbbb
+ffffffffb0d22d0bb220022b50b0b05b00bbb00bffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffbbb2bbbbbbb2bbbb
+ffffffffbb2882bbb00bb00bbbbbbbbbbbbbbbbbffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffbbb0bbbbbb0b0bbb
+d66dddddddd6fffdddd776ddddddddddddddddddddd666dddddddddd0000000000000000000000000000000000000000000000000000000100fff00010fff000
+76665555551ffff1d576de65d5577655d5555555d5766665d55555550000000000000000000000000000000000000000000000000000000bb000000bb0000000
+76665805555f4441d76deee5d576de65d5556555d5766665d5888885000000000000000000000000000000000000000000000000000000b1b1b1b1bb1b000000
+177d22055d5ffff1d66d11e5d76deee5d5576655d5677725d5555555000000000000000000000000000000000000000000000000000001bbbb1b1bbbbb000000
+d1d55505555f1011d66d01e5d66d11e5d55d7d55d566dd25d552225500000000000000000000000000000000000000000000000000000b1bbbbbbbbbb1b00000
+6555550515df1001d66d0e55d66d01e5d55ddd55d566dd25d55555550000000000000000000000000000000000000000000000000001b1bbbbbbbbbbbb1b0000
+d6d6d55555551005d56dd555d66d0e55d555d555d556dd55d555255500000000000000000000000000000000000000000000000000bb1bbbbbbbbbbbbbb1bb00
+d6d6d555d55d5555d5555555d56dd555d5555555d5555555d55222550000000000000000000000000000000000000000000000001b1bbbbbbbbbbbbbbbbbb1b1
+dddddddd55d555d5ddddd776ddddddddddd666dddddddddddddddddd0000000000000000000000000000000000000000000000000bbbbbbbbbbbbbbbbbbbbbb0
+d555555515555155d55576de65555555d5766665d5555555d552225500000000000000000000000000000000000000000000000000bbbbbbbbbbbbbbbbbbb100
+d555555a5d55d555d5576deee5558055d5766665d5556555d5552555000000000000000000000000000000000000000000000000001bbbbbbbbbbbbbbbbb1b00
+d5aaa99a55515d5dd5566d11e5522055d5677725d5576655d555555500000000000000000000000000000000000000000000000000b1bbbbbbbbbbbbbbbbb100
+d5aaa55ad5555555d5566d01e5555055d566dd25d55d7d55d5522255000000000000000000000000000000000000000000000000001bbbbbbbbbbbbbbbbb1b00
+d5a1199a55d51555d5566d0ed5555055d566dd25d55ddd55d555555500000000000000000000000000000000000000000000000000b1bbbbbbbbbbbbbbbbb100
+d544445a15555515d5556dd5d5555555d556dd55d555d555d5888885000000000000000000000000000000000000000000000000001bbbbbbbbbbbbbbbbbbb00
+d5151515555d5555d5555555d5555555d5555555d5555555d55555550000000000000000000000000000000000000000000000000bbbbbbbbbbbbbbbbbbbbbb0
+ffffffffffffffffffffffffffffffff0000000000000000000000000000000000000000000000000000000000000000000000001b1bbbbbbbbbbbbbbbbbb1b1
+ffffffffffffffffffffffffffffffff00000000000000000000000000000000000000000000000000000000000000000000000000bb1bbbbbbbbbbbbbb1bb00
+ffffffffffffffffffffffffffffffff0000000000000000000000000000000000000000000000000000000000000000000000000001b1bbbbbbbbbbbb1b0000
+ffffffffffffffffffffffffffffffff00000000000000000000000000000000000000000000000000000000000000000000000000000b1bbbbbbbbbb1b00000
+ff77777777ffffffff77757777ffffff000000000000000000000000000000000000000000000000000000000000000000000000000001bbbbb1b1bbbb000000
+ff766666666fffffff766657666fffff000000000000000000000000000000000000000000000000000000000000000000000000000000b1bb1b1b1b1b000000
+ff7666666666ffffff5555565555ffff0000000000000000000000000000000000000000000000000000000000000000000000000000000bb000000bb0000000
+f766666666666ffff777777577777fff000000000000000000000000000000000000000000000000000000000000000000000000000000010000000010000000
+f7666666666666fff7666665766666ff000000000000000000000000bbb22bbbbb8dd8bb62ddd26bb28882bb0000000000000000000000000000000000000000
+f76666666666666ff76666665766666f000000000000000000000000bb2882bbb8d66d8b6d666d6b2828282b0000000000000000000000000000000000000000
+f55555555555555ff55555555555555f000000000000000000000000b522225bb8d66d8b6d666d6b2868682b0000000000000000000000000000000000000000
+ffffffffffffffffffffffffffffffff000000000000000000000000b028820bb8d66d8b68d6d86b2262622b0000000000000000000000000000000000000000
+ffffffffffffffffffffffffffffffff000000000000000000000000bb2882bbb856658b6886886b2808082b0000000000000000000000000000000000000000
+ffffffffffffffffffffffffffffffff000000000000000000000000b522225bb886688b6226226b2888882b0000000000000000000000000000000000000000
+ffffffffffffffffffffffffffffffff000000000000000000000000b002200bb220022b50b0b05b00bbb00b0000000000000000000000000000000000000000
+ffffffffffffffffffffffffffffffff000000000000000000000000bbbbbbbbb00bb00bbbbbbbbbbbbbbbbb0000000000000000000000000000000000000000
 ccccccccccccc0cccccccccccccccccccccccccccccccccceeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeee
 ccccccccccccc0ccccccccccccccccccc71dcccc1c0c1cc7eeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeee
 cccccccccccccdccccccc677ddcccccc5666ccccc101c7d7eeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeee
@@ -691,38 +777,38 @@ ccccccccccccccdccccc67111dcccccc11116666dc0157d7eeeeeeeeeeeeeeeeffffffffffffffff
 4554444544544454555555559999f9999944677667767698eeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeee
 54445544554545449f9999f9999999f99977777777679887eeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeee
 455454554555544599fffffff9f999994777776677988977eeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeee
-eeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffff
-eeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffff
-eeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffff
-eeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffff
-eeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffff
-eeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffff
-eeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffff
-eeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffff
-eeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffff
-eeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffff
-eeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffff
-eeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffff
-eeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffff
-eeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffff
-eeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffff
-eeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffff
-ffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeee
-ffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeee
-ffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeee
-ffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeee
-ffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeee
-ffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeee
-ffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeee
-ffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeee
-ffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeee
-ffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeee
-ffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeee
-ffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeee
-ffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeee
-ffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeee
-ffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeee
-ffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeee
+ffffffffffffffffffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffff
+ffffffffffffffffffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffff
+ffffffffffffffffffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffff
+ffffffffffffffffffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffff
+ff77777777ffffffff77757777ffffffeeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffff
+ff766666666fffffff766657666fffffeeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffff
+ff7666666666ffffff5555565555ffffeeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffff
+f766666666666ffff777777577777fffeeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffff
+f7666666666666fff7666665766666ffeeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffff
+f76666666666666ff76666665766666feeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffff
+f55555555555555ff55555555555555feeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffff
+ffffffffffffffffffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffff
+ffffffffffffffffffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffff
+ffffffffffffffffffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffff
+ffffffffffffffffffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffff
+ffffffffffffffffffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffff
+ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeee
+ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeee
+ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeee
+ccccccccccccccccccccccf7ccccccccccccccccccccccccccccccccccccccccffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeee
+cccc7755555555ccccccc5f01cccccccccccccccccccccccccccccccccccccccffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeee
+ccc7675dd55dd5cccccc055ffccccccccccccc4ff75550cccccccccc7776660cffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeee
+cc7666755566555ccccc0f7557ccccccccccc4ffff7fccccccccc4ffff75550cffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeee
+cd66d6755666655ccccc0f7fff7ccccccc54454444444f7ccc45444444444cccffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeee
+c5dd66655555555ccccc0ff000550cccc555fffffffff55cc54fffffffffff5cffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeee
+916666d001110009cccc00df00cccccc95060000000006599504000000000459ffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeee
+f90500000444000999999900ff99999999555555555555999955555555555599ffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeee
+999999999999999f44999df9dff9f999f99999999999999f9999999999999999ffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeee
+9f9ff9999f9999994444df449df999f9999999f999999999f99f99f99999f99fffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeee
+99999999999999f999945559455599999ff9999999fff999999999999ff99999ffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeee
+99999999ffff9999fff999999999999999999999999999ff999fff9999999f99ffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeee
+9fffff99999999ff9999999f99999ff999fffff9999f99999f99999999999999ffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeee
 eeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffff
 eeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffff
 eeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffff
@@ -870,41 +956,41 @@ f000f000f0000fffff79f000000000ffff79ffffffffffffffffffffffffffffffffffffffffffff
 fffffffff7fffffff7fffffff7fffffff7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff7fffffff7ffffff
 
 __gff__
-0000020202020400000000000001010100010200010000000000000000010101000000000000000000000000000101010101010100000000000000000000000001010101010102000000000000000000010101010101020000000000000000000000000000000000000000000000000000000000000000000000000000000000
+0000020202020400000000000000000000000200010000010101010101010101010101010000000000000101010000000001010101000000000000000000000001010101010102000000000001010101010101010101020000000000010101010000000000000000000000000101010100000000000000010101010000000000
 0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 __map__
-0809000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000095959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595
-0808090213141604000000000000000000000000000012120000000000000000000000000000000000121200000000121200000000000000000000000000000095959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595
-08080c0a0a090000000000000204000000001212121212000000000000000000000000000000000000001212121212120000000000000000000003030300000095959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595
-080808080b000000000000000304000012121212121200000000000000000000000000000000000000000000000012000000000000000000000303030303030095959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595
-080b0b1812000000000000020400000012000000000000000000000000120000000000000000000000000000000000000000030303030303030303030303030095959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595
-0000001212000000000203040000000000000000000000000000121212000000000000000000000000000000000000000000000003000000000303030303030095959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595
-0012121212000000020303040030000000020505000000000000120000000000000000000000030303030303030303030000000000000000000003030303030095959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595
-0012121212000000000614140000000005030d0f0500000000121200000000000000000000030303030d0e0e030303030303000000000000000003030303030095959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595
-00121212120000000000141400000000030d1e1f030000000012000000000000000000000003030d0e1e1e1e0f0303030303000000000000000000030303030095959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595
-00121200120000000002031313050500032d2e2f030000000000000000000000000000000003031d1e1e1e1e1e0e0e0e0e03030000000000000000000303030095959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595
-0000000012000000000606000002060006030303030000000000000000000012000000000303031d1e2f0303030303030303030300000003030303030303000095959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595
-000000121200000000000000000000000006060606000000000000000000001200000000030303031e030303030303030300000000000000030303030303030095959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595
-000000000000000000000000000000000000000000000000000000000012121200000003030303032e2f0303030000000000000000000000000000000003030095959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595
-0000000000000000000000000012121200000000000000001200001212120000000000030303030303030303030300000000000012000000000000000000030095959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595
-0000121212120000000000121212121212120000000000001212121200000000000003030303030303030303030303000000120012121212121200000000000095959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595
-0012121212000000000000000000121212121212000000000000000000000000000003030303030303030303030303030000120000000000000000000000000095959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595
-0000000000000000000000000000000000000000000000000000000000000000000003030000000000000000000303030000001200120000000000000000000095959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595
-0000000000000000000000000000000000000000000000000000000000000000000003000000000000000000000003030300000000120000000000000000000095959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595
-0000000000000000000000000002050400000000000000000000000012000000000000000012121212121200000000030300000000001212000000000000000095959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595
-0000000000000000000205050503030400000000000000000000000012121212000000000000001212121212120000000000000600000012121203000000060095959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595
-00000000000000000002030d0e0f030303000000000000000000000000000012120000000000000000121212120000000000000000000000000003000000000095959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595
-00000000000000000503031d1e1e0e0e0f040000000000000000000000000000120000000000000000000000120000000000000000000000000003000000000095959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595
-00000000000000020303032d2e1e1e1e1f030400000000000000000000000012000000000000000000000000000000000000000003000000000303000000000095959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595
-000000000000000000060303031d1e1e2f030606060000000000000000121212000000000000000000000000000000000000000003030303030300000000000095959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595
-000000000000000000000002032d2e2f03060000000606000000000012120000000000000000000006060606060600000000000000030303000000000000000095959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595
-0000000000000000000000060603030303000000000000060000000012000000030000000000000000000000000606000600060000000003030303000000000095959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595
-0000000000000000000000000000000606000000000000060000000000000000030000000000000000000000000000000000000000030300000003000000000095959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595
-0000000000000000000000000000000000000000000000060000000000000000000000000000000000000000000000000000000000030303030300000000000095959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595
-0000000000000000000000000000000000000000000000000600000000000000000000000000000000000000000000000000000000030603030600000000000095959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595
-0000000000000000000000000000000000000000000000000006060600000000000000000000000000000000000000000000000000000000000000000000000095959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595
-0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000095959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595
-0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000095959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595
+0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000015151500000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000151515
+0000000000000000000000000000000000000000000000000000000000000000000000000000000000121200000000121200000000000000000000000000000015000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000015
+1212000000000000001616161600000000000000000007080900000000000000000000000000000000001212121212120000000000000000000003030300000015000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000015
+1212120000000016161616000000000000000000000708080809000000000000000000000000000000000000000012000000000000000000000303030303030000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+1212121212120000161616000204000000000007080808080809000000000000000000000000000000000000000000000000030303030303030303030303030000000012121212000000000000000000120012000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+1212121200000000160000000304000000000708080808080b00000000000000000000000000000000000000000000000000000003000000000303030303030000001212121212121200000000000000121212000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+121212160000000000000002040000070a0a0c080808080b0000000000120000000000000000030303030303030303030000000000000000000003030303030000121212121212000000000000001212121212000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+000000120000000000020304000000000b08080808080b000000121212000000000000000003030303171819030303030303000000000000000003030303030012120000000000000000000000121212121200000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+00121212000016000003030400000000000205050000000000001200000000000000000000030303171b1b1b190303030303000000000000000000030303030012000000000000000000000000121212120000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+1212121212000016000614140000000005031719050000000012120000000000000000000003031a1b1b1e1e1e1e03030303030000000000000000000303030000000000000000000012120000121212120000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+1212121212001600000014140000000003171b1c030000000012000000000000000000000303031d1b1f0303030303030303030300000003030303030303000000000000000000000012121212121212000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+00121200120016160002031313050500031d1b1f03000000000000000000000000000000030303031a030303030303030300000000000000030303030303030000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+000000001200001600060600000206000603030303000000000000000000001200000003030303031d1f0303030000000000000000000000000000000003030000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+0000001212000000000000000000000000060606060000000000000000000012000000030303030303030303030300000000000012000000000000000000030000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+0000000000000000001616000000000000000000000000000000000000121212000003030303030303030303030303000000120012121212121200000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000016000012121200000000000000001200001212120000000003030303030303030303030303030000120000000000000000000000000000000000000000000000000000000000000000000000000000121212121212120000000000000000000000000000000000000000000000000000000000000000
+0000121212120000000000001212121212120000000000001212121200000000000003030000000000000000000303030000001200120000000000000000000000000000000000000000000000000000000000000000000012121212121212120000000000000000000000000000000000000000000000000000000000000000
+0012121212000016000000000000121212121212000000000000000000000000000003000000000000000000000003030300000000120000000000000000000000000000000000000000000000000000000000000000001212121212121212120000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000002050400000000000000000000000012000000000000000012121212121200000000030300000000001212000000000000000000000000000000000000000000000000000000000000001212121200121212000000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000205050503030400000000000000000000000012121212000000000000001212121212120000000000000600000012121203000000060000000000000000000000000000000000000000001212121212120000000000000000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000217181819030303000000000000000000000000000012120000000000000000121212120000000000000000000000000003000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+000000000000000005031d1b1b1b181819040000000000000000000000000000120000000000000000000000120000000000000000000000000003000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+00000000000000020303031d1b1b1b1b1c030400000000000000000000000012000000000000000000000000000000000000000003000000000303000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+000000000000000000060303031a1b1b1f030606060000000000000000121212000000000000000000000000000000000000000003030303030300000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+000000000000000000000002031d1b1f03060000000606000000000012120000000000000000000006060606060600000000000000030303000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000060603030303000000000000060000000012000000030000000000000000000000000606000600060000000003030303000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000606000000000000060000000000000000030000000000000000000000000000000000000000030300000003000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000060000000000000000000000000000000000000000000000000000000000030303030300000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000600000000000000000000000000000000000000000000000000000000030603030600000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+1500000000000000000000000000000000000000000000000006060600000000000000000000000000000000000000000000000000000000000000000000001500000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+1500000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001500000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+1515150000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000015151500000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 __sfx__
 000100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 001000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
