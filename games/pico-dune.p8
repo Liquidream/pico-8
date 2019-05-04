@@ -195,6 +195,16 @@ cursor.draw=function(self)
  -- test fog of war
  reveal_fow(unit)
 
+ -- infantry
+ unit = m_obj(9*8, 3*8, 1, 62, 11)
+ unit.altframe=63
+ unit.framecount=10
+ unit.speed=.15
+ unit.norotate=true
+ add(units,unit)
+ -- test fog of war
+ reveal_fow(unit)
+
 end
 
 function reveal_fow(object)  
@@ -718,6 +728,7 @@ function m_obj(x,y,type,sprnum,trans_col,w,h,parent,func_onclick)
   h=(h or 1)*8, --
   parent=parent,
   spr=sprnum,
+  orig_spr=sprnum,
   trans_col=trans_col,
   func_onclick=func_onclick,
   ai=false,
@@ -728,6 +739,8 @@ function m_obj(x,y,type,sprnum,trans_col,w,h,parent,func_onclick)
   frame=0,
   framecount=0,
   col_cycle_pos=1,
+  -- (units: 1=idle/guarding, 2=moving, 3=attacking)
+  state=1, 
 
   get_hitbox=function(self)
    return {
@@ -767,10 +780,16 @@ function m_obj(x,y,type,sprnum,trans_col,w,h,parent,func_onclick)
   end,
   update=function(self)
     -- default functionality?
-    if self.col_cycle then
-      self.frame+=1
-      if (self.frame > self.framecount) then
-        self.frame=0
+    self.frame+=1
+    if (self.frame > self.framecount) then
+      self.frame=0
+      -- alternate moving frame?
+      if self.altframe 
+       and self.state==2 then
+        self.spr=self.orig_spr+(self.altframe-self.spr)
+      end
+
+      if self.col_cycle then
         self.col_cycle_pos+=1
         if (self.col_cycle_pos>#self.col_cycle) self.col_cycle_pos=1
       end
@@ -923,16 +942,22 @@ end
  
 function movepath_cor(unit)
  printh("-------------")
+
+ unit.state=2 --moving
+
  -- loop all path nodes...
  for i=#unit.path-1,1,-1 do
   local node=unit.path[i]
-  -- rotate to angle   
-  local dx=unit.x-(node.x*8)
-  local dy=unit.y-(node.y*8)
-  local a=atan2(dx,dy)
-  printh("  >> target angle="..a)
-  while (unit.r != a) do
-   turntowardtarget(unit, a)
+
+  if not unit.norotate then
+    -- rotate to angle
+    local dx=unit.x-(node.x*8)
+    local dy=unit.y-(node.y*8)
+    local a=atan2(dx,dy)
+    printh("  >> target angle="..a)
+    while (unit.r != a) do
+      turntowardtarget(unit, a)
+    end
   end
   
   -- move to new position
@@ -952,6 +977,7 @@ function movepath_cor(unit)
  end
 
  -- arrived?
+ unit.state=1 --idle
 
  -- todo: set map/path data that tile is now occupied
 end
@@ -1249,15 +1275,15 @@ b7bbbb7bfffffffff7ffffffd5555555d5515555ffffffffffffffff555d44444444444444444455
 01bbbb10000b0b00bbb1b0001b00000000b1bbbb000000b1bbbbbbbbbb1b1b1b0bbbbbb00bbbbbb0bb1b0000bbbbb1000001b1bb00b1bbbbbbbbbbbbffffffff
 001bb10000000000bbbb0000b0000000000b1bbb0000000b1b1b1b1bb000000b0bbbbbb001bbbb10bbb1bb00bbbbbb0000bb1bbb001bbbbbbbbbbbbbffffffff
 00000000000000000000000010000000000000000000000100000000000000000bbbbbb00bbbbbb0bbbbb1b1bbbbbbb01b1bbbbb0bbbbbbbbbbbbbbbffffffff
-ffffffffbb2222bbbb8dd8bb62ddd26bb28882bbffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
-ffffffffb088880bb8d66d8b6d666d6b2828282bffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
-ffffffffb088880bb8d66d8b6d666d6b2868682bffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
-ffffffffb288882bb8d66d8b68d6d86b2262622bffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
-ffffffffb288882bb856658b6886886b2808082bffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
-ffffffffb028820bb886688b6226226b2888882bffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
-ffffffffb0d22d0bb220022b50b0b05b00bbb00bffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
-ffffffffbb2882bbb00bb00bbbbbbbbbbbbbbbbbffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
-d66dddddddd6fffdddd776ddddddddddddddddddddd666dddddddddd000000000000000000000000000000000000000000000000000000010000000010000000
+ffffffffbb2222bbbb8dd8bb62ddd26bb28882bbffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffb6bbb6bbb6bbb6bb
+ffffffffb088880bb8d66d8b6d666d6b2828282bffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffb8bbb8bbb8bbb8bb
+ffffffffb088880bb8d66d8b6d666d6b2868682bffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffb2bbb2bbb2bbb2bb
+ffffffffb288882bb8d66d8b68d6d86b2262622bffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffb0bbb0bb0b0b0b0b
+ffffffffb288882bb856658b6886886b2808082bffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffbbb6bbbbbbb6bbbb
+ffffffffb028820bb886688b6226226b2888882bffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffbbb8bbbbbbb8bbbb
+ffffffffb0d22d0bb220022b50b0b05b00bbb00bffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffbbb2bbbbbbb2bbbb
+ffffffffbb2882bbb00bb00bbbbbbbbbbbbbbbbbffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffbbb0bbbbbb0b0bbb
+d66dddddddd6fffdddd776ddddddddddddddddddddd666dddddddddd0000000000000000000000000000000000000000000000000000000100fff00010fff000
 76665555551ffff1d576de65d5577655d5555555d5766665d55555550000000000000000000000000000000000000000000000000000000bb000000bb0000000
 76665805555f4441d76deee5d576de65d5556555d5766665d5888885000000000000000000000000000000000000000000000000000000b1b1b1b1bb1b000000
 177d22055d5ffff1d66d11e5d76deee5d5576655d5677725d5555555000000000000000000000000000000000000000000000000000001bbbb1b1bbbbb000000
