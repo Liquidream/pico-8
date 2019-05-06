@@ -366,10 +366,10 @@ function update_level()
  --
 
  -- auto-scroll (pan) map
- if (cursx<8) camx-=2
- if (cursx>119) camx+=2
- if (cursy<8) camy-=2
- if (cursy>119) camy+=2
+ if (cursx<4) camx-=2
+ if (cursx>123) camx+=2
+ if (cursy<4) camy-=2
+ if (cursy>123) camy+=2
 
  -- lock cam to map
  camx=mid(camx,384)  --896
@@ -529,10 +529,12 @@ function draw_ui()
   and selected_obj.build_obj 
   and selected_obj.build_obj.life>=100 then
   -- draw placement!
-  --fillp(0b1110110110110111.1)
-  rectfill(flr(cursor.x/8)*8,flr(cursor.y/8)*8,
-           (flr(cursor.x/8)+2)*8,(flr(cursor.y/8)+2)*8,11)
-  --fillp()
+  local xx=flr(cursor.x/8)*8-camx%8
+  local yy=flr(cursor.y/8)*8-camy%8
+  fillp("0b1110110110110111.1")
+  rectfill(xx, yy,
+           xx+selected_obj.build_obj.w, yy+selected_obj.build_obj.h, 11)
+  fillp()
  end
 
  -- cursor

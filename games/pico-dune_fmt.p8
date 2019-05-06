@@ -13,11 +13,11 @@ k={}
 l={}
 m={}
 n={}
-n.o=function(self)
+n.draw_windtrap=function(self)
 printh("hello building!!!")
-printh("hello "..self.p)
+printh("hello "..self.o)
 end
-q=
+p=
 [[1|cONSTRUCTION yARD|64|128|2|2|2|nil|nil|nil|1||100|nil||400|||aLL STRUCTURES ARE BUILT BY THE CONSTRUCTION YARD.||
 2|wINDTRAP|66|130|2|2|2|nil|1|1|1||300|100||200|||tHE WINDTRAP SUPPLIES POWER TO YOUR BASE. wITHOUT POWER YOUR STRUCTURES WILL DECAY.|draw_windtrap|update_bld
 3|sMALL cONCRETE sLAB|||2|1|1|nil|1|1|1||5|nil||0|||uSE CONCRETE TO MAKE A STURDY FOUNDATION FOR YOUR STRUCTURES.||
@@ -58,31 +58,31 @@ q=
 [[38|sARDAUKAR|||1|1|1||nil|nil|4||0||5|110|10|1|tHE sARDULAR ARE THE eMPEROR'S ELITE TROOPS. WITH SUPERIOR FIREPOWER AND ARMOUR.||
 39|sANDWORM|||1|1|1||nil|nil|3||0||300|1000|35|0|tHE sAND wORMS ARE INDIGEONOUS TO dUNE. aTTRACTED BY VIBRATIONS, ALMOST IMPOSSIBLE TO DESTROY, WILL CONSUME ANYTHING THAT MOVES.||]]
 function _init()
-r()
+q()
 poke(0x5f2d,1)
 cartdata("pn_picodune")
-s=1
-u()
-v=0
-cursor=w(0,0,0)
-cursor.x=function(self)
+r=1
+s()
+u=0
+cursor=v(0,0,0)
+cursor.w=function(self)
 return{
-y=self.y+(not z and c or 0)+2,
-ba=self.ba+(not z and d or 0)+1,
-bb=1,
-bc=1
+x=self.x+(not y and c or 0)+2,
+z=self.z+(not y and d or 0)+1,
+ba=1,
+bb=1
 }
 end
-cursor.bd=function(self)
+cursor.bc=function(self)
 spr((i and(i.type==1)) and 1 or self.spr,
-self.y,self.ba,self.bb/8,self.bc/8)
+self.x,self.z,self.ba/8,self.bb/8)
 end
-local be=w(12*8,4*8,2,66,nil,2,2)
-be.bf=50
-be.bg=w(109,20,2,130,nil,2,2,be,function(self)
+local bd=v(12*8,4*8,2,66,nil,2,2)
+bd.be=50
+bd.bf=v(109,20,2,130,nil,2,2,bd,function(self)
 printh("todo: fix windfarm?...")
 end)
-be.bh={
+bd.bg={
 {14,12},
 {14,12},
 {14,12},
@@ -94,185 +94,185 @@ be.bh={
 {14,1},
 {14,13},
 }
-be.bi=10
-add(m,be)
-bj(be)
-local bk=w(9*8,7*8,2,68,nil,3,2)
-bk.bf=10
-bk.bg=w(109,20,2,132,nil,2,2,bk,function(self)
+bd.bh=10
+add(m,bd)
+bi(bd)
+local bj=v(9*8,7*8,2,68,nil,3,2)
+bj.be=10
+bj.bf=v(109,20,2,132,nil,2,2,bj,function(self)
 printh("todo: fix refinary?...")
 end)
-add(m,bk)
-bj(bk)
-local bl=w(10*8,9*8,2,bm[1][3],nil,2,2)
-bl.bf=75
-bl.bg=w(109,20,2,128,nil,2,2,bl,function(self)
+add(m,bj)
+bi(bj)
+local bk=v(10*8,9*8,2,bl[1][3],nil,2,2)
+bk.be=75
+bk.bf=v(109,20,2,128,nil,2,2,bk,function(self)
 printh("todo: load construction yard menu...")
 end)
-bl.bn=w(109,44,2,162,nil,2,2,nil,function(self)
+bk.bm=v(109,44,2,162,nil,2,2,nil,function(self)
 printh("todo: build slab...")
-self.bo=0.5
-self.bp=cocreate(function(self)
-while self.bf<100 do
-self.bf+=self.bo
+self.bn=0.5
+self.bo=cocreate(function(self)
+while self.be<100 do
+self.be+=self.bn
 j-=.1
 yield()
 end
 end)
 end)
-add(m,bl)
-bj(bl)
-local bq=w(5*8,3*8,1,50,11)
-bq.br=0
-bq.bg=w(109,20,2,198,nil,2,2,bq,nil)
-bq.bf=100
-add(k,bq)
-bj(bq)
-bq=w(7*8,9*8,1,51,11)
-bq.br=0.25
-bq.bg=w(109,20,2,196,nil,2,2,bq,nil)
-bq.bf=100
-add(k,bq)
-bj(bq)
-bq=w(14*8,6*8,1,49,11)
-bq.bg=w(109,20,2,192,nil,2,2,bq,nil)
-bq.br=0.75
-bq.bs=.25
-bq.bf=100
-add(k,bq)
-bj(bq)
-bq=w(9*8,3*8,1,62,11)
-bq.bg=w(109,20,2,194,nil,2,2,bq,nil)
-bq.bt=63
-bq.bi=10
-bq.bs=.15
-bq.bu=true
-bq.bf=100
-add(k,bq)
-bj(bq)
+add(m,bk)
+bi(bk)
+local bp=v(5*8,3*8,1,50,11)
+bp.bq=0
+bp.bf=v(109,20,2,198,nil,2,2,bp,nil)
+bp.be=100
+add(k,bp)
+bi(bp)
+bp=v(7*8,9*8,1,51,11)
+bp.bq=0.25
+bp.bf=v(109,20,2,196,nil,2,2,bp,nil)
+bp.be=100
+add(k,bp)
+bi(bp)
+bp=v(12*8,8*8,1,49,11)
+bp.bf=v(109,20,2,192,nil,2,2,bp,nil)
+bp.bq=0.75
+bp.br=.25
+bp.be=100
+add(k,bp)
+bi(bp)
+bp=v(9*8,3*8,1,62,11)
+bp.bf=v(109,20,2,194,nil,2,2,bp,nil)
+bp.bs=63
+bp.bh=10
+bp.br=.15
+bp.bt=true
+bp.be=100
+add(k,bp)
+bi(bp)
 c=15
 end
-function bj(bv)
-local bw=bv.type==2 and 3 or 2
-for bx=-bw,bw do
-for by=-bw,bw do
-local bz=flr(bv.y/8)+bx
-local ca=flr(bv.ba/8)+by
-cb[bz][ca]=16
-cc(bz,ca)
-for ce=-1,1 do
-for cf=-1,1 do
-cc(bz+cf,ca+ce)
+function bi(bu)
+local bv=bu.type==2 and 3 or 2
+for bw=-bv,bv do
+for bx=-bv,bv do
+local by=flr(bu.x/8)+bw
+local bz=flr(bu.z/8)+bx
+ca[by][bz]=16
+cb(by,bz)
+for cc=-1,1 do
+for cd=-1,1 do
+cb(by+cd,bz+cc)
 end
 end
 end
 end
 end
 function _update60()
-cg()
-if(t()%1==0) ch()
+ce()
+if(t()%1==0) cf()
 end
 function _draw()
-ci()
-cj()
-if(a) ck("cpu: "..flr(stat(1)*100).."%\nmem: "..(flr(stat(0)/2048*100)).."%\nfps: "..stat(7),2,109,8,0)
+cg()
+ch()
+if(a) ci("cpu: "..flr(stat(1)*100).."%\nmem: "..(flr(stat(0)/2048*100)).."%\nfps: "..stat(7),2,109,8,0)
 end
-function u()
-cb={}
-for cl=-2,66 do
-cb[cl]={}
-for cm=-2,66 do
-cb[cl][cm]=0
-end
-end
-end
-function cn()
-local co=flr(c/8)
-local cp=flr(d/8)
-for bx=co-1,co+16 do
-for by=cp-1,cp+16 do
-if cb[bx][by]!=0 and cb[bx][by]!=16 then
-spr(cb[bx][by]+31,bx*8,by*8)
-elseif cb[bx][by]<16 then
-rectfill(bx*8,by*8,bx*8+7,by*8+7,0)
+function s()
+ca={}
+for cj=-2,66 do
+ca[cj]={}
+for ck=-2,66 do
+ca[cj][ck]=0
 end
 end
 end
+function cl()
+local cm=flr(c/8)
+local cn=flr(d/8)
+for bw=cm-1,cm+16 do
+for bx=cn-1,cn+16 do
+if ca[bw][bx]!=0 and ca[bw][bx]!=16 then
+spr(ca[bw][bx]+31,bw*8,bx*8)
+elseif ca[bw][bx]<16 then
+rectfill(bw*8,bx*8,bw*8+7,bx*8+7,0)
 end
-function cc(y,ba)
-if(y<0 or y>#cb or ba<0 or ba>#cb) return
-local cq=0
-if cb[y][ba]!=0 then
-if(cb[y][ba-1]>0) cq+=1
-if(cb[y-1][ba]>0) cq+=2
-if(cb[y+1][ba]>0) cq+=4
-if(cb[y][ba+1]>0) cq+=8
-cb[y][ba]=1+cq
 end
 end
-function ch()
+end
+function cb(x,z)
+if(x<0 or x>#ca or z<0 or z>#ca) return
+local co=0
+if ca[x][z]!=0 then
+if(ca[x][z-1]>0) co+=1
+if(ca[x-1][z]>0) co+=2
+if(ca[x+1][z]>0) co+=4
+if(ca[x][z+1]>0) co+=8
+ca[x][z]=1+co
+end
+end
+function cf()
 l={}
-for cr,bq in pairs(k) do
-l[flr(bq.y/8)..","..flr(bq.ba/8)]=1
+for cp,bp in pairs(k) do
+l[flr(bp.x/8)..","..flr(bp.z/8)]=1
 end
 end
-function cg()
-cs=stat(32)
-ct=stat(33)
-cu=stat(34)
-cv=(cu>0 and cw!=cu) or btnp(4)
-for cx=0,1 do
-if(btn(cx)) g+=cx*2-1
-if(btn(cx+2)) h+=cx*2-1
+function ce()
+cq=stat(32)
+cr=stat(33)
+cs=stat(34)
+ct=(cs>0 and cu!=cs) or btnp(4)
+for cv=0,1 do
+if(btn(cv)) g+=cv*2-1
+if(btn(cv+2)) h+=cv*2-1
 end
-e=mid(0,cs+g,127)
-f=mid(0,ct+h,127)
-cursor.y=e
-cursor.ba=f
+e=mid(0,cq+g,127)
+f=mid(0,cr+h,127)
+cursor.x=e
+cursor.z=f
 if(e<8) c-=2
 if(e>119) c+=2
 if(f<8) d-=2
 if(f>119) d+=2
 c=mid(c,384)
 d=mid(d,384)
-cy()
-cz()
-v+=1
-cw=cu
-da=i
+cw()
+cx()
+u+=1
+cu=cs
+cy=i
 end
-function db(bq,y,ba)
-bq.dc="init"
-if fget(mget(y,ba),0)
-or l[y..","..ba] then
+function cz(bp,x,z)
+bp.da="init"
+if fget(mget(x,z),0)
+or l[x..","..z] then
 printh("aborting pathfinding - invalid target")
 return
 end
-bq.dd=y
-bq.de=ba
-bq.df=bq.dg
-bq.dg=1
-bq.bp=cocreate(dh)
+bp.db=x
+bp.dc=z
+bp.dd=bp.de
+bp.de=1
+bp.bo=cocreate(df)
 end
-function cy()
-for cr,bq in pairs(k) do
-di(bq)
+function cw()
+for cp,bp in pairs(k) do
+dg(bp)
 end
-for cr,dj in pairs(m) do
-di(dj)
-di(dj.bn)
+for cp,dh in pairs(m) do
+dg(dh)
+dg(dh.bm)
 end
 end
-function di(dk)
-if dk then
-if dk.bp and costatus(dk.bp)!='dead'then
-dl(coresume(dk.bp,dk))
+function dg(di)
+if di then
+if di.bo and costatus(di.bo)!='dead'then
+assert(coresume(di.bo,di))
 else
-dk.bp=nil
+di.bo=nil
 end
 end
 end
-function ci()
+function cg()
 cls"15"
 camera(c,d)
 palt()
@@ -281,412 +281,414 @@ palt(0,false)
 palt(11,true)
 map(0,0,0,0,64,32)
 map(64,0,0,256,64,32)
-if dc!=nil and dc!="init"then
-spr(144,dc[1].y*8,dc[1].ba*8)
+if da!=nil and da!="init"then
+spr(144,da[1].x*8,da[1].z*8)
 end
-for cr,dj in pairs(m) do
-dj:dm()
-dj:bd()
-if(dj==i) then
-rect(i.y,i.ba,
-i.y+i.bb-1,i.ba+i.bc-1,
+for cp,dh in pairs(m) do
+dh:dj()
+dh:bc()
+if(dh==i) then
+rect(i.x,i.z,
+i.x+i.ba-1,i.z+i.bb-1,
 7)
 end
 end
 palt(11,true)
-for cr,bq in pairs(k) do
-bq:dm()
-bq:bd()
-if(bq==i) then
-spr(16,i.y,i.ba)
+for cp,bp in pairs(k) do
+bp:dj()
+bp:bc()
+if(bp==i) then
+spr(16,i.x,i.z)
 end
 end
-cn()
+cl()
 end
-function cj()
+function ch()
 camera(0,0)
 pal()
 palt(0,false)
-if i and i.bg then
-i.bg:bd(109,20,true)
-if i.bn then
-i.bn:bd(109,44,true)
+if i and i.bf then
+i.bf:bc(109,20,true)
+if i.bm then
+i.bm:bc(109,44,true)
 end
 end
-ck("00"..flr(j),103,2,7)
+ci("00"..flr(j),103,2,7)
 if i
-and i.bn
-and i.bn.bf>=100 then
-rectfill(flr(cursor.y/8)*8,flr(cursor.ba/8)*8,
-(flr(cursor.y/8)+2)*8,(flr(cursor.ba/8)+2)*8,11)
+and i.bm
+and i.bm.be>=100 then
+fillp("0b1110110110110111.1")
+rectfill(flr(cursor.x/8)*8,flr(cursor.z/8)*8,
+(flr(cursor.x/8)+2)*8,(flr(cursor.z/8)+2)*8,11)
+fillp()
 end
 palt(11,true)
-cursor:bd()
+cursor:bc()
 end
-function cz()
-dn=false
-foreach(k,dp)
-foreach(m,dp)
+function cx()
+dk=false
+foreach(k,dl)
+foreach(m,dl)
 if i then
-z=true
-if(i.bg) dp(i.bg)
-if(i.bn) dp(i.bn)
-z=false
+y=true
+if(i.bf) dl(i.bf)
+if(i.bm) dl(i.bm)
+y=false
 end
-if cv then
-if dn then
-if(i.dq) i:dq() i=da
+if ct then
+if dk then
+if(i.dm) i:dm() i=cy
 else
 if i and i.type==1 then
-db(i,flr((c+e)/8),flr((d+f)/8))
+cz(i,flr((c+e)/8),flr((d+f)/8))
 end
 if i
-and i.bn
-and i.bn.bf>=100 then
-local dr=flr((cursor.y+c)/8)
-local ds=flr((cursor.ba+d)/8)
-mset(dr,ds,19)
-mset(dr+1,ds,19)
-mset(dr,ds+1,19)
-mset(dr+1,ds+1,19)
-i.bn.bf=0
+and i.bm
+and i.bm.be>=100 then
+local dn=flr((cursor.x+c)/8)
+local dp=flr((cursor.z+d)/8)
+mset(dn,dp,19)
+mset(dn+1,dp,19)
+mset(dn,dp+1,19)
+mset(dn+1,dp+1,19)
+i.bm.be=0
 end
 i=nil
 end
 end
 end
-function dp(dk)
-dk.dt=du(cursor,dk)
-if cv and dk.dt then
-i=dk
-dn=true
+function dl(di)
+di.dq=dr(cursor,di)
+if ct and di.dq then
+i=di
+dk=true
 end
 end
-function dv(dw,dx)
+function ds(dt,du)
 end
-function dy(self,dz)
-if(dz==self.ea) return
-local eb=self.ec[dz]
-self.ed=eb.v
-self.ea=dz
-self.ee=1
+function dv(self,dw)
+if(dw==self.dx) return
+local dy=self.dz[dw]
+self.ea=dy.u
+self.dx=dw
+self.eb=1
 end
-function ef(self)
-self.ed-=1
-if self.ed<=0 then
-self.ee+=1
-local eb=self.ec[self.ea]
-self.ed=eb.v
-if self.ee>#eb.eg then
-self.ee=1
+function ec(self)
+self.ea-=1
+if self.ea<=0 then
+self.eb+=1
+local dy=self.dz[self.dx]
+self.ea=dy.u
+if self.eb>#dy.ed then
+self.eb=1
 end
-self.spr=eb.eg[self.ee]
+self.spr=dy.ed[self.eb]
 end
 end
-function ck(eh,ei,
-ej,ek,
-el)
+function ci(ee,ef,
+eg,eh,
+ei)
+for bw=-1,1 do
 for bx=-1,1 do
-for by=-1,1 do
-print(eh,ei+bx,ej+by,el)
+print(ee,ef+bw,eg+bx,ei)
 end
 end
-print(eh,ei,ej,ek)
+print(ee,ef,eg,eh)
 end
-function w(y,ba,type,em,en,bb,bc,eo,dq)
+function v(x,z,type,ej,ek,ba,bb,el,dm)
 return{
-y=y,
-ba=ba,
-ep=1,
+x=x,
+z=z,
+em=1,
 type=type,
+ba=(ba or 1)*8,
 bb=(bb or 1)*8,
-bc=(bc or 1)*8,
-eo=eo,
-spr=em,
-eq=em,
-en=en,
-dq=dq,
-er=false,
-es=bb or 1,
-et=bc or 1,
-bf=0,
-eu=0,
-bi=0,
-ev=1,
-dg=1,
-x=function(self)
+el=el,
+spr=ej,
+en=ej,
+ek=ek,
+dm=dm,
+eo=false,
+ep=ba or 1,
+eq=bb or 1,
+be=0,
+er=0,
+bh=0,
+es=1,
+de=1,
+w=function(self)
 return{
-y=self.y,
-ba=self.ba,
-bb=self.bb-1,
-bc=self.bc-1
+x=self.x,
+z=self.z,
+ba=self.ba-1,
+bb=self.bb-1
 }
 end,
-bd=function(self,y,ba,ew)
+bc=function(self,x,z,et)
 pal()
 palt(0,false)
-if(self.en) palt(self.en,true)
-if self.bh then
-pal(self.bh[self.ev][1],
-self.bh[self.ev][2])
+if(self.ek) palt(self.ek,true)
+if self.bg then
+pal(self.bg[self.es][1],
+self.bg[self.es][2])
 end
-if self.br then
-ex(self.spr%16*8,flr(self.spr/16)*8,self.y,self.ba,.25-self.br,1,11)
+if self.bq then
+eu(self.spr%16*8,flr(self.spr/16)*8,self.x,self.z,.25-self.bq,1,11)
 else
-if ew then
-rectfill(y-1,ba-1,y+16,ba+19,0)
-local ey=self.eo or self
-local ek=ey.bo and 12 or(ey.bf<33 and 8 or ey.bf<66 and 10 or 11)
-if(ey.bf>0) rectfill(y,ba+17,y+(15*ey.bf/100),ba+18,ek)
+if et then
+rectfill(x-1,z-1,x+16,z+19,0)
+local ev=self.el or self
+local eh=ev.bn and 12 or(ev.be<33 and 8 or ev.be<66 and 10 or 11)
+if(ev.be>0) rectfill(x,z+17,x+(15*ev.be/100),z+18,eh)
 end
-spr(self.spr,self.y or y,self.ba or ba,self.bb/8,self.bc/8)
+spr(self.spr,self.x or x,self.z or z,self.ba/8,self.bb/8)
 end
-if(b) ez(self)
+if(b) ew(self)
 end,
-dm=function(self)
-self.eu+=1
-if(self.eu>self.bi) then
-self.eu=0
-if self.bt
-and self.dg==2 then
-self.spr=self.eq+(self.bt-self.spr)
+dj=function(self)
+self.er+=1
+if(self.er>self.bh) then
+self.er=0
+if self.bs
+and self.de==2 then
+self.spr=self.en+(self.bs-self.spr)
 end
-if self.bh then
-self.ev+=1
-if(self.ev>#self.bh) self.ev=1
+if self.bg then
+self.es+=1
+if(self.es>#self.bg) self.es=1
 end
 end
 end
 }
 end
-function du(dw,dx)
-local fa=dw:x()
-local fb=dx:x()
-if fa.y<fb.y+fb.bb and
-fa.y+fa.bb>fb.y and
-fa.ba<fb.ba+fb.bc and
-fa.ba+fa.bc>fb.ba
+function dr(dt,du)
+local ex=dt:w()
+local ey=du:w()
+if ex.x<ey.x+ey.ba and
+ex.x+ex.ba>ey.x and
+ex.z<ey.z+ey.bb and
+ex.z+ex.bb>ey.z
 then
 return true
 else
 return false
 end
 end
-function ez(dk)
-local fc=dk:x()
-rect(fc.y,fc.ba,fc.y+fc.bb,fc.ba+fc.bc,dk.dt and 11 or 8)
+function ew(di)
+local ez=di:w()
+rect(ez.x,ez.z,ez.x+ez.ba,ez.z+ez.bb,di.dq and 11 or 8)
 end
-function fd()
+function fa()
 return flr(t())%2==0
 end
-function r()
-bm=fe(q,"|","\n")
+function q()
+bl=fb(p,"|","\n")
 printh("------------------")
-printh("test 1:"..#bm)
-printh("test 4:"..bm[1][1])
-printh("test 5:"..bm[2][1])
-printh("test 5.1:"..bm[2][11])
-ff={
-p="test obj",
-bd=n[bm[2][20]]
+printh("test 1:"..#bl)
+printh("test 4:"..bl[1][1])
+printh("test 5:"..bl[2][1])
+printh("test 5.1:"..bl[2][11])
+fc={
+o="test obj",
+bc=n[bl[2][20]]
 }
-ff:bd()
+fc:bc()
 end
-function fe(eh,fg,fh)
-local eb={}
+function fb(ee,fd,fe)
+local dy={}
+local ff=0
+local fg=''
+local fh=''
+if fe~=nil then ee=fb(ee,fe) end
+while#ee>0 do
+if type(ee)=='table'then
+fg=ee[1]
+add(dy,fb(fg,fd))
+del(ee,fg)
+else
+fg=sub(ee,1,1)
+ee=sub(ee,2)
+if fg==fd then
+add(dy,fh)
+fh=''
+else
+fh=fh..fg
+end
+end
+end
+add(dy,fh)
+return dy
+end
 local fi=0
-local fj=''
-local fk=''
-if fh~=nil then eh=fe(eh,fh) end
-while#eh>0 do
-if type(eh)=='table'then
-fj=eh[1]
-add(eb,fe(fj,fg))
-del(eh,fj)
-else
-fj=sub(eh,1,1)
-eh=sub(eh,2)
-if fj==fg then
-add(eb,fk)
-fk=''
-else
-fk=fk..fj
+function eu(fj,fk,x,z,dy,ba,fl)
+local fm,fn=cos(dy),sin(dy)
+local fo,fp,fq,fr
+local fs,ft=fm,fn
+local co=shl(0xfff8,(ba-1))
+ba*=4
+fm*=ba-0.5
+fn*=ba-0.5
+local fu,fv=fn-fm+ba,-fm-fn+ba
+ba=2*ba-1
+for fw=0,ba do
+fo,fp=fu,fv
+for fx=0,ba do
+if band(bor(fo,fp),co)==0 then
+local ff=sget(fj+fo,fk+fp)
+if(ff!=fl) pset(x+fw,z+fx,ff)
+end
+fo-=ft
+fp+=fs
+end
+fu+=fs
+fv+=ft
 end
 end
-end
-add(eb,fk)
-return eb
-end
-local fl=0
-function ex(fm,fn,y,ba,eb,bb,fo)
-local fp,fq=cos(eb),sin(eb)
-local fr,fs,ft,fu
-local fv,fw=fp,fq
-local cq=shl(0xfff8,(bb-1))
-bb*=4
-fp*=bb-0.5
-fq*=bb-0.5
-local fx,fy=fq-fp+bb,-fp-fq+bb
-bb=2*bb-1
-for fz=0,bb do
-fr,fs=fx,fy
-for ga=0,bb do
-if band(bor(fr,fs),cq)==0 then
-local fi=sget(fm+fr,fn+fs)
-if(fi!=fo) pset(y+fz,ba+ga,fi)
-end
-fr-=fw
-fs+=fv
-end
-fx+=fv
-fy+=fw
-end
-end
-function dh(bq)
-bq.dc=gb(
-{y=flr(bq.y/8),ba=flr(bq.ba/8)},
-{y=bq.dd,ba=bq.de},
-gc,
-gd,
-ge,
-function(gf) return shl(gf.ba,8)+gf.y end,
+function df(bp)
+bp.da=fy(
+{x=flr(bp.x/8),z=flr(bp.z/8)},
+{x=bp.db,z=bp.dc},
+fz,
+ga,
+gb,
+function(gc) return shl(gc.z,8)+gc.x end,
 nil)
-bq.df=bq.dg
-bq.dg=2
-bq.bp=cocreate(gg)
+bp.dd=bp.de
+bp.de=2
+bp.bo=cocreate(gd)
 end
-function gg(bq)
+function gd(bp)
 printh("-------------")
-bq.dg=2
-for cl=#bq.dc-1,1,-1 do
-local gf=bq.dc[cl]
-if not bq.bu then
-local cf=bq.y-(gf.y*8)
-local ce=bq.ba-(gf.ba*8)
-local eb=atan2(cf,ce)
-printh("  >> target angle="..eb)
-while(bq.br!=eb) do
-gh(bq,eb)
+bp.de=2
+for cj=#bp.da-1,1,-1 do
+local gc=bp.da[cj]
+if not bp.bt then
+local cd=bp.x-(gc.x*8)
+local cc=bp.z-(gc.z*8)
+local dy=atan2(cd,cc)
+printh("  >> target angle="..dy)
+while(bp.bq!=dy) do
+ge(bp,dy)
 end
 end
-local gi=bq.bs or .5
-local gj=sqrt((gf.y*8-bq.y)^2+(gf.ba*8-bq.ba)^2)
-local gk=gi*(gf.y*8-bq.y)/gj
-local gl=gi*(gf.ba*8-bq.ba)/gj
-for cl=0,gj/gi-1 do
-bq.y+=gk
-bq.ba+=gl
+local gf=bp.br or .5
+local gg=sqrt((gc.x*8-bp.x)^2+(gc.z*8-bp.z)^2)
+local gh=gf*(gc.x*8-bp.x)/gg
+local gi=gf*(gc.z*8-bp.z)/gg
+for cj=0,gg/gf-1 do
+bp.x+=gh
+bp.z+=gi
 yield()
 end
-bq.y,bq.ba=gf.y*8,gf.ba*8
-bj(bq)
+bp.x,bp.z=gc.x*8,gc.z*8
+bi(bp)
 end
-bq.dg=1
+bp.de=1
 end
-gm=3.14159
-gn=.5*(gm/180)
-function gh(bq,go)
-gp=go-bq.br
-printh("unit.r="..bq.br)
-printh("targetangle="..go)
-printh("diff="..gp)
-printh("turnspeed="..gn)
+gj=3.14159
+gk=.5*(gj/180)
+function ge(bp,gl)
+gm=gl-bp.bq
+printh("unit.r="..bp.bq)
+printh("targetangle="..gl)
+printh("diff="..gm)
+printh("turnspeed="..gk)
 printh("-")
-if gp>0.5 then
+if gm>0.5 then
 printh("big angle 1")
-gp-=1
-elseif gp<-0.5 then
+gm-=1
+elseif gm<-0.5 then
 printh("big angle 2")
-gp+=1
+gm+=1
 end
-if gp>gn then
-bq.br+=gn
-elseif gp<-gn then
-bq.br-=gn
+if gm>gk then
+bp.bq+=gk
+elseif gm<-gk then
+bp.bq-=gk
 else
-bq.br=go
+bp.bq=gl
 end
-if(bq.br>gm) bq.br-=2*gm
-if(bq.br<-gm) bq.br+=2*gm
+if(bp.bq>gj) bp.bq-=2*gj
+if(bp.bq<-gj) bp.bq+=2*gj
 yield()
 end
-function gd(gq,gf,gr)
-local gs=fget(mget(gf.y,gf.ba),1) and 4 or 1
-if(gq.y!=gf.y and gq.ba!=gf.ba) return gs+1
-return gs
+function ga(gn,gc,go)
+local gp=fget(mget(gc.x,gc.z),1) and 4 or 1
+if(gn.x!=gc.x and gn.z!=gc.z) return gp+1
+return gp
 end
-function ge(gf,gr)
-local gt={}
+function gb(gc,go)
+local gq={}
+for bw=-1,1 do
 for bx=-1,1 do
-for by=-1,1 do
-if(bx!=0 or by!=0) gu(gf.y+bx,gf.ba+by,gt)
+if(bw!=0 or bx!=0) gr(gc.x+bw,gc.z+bx,gq)
 end
-end return gt
+end return gq
 end
-function gu(gv,gw,gx)
-printh("testing:"..gv..","..gw)
+function gr(gs,gt,gu)
+printh("testing:"..gs..","..gt)
 if(
-not fget(mget(gv,gw),0)
-and l[gv..","..gw]==nil
+not fget(mget(gs,gt),0)
+and l[gs..","..gt]==nil
 )
 then
-add(gx,{y=gv,ba=gw})
+add(gu,{x=gs,z=gt})
 end
 printh("test passed.")
 end
-function gc(eb,gy)
-return abs(eb.y-gy.y)+abs(eb.ba-gy.ba)
+function fz(dy,gv)
+return abs(dy.x-gv.x)+abs(dy.z-gv.z)
 end
-function gb
-(gz,
+function fy
+(gw,
+gx,
+gy,
+gz,
+gq,
 ha,
-hb,
-hc,
-gt,
-hd,
-gr)
-local he,
-hf={
-hg=gz,
-hh=0,
-hi=hb(gz,ha,gr)
+go)
+local hb,
+hc={
+hd=gw,
+he=0,
+hf=gy(gw,gx,go)
 },{}
-hf[hd(gz,gr)]=he
-local hj,hk,hl,hm={he},1,hd(ha,gr),32767.99
-while hk>0 do
-local hn,ho=hm
-for cl=1,hk do
-local hp=hj[cl].hh+hj[cl].hi
-if(hp<=hn) ho,hn=cl,hp
+hc[ha(gw,go)]=hb
+local hg,hh,hi,hj={hb},1,ha(gx,go),32767.99
+while hh>0 do
+local hk,hl=hj
+for cj=1,hh do
+local hm=hg[cj].he+hg[cj].hf
+if(hm<=hk) hl,hk=cj,hm
 end
-he=hj[ho]
-hj[ho],he.hq=hj[hk],true
-hk-=1
-local hr=he.hg
-if hd(hr,gr)==hl then
-hr={ha}
-while he.hs do
-he=hf[hd(he.hs,gr)]
-add(hr,he.hg)
+hb=hg[hl]
+hg[hl],hb.hn=hg[hh],true
+hh-=1
+local ho=hb.hd
+if ha(ho,go)==hi then
+ho={gx}
+while hb.hp do
+hb=hc[ha(hb.hp,go)]
+add(ho,hb.hd)
 end
-return hr
+return ho
 end
-for ht in all(gt(hr,gr)) do
-local hu=hd(ht,gr)
-local hv,hw=
-hf[hu],
-he.hh+hc(hr,ht,gr)
-if not hv then
-hv={
-hg=ht,
-hh=hm,
-hi=hb(ht,ha,gr)
+for hq in all(gq(ho,go)) do
+local hr=ha(hq,go)
+local hs,ht=
+hc[hr],
+hb.he+gz(ho,hq,go)
+if not hs then
+hs={
+hd=hq,
+he=hj,
+hf=gy(hq,gx,go)
 }
-hk+=1
-hj[hk],hf[hu]=hv,hv
+hh+=1
+hg[hh],hc[hr]=hs,hs
 end
-if not hv.hq and hv.hh>hw then
-hv.hh,hv.hs=hw,hr
+if not hs.hn and hs.he>ht then
+hs.he,hs.hp=ht,ho
 end
 end
 count+=1
