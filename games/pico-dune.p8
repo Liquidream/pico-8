@@ -29,9 +29,10 @@ _g.draw_windtrap=function(self)
  printh("hello "..self.name)
 end
 
--- building data
+-- object data
+obj_data=[[id|name|obj_spr|ico_spr|type|w|h|trans_col|parent|req_id|req_level|req_faction|cost|power|arms|hitpoint|speed|range|description|update()|draw()
+]]..
 -- [ID|Name|obj_spr|ico_spr|type|w|h|trans_col|parent|req_id|req_level|req_faction|cost|power|arms|hitpoint|speed|range|description|update()|draw()]
-obj_data=
 -- buildings
 [[1|cONSTRUCTION yARD|64|128|2|2|2|nil|nil|nil|1||100|nil||400|||aLL STRUCTURES ARE BUILT BY THE CONSTRUCTION YARD.||
 2|wINDTRAP|66|130|2|2|2|nil|1|1|1||300|100||200|||tHE WINDTRAP SUPPLIES POWER TO YOUR BASE. wITHOUT POWER YOUR STRUCTURES WILL DECAY.|draw_windtrap|update_bld
@@ -51,7 +52,8 @@ obj_data=
 16|rEPAIR fACILITY|||2|3|2|nil|1|7+12|5||700|20||200|||tHE rEPAIR fACILITY IS USED TO REPAIR YOUR VEHICLES.||
 17|sTARPORT|||2|3|3|nil|1|6|6||500|50||500|||tHE sTARPORT IS USED TO ORDER AND RECEIVED SHIPMENTS FROM c.h.o.a.m.||
 18|hOUSE OF ix|||2|2|2|nil|1|7+12|5||500|40||400|||tHE ix rESEARCH fACILITY ADVANCES YOUR hOUSE'S TECHNOLOGY.||
-19|pALACE|||2|3|3|nil|1|17|8||999|80||1000|||tHIS IS YOUR pALACE.||]]..
+19|pALACE|||2|3|3|nil|1|17|8||999|80||1000|||tHIS IS YOUR pALACE.||
+]]..
 -- units
 [[20|lIGHT iNFANTRY (X3)|||1|1|1||9|9|2|AO|60||4|50|5|2|iNFANTRY ARE LIGHTLY ARMOURED FOOTSOLDIERS, WITH LIMITED FIRING RANGE AND SPEED.||
 21|hEAVY tROOPERS (X3)|||1|1|1||10|9|3|HO|100||8|110|10|3|tROOPERS ARE HEAVILY ARMOURED FOOTSOLDIERS, WITH IMPROVED FIRING RANGE AND SPEED.||
@@ -70,7 +72,8 @@ obj_data=
 34|dEATH hAND|||1|1|1||19||8|H|0||150|70|250|nil|tHE dEATH hAND IS A SPECIAL hARKONNEN pALACE WEAPON. aN INACCURATE, BUT VERY DESTRUCTIVE BALLISTIC MISSILE.||
 35|rAIDER|||1|1|1||11||2|O|150||8|80|75|3|tHE oRDOS rAIDER IS SIMILAR TO THE STANDARD tRIKE, BUT WITH LESS ARMOUR IN FAVOUR OF SPEED.||
 36|dEVIATOR|||1|1|1||12|13|7|O|750||0|120|30|7|tHE oRDOS dEVIATOR IS A STANDARD mISSILE tANK, WHICH FIRES UNIQUE NERVE GAS MISSILES THAT MAY TEMPORARILY CHANGE ENEMY LOYALTY.||
-37|sABOTEUR|||1|1|1||19||8|O|0||150|40|40|2|tHE sABOTEUR IS A SPECIAL MILITARY UNIT, TRAINED AT AN oRDOS pALACE. cAN DESTRY ALMOST ANY STRUCTURE OR VEHICLE.||]]..
+37|sABOTEUR|||1|1|1||19||8|O|0||150|40|40|2|tHE sABOTEUR IS A SPECIAL MILITARY UNIT, TRAINED AT AN oRDOS pALACE. cAN DESTRY ALMOST ANY STRUCTURE OR VEHICLE.||
+]]..
 -- other
 [[38|sARDAUKAR|||1|1|1||nil|nil|4||0||5|110|10|1|tHE sARDULAR ARE THE eMPEROR'S ELITE TROOPS. WITH SUPERIOR FIREPOWER AND ARMOUR.||
 39|sANDWORM|||1|1|1||nil|nil|3||0||300|1000|35|0|tHE sAND wORMS ARE INDIGEONOUS TO dUNE. aTTRACTED BY VIBRATIONS, ALMOST IMPOSSIBLE TO DESTROY, WILL CONSUME ANYTHING THAT MOVES.||]]
@@ -153,7 +156,7 @@ cursor.draw=function(self)
  add(buildings,refinary)
  reveal_fow(refinary)
  --
- local constyard=m_obj(10*8,9*8, 2, strArrays[1][3], nil, 2,2)
+ local constyard=m_obj(10*8,9*8, 2, str_arrays[1][3], nil, 2,2)
  constyard.life=75
  constyard.ico_obj=m_obj(109,20,2, 128, nil, 2,2, constyard, function(self)
     printh("todo: load construction yard menu...")
@@ -842,24 +845,40 @@ end
 
 -- explode object data
 function explode_data()
-  strArrays=split(obj_data,"|","\n")
+ str_arrays=split(obj_data,"|","\n")
+ ---------------------------------
+ -- printh("------------------")
+ -- printh("test 1:"..#str_arrays)
+ -- printh("test 4:"..str_arrays[1][1])
+ -- printh("test 5:"..str_arrays[2][1])
+ -- printh("test 5.1:"..str_arrays[2][11])
+ -- --test 6
+ -- --_g[a[2][11]]()
+ -- --test 7
+ -- new_obj={
+ --   name="test obj",
+ --   draw=_g[str_arrays[3][20]]
+ -- }
+ -- new_obj:draw()
+ ---------------------------------
 
-  printh("------------------")
-  printh("test 1:"..#strArrays)
-
-  printh("test 4:"..strArrays[1][1])
-  printh("test 5:"..strArrays[2][1])
-  printh("test 5.1:"..strArrays[2][11])
-
-  --test 6
-  --_g[a[2][11]]()
-
-  --test 7
-  new_obj={
-    name="test obj",
-    draw=_g[strArrays[2][20]]
-  }
-  new_obj:draw()
+ new_data={}
+ -- loop all objects
+ for i=2,#str_arrays-1 do
+  new_obj={}
+  -- loop all properties
+  for j=2,#str_arrays[i] do
+   local val=str_arrays[i][j]
+   if (j!=2 and j<20) val=tonum(val)
+   new_obj[str_arrays[1][j]]=val
+  end
+  --printh(">>>>"..str_arrays[i][1])
+  new_data[tonum(str_arrays[i][1])]=new_obj
+ end
+ -- replace with exploded data
+ obj_data=new_data
+ -- test new structure!
+ --printh("test 8:"..obj_data[1].name)
 end
 
 
