@@ -131,7 +131,7 @@ cursor.draw=function(self)
  windfarm.ico_obj=m_obj(109,20,2, 130, nil, 2,2, windfarm, function(self)
     printh("todo: fix windfarm?...")
   end)
-  windfarm.col_cycle = {
+ windfarm.col_cycle = {
     {14,12},
     {14,12},
     {14,12},
@@ -143,7 +143,7 @@ cursor.draw=function(self)
     {14,1},
     {14,13},
   }
-  windfarm.framecount=10
+ windfarm.framecount=10
  add(buildings,windfarm)
  -- reveal fog?
  reveal_fow(windfarm)
@@ -156,7 +156,7 @@ cursor.draw=function(self)
  add(buildings,refinary)
  reveal_fow(refinary)
  --
- local constyard=m_obj(10*8,9*8, 2, str_arrays[1][3], nil, 2,2)
+ local constyard=m_obj(10*8,9*8, 2, str_arrays[2][3], nil, 2,2)
  constyard.life=75
  constyard.ico_obj=m_obj(109,20,2, 128, nil, 2,2, constyard, function(self)
     printh("todo: load construction yard menu...")
@@ -869,6 +869,7 @@ function explode_data()
   -- loop all properties
   for j=2,#str_arrays[i] do
    local val=str_arrays[i][j]
+   -- convert all but the text columns to numbers
    if (j!=2 and j<20) val=tonum(val)
    new_obj[str_arrays[1][j]]=val
   end
@@ -878,7 +879,7 @@ function explode_data()
  -- replace with exploded data
  obj_data=new_data
  -- test new structure!
- --printh("test 8:"..obj_data[1].name)
+ printh("test 8:"..obj_data[1].name)
 end
 
 
