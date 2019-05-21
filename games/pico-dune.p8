@@ -29,6 +29,7 @@ _g.draw_windtrap=function(self)
  printh("hello "..self.name)
 end
 
+
 -- object data
 obj_data=[[id|name|obj_spr|ico_spr|type|w|h|trans_col|parent|req_id|req_level|req_faction|cost|power|arms|hitpoint|speed|range|description|update()|draw()
 ]]..
@@ -123,104 +124,136 @@ cursor.draw=function(self)
  end
 
 
-
+discover_objs()
 
  -- add test buldings
- local windfarm=m_obj(12*8,4*8, 2, 66, nil, 2,2)
- windfarm.life=50
- windfarm.ico_obj=m_obj(109,20,2, 130, nil, 2,2, windfarm, function(self)
-    printh("todo: fix windfarm?...")
-  end)
- windfarm.col_cycle = {
-    {14,12},
-    {14,12},
-    {14,12},
-    {14,12},
-    {14,13},
-    {14,1},
-    {14,1},
-    {14,1},
-    {14,1},
-    {14,13},
-  }
- windfarm.framecount=10
- add(buildings,windfarm)
- -- reveal fog?
- reveal_fow(windfarm)
- --
- local refinary=m_obj(9*8,7*8, 2, 68, nil, 3,2)
- refinary.life=10
- refinary.ico_obj=m_obj(109,20,2, 132, nil, 2,2, refinary, function(self)
-    printh("todo: fix refinary?...")
-  end)
- add(buildings,refinary)
- reveal_fow(refinary)
- --
- local constyard=m_obj(10*8,9*8, 2, str_arrays[2][3], nil, 2,2)
- constyard.life=75
- constyard.ico_obj=m_obj(109,20,2, 128, nil, 2,2, constyard, function(self)
-    printh("todo: load construction yard menu...")
-  end)
- constyard.build_obj=m_obj(109,44,2, 162, nil, 2,2, nil, function(self)
-    printh("todo: build slab...")
-    self.build_step=0.5
-    self.cor=cocreate(function(self)
-        -- build slab
-        while self.life<100 do
-          self.life+=self.build_step
-          credits-=.1
-         yield()
-        end
-      end)
-  end)
- add(buildings,constyard)
- reveal_fow(constyard)
+--  local windfarm=m_obj(12*8,4*8, 2, 66, nil, 2,2)
+--  windfarm.life=50
+--  windfarm.ico_obj=m_obj(109,20,2, 130, nil, 2,2, windfarm, function(self)
+--     printh("todo: fix windfarm?...")
+--   end)
+--  windfarm.col_cycle = {
+--     {14,12},
+--     {14,12},
+--     {14,12},
+--     {14,12},
+--     {14,13},
+--     {14,1},
+--     {14,1},
+--     {14,1},
+--     {14,1},
+--     {14,13},
+--   }
+--  windfarm.framecount=10
+--  add(buildings,windfarm)
+--  -- reveal fog?
+--  reveal_fow(windfarm)
+--  --
+--  local refinary=m_obj(9*8,7*8, 2, 68, nil, 3,2)
+--  refinary.life=10
+--  refinary.ico_obj=m_obj(109,20,2, 132, nil, 2,2, refinary, function(self)
+--     printh("todo: fix refinary?...")
+--   end)
+--  add(buildings,refinary)
+--  reveal_fow(refinary)
+--  --
+--  local constyard=m_obj(10*8,9*8, 2, str_arrays[2][3], nil, 2,2)
+--  constyard.life=75
+--  constyard.ico_obj=m_obj(109,20,2, 128, nil, 2,2, constyard, function(self)
+--     printh("todo: load construction yard menu...")
+--   end)
+--  constyard.build_obj=m_obj(109,44,2, 162, nil, 2,2, nil, function(self)
+--     printh("todo: build slab...")
+--     self.build_step=0.5
+--     self.cor=cocreate(function(self)
+--         -- build slab
+--         while self.life<100 do
+--           self.life+=self.build_step
+--           credits-=.1
+--          yield()
+--         end
+--       end)
+--   end)
+--  add(buildings,constyard)
+--  reveal_fow(constyard)
 
- -- add test units
+--  -- add test units
 
- -- siege tank
- local unit = m_obj(5*8, 3*8, 1, 50, 11)
- unit.r=0
- unit.ico_obj=m_obj(109,20,2, 198, nil, 2,2, unit, nil)
- unit.life=100
- add(units,unit)
- reveal_fow(unit)
+--  -- siege tank
+--  local unit = m_obj(5*8, 3*8, 1, 50, 11)
+--  unit.r=0
+--  unit.ico_obj=m_obj(109,20,2, 198, nil, 2,2, unit, nil)
+--  unit.life=100
+--  add(units,unit)
+--  reveal_fow(unit)
  
- -- combat tank
- unit = m_obj(7*8, 9*8, 1, 51, 11)
- unit.r=0.25
- unit.ico_obj=m_obj(109,20,2, 196, nil, 2,2, unit, nil)
- unit.life=100
- add(units,unit)
- -- test fog of war
- reveal_fow(unit)--.x,unit.y)
+--  -- combat tank
+--  unit = m_obj(7*8, 9*8, 1, 51, 11)
+--  unit.r=0.25
+--  unit.ico_obj=m_obj(109,20,2, 196, nil, 2,2, unit, nil)
+--  unit.life=100
+--  add(units,unit)
+--  -- test fog of war
+--  reveal_fow(unit)--.x,unit.y)
  
- -- harvester
- unit = m_obj(12*8, 8*8, 1, 49, 11)
- unit.ico_obj=m_obj(109,20,2, 192, nil, 2,2, unit, nil)
- unit.r=0.75
- unit.speed=.25
- unit.life=100
- add(units,unit)
- -- test fog of war
- reveal_fow(unit)
+--  -- harvester
+--  unit = m_obj(12*8, 8*8, 1, 49, 11)
+--  unit.ico_obj=m_obj(109,20,2, 192, nil, 2,2, unit, nil)
+--  unit.r=0.75
+--  unit.speed=.25
+--  unit.life=100
+--  add(units,unit)
+--  -- test fog of war
+--  reveal_fow(unit)
 
- -- infantry
- unit = m_obj(9*8, 3*8, 1, 62, 11)
- unit.ico_obj=m_obj(109,20,2, 194, nil, 2,2, unit, nil)
- unit.altframe=63
- unit.framecount=10
- unit.speed=.15
- unit.norotate=true
- unit.life=100
- add(units,unit)
- -- test fog of war
- reveal_fow(unit)
+--  -- infantry
+--  unit = m_obj(9*8, 3*8, 1, 62, 11)
+--  unit.ico_obj=m_obj(109,20,2, 194, nil, 2,2, unit, nil)
+--  unit.altframe=63
+--  unit.framecount=10
+--  unit.speed=.15
+--  unit.norotate=true
+--  unit.life=100
+--  add(units,unit)
+--  -- test fog of war
+--  reveal_fow(unit)
 
 
  camx=15
 
 end
+
+function discover_objs()
+  -- analyse current map & spawn objs
+  for my=0,31 do
+    for mx=0,127 do
+      local objref=nil
+      local spr_val=mget(mx,my)
+      local flags=fget(spr_val)
+      
+      --printh("sprval="..spr_val)
+      
+      -- find object for id
+      for o in all(obj_data) do
+       --printh(">> "..o.obj_spr)
+       
+       if (o.obj_spr==spr_val) objref=o printh("found!") break
+      end
+      
+      if objref!=nil then
+        local newobj=m_obj(mx*8,my*8, objref.type, objref.obj_spr, nil, objref.w,objref.h)
+        newobj.life = 75
+    --  constyard.ico_obj=m_obj(109,20,2, 128, nil, 2,2, constyard, function(self)
+    --     printh("todo: load construction yard menu...")
+    --   end)
+        if (objref.type==2) add(buildings,newobj)
+        reveal_fow(newobj)
+      end
+    end
+  end
+
+end
+
 
 function reveal_fow(object)  
  local size = object.type==2 and 3 or 2
