@@ -497,7 +497,7 @@ function draw_level()
  end
 
 -- draw fog-of-war
-draw_fow()
+--draw_fow()
 end
 
 
@@ -532,12 +532,22 @@ function draw_ui()
   and selected_obj.build_obj 
   and selected_obj.build_obj.life>=100 then
   -- draw placement!
-  local xx=flr(cursor.x/8)*8-camx%8
-  local yy=flr(cursor.y/8)*8-camy%8
+  local xpos=flr((cursor.x)/8)*8+4+(camx%8)
+  local ypos=flr((cursor.y)/8)*8+4-(camy%8)
   fillp("0b1110110110110111.1")
-  rectfill(xx, yy,
-           xx+selected_obj.build_obj.w, yy+selected_obj.build_obj.h, 11)
+  rectfill(xpos, ypos,
+           xpos+selected_obj.build_obj.w, ypos+selected_obj.build_obj.h, 11)
   fillp()
+
+  --  test diff with placement code
+  local xpos2=flr((cursor.x+camx)/8)
+  local ypos2=flr((cursor.y+camy)/8)
+  mset(xpos2,ypos2,19)
+  mset(xpos2+1,ypos2,19)
+  mset(xpos2,ypos2+1,19)
+  mset(xpos2+1,ypos2+1,19)
+  
+  printh("pos1="..(xpos)..","..(ypos).."  |  pos2="..(xpos2)..","..(ypos2))
  end
 
  -- cursor
