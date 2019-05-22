@@ -235,9 +235,7 @@ function discover_objs()
       
       -- find object for id
       for o in all(obj_data) do
-       --printh(">> "..o.obj_spr)
-       
-       if (o.obj_spr==spr_val) objref=o printh("found!") break
+       if (o.obj_spr==spr_val) objref=o printh("found "..objref.name) break
       end
       
       if objref!=nil then
@@ -246,7 +244,7 @@ function discover_objs()
     --  constyard.ico_obj=m_obj(109,20,2, 128, nil, 2,2, constyard, function(self)
     --     printh("todo: load construction yard menu...")
     --   end)
-        if (objref.type==2) add(buildings,newobj)
+        if (objref.type==2) add(buildings,newobj) mset(mx,my,20)
         reveal_fow(newobj)
       end
     end
