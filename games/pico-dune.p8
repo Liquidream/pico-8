@@ -60,13 +60,13 @@ obj_data=[[id|name|obj_spr|ico_spr|map_spr|type|w|h|trans_col|parent|req_id|req_
 ]]..
 -- units
 [[20|lIGHT iNFANTRY (X3)||||1|1|1||9|9|2|AO|60||4|50|5|2|iNFANTRY ARE LIGHTLY ARMOURED FOOTSOLDIERS, WITH LIMITED FIRING RANGE AND SPEED.|||
-21|hEAVY tROOPERS (X3)||||1|1|1||10|9|3|HO|100||8|110|10|3|tROOPERS ARE HEAVILY ARMOURED FOOTSOLDIERS, WITH IMPROVED FIRING RANGE AND SPEED.||
+21|hEAVY tROOPERS (X3)|62|194||1|1|1||10|9|3|HO|100||8|110|10|3|tROOPERS ARE HEAVILY ARMOURED FOOTSOLDIERS, WITH IMPROVED FIRING RANGE AND SPEED.||
 22|tRIKE||||1|1|1||11+17||2||150||8|100|60|3|tHE tRIKE IS A LIGHTLY-ARMOURED, 3-WHEELED VEHICLE, WITH LIMITED FIRING RANGE, BUT RAPID SPEED.|||
 23|qUAD||||1|1|1||11+17||3||200||10|130|50|3|tHE qUAD IS A LIGHTLY-ARMOURED, 4-WHEELED VEHICLE. sLOWER THAN THE tRIKE, BUT STRONGER ARMOUR AND FIREPOWER.|||
-24|cOMBAT tANK||||1|1|1||12+17|7|4||300||38|200|25|4|tHE cOMBAT tANK IS A MEDIUM ARMOURED TANK, FIRES HIGH-EXPLOSIVE ROUNDS.|||
-25|sIEGE tANK||||1|1|1||12+17|7|6||600||45|300|20|5|tHE mISSILE tANK IS A MEDIUM ARMOURED TANK, WHICH FIRES MISSILES. lONG-RANGE, BUT INACCURATE.|||
+24|cOMBAT tANK|51|196||1|1|1||12+17|7|4||300||38|200|25|4|tHE cOMBAT tANK IS A MEDIUM ARMOURED TANK, FIRES HIGH-EXPLOSIVE ROUNDS.|||
+25|sIEGE tANK|50|198||1|1|1||12+17|7|6||600||45|300|20|5|tHE mISSILE tANK IS A MEDIUM ARMOURED TANK, WHICH FIRES MISSILES. lONG-RANGE, BUT INACCURATE.|||
 26|rOCKET lAUNCHER||||1|1|1||12+17|7|5||450||112|100|30|9|tHE sIEGE tANK IS A HEAVY ARMOURED TANK, WHICH HAS DUAL CANNONS, BUT IS SLOW.|||
-27|hARVESTER||||1|1|1||12+17||2||300||0|150|30|nil|tHE hARVESTER SEPARATES SPICE FROM THE SAND & RETURNS RAW SPICE TO THE rEFINERY FOR PROCESSING.|||
+27|hARVESTER|49|192||1|1|1||12+17||2||300||0|150|30|nil|tHE hARVESTER SEPARATES SPICE FROM THE SAND & RETURNS RAW SPICE TO THE rEFINERY FOR PROCESSING.|||
 28|cARRYALL||||1|1|1||13|13|5||800||0|100|200|nil|tHE cARRYALL IS A LIGHTLY ARMOURED AIRCRAFT WITH NO WEAPONS. mAINLY USED TO LIFT+TRANSPORT hARVESTERS.|||
 29|oRNITHOPTER||||1|1|1||13+17|13|7|AO|600||75|5|150|5|tHE oRNITHOPTER IS A LIGHTLY ARMOURED AIRCRAFT THAT FIRES ROCKETS. hIGHLY MANOUVERABLE + FASTED AIRCRAFT ON dUNE.|||
 30|mcv (mOBILE CONSTRUCTION VEHICLE)||||1|2|1||12+17|7|4||900||0|150|0|nil|tHE mcv SCOUT VEHICLE IS USED TO FIND AND DEPLOY NEW BASE LOCATIONS.|||
@@ -83,6 +83,7 @@ obj_data=[[id|name|obj_spr|ico_spr|map_spr|type|w|h|trans_col|parent|req_id|req_
 39|sANDWORM||||1|1|1||nil|nil|3||0||300|1000|35|0|tHE sAND wORMS ARE INDIGEONOUS TO dUNE. aTTRACTED BY VIBRATIONS, ALMOST IMPOSSIBLE TO DESTROY, WILL CONSUME ANYTHING THAT MOVES.|||]]
 
 
+
 --[[
   ## messages ##
 There isn't enough open concrete to place this structure. You may proceed, but without enough concrete the building will need repairs.
@@ -95,6 +96,7 @@ You have successfully completed your mission.
 --------------------------------
 
 function _init()
+ printh("-- init -------------") 
  -- enable mouse
  poke(0x5f2d, 1)
 
@@ -236,16 +238,35 @@ function discover_objs()
       --printh("sprval="..spr_val)
       
       -- find object for id
-      for o in all(obj_data) do
-       if (o.obj_spr==spr_val) objref=o printh("found "..objref.name) break
+      for o in all(obj_data) do       
+       if (o.obj_spr!=nil and o.obj_spr==spr_val) objref=o printh("o.obj_spr:"..o.obj_spr) printh("found> "..objref.name) break
       end
       
-      if objref!=nil then
+      if objref!=nil then        
         local newobj=m_obj(mx*8,my*8, objref.type, objref.obj_spr, nil, objref.w,objref.h)
         newobj.ref=objref -- for future ref
-        newobj.life=75
         newobj.ico_obj=m_obj(109,20, objref.type, objref.ico_spr, nil, 2,2, newobj, _g[objref.func_onclick])
+        newobj.life=75
+
+        -- factory?
+        newobj.build_objs={}
+        -- go through all ref's and see if any valid for this building
+        for o in all(obj_data) do
+         printh("o.parent="..(o.parent!=nil and o.parent or "nil"))
+         if (o.parent!=nil and o.parent==newobj.ref.id) then
+          printh("found child: "..o.name)
+          local build_obj = m_obj(109,44, o.type, o.ico_spr, nil, 2,2, newobj, function(self)
+           -- build item clicked
+           printh("build item clicked...")
+          end)
+          build_obj.ref=o -- for future ref
+          add(newobj.build_objs,build_obj)
+          newobj.build_obj=newobj.build_objs[1]
+         end
+        end
+
         if (objref.type==2) add(buildings,newobj) mset(mx,my,20)
+        if (objref.type==1) add(units,newobj) mset(mx,my,17)
         reveal_fow(newobj)
       end
     end
@@ -253,6 +274,13 @@ function discover_objs()
 
 end
 
+-- function get_objref(ref_id, spr_num, parent_id)
+--  local refs={}
+--  for o in all(obj_data) do
+--   if (o.obj_spr==spr_num or o.id==ref_id or o.parent==parent_id) printh("found "..o.name) add(refs,o)
+--  end
+--  return refs
+-- end
 
 function reveal_fow(object)  
  local size = object.type==2 and 3 or 2
@@ -530,7 +558,7 @@ function draw_level()
  end
 
 -- draw fog-of-war
---draw_fow()
+draw_fow()
 end
 
 
@@ -902,7 +930,7 @@ function explode_data()
  for i=2,#str_arrays-1 do
   new_obj={}
   -- loop all properties
-  for j=2,#str_arrays[i] do
+  for j=1,#str_arrays[i] do
    local val=str_arrays[i][j]
    -- convert all but the text columns to numbers
    if (j!=2 and j<20) val=tonum(val)
@@ -915,6 +943,7 @@ function explode_data()
  obj_data=new_data
  -- test new structure!
  printh("test 8:"..obj_data[1].name)
+ printh("test 8:"..obj_data[1].id)
 end
 
 
@@ -1375,14 +1404,14 @@ ff77777777ffffffff77757777ffffff000000000000000000000000000000000000000000000000
 ff766666666fffffff766657666fffff000000000000000000000000000000000000000000000000000000000000000000000000000000b1bb1b1b1b1b000000
 ff7666666666ffffff5555565555ffff0000000000000000000000000000000000000000000000000000000000000000000000000000000bb000000bb0000000
 f766666666666ffff777777577777fff000000000000000000000000000000000000000000000000000000000000000000000000000000010000000010000000
-f7666666666666fff7666665766666ff000000000000000000000000bbb22bbbbb8dd8bb62ddd26bb28882bb0000000000000000000000000000000000000000
-f76666666666666ff76666665766666f000000000000000000000000bb2882bbb8d66d8b6d666d6b2828282b0000000000000000000000000000000000000000
-f55555555555555ff55555555555555f000000000000000000000000b522225bb8d66d8b6d666d6b2868682b0000000000000000000000000000000000000000
-ffffffffffffffffffffffffffffffff000000000000000000000000b028820bb8d66d8b68d6d86b2262622b0000000000000000000000000000000000000000
-ffffffffffffffffffffffffffffffff000000000000000000000000bb2882bbb856658b6886886b2808082b0000000000000000000000000000000000000000
-ffffffffffffffffffffffffffffffff000000000000000000000000b522225bb886688b6226226b2888882b0000000000000000000000000000000000000000
-ffffffffffffffffffffffffffffffff000000000000000000000000b002200bb220022b50b0b05b00bbb00b0000000000000000000000000000000000000000
-ffffffffffffffffffffffffffffffff000000000000000000000000bbbbbbbbb00bb00bbbbbbbbbbbbbbbbb0000000000000000000000000000000000000000
+f7666666666666fff7666665766666ff000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+f76666666666666ff76666665766666f000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+f55555555555555ff55555555555555f000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+ffffffffffffffffffffffffffffffff000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+ffffffffffffffffffffffffffffffff000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+ffffffffffffffffffffffffffffffff000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+ffffffffffffffffffffffffffffffff000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+ffffffffffffffffffffffffffffffff000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 ccccccccccccc0cccccccccccccccccccccccccccccccccceeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeee
 ccccccccccccc0ccccccccccccccccccc71dcccc1c0c1cc7eeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeee
 cccccccccccccdccccccc677ddcccccc5666ccccc101c7d7eeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeeeffffffffffffffffeeeeeeeeeeeeeeee
@@ -1578,7 +1607,7 @@ f000f000f0000fffff79f000000000ffff79ffffffffffffffffffffffffffffffffffffffffffff
 fffffffff7fffffff7fffffff7fffffff7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff7fffffff7ffffff
 
 __gff__
-0000020202020400000000000000000000000200010000010101010101010101010101010000000000000101010000000001010101000000000000000000000001010101010102000000000001010101010101010101020000000000010101010000000000000000000000000101010100000000000000010101010000000000
+0000020202020400000000000000000000000200010000010101010101010101010101010000000000000101010000000001010101000000000000000000000001010101010102000000000001010101010101010101020000000000010101010000000000000000000000000101010100000000000000000000000000000000
 0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 __map__
 0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000015151500000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000151515
