@@ -26,6 +26,7 @@ buildings={}
 _g={}
 _g.constyard_click=function(self)
   printh("todo: load construction yard menu...")
+  show_building_menu=self
 end
 _g.draw_windtrap=function(self)
  printh("hello building!!!")
@@ -628,11 +629,24 @@ function draw_ui()
   fillp()
  end
 
+ if show_building_menu then
+ -- test
+ draw_dialog(80,40,0,7)
+end
+
  -- cursor
  palt(11,true)
  cursor:draw()
 end
 
+function draw_dialog(w,h,bgcol,bordercol)
+ fillp(0xA5A5.8)
+ rectfill(0,0,127,127,0)
+ fillp()
+
+ rectfill(64-w/2, 64-h/2, 64+w/2, 64+h/2, bgcol)
+ rect(64-w/2+1, 64-h/2+1, 64+w/2-1, 64+h/2-1, bordercol) 
+end
 
 -- function draw_pathfinding()
 --  -- debug pathfinding 
@@ -707,6 +721,7 @@ function collisions()
     end
 
     selected_obj=nil
+    show_building_menu=nil
   end 
  end
 
