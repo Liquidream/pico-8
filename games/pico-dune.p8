@@ -243,8 +243,11 @@ function discover_objs()
       end
       
       if objref!=nil then
-        local newobj=m_obj(mx*8,my*8, objref.type, objref.obj_spr, objref.trans_col, objref.w,objref.h)
-        newobj.ref=objref -- for future ref
+        local newobj=m_obj(mx*8,my*8, objref.type, objref.obj_spr, objref.trans_col, objref.w,objref.h)        
+        -- clone ref obj details to instance
+        copy_ref_to_obj(objref,newobj)
+        --newobj.ref=objref -- for future ref
+        
         newobj.ico_obj=m_obj(109,20, objref.type, objref.ico_spr, nil, 2,2, newobj, _g[objref.func_onclick])
         newobj.life=100 -- unless built without concrete
         
@@ -253,26 +256,29 @@ function discover_objs()
         -- go through all ref's and see if any valid for this building
         for o in all(obj_data) do
          printh("o.parent="..(o.parent!=nil and o.parent or "nil"))
-         if (o.parent!=nil and o.parent==newobj.ref.id) then
+         if (o.parent!=nil and o.parent==newobj.id) then
           printh("found child: "..o.name)
           local build_obj = m_obj(109,44, o.type, o.ico_spr, nil, 2,2, nil, function(self)
            -- build item clicked
            printh("build item clicked...")
-           self.build_step=5/self.ref.cost
+           self.build_step=5/self.cost
            self.cor=cocreate(function(self)
               -- build slab
               self.buildstep=0
               self.spent=0
-              while self.spent<self.ref.cost do
+              while self.spent<self.cost do
                 self.buildstep+=1
                 if (self.buildstep>3)self.buildstep=0 credits-=1 self.spent+=1
-                self.life=(self.spent/self.ref.cost)*100
+                self.life=(self.spent/self.cost)*100
                 yield()
               end
               -- ready to place!
            end)
           end)
-          build_obj.ref=o -- for future ref
+          
+          copy_ref_to_obj(o,build_obj)
+          --build_obj.ref=o -- for future ref
+
           add(newobj.build_objs,build_obj)
           newobj.build_obj=newobj.build_objs[1]
          end
@@ -295,6 +301,13 @@ function discover_objs()
     end
   end
 
+end
+
+function copy_ref_to_obj(ref_obj, new_obj)
+ for k,v in pairs(ref_obj) do
+  printh(">>>>> copying: "..k.." = "..tostr(v).." (type:"..type(v)..")")
+  new_obj[k] = v
+ end
 end
 
 -- function get_objref(ref_id, spr_num, parent_id)
