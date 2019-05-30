@@ -39,7 +39,7 @@ obj_data=[[id|name|obj_spr|ico_spr|map_spr|type|w|h|trans_col|parent_id|req_id|r
 ]]..
 -- buildings
 [[1|cONSTRUCTION yARD|64|128||2|2|2|nil|nil|nil|1||100|nil||400||||||aLL STRUCTURES ARE BUILT BY THE CONSTRUCTION YARD.|||constyard_click
-2|wINDTRAP|66|130||2|2|2|nil|1|1|1||300|100||200||||||tHE WINDTRAP SUPPLIES POWER TO YOUR BASE. wITHOUT POWER YOUR STRUCTURES WILL DECAY.|draw_windtrap|update_bld|
+2|wINDTRAP|66|130||2|2|2|nil|1|1|1||30|100||200||||||tHE WINDTRAP SUPPLIES POWER TO YOUR BASE. wITHOUT POWER YOUR STRUCTURES WILL DECAY.|draw_windtrap|update_bld|
 3|sMALL cONCRETE sLAB|nil|||2|1|1|nil|1|1|1||5|nil||0||||||uSE CONCRETE TO MAKE A STURDY FOUNDATION FOR YOUR STRUCTURES.|||
 4|lARGE cONCRETE sLAB|nil|||2|2|2|nil|1|1|4||20|nil||0||||||uSE CONCRETE TO MAKE A STURDY FOUNDATION FOR YOUR STRUCTURES.|||
 5|dEFENSIVE wALL||||2|1|1|nil|1|7|4||50|nil||50||||||tHE wALL IS USED FOR PASSIVE DEFENSE.|||
@@ -731,10 +731,20 @@ function collisions()
       -- place object
       local xpos=flr((cursor.x+camx)/8)
       local ypos=flr((cursor.y+camy)/8)
-      mset(xpos,ypos,19)
-      mset(xpos+1,ypos,19)
-      mset(xpos,ypos+1,19)
-      mset(xpos+1,ypos+1,19)
+      
+      local objref = obj_data[selected_obj.build_obj.id]
+      local newobj=m_obj(xpos*8,ypos*8, objref.type, objref.obj_spr, objref.trans_col, objref.w,objref.h, nil, nil)        
+        -- clone ref obj details to instance
+      copy_ref_to_obj(objref,newobj)
+      add(buildings,newobj)
+      reveal_fow(newobj)
+
+      -- ### test code ###
+      -- mset(xpos,ypos,19)
+      -- mset(xpos+1,ypos,19)
+      -- mset(xpos,ypos+1,19)
+      -- mset(xpos+1,ypos+1,19)
+
       -- reset build
       selected_obj.build_obj.life=0
 
