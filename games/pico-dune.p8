@@ -375,7 +375,11 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_onclick)
          if (this.life>0) rectfill(x,y+17,x+(15*this.life/100),y+18,col)
        end
        -- non-rotational sprite
+       if self.type>2 then 
+        spr(self.ico_spr, self.x or x, self.y or y, 2, 2)
+       else
        spr(self.obj_spr, self.x or x, self.y or y, self.w/8, self.h/8)
+       end
      end
  
      if (debug_collision) draw_hitbox(self)
