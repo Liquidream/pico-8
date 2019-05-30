@@ -114,19 +114,38 @@ function _init()
  ticks=0
 
  -- create cursor ui "object" (for collisions)
- cursor = m_obj(0,0,0)
- cursor.get_hitbox=function(self)
+ cursor = {
+  x=0,
+  y=0,
+  w=8,
+  h=8,
+  spr=0,
+  get_hitbox=function(self)
    return {
     x=self.x+(not ui_collision_mode and camx or 0)+2,
     y=self.y+(not ui_collision_mode and camy or 0)+1,
     w=1,
     h=1
    }
+  end,
+  draw=function(self)   
+   spr((selected_obj and (selected_obj.type==1)) and 1 or self.spr, 
+    self.x, self.y, self.w/8, self.h/8)
   end
-cursor.draw=function(self)   
-  spr((selected_obj and (selected_obj.type==1)) and 1 or self.spr, 
-   self.x, self.y, self.w/8, self.h/8)
- end
+}
+--  cursor = m_obj(0,0,0)
+--  cursor.get_hitbox=function(self)
+--    return {
+--     x=self.x+(not ui_collision_mode and camx or 0)+2,
+--     y=self.y+(not ui_collision_mode and camy or 0)+1,
+--     w=1,
+--     h=1
+--    }
+--   end
+-- cursor.draw=function(self)   
+--   spr((selected_obj and (selected_obj.type==1)) and 1 or self.spr, 
+--    self.x, self.y, self.w/8, self.h/8)
+--  end
 
 
 discover_objs()
@@ -244,12 +263,15 @@ function discover_objs()
       end
       
       if objref!=nil then
-        local newobj=m_obj(mx*8,my*8, objref.type, objref.obj_spr, objref.trans_col, objref.w,objref.h, nil, nil)        
+       local newobj=m_obj_from_ref(objref, mx*8,my*8, objref.type, nil, nil)
+        --local newobj=m_obj(mx*8,my*8, objref.type, objref.obj_spr, objref.trans_col, objref.w,objref.h, nil, nil)        
         -- clone ref obj details to instance
-        copy_ref_to_obj(objref,newobj)
+        --copy_ref_to_obj(objref,newobj)
         --newobj.ref=objref -- for future ref
         
-        newobj.ico_obj=m_obj(109,20, objref.type, objref.ico_spr, nil, 2,2, newobj, _g[objref.func_onclick])
+        -- set type==3 (icon!)
+        newobj.ico_obj=m_obj_from_ref(objref, 109,20, 3, newobj, _g[objref.func_onclick])
+        --newobj.ico_obj=m_obj(109,20, objref.type, objref.ico_spr, nil, 2,2, newobj, _g[objref.func_onclick])
         newobj.life=100 -- unless built without concrete
         
         -- factory?
@@ -259,8 +281,9 @@ function discover_objs()
          printh("o.parent="..(o.parent_id!=nil and o.parent_id or "nil"))
          if (o.parent_id!=nil and o.parent_id==newobj.id) then
           printh("found child: "..o.name)
-          -- set type==3 (icon!)
-          local build_obj = m_obj(109,44, 3, o.ico_spr, nil, 2,2, newobj, function(self)
+          -- set type==4 (build icon!)
+          local build_obj = m_obj_from_ref(o, 109,44, 4, newobj, function(self)
+          --local build_obj = m_obj(109,44, 3, o.ico_spr, nil, 2,2, newobj, function(self)
            -- build item clicked
            printh("build item clicked...")
            self.build_step=5/self.cost
@@ -278,7 +301,7 @@ function discover_objs()
            end)
           end)
           
-          copy_ref_to_obj(o,build_obj)
+          --copy_ref_to_obj(o,build_obj)
           --build_obj.ref=o -- for future ref
 
           add(newobj.build_objs,build_obj)
@@ -302,19 +325,107 @@ function discover_objs()
       end
     end
   end
-
 end
 
-function copy_ref_to_obj(ref_obj, new_obj)
+
+function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_onclick)
+ local _w=(ref_obj.w or 1)*8 -- pixel dimensions
+ local _h=(ref_obj.h or 1)*8 --
+ local obj={
+  x=x,
+  y=y,
+  z=1, -- defaults
+  type=in_type, -- 1=unit, 2=structure, 3=obj_status_icon, 4=build_icon, 9=worm
+  parent=parent,
+  func_onclick=func_onclick,
+  w=_w,
+  h=_h,
+  spr_w=_w or 1, -- defaults
+  spr_h=_h or 1, --
+  life=0,
+  frame=0,
+  get_hitbox=function(self)
+    return {
+     x=self.x,
+     y=self.y,
+     w=self.w-1,
+     h=self.h-1
+    }
+   end,
+   draw=function(self, x,y, icon_mode) 
+     pal()
+     palt(0,false)
+     if (self.trans_col) palt(self.trans_col,true)
+     -- colour anim?
+     if self.col_cycle then
+       pal(self.col_cycle[self.col_cycle_pos][1],
+           self.col_cycle[self.col_cycle_pos][2])
+     end
+     -- rotating obj?
+     if self.r then
+      rspr(self.obj_spr%16*8,flr(self.obj_spr/16)*8, self.x, self.y, .25-self.r, 1, self.trans_col)      
+     -- norm sprite
+     else      
+       -- icon mode?
+       if icon_mode then
+         rectfill(x-1,y-1,x+16,y+19,0)
+         -- draw health/progress
+         local this=self.type==3 and self or self.parent
+         local col = this.build_step and 12 or (this.life<33 and 8 or this.life<66 and 10 or 11)
+         if (this.life>0) rectfill(x,y+17,x+(15*this.life/100),y+18,col)
+       end
+       -- non-rotational sprite
+       spr(self.obj_spr, self.x or x, self.y or y, self.w/8, self.h/8)
+     end
+ 
+     if (debug_collision) draw_hitbox(self)
+   end,
+   update=function(self)
+     -- default functionality?    
+     if self.framecount!=nil then
+      self.frame+=1
+      if (self.frame > self.framecount) then
+       self.frame=0
+       -- alternate moving frame?
+       if self.altframe 
+        and self.state==2 then
+         self.spr=self.orig_spr+(self.altframe-self.spr)
+       end
+ 
+       if self.col_cycle then
+         self.col_cycle_pos+=1
+         if (self.col_cycle_pos>#self.col_cycle) self.col_cycle_pos=1
+       end
+      end
+     end
+   end
+  }
+ --end
+
+ -- copy ref properties to object (where empty!)
  for k,v in pairs(ref_obj) do
-  if new_obj[k]==nil and v!="" then
+  if obj[k]==nil and v!="" then
    printh(">>>>> copying: "..k.." = "..tostr(v).." (type:"..type(v)..")")
-   new_obj[k] = v
+   obj[k] = v
   else
    printh(">>>>>>>> SKIPPING - already has value")
   end
  end
+
+ return obj
 end
+
+
+-- function copy_ref_to_obj(ref_obj, new_obj)
+--  for k,v in pairs(ref_obj) do
+--   if new_obj[k]==nil and v!="" then
+--    printh(">>>>> copying: "..k.." = "..tostr(v).." (type:"..type(v)..")")
+--    new_obj[k] = v
+--   else
+--    printh(">>>>>>>> SKIPPING - already has value")
+--   end
+--  end
+-- end
 
 -- function get_objref(ref_id, spr_num, parent_id)
 --  local refs={}
@@ -867,87 +978,87 @@ function printo(str,startx,
  print(str,startx,starty,col)
 end
 
-function m_obj(x,y,intype,sprnum,trans_col,w,h,parent,func_onclick)
- return {
-  x=x,
-  y=y,
-  z=1, -- defaults
-  type=intype, -- 1=unit, 2=structure, 3=worm
-  w=(w or 1)*8, -- pixel dimensions
-  h=(h or 1)*8, --
-  parent=parent,
-  spr=sprnum,
-  orig_spr=sprnum,
-  trans_col=trans_col,
-  func_onclick=func_onclick,
-  ai=false,
-  spr_w=w or 1, -- defaults
-  spr_h=h or 1, --
-  life=0,
-  -- color cycling/anim
-  frame=0,
-  --framecount=0,
-  col_cycle_pos=1,
-  -- (units: 1=idle/guarding, 2=moving, 3=attacking)
-  state=1, 
+-- function m_obj(x,y,intype,sprnum,trans_col,w,h,parent,func_onclick)
+--  return {
+--   x=x,
+--   y=y,
+--   z=1, -- defaults
+--   type=intype, -- 1=unit, 2=structure, 3=worm
+--   w=(w or 1)*8, -- pixel dimensions
+--   h=(h or 1)*8, --
+--   parent=parent,
+--   spr=sprnum,
+--   orig_spr=sprnum,
+--   trans_col=trans_col,
+--   func_onclick=func_onclick,
+--   ai=false,
+--   spr_w=w or 1, -- defaults
+--   spr_h=h or 1, --
+--   life=0,
+--   -- color cycling/anim
+--   frame=0,
+--   --framecount=0,
+--   col_cycle_pos=1,
+--   -- (units: 1=idle/guarding, 2=moving, 3=attacking)
+--   state=1, 
 
-  get_hitbox=function(self)
-   return {
-    x=self.x,
-    y=self.y,
-    w=self.w-1,
-    h=self.h-1
-   }
-  end,
-  draw=function(self, x,y, icon_mode) 
-    pal()
-    palt(0,false)
-    if (self.trans_col) palt(self.trans_col,true)
-    -- colour anim?
-    if self.col_cycle then
-      pal(self.col_cycle[self.col_cycle_pos][1],
-          self.col_cycle[self.col_cycle_pos][2])
-    end
-    -- rotating obj?
-    if self.r then
-     rspr(self.spr%16*8,flr(self.spr/16)*8, self.x, self.y, .25-self.r, 1, self.trans_col)      
-    -- norm sprite
-    else      
-      -- icon mode?
-      if icon_mode then
-        rectfill(x-1,y-1,x+16,y+19,0)
-        -- draw health/progress
-        local this=self.type==3 and self or self.parent
-        local col = this.build_step and 12 or (this.life<33 and 8 or this.life<66 and 10 or 11)
-        if (this.life>0) rectfill(x,y+17,x+(15*this.life/100),y+18,col)
-      end
-      -- non-rotational sprite
-      spr(self.spr, self.x or x, self.y or y, self.w/8, self.h/8)
-    end
+--   get_hitbox=function(self)
+--    return {
+--     x=self.x,
+--     y=self.y,
+--     w=self.w-1,
+--     h=self.h-1
+--    }
+--   end,
+--   draw=function(self, x,y, icon_mode) 
+--     pal()
+--     palt(0,false)
+--     if (self.trans_col) palt(self.trans_col,true)
+--     -- colour anim?
+--     if self.col_cycle then
+--       pal(self.col_cycle[self.col_cycle_pos][1],
+--           self.col_cycle[self.col_cycle_pos][2])
+--     end
+--     -- rotating obj?
+--     if self.r then
+--      rspr(self.spr%16*8,flr(self.spr/16)*8, self.x, self.y, .25-self.r, 1, self.trans_col)      
+--     -- norm sprite
+--     else      
+--       -- icon mode?
+--       if icon_mode then
+--         rectfill(x-1,y-1,x+16,y+19,0)
+--         -- draw health/progress
+--         local this=self.type==3 and self or self.parent
+--         local col = this.build_step and 12 or (this.life<33 and 8 or this.life<66 and 10 or 11)
+--         if (this.life>0) rectfill(x,y+17,x+(15*this.life/100),y+18,col)
+--       end
+--       -- non-rotational sprite
+--       spr(self.spr, self.x or x, self.y or y, self.w/8, self.h/8)
+--     end
 
-    if (debug_collision) draw_hitbox(self)
-  end,
-  update=function(self)
-    -- default functionality?    
-    if self.framecount!=nil then
-     self.frame+=1
-     if (self.frame > self.framecount) then
-      self.frame=0
-      -- alternate moving frame?
-      if self.altframe 
-       and self.state==2 then
-        self.spr=self.orig_spr+(self.altframe-self.spr)
-      end
+--     if (debug_collision) draw_hitbox(self)
+--   end,
+--   update=function(self)
+--     -- default functionality?    
+--     if self.framecount!=nil then
+--      self.frame+=1
+--      if (self.frame > self.framecount) then
+--       self.frame=0
+--       -- alternate moving frame?
+--       if self.altframe 
+--        and self.state==2 then
+--         self.spr=self.orig_spr+(self.altframe-self.spr)
+--       end
 
-      if self.col_cycle then
-        self.col_cycle_pos+=1
-        if (self.col_cycle_pos>#self.col_cycle) self.col_cycle_pos=1
-      end
-     end
-    end
-  end
- }
-end
+--       if self.col_cycle then
+--         self.col_cycle_pos+=1
+--         if (self.col_cycle_pos>#self.col_cycle) self.col_cycle_pos=1
+--       end
+--      end
+--     end
+--   end
+--  }
+-- end
 
 function collide(o1, o2)
  local hb1=o1:get_hitbox()
