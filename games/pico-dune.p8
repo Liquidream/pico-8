@@ -327,11 +327,14 @@ function discover_objs()
   end
 end
 
+function m_obj_tree(ref_obj, x,y)
+end
 
 function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_onclick)
  local _w=(ref_obj.w or 1)*8 -- pixel dimensions
  local _h=(ref_obj.h or 1)*8 --
  local obj={
+  ref=ref_obj,
   x=x,
   y=y,
   z=1, -- defaults
@@ -352,7 +355,7 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_onclick)
      h=self.h-1
     }
    end,
-   draw=function(self, x,y, icon_mode) 
+   draw=function(self, x,y) 
      pal()
      palt(0,false)
      if (self.trans_col) palt(self.trans_col,true)
@@ -367,10 +370,10 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_onclick)
      -- norm sprite
      else      
        -- icon mode?
-       if icon_mode then
+       if self.type>2 then
          rectfill(x-1,y-1,x+16,y+19,0)
          -- draw health/progress
-         local this=self.type==3 and self or self.parent
+         local this=self.type==4 and self or self.parent
          local col = this.build_step and 12 or (this.life<33 and 8 or this.life<66 and 10 or 11)
          if (this.life>0) rectfill(x,y+17,x+(15*this.life/100),y+18,col)
        end
@@ -847,10 +850,13 @@ function collisions()
       local xpos=flr((cursor.x+camx)/8)
       local ypos=flr((cursor.y+camy)/8)
       
-      local objref = obj_data[selected_obj.build_obj.id]
-      local newobj=m_obj(xpos*8,ypos*8, objref.type, objref.obj_spr, objref.trans_col, objref.w,objref.h, nil, nil)        
+      local objref = selected_obj.build_obj.ref
+      --local objref = obj_data[selected_obj.build_obj.id]
+      local newobj=m_obj_from_ref(selected_obj.build_obj.ref, xpos*8,ypos*8, 
+             objref.type, objref.obj_spr, objref.trans_col, objref.w,objref.h, nil, nil)        
+      --local newobj=m_obj(xpos*8,ypos*8, objref.type, objref.obj_spr, objref.trans_col, objref.w,objref.h, nil, nil)        
         -- clone ref obj details to instance
-      copy_ref_to_obj(objref,newobj)
+      --copy_ref_to_obj(objref,newobj)
       add(buildings,newobj)
       reveal_fow(newobj)
 
