@@ -259,75 +259,70 @@ function discover_objs()
       
       -- find object for id
       for o in all(obj_data) do       
-       if (o.obj_spr!=nil and o.obj_spr==spr_val) objref=o printh("o.obj_spr:"..o.obj_spr) printh("found> "..objref.name) break
+       if (o.obj_spr!=nil and o.obj_spr==spr_val) objref=o printh("o.obj_spr:"..o.obj_spr) printh("found> "..objref.name) break       
       end
       
       if objref!=nil then
-       local newobj=m_obj_from_ref(objref, mx*8,my*8, objref.type, nil, nil)
-        --local newobj=m_obj(mx*8,my*8, objref.type, objref.obj_spr, objref.trans_col, objref.w,objref.h, nil, nil)        
-        -- clone ref obj details to instance
-        --copy_ref_to_obj(objref,newobj)
-        --newobj.ref=objref -- for future ref
-        
-        -- set type==3 (icon!)
-        newobj.ico_obj=m_obj_from_ref(objref, 109,20, 3, newobj, _g[objref.func_onclick])
-        --newobj.ico_obj=m_obj(109,20, objref.type, objref.ico_spr, nil, 2,2, newobj, _g[objref.func_onclick])
-        newobj.life=100 -- unless built without concrete
-        
-        -- factory?
-        newobj.build_objs={}
-        -- go through all ref's and see if any valid for this building
-        for o in all(obj_data) do
-         printh("o.parent="..(o.parent_id!=nil and o.parent_id or "nil"))
-         if (o.parent_id!=nil and o.parent_id==newobj.id) then
-          printh("found child: "..o.name)
-          -- set type==4 (build icon!)
-          local build_obj = m_obj_from_ref(o, 109,44, 4, newobj, function(self)
-          --local build_obj = m_obj(109,44, 3, o.ico_spr, nil, 2,2, newobj, function(self)
-           -- build item clicked
-           printh("build item clicked...")
-           self.build_step=5/self.cost
-           self.cor=cocreate(function(self)
-              -- build slab
-              self.buildstep=0
-              self.spent=0
-              while self.spent<self.cost do
-                self.buildstep+=1
-                if (self.buildstep>3)self.buildstep=0 credits-=1 self.spent+=1
-                self.life=(self.spent/self.cost)*100
-                yield()
-              end
-              -- ready to place!
-           end)
-          end)
-          
-          --copy_ref_to_obj(o,build_obj)
-          --build_obj.ref=o -- for future ref
+        m_map_obj_tree(objref, mx*8,my*8)
 
-          add(newobj.build_objs,build_obj)
-          newobj.build_obj=newobj.build_objs[1]
-         end
-        end
-        
-        printh("objref.type=="..objref.type)
-        -- building props?        
         if objref.type==2 then
-         add(buildings,newobj)
-         mset(mx,my,20)
+          mset(mx,my,20)        
+        elseif objref.type==1 then
+          mset(mx,my,17)
         end
-        -- unit props
-        if objref.type==1 then
-         if (newobj.norotate!=1) newobj.r=flr(rnd(8))*.125
-         add(units,newobj) 
-         mset(mx,my,17)
-        end
-        reveal_fow(newobj)
       end
     end
   end
 end
 
-function m_obj_tree(ref_obj, x,y)
+function m_map_obj_tree(objref, x,y)
+  local newobj=m_obj_from_ref(objref, x,y, objref.type, nil, nil)
+  -- set type==3 (icon!)
+  newobj.ico_obj=m_obj_from_ref(objref, 109,20, 3, newobj, _g[objref.func_onclick])
+  newobj.life=100 -- unless built without concrete
+  
+  -- factory?
+  newobj.build_objs={}
+  -- go through all ref's and see if any valid for this building
+  for o in all(obj_data) do
+    printh("o.parent="..(o.parent_id!=nil and o.parent_id or "nil"))
+    if (o.parent_id!=nil and o.parent_id==newobj.id) then
+    printh("found child: "..o.name)
+    -- set type==4 (build icon!)
+    local build_obj = m_obj_from_ref(o, 109,44, 4, newobj, function(self)
+      -- build item clicked
+      printh("build item clicked...")
+      self.build_step=5/self.cost
+      self.cor=cocreate(function(self)
+        -- build slab
+        self.buildstep=0
+        self.spent=0
+        while self.spent<self.cost do
+          self.buildstep+=1
+          if (self.buildstep>3)self.buildstep=0 credits-=1 self.spent+=1
+          self.life=(self.spent/self.cost)*100
+          yield()
+        end
+        -- ready to place!
+      end)
+    end)
+    
+    add(newobj.build_objs,build_obj)
+    newobj.build_obj=newobj.build_objs[1]
+    end
+  end
+  
+  printh("objref.type=="..objref.type)
+  -- building props?        
+  if objref.type==2 then
+    add(buildings,newobj)
+  end
+  -- unit props
+  if objref.type==1 then
+    if (newobj.norotate!=1) newobj.r=flr(rnd(8))*.125
+    add(units,newobj)
+  end
+  reveal_fow(newobj)
 end
 
 function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_onclick)
@@ -852,13 +847,14 @@ function collisions()
       
       local objref = selected_obj.build_obj.ref
       --local objref = obj_data[selected_obj.build_obj.id]
-      local newobj=m_obj_from_ref(selected_obj.build_obj.ref, xpos*8,ypos*8, 
-             objref.type, objref.obj_spr, objref.trans_col, objref.w,objref.h, nil, nil)        
+      m_map_obj_tree(objref,xpos*8,ypos*8)
+      -- local newobj=m_obj_from_ref(selected_obj.build_obj.ref, xpos*8,ypos*8, 
+      --        objref.type, objref.obj_spr, objref.trans_col, objref.w,objref.h, nil, nil)        
       --local newobj=m_obj(xpos*8,ypos*8, objref.type, objref.obj_spr, objref.trans_col, objref.w,objref.h, nil, nil)        
         -- clone ref obj details to instance
       --copy_ref_to_obj(objref,newobj)
-      add(buildings,newobj)
-      reveal_fow(newobj)
+      -- add(buildings,newobj)
+      -- reveal_fow(newobj)
 
       -- ### test code ###
       -- mset(xpos,ypos,19)
