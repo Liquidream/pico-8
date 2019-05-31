@@ -15,7 +15,7 @@ cursx,cursy=0,0
 keyx,keyy=0,0
 selected_obj=nil
 credits=2335
-
+_t=0
 
 --cor=nil
 count=0
@@ -377,6 +377,7 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
      end
      -- rotating obj?
      if self.r then
+      rspr(self.obj_spr%16*8,flr(self.obj_spr/16)*8, self.x, self.y+1, .25-self.r, 1, self.trans_col, 2)
       rspr(self.obj_spr%16*8,flr(self.obj_spr/16)*8, self.x, self.y, .25-self.r, 1, self.trans_col)      
      -- norm sprite
      else      
@@ -464,6 +465,7 @@ function _update60()  --game_update
  
  -- update positions of pathfinding "blocker" objects
  if (t()%1==0) update_obj_tiles()
+ _t+=1
 end
 
 
@@ -1154,7 +1156,7 @@ end
 -- https://www.lexaloffle.com/bbs/?pid=52525#p52541
 local rspr_clear_col=0
 
-function rspr(sx,sy,x,y,a,w,trans)
+function rspr(sx,sy,x,y,a,w,trans,single_col)
 	local ca,sa=cos(a),sin(a)
 	local srcx,srcy,addr,pixel_pair
 	local ddx0,ddy0=ca,sa
@@ -1169,7 +1171,7 @@ function rspr(sx,sy,x,y,a,w,trans)
 		for iy=0,w do
 			if band(bor(srcx,srcy),mask)==0 then
 				local c=sget(sx+srcx,sy+srcy)
-				if (c!=trans) pset(x+ix,y+iy,c)
+				if (c!=trans) pset(x+ix,y+iy, single_col or c)
 			--else
 				--pset(x+ix,y+iy,rspr_clear_col)
 			end
