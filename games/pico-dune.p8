@@ -259,7 +259,7 @@ function discover_objs()
       
       -- find object for id
       for o in all(obj_data) do       
-       if (o.obj_spr!=nil and o.obj_spr==spr_val) objref=o printh("o.obj_spr:"..o.obj_spr) printh("found> "..objref.name) break       
+       if (o.obj_spr!=nil and o.obj_spr==spr_val) objref=o break       
       end
       
       if objref!=nil then
@@ -285,13 +285,13 @@ function m_map_obj_tree(objref, x,y)
   newobj.build_objs={}
   -- go through all ref's and see if any valid for this building
   for o in all(obj_data) do
-    printh("o.parent="..(o.parent_id!=nil and o.parent_id or "nil"))
+    --printh("o.parent="..(o.parent_id!=nil and o.parent_id or "nil"))
     if (o.parent_id!=nil and o.parent_id==newobj.id) then
-    printh("found child: "..o.name)
+    --printh("found child: "..o.name)
     -- set type==4 (build icon!)
     local build_obj = m_obj_from_ref(o, 109,44, 4, newobj, function(self)
       -- build item clicked
-      printh("build item clicked...")
+      --printh("build item clicked...")
       self.build_step=5/self.cost
       self.cor=cocreate(function(self)
         -- build slab
@@ -312,7 +312,7 @@ function m_map_obj_tree(objref, x,y)
     end
   end
   
-  printh("objref.type=="..objref.type)
+  --printh("objref.type=="..objref.type)
   -- building props?        
   if objref.type==2 then
     add(buildings,newobj)
@@ -407,35 +407,16 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_onclick)
  -- copy ref properties to object (where empty!)
  for k,v in pairs(ref_obj) do
   if obj[k]==nil and v!="" then
-   printh(">>>>> copying: "..k.." = "..tostr(v).." (type:"..type(v)..")")
+   --printh(">>>>> copying: "..k.." = "..tostr(v).." (type:"..type(v)..")")
    obj[k] = v
-  else
-   printh(">>>>>>>> SKIPPING - already has value")
+  --else
+   --printh(">>>>>>>> SKIPPING - already has value")
   end
  end
 
  return obj
 end
 
-
--- function copy_ref_to_obj(ref_obj, new_obj)
---  for k,v in pairs(ref_obj) do
---   if new_obj[k]==nil and v!="" then
---    printh(">>>>> copying: "..k.." = "..tostr(v).." (type:"..type(v)..")")
---    new_obj[k] = v
---   else
---    printh(">>>>>>>> SKIPPING - already has value")
---   end
---  end
--- end
-
--- function get_objref(ref_id, spr_num, parent_id)
---  local refs={}
---  for o in all(obj_data) do
---   if (o.obj_spr==spr_num or o.id==ref_id or o.parent==parent_id) printh("found "..o.name) add(refs,o)
---  end
---  return refs
--- end
 
 function reveal_fow(object)  
  local size = object.type==2 and 3 or 2
@@ -843,28 +824,11 @@ function collisions()
      and selected_obj.build_obj.life>=100 then
       -- place object
       local xpos=flr((cursor.x+camx)/8)
-      local ypos=flr((cursor.y+camy)/8)
-      
+      local ypos=flr((cursor.y+camy)/8)      
       local objref = selected_obj.build_obj.ref
-      --local objref = obj_data[selected_obj.build_obj.id]
       m_map_obj_tree(objref,xpos*8,ypos*8)
-      -- local newobj=m_obj_from_ref(selected_obj.build_obj.ref, xpos*8,ypos*8, 
-      --        objref.type, objref.obj_spr, objref.trans_col, objref.w,objref.h, nil, nil)        
-      --local newobj=m_obj(xpos*8,ypos*8, objref.type, objref.obj_spr, objref.trans_col, objref.w,objref.h, nil, nil)        
-        -- clone ref obj details to instance
-      --copy_ref_to_obj(objref,newobj)
-      -- add(buildings,newobj)
-      -- reveal_fow(newobj)
-
-      -- ### test code ###
-      -- mset(xpos,ypos,19)
-      -- mset(xpos+1,ypos,19)
-      -- mset(xpos,ypos+1,19)
-      -- mset(xpos+1,ypos+1,19)
-
       -- reset build
       selected_obj.build_obj.life=0
-
     end
 
     selected_obj=nil
@@ -1227,7 +1191,7 @@ function findpath_cor(unit)
 end
  
 function movepath_cor(unit)
- printh("-------------")
+ --printh("-------------")
 
  unit.state=2 --moving
 
@@ -1240,7 +1204,7 @@ function movepath_cor(unit)
     local dx=unit.x-(node.x*8)
     local dy=unit.y-(node.y*8)
     local a=atan2(dx,dy)
-    printh("  >> target angle="..a)
+    --printh("  >> target angle="..a)
     while (unit.r != a) do
       turntowardtarget(unit, a)
     end
@@ -1283,18 +1247,18 @@ turnspeed = .5 * (pi/180)
 
 function turntowardtarget(unit, targetangle)
    diff = targetangle-unit.r
-   printh("unit.r="..unit.r)
-   printh("targetangle="..targetangle)
-   printh("diff="..diff)
-   printh("turnspeed="..turnspeed)
-   printh("-")
+  --  printh("unit.r="..unit.r)
+  --  printh("targetangle="..targetangle)
+  --  printh("diff="..diff)
+  --  printh("turnspeed="..turnspeed)
+  --  printh("-")
    
    -- never turn more than 180
    if diff > 0.5 then
-    printh("big angle 1")
+    --printh("big angle 1")
     diff -= 1
    elseif diff < -0.5 then
-    printh("big angle 2")
+    --printh("big angle 2")
     diff += 1
    end
 
@@ -1358,7 +1322,7 @@ end
 -- maybe adds the node to neighbors table
 -- (if flag zero is unset at this position)
 function maybe_add(nx, ny, ntable)
- printh("testing:"..nx..","..ny)
+ --printh("testing:"..nx..","..ny)
  if (
   not fget(mget(nx,ny), 0) 
   and object_tiles[nx..","..ny]==nil
@@ -1378,7 +1342,7 @@ function maybe_add(nx, ny, ntable)
   then 
    add(ntable, {x=nx, y=ny}) 
  end
- printh("test passed.")
+ --printh("test passed.")
 end
 
 -- estimates the cost from a to
