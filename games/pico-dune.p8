@@ -129,7 +129,7 @@ function _init()
    }
   end,
   draw=function(self)   
-   spr((selected_obj and (selected_obj.type==1)) and 1 or self.spr, 
+   spr((selected_obj and (selected_obj.type==1)) and 1 or self.obj_spr, 
     self.x, self.y, self.w/8, self.h/8)
   end
 }
@@ -338,6 +338,7 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_onclick)
   func_onclick=func_onclick,
   w=_w,
   h=_h,
+  orig_spr=ref_obj.obj_spr,
   spr_w=_w or 1, -- defaults
   spr_h=_h or 1, --
   life=0,
@@ -391,7 +392,7 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_onclick)
        -- alternate moving frame?
        if self.altframe 
         and self.state==2 then
-         self.spr=self.orig_spr+(self.altframe-self.spr)
+         self.obj_spr=self.orig_spr+(self.altframe-self.obj_spr)
        end
  
        if self.col_cycle then
@@ -928,7 +929,7 @@ function _update_anim(self)
    self.curframe=1--loop
   end
   -- store the spr frame
-  self.spr=a.frames[self.curframe]
+  self.obj_spr=a.frames[self.curframe]
   
  end
 end
