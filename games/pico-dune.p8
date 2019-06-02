@@ -7,7 +7,7 @@ __lua__
 
 -- global flags
 debug_mode=true
-debug_collision=true
+debug_collision=false
 
 -- fields
 camx,camy=0,0
@@ -782,15 +782,16 @@ function draw_ui()
      curr_item:draw()
      -- draw selected reticule
      if (selected_subobj == curr_item) then 
-      rect(curr_item.x, curr_item.y, 
-          curr_item.x+15, curr_item.y+15, 
+      rect(curr_item.x-2, curr_item.y-2, 
+          curr_item.x+17, curr_item.y+17, 
           7)
 
-      print(selected_subobj.name,30,33,7)      
+      print(selected_subobj.name,30,31,7)
+      print("cOST:"..selected_subobj.cost,85,38,9)
       yoff=0
       local desc_lines=create_text_lines(selected_subobj.description, 23)
       for l in all(desc_lines) do
-       print(l,30,40+yoff,6)
+       print(l,30,44+yoff,6)
        yoff+=6
       end
 
