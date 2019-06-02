@@ -7,7 +7,7 @@ __lua__
 
 -- global flags
 debug_mode=false
-debug_collision=false
+debug_collision=true
 
 -- fields
 camx,camy=0,0
@@ -54,8 +54,8 @@ obj_data=[[id|name|obj_spr|ico_spr|map_spr|type|w|h|trans_col|parent_id|req_id|r
 -- buildings
 [[1|cONSTRUCTION yARD|64|128||2|2|2|nil|nil|nil|1||100|nil||400||||||aLL STRUCTURES ARE BUILT BY THE CONSTRUCTION YARD.||||constyard_click
 2|wINDTRAP|66|130||2|2|2|nil|1|1|1||300|100||200|||||10|tHE WINDTRAP SUPPLIES POWER TO YOUR BASE. wITHOUT POWER YOUR STRUCTURES WILL DECAY.|init_windtrap|||
-3|sMALL cONCRETE sLAB|nil|||2|1|1|nil|1|1|1||5|nil||0||||||uSE CONCRETE TO MAKE A STURDY FOUNDATION FOR YOUR STRUCTURES.||||
-4|lARGE cONCRETE sLAB|nil|||2|2|2|nil|1|1|4||20|nil||0||||||uSE CONCRETE TO MAKE A STURDY FOUNDATION FOR YOUR STRUCTURES.||||
+3|sMALL cONCRETE sLAB|nil|160||2|1|1|nil|1|1|1||5|nil||0||||||uSE CONCRETE TO MAKE A STURDY FOUNDATION FOR YOUR STRUCTURES.||||
+4|lARGE cONCRETE sLAB|nil|162||2|2|2|nil|1|1|4||20|nil||0||||||uSE CONCRETE TO MAKE A STURDY FOUNDATION FOR YOUR STRUCTURES.||||
 5|dEFENSIVE wALL||||2|1|1|nil|1|7|4||50|nil||50||||||tHE wALL IS USED FOR PASSIVE DEFENSE.||||
 6|sPICE rEFINERY|68|132||2|3|2|nil|1|2|1||400|30||450||||||tHE rEFINERY CONVERTS SPICE INTO CREDITS.||||
 7|rADAR oUTPOST||||2|2|2|nil|1|2|2||400|30||500||||||tHE oUTPOST PROVIDES RADAR AND AIDS CONTROL OF DISTANT VEHICLES.||||
@@ -95,6 +95,9 @@ obj_data=[[id|name|obj_spr|ico_spr|map_spr|type|w|h|trans_col|parent_id|req_id|r
 -- other
 [[38|sARDAUKAR||||1|1|1|11|nil|nil|4||0||5|110|0.1|1||||tHE sARDULAR ARE THE eMPEROR'S ELITE TROOPS. WITH SUPERIOR FIREPOWER AND ARMOUR.||||
 39|sANDWORM||||1|1|1|11|nil|nil|3||0||300|1000|0.35|0||||tHE sAND wORMS ARE INDIGEONOUS TO dUNE. aTTRACTED BY VIBRATIONS, ALMOST IMPOSSIBLE TO DESTROY, WILL CONSUME ANYTHING THAT MOVES.||||]]
+
+
+
 
 
 
@@ -391,9 +394,9 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
        end
        -- non-rotational sprite
        if self.type>2 then 
-        spr(self.ico_spr, self.x or x, self.y or y, 2, 2)
+        spr(self.ico_spr, x or self.x, y or self.y, 2, 2)
        else
-       spr(self.obj_spr, self.x or x, self.y or y, self.w/8, self.h/8)
+        spr(self.obj_spr, x or self.x, y or self.y, self.w/8, self.h/8)
        end
      end
  
@@ -586,36 +589,25 @@ function update_level()
  --
  -- game mode
  --
+ if not show_menu then 
+  -- auto-scroll (pan) map
+  if (cursx<4) camx-=2
+  if (cursx>123) camx+=2
+  if (cursy<4) camy-=2
+  if (cursy>123) camy+=2
 
- -- auto-scroll (pan) map
- if (cursx<4) camx-=2
- if (cursx>123) camx+=2
- if (cursy<4) camy-=2
- if (cursy>123) camy+=2
-
- -- lock cam to map
- camx=mid(camx,384)  --896
- camy=mid(camy,384)  --128
-
- --printh("cursor="..cursor.x..","..cursor.y)
-
-
- --printh("cam="..camx..","..camy)
-
+  -- lock cam to map
+  camx=mid(camx,384)  --896
+  camy=mid(camy,384)  --128
+ end
 
  update_coroutines()
- --update_pathfinding()
 
- -- p1:update()
- -- sound_monitor:update()
  collisions()
- -- curr_level:update()
- -- update_snow()
- -- cam:update()
 
-  ticks+=1
-  last_mouse_btn = mouse_btn
-  last_selected_obj = selected_obj
+ ticks+=1
+ last_mouse_btn = mouse_btn
+ last_selected_obj = selected_obj
 end
 
 function move_unit_pos(unit,x,y)
@@ -764,10 +756,18 @@ function draw_ui()
  end
 
  if show_menu then
- -- test
- draw_dialog(121,73,col2,col1)
- rectfill(6,30,28,97,0)
-end
+  -- test
+  draw_dialog(121,73,col2,col1)
+
+  -- build menu?
+  if selected_obj.build_objs then
+    rectfill(6,30,27,97,0)
+    for i=1,3 do
+     printh("drawing: "..selected_obj.build_objs[i].name)
+     selected_obj.build_objs[i]:draw(9,14+(i*19))
+    end
+  end
+ end
 
  -- cursor
  palt(11,true)
@@ -812,22 +812,21 @@ function collisions()
  clickedsomething=false
 
  -- check cursor/ui collisions
- if show_menu then
-  
- else
+ if not show_menu then  
   -- unit collisions
   foreach(units, check_hover_select)
   -- building collisions 
   foreach(buildings, check_hover_select)
-
-  -- selected obj ui collision
-  if selected_obj then
-    ui_collision_mode=true
-    if (selected_obj.ico_obj) check_hover_select(selected_obj.ico_obj)
-    if (selected_obj.build_obj) check_hover_select(selected_obj.build_obj)
-    ui_collision_mode=false
-  end
  end
+ -- selected obj ui collision
+ if selected_obj then
+   ui_collision_mode=true
+   if (selected_obj.ico_obj and not show_menu) check_hover_select(selected_obj.ico_obj)
+   foreach(selected_obj.build_objs, check_hover_select)
+   --if (selected_obj.build_obj) check_hover_select(selected_obj.build_obj)
+   ui_collision_mode=false
+ end
+ 
 
  -- clicked something?
  if left_button_clicked then
