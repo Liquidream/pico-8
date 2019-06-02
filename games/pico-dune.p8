@@ -786,7 +786,14 @@ function draw_ui()
           curr_item.x+15, curr_item.y+15, 
           7)
 
-      print(selected_subobj.name,30,33,7)
+      print(selected_subobj.name,30,33,7)      
+      yoff=0
+      local desc_lines=create_text_lines(selected_subobj.description, 23)
+      for l in all(desc_lines) do
+       print(l,30,40+yoff,6)
+       yoff+=6
+      end
+
      end
     end
   end
@@ -804,6 +811,52 @@ function draw_dialog(w,h,bgcol,bordercol)
 
  rectfill(64-w/2, 64-h/2, 64+w/2, 64+h/2, bgcol)
  rect(64-w/2+1, 64-h/2+1, 64+w/2-1, 64+h/2-1, bordercol) 
+end
+
+
+-- auto-break message into lines
+function create_text_lines(msg, max_line_length) --, comma_is_newline)
+	--  > ";" new line, shown immediately
+	local lines={}
+	local currline=""
+	local curword=""
+	local curchar=""
+	
+	local upt=function(max_length)
+		if #curword + #currline > max_length then
+			add(lines,currline)
+			currline=""
+		end
+		currline=currline..curword
+		curword=""
+	end
+
+	for i = 1, #msg do
+		curchar=sub(msg,i,i)
+		curword=curword..curchar
+		
+		if curchar == " "
+		 or #curword > max_line_length-1 then
+			upt(max_line_length)
+		
+		elseif #curword>max_line_length-1 then
+			curword=curword.."-"
+			upt(max_line_length)
+
+		elseif curchar == ";" then 
+			-- line break
+			currline=currline..sub(curword,1,#curword-1)
+			curword=""
+			upt(0)
+		end
+	end
+
+	upt(max_line_length)
+	if currline!="" then
+		add(lines,currline)
+	end
+
+	return lines
 end
 
 -- function draw_pathfinding()
