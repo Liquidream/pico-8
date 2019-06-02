@@ -6,7 +6,7 @@ __lua__
 -- (with support from my patrons)
 
 -- global flags
-debug_mode=false
+debug_mode=true
 debug_collision=true
 
 -- fields
@@ -28,6 +28,7 @@ buildings={}
 _g={}
 _g.constyard_click=function(self)
   printh("todo: load construction yard menu...")
+  selected_subobj=self.parent.build_objs[1]
   show_menu=self
 end
 _g.init_windtrap=function(self)
@@ -296,7 +297,7 @@ end
 function m_map_obj_tree(objref, x,y)
   local newobj=m_obj_from_ref(objref, x,y, objref.type, nil, _g[objref.func_init], _g[objref.func_draw], _g[objref.func_update], nil)
   -- set type==3 (icon!)
-  newobj.ico_obj=m_obj_from_ref(objref, 109,20, 3, newobj, nil, nil, _g[objref.func_onclick])
+  newobj.ico_obj=m_obj_from_ref(objref, 109,0, 3, newobj, nil, nil, _g[objref.func_onclick])
   newobj.life=100 -- unless built without concrete
   
   -- factory?
@@ -307,22 +308,28 @@ function m_map_obj_tree(objref, x,y)
     if (o.parent_id!=nil and o.parent_id==newobj.id) then
     --printh("found child: "..o.name)
     -- set type==4 (build icon!)
-    local build_obj = m_obj_from_ref(o, 109,44, 4, newobj, nil, nil, function(self)
-      -- build item clicked
+    local build_obj = m_obj_from_ref(o, 109,0, 4, newobj, nil, nil, function(self)
+      -- build icon clicked
       --printh("build item clicked...")
-      self.build_step=5/self.cost
-      self.cor=cocreate(function(self)
-        -- build slab
-        self.buildstep=0
-        self.spent=0
-        while self.spent<self.cost do
-          self.buildstep+=1
-          if (self.buildstep>3)self.buildstep=0 credits-=1 self.spent+=1
-          self.life=(self.spent/self.cost)*100
-          yield()
-        end
-        -- ready to place!
-      end)
+      if show_menu then
+        -- select building
+        selected_obj=self
+      else
+        --auto build
+        self.build_step=5/self.cost
+        self.cor=cocreate(function(self)        
+          -- build object
+          self.buildstep=0
+          self.spent=0
+          while self.spent<self.cost do
+            self.buildstep+=1
+            if (self.buildstep>3)self.buildstep=0 credits-=1 self.spent+=1
+            self.life=(self.spent/self.cost)*100
+            yield()
+          end
+          -- ready to place!
+        end)
+      end
     end)
     
     add(newobj.build_objs,build_obj)
@@ -369,7 +376,7 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
      h=(self.type>2 and 16 or self.h)-1
     }
    end,
-   draw=func_draw or function(self, x,y) 
+   draw=func_draw or function(self)--, x,y) 
      pal()
      palt(0,false)
      if (self.trans_col) palt(self.trans_col,true)
@@ -386,17 +393,17 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
      else      
        -- icon mode?
        if self.type>2 then
-         rectfill(x-1,y-1,x+16,y+19,0)
+         rectfill(self.x-1,self.y-1,self.x+16,self.y+19,0)
          -- draw health/progress
          local this=self.type==4 and self or self.parent
          local col = this.build_step and 12 or (this.life<33 and 8 or this.life<66 and 10 or 11)
-         if (this.life>0) rectfill(x,y+17,x+(15*this.life/100),y+18,col)
+         if (this.life>0) rectfill(self.x,self.y+17,self.x+(15*this.life/100),self.y+18,col)
        end
        -- non-rotational sprite
        if self.type>2 then 
-        spr(self.ico_spr, x or self.x, y or self.y, 2, 2)
+        spr(self.ico_spr, self.x, self.y, 2, 2)
        else
-        spr(self.obj_spr, x or self.x, y or self.y, self.w/8, self.h/8)
+        spr(self.obj_spr, self.x, self.y, self.w/8, self.h/8)
        end
      end
  
@@ -420,6 +427,10 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
        end
       end
      end
+   end,
+   setpos=function(self,x,y)
+    self.x=x
+    self.y=y
    end
   }
  --end
@@ -696,6 +707,7 @@ function draw_level()
         7)
   end
  end
+ 
  -- draw units
  palt(11,true)
  for _,unit in pairs(units) do
@@ -723,9 +735,11 @@ function draw_ui()
  
  -- object menu icon/buttons?
  if selected_obj and selected_obj.ico_obj then
-  selected_obj.ico_obj:draw(109,20)  
+  selected_obj.ico_obj:setpos(109,20)
+  selected_obj.ico_obj:draw()--109,20)  
   if selected_obj.build_obj then
-    selected_obj.build_obj:draw(109,44)  
+    selected_obj.build_obj:setpos(109,44) 
+    selected_obj.build_obj:draw()--109,44)  
    end
  end
  
@@ -763,8 +777,17 @@ function draw_ui()
   if selected_obj.build_objs then
     rectfill(6,30,27,97,0)
     for i=1,3 do
-     printh("drawing: "..selected_obj.build_objs[i].name)
-     selected_obj.build_objs[i]:draw(9,14+(i*19))
+     local curr_item=selected_obj.build_objs[i]
+     curr_item:setpos(9,14+(i*19))
+     curr_item:draw()
+     -- draw selected reticule
+     if (selected_subobj == curr_item) then 
+      rect(curr_item.x, curr_item.y, 
+          curr_item.x+15, curr_item.y+15, 
+          7)
+
+      print(selected_subobj.name,30,33,7)
+     end
     end
   end
  end
@@ -831,9 +854,9 @@ function collisions()
  -- clicked something?
  if left_button_clicked then
   if clickedsomething then
-   show_menu=nil
-    -- button?
-    if (selected_obj.func_onclick and selected_obj.parent!=nil)  selected_obj:func_onclick() selected_obj=last_selected_obj
+   --show_menu=nil
+    -- object "button"?
+    if (not show_menu and selected_obj.func_onclick and selected_obj.parent!=nil) selected_obj:func_onclick() selected_obj=last_selected_obj
   
   -- deselect?
   else 
@@ -855,8 +878,8 @@ function collisions()
       selected_obj.build_obj.life=0
     end
 
-    selected_obj=nil
-    show_menu=nil
+    if (not show_menu) selected_obj=nil
+    --show_menu=nil
   end 
  end
 
@@ -865,7 +888,11 @@ end
 function check_hover_select(obj)
   obj.hover = collide(cursor, obj)
   if left_button_clicked and obj.hover then
-   selected_obj = obj   
+   if show_menu then
+    selected_subobj = obj
+   else
+    selected_obj = obj
+   end
    clickedsomething=true
   end
 end
