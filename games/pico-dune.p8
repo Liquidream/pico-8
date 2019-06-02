@@ -15,6 +15,8 @@ cursx,cursy=0,0
 keyx,keyy=0,0
 selected_obj=nil
 credits=2335
+col1=8 -- faction cols
+col2=2
 _t=0
 
 --cor=nil
@@ -26,7 +28,7 @@ buildings={}
 _g={}
 _g.constyard_click=function(self)
   printh("todo: load construction yard menu...")
-  show_building_menu=self
+  show_menu=self
 end
 _g.init_windtrap=function(self)
   self.col_cycle = {
@@ -375,7 +377,7 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
      end
      -- rotating obj?
      if self.r then
-      rspr(self.obj_spr%16*8,flr(self.obj_spr/16)*8, self.x, self.y+1, .25-self.r, 1, self.trans_col, 2)
+      rspr(self.obj_spr%16*8,flr(self.obj_spr/16)*8, self.x, self.y+1, .25-self.r, 1, self.trans_col, 5)
       rspr(self.obj_spr%16*8,flr(self.obj_spr/16)*8, self.x, self.y, .25-self.r, 1, self.trans_col)      
      -- norm sprite
      else      
@@ -761,9 +763,10 @@ function draw_ui()
   fillp()
  end
 
- if show_building_menu then
+ if show_menu then
  -- test
- draw_dialog(80,40,0,7)
+ draw_dialog(121,73,col2,col1)
+ rectfill(6,30,28,97,0)
 end
 
  -- cursor
@@ -809,24 +812,27 @@ function collisions()
  clickedsomething=false
 
  -- check cursor/ui collisions
- 
- -- unit collisions
- foreach(units, check_hover_select)
- -- building collisions 
- foreach(buildings, check_hover_select)
+ if show_menu then
+  
+ else
+  -- unit collisions
+  foreach(units, check_hover_select)
+  -- building collisions 
+  foreach(buildings, check_hover_select)
 
- -- selected obj ui collision
- if selected_obj then
-  ui_collision_mode=true
-  if (selected_obj.ico_obj) check_hover_select(selected_obj.ico_obj)
-  if (selected_obj.build_obj) check_hover_select(selected_obj.build_obj)
-  ui_collision_mode=false
+  -- selected obj ui collision
+  if selected_obj then
+    ui_collision_mode=true
+    if (selected_obj.ico_obj) check_hover_select(selected_obj.ico_obj)
+    if (selected_obj.build_obj) check_hover_select(selected_obj.build_obj)
+    ui_collision_mode=false
+  end
  end
 
  -- clicked something?
  if left_button_clicked then
   if clickedsomething then
-   show_building_menu=nil
+   show_menu=nil
     -- button?
     if (selected_obj.func_onclick and selected_obj.parent!=nil)  selected_obj:func_onclick() selected_obj=last_selected_obj
   
@@ -851,7 +857,7 @@ function collisions()
     end
 
     selected_obj=nil
-    show_building_menu=nil
+    show_menu=nil
   end 
  end
 
@@ -1545,14 +1551,14 @@ b7bbbb7bfffffffff7ffffffd5555555d5515555ffffffffffffffff555d44444444444444444455
 01bbbb10000b0b00bbb1b0001b00000000b1bbbb000000b1bbbbbbbbbb1b1b1b0bbbbbb00bbbbbb0bb1b0000bbbbb1000001b1bb00b1bbbbbbbbbbbbffffffff
 001bb10000000000bbbb0000b0000000000b1bbb0000000b1b1b1b1bb000000b0bbbbbb001bbbb10bbb1bb00bbbbbb0000bb1bbb001bbbbbbbbbbbbbffffffff
 0000000000000000bbb0bbbb10000000000000000000000100000000000000000bbbbbb00bbbbbb0bbbbb1b1bbbbbbb01b1bbbbb0bbbbbbbbbbbbbbbffffffff
-ffffffffbb2222bb58ddd85bbbbbbbbbb28882bb50bbb05bffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffb6bbb6bbb6bbb6bb
-ffffffffb088880b0d777d0b68ddd86b2828282b6888886bffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffb8bbb8bbb8bbb8bb
-ffffffffb088880b0677760b7d777d7b2868682b68d8d86bffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffb2bbb2bbb2bbb2bb
-ffffffffb288882b0677760b7d666d7b2262622b6868686bffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffb0bbb0bb0b0b0b0b
-ffffffffb288882b0d676d0b78d6d87b2808082b6878786bffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffbbb6bbbbbbb6bbbb
-ffffffffb028820b0867680b7886887b2888882b6808086bffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffbbb8bbbbbbb8bbbb
-ffffffffb0d22d0b5867685b6226226b00bbb00b7888887bffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffbbb2bbbbbbb2bbbb
-ffffffffbb2882bbbb000bbb50b0b05bbbbbbbbb50bbb05bffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffbbb0bbbbbb0b0bbb
+ffffffffbb2222bbb08dd80bbbbbbbbbb28882bbbbbbbbbbffffffffffffffffffffffffffffffffffffffff50bbb05bffffffffffffffffb6bbb6bbb6bbb6bb
+ffffffffb088880bb2d77d2bb68d86bb0888880bb68886bbbfffffffffffffffffffffffffffffffffffffff6888886bffffffffffffffffb8bbb8bbb8bbb8bb
+ffffffffb088880bb867768bb7d7d7bb0828280bb8ddd8bbbfffffffffffffffffffffffffffffffffffffff68d8d86bffffffffffffffffb2bbb2bbb2bbb2bb
+ffffffffb288882bb867768bb7d6d7bb2868682bb86868bbbfffffffffffffffffffffffffffffffffffffff6868686bffffffffffffffffb0bbb0bb0b0b0b0b
+ffffffffb288882bb2d66d2bb78687bb2262622bb87878bbbfffffffffffffffffffffffffffffffffffffff6878786bffffffffffffffffbbb6bbbbbbb6bbbb
+ffffffffb028820bb286682bb78087bb2c0c0c2bb80808bbbfffffffffffffffffffffffffffffffffffffff6808086bffffffffffffffffbbb8bbbbbbb8bbbb
+ffffffffb0d22d0bb026620bb62226bb0088800bb62226bbbfffffffffffffffffffffffffffffffffffffff7888887bffffffffffffffffbbb2bbbbbbb2bbbb
+ffffffffbb2882bbbbb00bbbbbbbbbbbbbbbbbbbbbbbbbbbffffffffffffffffffffffffffffffffffffffff50bbb05bffffffffffffffffbbb0bbbbbb0b0bbb
 d66dddddddd6fffdddd776ddddddddddddddddddddd666dddddddddd0000000000000000000000000000000000000000000000000000000100fff00010fff000
 76665555551ffff1d576de65d5577655d5555555d5766665d55555550000000000000000000000000000000000000000000000000000000bb000000bb0000000
 76665805555f4441d76deee5d576de65d5556555d5766665d5888885000000000000000000000000000000000000000000000000000000b1b1b1b1bb1b000000
@@ -1780,7 +1786,7 @@ f000f000f0000fffff79f000000000ffff79ffffffffffffffffffffffffffffffffffffffffffff
 fffffffff7fffffff7fffffff7fffffff7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff7fffffff7ffffff
 
 __gff__
-0000020202020400000000000000000000000200010000010101010101010101010101010000000000000101010000000001010101010000000000000000000001010101010102000000000001010101010101010101020000000000010101010000000000000000000000000101010100000000000000000000000000000000
+0000020202020400000000000000000000000200010000010101010101010101010101010000000000000101010000000001010101010000000000010000000001010101010102000000000001010101010101010101020000000000010101010000000000000000000000000101010100000000000000000000000000000000
 0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 __map__
 0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000015151500000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000151515
