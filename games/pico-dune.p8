@@ -32,12 +32,18 @@ _g.factory_click=function(self)
   --printh("todo: load construction yard menu...")
   selected_subobj=self.parent.build_objs[1]
   -- create buttons
-  m_button(6,89,"⬆️",function(self)
-   menu_pos=max(menu_pos-1,1)
+  m_button(6,89,"⬆️",function(self)   
+   --sel_build_item_idx-=1
+   sel_build_item_idx=mid(1,sel_build_item_idx-1,#selected_obj.build_objs)
+   selected_subobj = selected_obj.build_objs[sel_build_item_idx]
+   if (sel_build_item_idx<menu_pos) menu_pos-=1
+   --menu_pos=max(menu_pos-1,1)
   end, 10)
   m_button(17,89,"⬇️",function(self)
-   printh("show_menu.parent.build_objs="..#show_menu.parent.build_objs)
-   menu_pos=min(menu_pos+1,#show_menu.parent.build_objs-2)
+   sel_build_item_idx=mid(1,sel_build_item_idx+1,#selected_obj.build_objs)
+   selected_subobj = selected_obj.build_objs[sel_build_item_idx]
+   if (sel_build_item_idx>menu_pos+2) menu_pos=min(menu_pos+1,#show_menu.parent.build_objs-2)
+   --menu_pos=min(menu_pos+1,#show_menu.parent.build_objs-2)
   end, 10)
   m_button(32,88,"build",function(self)
    --printh(">>> build clicked!")
@@ -817,6 +823,7 @@ function draw_ui()
      end
      -- draw selected reticule
      if (selected_subobj == curr_item) then 
+      sel_build_item_idx=i
       rect(curr_item.x-2, curr_item.y-2, 
           curr_item.x+17, curr_item.y+17, 
           7)
