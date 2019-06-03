@@ -44,16 +44,13 @@ _g.constyard_click=function(self)
   -- show build menu
   show_menu=self
 end
-_g.draw_slab=function(self)
--- printh("self.w="..self.w)
--- printh("self.w/8="..self.w/8)
-  printh("spr_w="..self.spr_w)
-  for xx=0,self.spr_w-1 do
-   for yy=0,self.spr_h-1 do
-    spr(19, self.x+(xx*8), self.y+(yy*8))
-   end
-  end
-end
+-- _g.draw_slab=function(self)
+--   for xx=0,self.spr_w-1 do
+--    for yy=0,self.spr_h-1 do
+--     spr(19, self.x+(xx*8), self.y+(yy*8))
+--    end
+--   end
+-- end
 _g.init_windtrap=function(self)
   self.col_cycle = {
     {14,12},
@@ -78,8 +75,8 @@ obj_data=[[id|name|obj_spr|ico_spr|map_spr|type|w|h|trans_col|parent_id|req_id|r
 -- buildings
 [[1|cONSTRUCTION yARD|64|128||2|2|2|nil|nil|nil|1||100|nil||400||||||aLL STRUCTURES ARE BUILT BY THE CONSTRUCTION YARD.||||constyard_click
 2|wINDTRAP|66|130||2|2|2|nil|1|1|1||300|100||200|||||10|tHE WINDTRAP SUPPLIES POWER TO YOUR BASE. wITHOUT POWER YOUR STRUCTURES WILL DECAY.|init_windtrap|||
-3|sMALL cONCRETE sLAB|nil|160||2|1|1|nil|1|1|1||5|nil||0||||||uSE CONCRETE TO MAKE A STURDY FOUNDATION FOR YOUR STRUCTURES.||draw_slab||
-4|lARGE cONCRETE sLAB|nil|162||2|2|2|nil|1|1|4||20|nil||0||||||uSE CONCRETE TO MAKE A STURDY FOUNDATION FOR YOUR STRUCTURES.||draw_slab||
+3|sMALL cONCRETE sLAB|nil|160||2|1|1|nil|1|1|1||5|nil||0||||||uSE CONCRETE TO MAKE A STURDY FOUNDATION FOR YOUR STRUCTURES.||||
+4|lARGE cONCRETE sLAB|nil|162||2|2|2|nil|1|1|4||20|nil||0||||||uSE CONCRETE TO MAKE A STURDY FOUNDATION FOR YOUR STRUCTURES.||||
 5|dEFENSIVE wALL||||2|1|1|nil|1|7|4||50|nil||50||||||tHE wALL IS USED FOR PASSIVE DEFENSE.||||
 6|sPICE rEFINERY|68|132||2|3|2|nil|1|2|1||400|30||450||||||tHE rEFINERY CONVERTS SPICE INTO CREDITS.||||
 7|rADAR oUTPOST||||2|2|2|nil|1|2|2||400|30||500||||||tHE oUTPOST PROVIDES RADAR AND AIDS CONTROL OF DISTANT VEHICLES.||||
@@ -119,8 +116,6 @@ obj_data=[[id|name|obj_spr|ico_spr|map_spr|type|w|h|trans_col|parent_id|req_id|r
 -- other
 [[38|sARDAUKAR||||1|1|1|11|nil|nil|4||0||5|110|0.1|1||||tHE sARDULAR ARE THE eMPEROR'S ELITE TROOPS. WITH SUPERIOR FIREPOWER AND ARMOUR.||||
 39|sANDWORM||||1|1|1|11|nil|nil|3||0||300|1000|0.35|0||||tHE sAND wORMS ARE INDIGEONOUS TO dUNE. aTTRACTED BY VIBRATIONS, ALMOST IMPOSSIBLE TO DESTROY, WILL CONSUME ANYTHING THAT MOVES.||||]]
-
-
 
 
 
@@ -982,9 +977,19 @@ function collisions()
      and selected_obj.build_obj.life>=100 then
       -- place object
       local xpos=flr((cursor.x+camx)/8)
-      local ypos=flr((cursor.y+camy)/8)      
-      local objref = selected_obj.build_obj.ref
-      m_map_obj_tree(objref,xpos*8,ypos*8)
+      local ypos=flr((cursor.y+camy)/8)
+      -- slabs?
+      if (selected_obj.build_obj.id==3 or selected_obj.build_obj.id==4) then
+       for xx=0,selected_obj.build_obj.spr_w-1 do
+        for yy=0,selected_obj.build_obj.spr_h-1 do
+          mset(xpos+xx, ypos+yy, 19)
+        end
+       end
+      else
+       -- normal obj placement
+       local objref = selected_obj.build_obj.ref
+       m_map_obj_tree(objref,xpos*8,ypos*8)
+      end
       -- reset build
       selected_obj.build_obj.life=0
     end
@@ -1003,7 +1008,7 @@ function check_hover_select(obj)
     selected_subobj = obj
    else
     -- avoid certain objects from selection
-    if (obj.id==3 or obj.id==4) return
+    --if (obj.parent==nil and obj.id==3 or obj.id==4) return
     selected_obj = obj
    end
    clickedsomething=true
