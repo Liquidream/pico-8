@@ -7,7 +7,7 @@ __lua__
 
 -- global flags
 debug_mode=true
-debug_collision=false
+debug_collision=true
 
 -- fields
 camx,camy=0,0
@@ -806,10 +806,15 @@ function draw_ui()
   -- build menu?
   if selected_obj.build_objs then
     rectfill(6,30,27,97,0)
-    for i=menu_pos,menu_pos+2 do
+    for i=1,#selected_obj.build_objs do
      local curr_item=selected_obj.build_objs[i]
-     curr_item:setpos(9,32+((i-menu_pos)*19))
-     curr_item:draw()
+     if i>=menu_pos and i<=menu_pos+2 then
+      curr_item:setpos(9,32+((i-menu_pos)*19))
+      curr_item:draw()
+     else
+      -- hide!
+      curr_item:setpos(-16,16)
+     end
      -- draw selected reticule
      if (selected_subobj == curr_item) then 
       rect(curr_item.x-2, curr_item.y-2, 
@@ -1018,6 +1023,7 @@ function check_hover_select(obj)
   if left_button_clicked and obj.hover then
    if show_menu then
     selected_subobj = obj
+    printh("selected_subobj selected!")
    else
     -- avoid certain objects from selection
     --if (obj.parent==nil and obj.id==3 or obj.id==4) return
