@@ -7,7 +7,7 @@ __lua__
 
 -- global flags
 debug_mode=true
-debug_collision=false
+debug_collision=true
 
 -- fields
 camx,camy=0,0
@@ -24,11 +24,23 @@ count=0
 units={}
 object_tiles={}
 buildings={}
+ui_controls={}
 
 _g={}
 _g.constyard_click=function(self)
   printh("todo: load construction yard menu...")
   selected_subobj=self.parent.build_objs[1]
+  -- create buttons
+  m_button(32,88,"build",function()
+   printh(">>> build clicked!")
+   last_selected_subobj:func_onclick()
+   show_menu=nil
+  end)
+  m_button(96,88,"close",function()
+   printh(">>> close clicked!")
+   show_menu=nil
+  end)
+  -- show build menu
   show_menu=self
 end
 _g.init_windtrap=function(self)
@@ -619,6 +631,7 @@ function update_level()
  ticks+=1
  last_mouse_btn = mouse_btn
  last_selected_obj = selected_obj
+ last_selected_subobj = selected_subobj
 end
 
 function move_unit_pos(unit,x,y)
@@ -798,6 +811,12 @@ function draw_ui()
      end
     end
   end
+
+  -- ui elements (buttons)?
+  for _,controls in pairs(ui_controls) do 
+    --controls:update()
+    controls:draw()
+  end
  end
 
  -- cursor
@@ -814,6 +833,32 @@ function draw_dialog(w,h,bgcol,bordercol)
  rect(64-w/2+1, 64-h/2+1, 64+w/2-1, 64+h/2-1, bordercol) 
 end
 
+function m_button(x,y,text,func_onclick)
+local obj={
+  x=x,
+  y=y,
+  w=#text*4+2,
+  h=8,
+  text=text,
+  get_hitbox=function(self)
+    return {
+     x=self.x,
+     y=self.y,
+     w=self.w,
+     h=self.h
+    }
+   end,
+  draw=function(self)
+    rectfill(self.x,self.y,self.x+self.w,self.y+self.h, 7)
+    rectfill(self.x+1,self.y+1,self.x+self.w-1,self.y+self.h-1, 6)
+    print(self.text,self.x+2,self.y+2,0)
+
+    if (debug_collision) draw_hitbox(self)
+  end,
+  func_onclick = func_onclick
+ }
+ add(ui_controls,obj)
+end
 
 -- auto-break message into lines
 function create_text_lines(msg, max_line_length) --, comma_is_newline)
@@ -900,6 +945,7 @@ function collisions()
    ui_collision_mode=true
    if (selected_obj.ico_obj and not show_menu) check_hover_select(selected_obj.ico_obj)
    foreach(selected_obj.build_objs, check_hover_select)
+   foreach(ui_controls, check_hover_select)
    --if (selected_obj.build_obj) check_hover_select(selected_obj.build_obj)
    ui_collision_mode=false
  end
@@ -911,6 +957,7 @@ function collisions()
    --show_menu=nil
     -- object "button"?
     if (not show_menu and selected_obj.func_onclick and selected_obj.parent!=nil) selected_obj:func_onclick() selected_obj=last_selected_obj
+    if (show_menu and selected_subobj.text and selected_subobj.func_onclick) selected_subobj:func_onclick() --selected_subobj=last_selected_subobj
   
   -- deselect?
   else 
