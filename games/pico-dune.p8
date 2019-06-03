@@ -31,17 +31,28 @@ _g.constyard_click=function(self)
   printh("todo: load construction yard menu...")
   selected_subobj=self.parent.build_objs[1]
   -- create buttons
-  m_button(32,88,"build",function()
+  m_button(32,88,"build",function(self)
    printh(">>> build clicked!")
    show_menu=nil
+   selected_obj.build_obj=last_selected_subobj
    last_selected_subobj:func_onclick()
   end)
-  m_button(96,88,"close",function()
+  m_button(96,88,"close",function(self)
    printh(">>> close clicked!")
    show_menu=nil
   end)
   -- show build menu
   show_menu=self
+end
+_g.draw_slab=function(self)
+-- printh("self.w="..self.w)
+-- printh("self.w/8="..self.w/8)
+  printh("spr_w="..self.spr_w)
+  for xx=0,self.spr_w-1 do
+   for yy=0,self.spr_h-1 do
+    spr(19, self.x+(xx*8), self.y+(yy*8))
+   end
+  end
 end
 _g.init_windtrap=function(self)
   self.col_cycle = {
@@ -67,8 +78,8 @@ obj_data=[[id|name|obj_spr|ico_spr|map_spr|type|w|h|trans_col|parent_id|req_id|r
 -- buildings
 [[1|cONSTRUCTION yARD|64|128||2|2|2|nil|nil|nil|1||100|nil||400||||||aLL STRUCTURES ARE BUILT BY THE CONSTRUCTION YARD.||||constyard_click
 2|wINDTRAP|66|130||2|2|2|nil|1|1|1||300|100||200|||||10|tHE WINDTRAP SUPPLIES POWER TO YOUR BASE. wITHOUT POWER YOUR STRUCTURES WILL DECAY.|init_windtrap|||
-3|sMALL cONCRETE sLAB|nil|160||2|1|1|nil|1|1|1||5|nil||0||||||uSE CONCRETE TO MAKE A STURDY FOUNDATION FOR YOUR STRUCTURES.||||
-4|lARGE cONCRETE sLAB|nil|162||2|2|2|nil|1|1|4||20|nil||0||||||uSE CONCRETE TO MAKE A STURDY FOUNDATION FOR YOUR STRUCTURES.||||
+3|sMALL cONCRETE sLAB|nil|160||2|1|1|nil|1|1|1||5|nil||0||||||uSE CONCRETE TO MAKE A STURDY FOUNDATION FOR YOUR STRUCTURES.||draw_slab||
+4|lARGE cONCRETE sLAB|nil|162||2|2|2|nil|1|1|4||20|nil||0||||||uSE CONCRETE TO MAKE A STURDY FOUNDATION FOR YOUR STRUCTURES.||draw_slab||
 5|dEFENSIVE wALL||||2|1|1|nil|1|7|4||50|nil||50||||||tHE wALL IS USED FOR PASSIVE DEFENSE.||||
 6|sPICE rEFINERY|68|132||2|3|2|nil|1|2|1||400|30||450||||||tHE rEFINERY CONVERTS SPICE INTO CREDITS.||||
 7|rADAR oUTPOST||||2|2|2|nil|1|2|2||400|30||500||||||tHE oUTPOST PROVIDES RADAR AND AIDS CONTROL OF DISTANT VEHICLES.||||
@@ -108,8 +119,6 @@ obj_data=[[id|name|obj_spr|ico_spr|map_spr|type|w|h|trans_col|parent_id|req_id|r
 -- other
 [[38|sARDAUKAR||||1|1|1|11|nil|nil|4||0||5|110|0.1|1||||tHE sARDULAR ARE THE eMPEROR'S ELITE TROOPS. WITH SUPERIOR FIREPOWER AND ARMOUR.||||
 39|sANDWORM||||1|1|1|11|nil|nil|3||0||300|1000|0.35|0||||tHE sAND wORMS ARE INDIGEONOUS TO dUNE. aTTRACTED BY VIBRATIONS, ALMOST IMPOSSIBLE TO DESTROY, WILL CONSUME ANYTHING THAT MOVES.||||]]
-
-
 
 
 
@@ -323,6 +332,7 @@ function m_map_obj_tree(objref, x,y)
     local build_obj = m_obj_from_ref(o, 109,0, 4, newobj, nil, nil, function(self)
       -- build icon clicked
       printh("build item clicked...")
+      printh("name=.."..self.name)
       if show_menu then
         -- select building
         selected_obj=self
@@ -376,8 +386,8 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
   w=_w,
   h=_h,
   orig_spr=ref_obj.obj_spr,
-  spr_w=_w or 1, -- defaults
-  spr_h=_h or 1, --
+  spr_w=ref_obj.w or 1, -- defaults
+  spr_h=ref_obj.h or 1, --
   life=0,
   frame=0,
   get_hitbox=function(self)
@@ -992,6 +1002,8 @@ function check_hover_select(obj)
    if show_menu then
     selected_subobj = obj
    else
+    -- avoid certain objects from selection
+    if (obj.id==3 or obj.id==4) return
     selected_obj = obj
    end
    clickedsomething=true
