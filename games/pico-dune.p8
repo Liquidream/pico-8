@@ -33,8 +33,8 @@ _g.constyard_click=function(self)
   -- create buttons
   m_button(32,88,"build",function()
    printh(">>> build clicked!")
-   last_selected_subobj:func_onclick()
    show_menu=nil
+   last_selected_subobj:func_onclick()
   end)
   m_button(96,88,"close",function()
    printh(">>> close clicked!")
@@ -322,7 +322,7 @@ function m_map_obj_tree(objref, x,y)
     -- set type==4 (build icon!)
     local build_obj = m_obj_from_ref(o, 109,0, 4, newobj, nil, nil, function(self)
       -- build icon clicked
-      --printh("build item clicked...")
+      printh("build item clicked...")
       if show_menu then
         -- select building
         selected_obj=self
