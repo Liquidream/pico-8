@@ -7,7 +7,7 @@ __lua__
 
 -- global flags
 debug_mode=true
-debug_collision=true
+debug_collision=false
 
 -- fields
 camx,camy=0,0
@@ -27,18 +27,26 @@ buildings={}
 ui_controls={}
 
 _g={}
-_g.constyard_click=function(self)
-  printh("todo: load construction yard menu...")
+_g.factory_click=function(self)
+  menu_pos=1
+  --printh("todo: load construction yard menu...")
   selected_subobj=self.parent.build_objs[1]
   -- create buttons
+  m_button(6,89,"⬆️",function(self)
+   menu_pos=max(menu_pos-1,1)
+  end, 10)
+  m_button(17,89,"⬇️",function(self)
+   printh("show_menu.parent.build_objs="..#show_menu.parent.build_objs)
+   menu_pos=min(menu_pos+1,#show_menu.parent.build_objs-2)
+  end, 10)
   m_button(32,88,"build",function(self)
-   printh(">>> build clicked!")
+   --printh(">>> build clicked!")
    show_menu=nil
    selected_obj.build_obj=last_selected_subobj
    last_selected_subobj:func_onclick()
   end)
   m_button(96,88,"close",function(self)
-   printh(">>> close clicked!")
+   --printh(">>> close clicked!")
    show_menu=nil
   end)
   -- show build menu
@@ -73,7 +81,7 @@ end
 obj_data=[[id|name|obj_spr|ico_spr|map_spr|type|w|h|trans_col|parent_id|req_id|req_level|req_faction|cost|power|arms|hitpoint|speed|range|norotate|altframe|framecount|description|func_init|func_draw|func_update|func_onclick
 ]]..
 -- buildings
-[[1|cONSTRUCTION yARD|64|128||2|2|2|nil|nil|nil|1||100|nil||400||||||aLL STRUCTURES ARE BUILT BY THE CONSTRUCTION YARD.||||constyard_click
+[[1|cONSTRUCTION yARD|64|128||2|2|2|nil|nil|nil|1||100|nil||400||||||aLL STRUCTURES ARE BUILT BY THE CONSTRUCTION YARD.||||factory_click
 2|wINDTRAP|66|130||2|2|2|nil|1|1|1||300|100||200|||||10|tHE WINDTRAP SUPPLIES POWER TO YOUR BASE. wITHOUT POWER YOUR STRUCTURES WILL DECAY.|init_windtrap|||
 3|sMALL cONCRETE sLAB|nil|160||2|1|1|nil|1|1|1||5|nil||0||||||uSE CONCRETE TO MAKE A STURDY FOUNDATION FOR YOUR STRUCTURES.||||
 4|lARGE cONCRETE sLAB|nil|162||2|2|2|nil|1|1|4||20|nil||0||||||uSE CONCRETE TO MAKE A STURDY FOUNDATION FOR YOUR STRUCTURES.||||
@@ -81,17 +89,17 @@ obj_data=[[id|name|obj_spr|ico_spr|map_spr|type|w|h|trans_col|parent_id|req_id|r
 6|sPICE rEFINERY|68|132||2|3|2|nil|1|2|1||400|30||450||||||tHE rEFINERY CONVERTS SPICE INTO CREDITS.||||
 7|rADAR oUTPOST||||2|2|2|nil|1|2|2||400|30||500||||||tHE oUTPOST PROVIDES RADAR AND AIDS CONTROL OF DISTANT VEHICLES.||||
 8|sPICE sTORAGE sILO||||2|2|2|nil|1|6|2||150|5||150||||||tHE sPICE SILO IS USED TO STORE REFINED SPICE.||||
-9|bARRACKS||||2|2|2|nil|1|7|2||300|10||300||||||tHE bARRACKS IS USED TO TRAIN YOUR lIGHT INFANTRY.||||
-10|wor tROOPER fACILITY||||2|2|2|nil|1|7|2||400|10||400||||||wor IS USED TO TRAIN YOUR hEAVY INFANTRY.||||
-11|lIGHT vEHICLE fACTORY||||2|2|2|nil|1|6|2||400|20||350||||||tHE lIGHT fACTORY PRODUCES LIGHT ATTACK VEHICLES.||||
-12|hEAVY vEHICLE fACTORY||||2|3|2|nil|1|6|3||600|20||200||||||tHE hEAVY fACTORY PRODUCES HEAVY ATTACK VEHICLES.||||
-13|hI-tECH fACTORY||||2|3|2|nil|1|7+12|5||500|35||400||||||tHE hI-tECH fACTORY PRODUCES FLYING VEHICLES.||||
+9|bARRACKS||||2|2|2|nil|1|7|2||300|10||300||||||tHE bARRACKS IS USED TO TRAIN YOUR lIGHT INFANTRY.||||factory_click
+10|wor tROOPER fACILITY||||2|2|2|nil|1|7|2||400|10||400||||||wor IS USED TO TRAIN YOUR hEAVY INFANTRY.||||factory_click
+11|lIGHT vEHICLE fACTORY||||2|2|2|nil|1|6|2||400|20||350||||||tHE lIGHT fACTORY PRODUCES LIGHT ATTACK VEHICLES.||||factory_click
+12|hEAVY vEHICLE fACTORY||||2|3|2|nil|1|6|3||600|20||200||||||tHE hEAVY fACTORY PRODUCES HEAVY ATTACK VEHICLES.||||factory_click
+13|hI-tECH fACTORY||||2|3|2|nil|1|7+12|5||500|35||400||||||tHE hI-tECH fACTORY PRODUCES FLYING VEHICLES.||||factory_click
 14|cANNON tURRET||||2|1|1|nil|1|7|5||125|10||200||||||tHE cANNON tURRET IS USED FOR SHORT RANGE ACTIVE DEFENSE.||||
 15|rOCKET tURRET||||2|1|1|nil|1|7|6||250|20||200||||||tHE rOCKET/cANNON TURRET IS USED FOR BOTH SHORT AND MEDIUM RANGE ACTIVE DEFENSE.||||
 16|rEPAIR fACILITY||||2|3|2|nil|1|7+12|5||700|20||200||||||tHE rEPAIR fACILITY IS USED TO REPAIR YOUR VEHICLES.||||
-17|sTARPORT||||2|3|3|nil|1|6|6||500|50||500||||||tHE sTARPORT IS USED TO ORDER AND RECEIVED SHIPMENTS FROM c.h.o.a.m.||||
+17|sTARPORT||||2|3|3|nil|1|6|6||500|50||500||||||tHE sTARPORT IS USED TO ORDER AND RECEIVED SHIPMENTS FROM c.h.o.a.m.||||factory_click
 18|hOUSE OF ix||||2|2|2|nil|1|7+12|5||500|40||400||||||tHE ix rESEARCH fACILITY ADVANCES YOUR hOUSE'S TECHNOLOGY.||||
-19|pALACE||||2|3|3|nil|1|17|8||999|80||1000||||||tHIS IS YOUR pALACE.||||
+19|pALACE||||2|3|3|nil|1|17|8||999|80||1000||||||tHIS IS YOUR pALACE.||||factory_click
 ]]..
 -- units
 [[20|lIGHT iNFANTRY (X3)||||1|1|1|11|9|9|2|AO|60||4|50|0.05|2|1|63|10|iNFANTRY ARE LIGHTLY ARMOURED FOOTSOLDIERS, WITH LIMITED FIRING RANGE AND SPEED.||||
@@ -116,6 +124,10 @@ obj_data=[[id|name|obj_spr|ico_spr|map_spr|type|w|h|trans_col|parent_id|req_id|r
 -- other
 [[38|sARDAUKAR||||1|1|1|11|nil|nil|4||0||5|110|0.1|1||||tHE sARDULAR ARE THE eMPEROR'S ELITE TROOPS. WITH SUPERIOR FIREPOWER AND ARMOUR.||||
 39|sANDWORM||||1|1|1|11|nil|nil|3||0||300|1000|0.35|0||||tHE sAND wORMS ARE INDIGEONOUS TO dUNE. aTTRACTED BY VIBRATIONS, ALMOST IMPOSSIBLE TO DESTROY, WILL CONSUME ANYTHING THAT MOVES.||||]]
+
+
+
+
 
 
 
@@ -794,9 +806,9 @@ function draw_ui()
   -- build menu?
   if selected_obj.build_objs then
     rectfill(6,30,27,97,0)
-    for i=1,3 do
+    for i=menu_pos,menu_pos+2 do
      local curr_item=selected_obj.build_objs[i]
-     curr_item:setpos(9,14+(i*19))
+     curr_item:setpos(9,32+((i-menu_pos)*19))
      curr_item:draw()
      -- draw selected reticule
      if (selected_subobj == curr_item) then 
@@ -838,11 +850,11 @@ function draw_dialog(w,h,bgcol,bordercol)
  rect(64-w/2+1, 64-h/2+1, 64+w/2-1, 64+h/2-1, bordercol) 
 end
 
-function m_button(x,y,text,func_onclick)
+function m_button(x,y,text,func_onclick,_w)
 local obj={
   x=x,
   y=y,
-  w=#text*4+2,
+  w=_w or #text*4+2,
   h=8,
   text=text,
   get_hitbox=function(self)
@@ -854,9 +866,9 @@ local obj={
     }
    end,
   draw=function(self)
-    rectfill(self.x,self.y,self.x+self.w,self.y+self.h, 7)
-    rectfill(self.x+1,self.y+1,self.x+self.w-1,self.y+self.h-1, 6)
-    print(self.text,self.x+2,self.y+2,0)
+    if(#text>1)rectfill(self.x,self.y,self.x+self.w,self.y+self.h, 7)
+    if(#text>1)rectfill(self.x+1,self.y+1,self.x+self.w-1,self.y+self.h-1, self.hover and 12 or 6)
+    print(self.text,self.x+2,self.y+2,(#text>1) and 0 or (self.hover and 12 or 7))
 
     if (debug_collision) draw_hitbox(self)
   end,
@@ -1266,7 +1278,7 @@ function explode_data()
  -- test new structure!
  printh("test 8:"..obj_data[2].name)
  printh("test 98:"..obj_data[2].id)
- printh("test 98:"..obj_data[2].func_init)
+ printh("test 98b:"..obj_data[2].func_init)
 end
 
 
