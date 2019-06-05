@@ -202,35 +202,46 @@ function _init()
  music(9)
 end
 
+-- analyse current map & spawn objs  
 function discover_objs()
-  -- analyse current map & spawn objs
-  for my=0,31 do
-    for mx=0,127 do
-      local objref=nil
-      local spr_val=mget(mx,my)
-      local flags=fget(spr_val)
-      
-      --printh("sprval="..spr_val)
-      
-      -- find object for id
-      for o in all(obj_data) do       
-       if (o.obj_spr!=nil and o.obj_spr==spr_val) objref=o break       
-      end
-      
-      if objref!=nil then
-        m_map_obj_tree(objref, mx*8,my*8)
-
-        if objref.type==2 then
-          mset(mx,my,20)        
-        elseif objref.type==1 then
-          mset(mx,my,17)
+  -- make 2 passes
+  -- (first find the player start pos/const yard)
+  -- (second finds everything else)
+  for i=1,2 do
+   for my=0,31 do
+     for mx=0,127 do
+       local objref=nil
+       local spr_val=mget(mx,my)
+       local flags=fget(spr_val)
+       local owner=0 -- default to auto-owner
+       
+       -- handle player start pos (const yard) as a special case
+       if i==1 and spr_val==1 then
+        -- found player start
+        owner=1
+        objref=obj_data[1]
+       else
+        -- find object for id
+        for o in all(obj_data) do       
+         if (o.obj_spr!=nil and o.obj_spr==spr_val) objref=o break       
         end
-      end
-    end
-  end
+       end
+       
+       if objref!=nil then
+         m_map_obj_tree(objref, mx*8,my*8, owner)
+
+         if objref.type==2 then
+           mset(mx,my,20)        
+         elseif objref.type==1 then
+           mset(mx,my,17)
+         end
+       end
+     end
+   end
+ end
 end
 
-function m_map_obj_tree(objref, x,y)
+function m_map_obj_tree(objref, x,y, owner)
   local newobj=m_obj_from_ref(objref, x,y, objref.type, nil, _g[objref.func_init], _g[objref.func_draw], _g[objref.func_update], nil)
   -- set type==3 (icon!)
   newobj.ico_obj=m_obj_from_ref(objref, 109,0, 3, newobj, nil, nil, _g[objref.func_onclick])
@@ -269,6 +280,10 @@ function m_map_obj_tree(objref, x,y)
         end)
       end
     end)
+
+    -- player-controlled or ai?
+    finish this!!!!! #######
+    newobj.ai=(owner!=1 or 
     
     add(newobj.build_objs,build_obj)
     newobj.build_obj=newobj.build_objs[1]
@@ -1178,6 +1193,12 @@ function rspr(sx,sy,x,y,a,w,trans,single_col)
 		dx0+=ddx0
 		dy0+=ddy0
 	end
+end
+
+-- fixed sqrt to avoid overflow
+-- https://www.lexaloffle.com/bbs/?tid=29528
+function dist(x1,y1,x2,y2)
+ return abs(sqrt(((x1-x2)/1000)^2+((y1-y2)/1000)^2)*1000)
 end
 
 
