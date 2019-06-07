@@ -215,7 +215,7 @@ function discover_objs()
        local flags=fget(spr_val)
 
        local owner=0  -- 0=auto, 1=player, 2=computer/ai
-       
+       if(spr_val>0)printh("mpos="..mx..","..my.." - spr_val="..spr_val)
        -- handle player start pos (const yard) as a special case
        if i==1 and spr_val==1 then
         -- found player start position
@@ -224,7 +224,7 @@ function discover_objs()
         -- create player const yard
         owner=1        
         objref=obj_data[1]
-       else
+       elseif i==2 then
         -- find object for id
         for o in all(
          obj_data) do
@@ -286,25 +286,25 @@ function m_map_obj_tree(objref, x,y, owner)
       end
     end)
 
-    -- player-controlled or ai?
-    -- note: this whole thing may not be needed 
-    -- as once we have plr start pos, that might be all we need
-    --finish this!!!!! #######
-    if owner==0 then
-     if dist(x,y,pstartx,pstarty)<10 then
-      newobj.owner=1 -- 0=auto, 1=player, 2=computer/ai
-     else
-      newobj.owner=2 -- auto, probably
-     end
-    else
-     newobj.owner=owner -- overriden, prob 
-    end
-
     add(newobj.build_objs,build_obj)
     newobj.build_obj=newobj.build_objs[1]
     end
   end
-  
+
+  -- player-controlled or ai?
+  -- note: this whole thing may not be needed 
+  -- as once we have plr start pos, that might be all we need
+  --finish this!!!!! #######
+  if owner==0 then
+    if dist(x,y,pstartx,pstarty)<75 then
+    newobj.owner=1 -- 0=auto, 1=player, 2=computer/ai
+    else
+    newobj.owner=2 -- auto, probably
+    end
+  else
+    newobj.owner=owner -- overriden, prob 
+  end
+
   --printh("objref.type=="..objref.type)
   -- building props?        
   if objref.type==2 then
@@ -356,7 +356,7 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
      end
      -- rotating obj?
      if self.r then
-      rspr(self.obj_spr%16*8,flr(self.obj_spr/16)*8, self.x, self.y+1, .25-self.r, 1, self.trans_col, 5)
+      rspr(self.obj_spr%16*8,flr(self.obj_spr/16)*8, self.x, self.y+1, .25-self.r, 1, self.trans_col, self.owner==2 and 8 or 5)
       rspr(self.obj_spr%16*8,flr(self.obj_spr/16)*8, self.x, self.y, .25-self.r, 1, self.trans_col)      
      -- norm sprite
      else      
@@ -370,8 +370,10 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
        end
        -- non-rotational sprite
        if self.type>2 then 
+        -- icon
         spr(self.ico_spr, self.x, self.y, 2, 2)
        else
+        -- building
         spr(self.obj_spr, self.x, self.y, self.w/8, self.h/8)
        end
      end
@@ -421,7 +423,12 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
 end
 
 
-function reveal_fow(object)  
+function reveal_fow(object)
+ -- only reveal if
+ -- > player
+ -- > firing ai
+ if(object.owner!=1 and object.state!=3)return
+
  local size = object.type==2 and 3 or 2
  -- clear group of tiles
  for xx=-size,size do
@@ -1840,7 +1847,7 @@ __map__
 0000000000000000000000000002050400000000000000000000000012000000000000000012121212121200000000030300000000001212000000000000000000000000000000000000000000000000000000000000001212121200121212000000000000000000000000000000000000000000000000000000000000000000
 0000000000000000000205050503030400000000000000000000000012121212000000000000001212121212120000000000000600000012121203000000060000000000000000000000000000000000000000001212121212120000000000000000000000000000000000000000000000000000000000000000000000000000
 0000000000000000000217181819030303000000000000000000000000000012120000000000000000121212120000000000000000000000000003000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
-000000000000000005031d1b1b1b181819040000000000000000000000000000120000000000000000000000120000000000000000000000000003000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+000000000000310005031d1b1b1b181819040000000000000000000000000000120000000000000000000000120000000000000000000000000003000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 00000000000000020303031d1b1b1b1b1c030400000000000000000000000012000000000000000000000000000000000000000003000000000303000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 000000000000000000060303031a1b1b1f030606060000000000000000121212000000000000000000000000000000000000000003030303030300000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 000000000000000000000002031d1b1f03060000000606000000000012120000000000000000000006060606060600000000000000030303000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
