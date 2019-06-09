@@ -856,11 +856,21 @@ function draw_ui()
 
   -- check ok to place
   placement_pos_ok=false
-  for xx=-1,selected_obj.build_obj.ref.w do
-    for yy=-1,selected_obj.build_obj.ref.h do      
+  placement_inner_occupied=false
+  local w=selected_obj.build_obj.ref.w
+  local h=selected_obj.build_obj.ref.h
+  for xx=-1,w do
+    for yy=-1,h do
+     if xx==-1 or xx==w or yy==-1 or y==h then     
+      -- check edges
       if (mget(mxpos+xx, mypos+yy)>=63) placement_pos_ok=true
+     else
+      -- check inner
+      if (object_tiles[mxpos+xx..","..mypos+yy] or mget(mxpos+xx, mypos+yy)>63) placement_inner_occupied=true
+     end
     end
   end
+  if (placement_inner_occupied)placement_pos_ok=false
 
   fillp("0b1110110110110111.1")
   rectfill(sxpos, sypos,
