@@ -9,14 +9,26 @@ __lua__
 debug_mode=true
 debug_collision=false
 
+-- data flags (eventually pulled from cartdata)
+p_faction=3 -- 0=None, 1=Atreides, 2=Ordos, 3=Harkonnen
+p_col1=8
+p_col2=2
+ai_faction=1
+ai_col1=12
+ai_col2=1
+
+
+-- constants
+--### do this in main cart, pre-game!
+--faction_cols={12,1,  11,3,  8,2}
+--faction_cols[plr_faction*2], faction_cols[plr_faction*2-1]
+
 -- fields
 camx,camy=0,0
 cursx,cursy=0,0
 keyx,keyy=0,0
 selected_obj=nil
 credits=2335
-col1=8 -- faction cols
-col2=2
 _t=0
 
 --cor=nil
@@ -67,16 +79,16 @@ end
 -- end
 _g.init_windtrap=function(self)
   self.col_cycle = {
-    {14,12},
-    {14,12},
-    {14,12},
-    {14,12},
-    {14,13},
-    {14,1},
-    {14,1},
-    {14,1},
-    {14,1},
-    {14,13},
+    {11,12},
+    {11,12},
+    {11,12},
+    {11,12},
+    {11,13},
+    {11,1},
+    {11,1},
+    {11,1},
+    {11,1},
+    {11,13},
   }
   self.col_cycle_pos=1
 end
@@ -292,12 +304,22 @@ function m_map_obj_tree(objref, x,y, owner)
   -- as once we have plr start pos, that might be all we need
   if owner==0 then
     if dist(x,y,pstartx,pstarty)<75 then
-    newobj.owner=1 -- 0=auto, 1=player, 2=computer/ai
+      owner=1 -- player
     else
-    newobj.owner=2 -- auto, probably
+      owner=2 -- auto, probably ai
     end
+  end
+  newobj.owner=owner
+
+  -- 0=auto, 1=player, 2=computer/ai
+  if owner==1 then
+    newobj.faction=p_faction
+    newobj.col1=p_col1
+    newobj.col2=p_col2
   else
-    newobj.owner=owner -- overriden, prob 
+    newobj.faction=ai_faction
+    newobj.col1=ai_col1
+    newobj.col2=ai_col2
   end
 
   --printh("objref.type=="..objref.type)
@@ -308,6 +330,10 @@ function m_map_obj_tree(objref, x,y, owner)
   -- unit props
   if objref.type==1 then
     if (newobj.norotate!=1) newobj.r=flr(rnd(8))*.125
+    -- combat stuff
+    newobj.fire=function(self)
+      printh(t().."> fire!!!")
+    end
     add(units,newobj)
   end
   reveal_fow(newobj)
@@ -331,7 +357,8 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
   spr_h=ref_obj.h or 1, --
   life=0,
   frame=0,
-  faction=0, -- 0=None, 1=Atreides, 2=Ordos, 3=Harkonnen
+  --faction=0, -- 0=None, 1=Atreides, 2=Ordos, 3=Harkonnen
+  fire_cooldown=0,
   get_hitbox=function(self)
     return {
      x=self.x,
@@ -344,6 +371,8 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
      pal()
      palt(0,false)
      if (self.trans_col) palt(self.trans_col,true)
+     -- faction?
+     if (self.faction) pal(12,self.col1) pal(14,self.col2)
      -- colour anim?
      if self.col_cycle then
        pal(self.col_cycle[self.col_cycle_pos][1],
@@ -596,25 +625,27 @@ end
 
 function do_attack(attacker, target)
 
-  -- todo:
-  --  1) move to within firing range of target
-  --  2) turn to face?
-  --  3) commence firing
   --  4) repeat 1-4 until target destroyed
   attacker.target=target
   attacker.cor = cocreate(function(attacker)
-    if dist(attacker.x,attacker.y,target.x,target.y) > attacker.range then
-      -- move to within firing range of target
-    end
+    while target!=nil do
+      -- todo:
+      --  1) move to within firing range of target
+      if dist(attacker.x,attacker.y,target.x,target.y) > attacker.range then
+        -- move to within firing range of target
+      end
 
-    --2 
-    -- rotate to face target
-    local a=atan2(attacker.x-target.x, attacker.y-target.y)
-    --printh("  >> target angle="..a)
-    while (attacker.r != a) do
-      turntowardtarget(attacker, a)
-    end
+      -- 2) turn to face target
+      local a=atan2(attacker.x-target.x, attacker.y-target.y)
+      while (attacker.r != a) do
+        turntowardtarget(attacker, a)
+      end
 
+      -- 3) commence firing
+      attacker.fire_cooldown-=.1
+      --printh("attacker.fire_cooldown="..attacker.fire_cooldown)
+      if (attacker.fire_cooldown<=0) attacker.fire(attacker) attacker.fire_cooldown=100*attacker.arms printh("attacker.arms="..attacker.arms)
+    end
   end)
 
   -- 0=idle, 1=pathfinding, 2=moving, 3=attacking, 4=guarding?
@@ -833,7 +864,7 @@ function draw_ui()
 
  if show_menu then
   -- test
-  draw_dialog(121,73,col2,col1)
+  draw_dialog(121,73,p_col2, p_col1)
 
   -- build menu?
   if selected_obj.build_objs then
@@ -1602,32 +1633,32 @@ b7bbbb7bfffffffff7ffffffd5555555d5515555ffffffffffffffff555524444444444444444455
 01bbbb10000b0b00bbb1b0001b00000000b1bbbb000000b1bbbbbbbbbb1b1b1b0bbbbbb00bbbbbb0bb1b0000bbbbb1000001b1bb00b1bbbbbbbbbbbbffffffff
 001bb10000000000bbbb0000b0000000000b1bbb0000000b1b1b1b1bb000000b0bbbbbb001bbbb10bbb1bb00bbbbbb0000bb1bbb001bbbbbbbbbbbbbffffffff
 0000000000000000bbb0bbbb10000000000000000000000100000000000000000bbbbbb00bbbbbb0bbbbb1b1bbbbbbb01b1bbbbb0bbbbbbbbbbbbbbbffffffff
-ffffffffbb2222bbb08dd80bbbbbbbbbb28882bbbbbbbbbbffffffffffffffffffffffffffffffffffffffff50bbb05bbbb76bbbbbb76bbbb6bbb6bbb6bbb6bb
-ffffffffb088880bb2d77d2bb68d86bb0888880bb68886bbbfffffffffffffffffffffffffffffffffffffff6888886bbbb76bbbbbb76bbbb8bbb8bbb8bbb8bb
-ffffffffb088880bb867768bb7d7d7bb0828280bb8ddd8bbbfffffffffffffffffffffffffffffffffffffff68d8d86bbbbddbbbb7b55b7bb2bbb2bbb2bbb2bb
-ffffffffb288882bb867768bb7d6d7bb2868682bb86868bbbfffffffffffffffffffffffffffffffffffffff6868686bbbd66dbbb651156bb0bbb0bb0b0b0b0b
-ffffffffb288882bb2d66d2bb78687bb2262622bb87878bbbfffffffffffffffffffffffffffffffffffffff6878786bbbd66dbbbdd66ddbbbb6bbbbbbb6bbbb
-ffffffffb028820bb286682bb78087bb2c0c0c2bb80808bbbfffffffffffffffffffffffffffffffffffffff6808086bbbbddbbbb1b11b1bbbb8bbbbbbb8bbbb
-ffffffffb0d22d0bb026620bb62226bb0088800bb62226bbbfffffffffffffffffffffffffffffffffffffff7888887bbbbbbbbbbbbbbbbbbbb2bbbbbbb2bbbb
-ffffffffbb2882bbbbb00bbbbbbbbbbbbbbbbbbbbbbbbbbbffffffffffffffffffffffffffffffffffffffff50bbb05bbbbbbbbbbbbbbbbbbbb0bbbbbb0b0bbb
+ffffffffbbeeeebbb08dd80bbbbbbbbbb28882bbbbbbbbbbffffffffffffffffffffffffffffffffffffffff50bbb05bbbb76bbbbbb76bbbb6bbb6bbb6bbb6bb
+ffffffffb0cccc0bb2d77d2bb68d86bb0888880bb68886bbbfffffffffffffffffffffffffffffffffffffff6888886bbbb76bbbbbb76bbbb8bbb8bbb8bbb8bb
+ffffffffb0cccc0bb867768bb7d7d7bb0828280bb8ddd8bbbfffffffffffffffffffffffffffffffffffffff68d8d86bbbbddbbbb7b55b7bb2bbb2bbb2bbb2bb
+ffffffffbeccccebb867768bb7d6d7bb2868682bb86868bbbfffffffffffffffffffffffffffffffffffffff6868686bbbd66dbbb651156bb0bbb0bb0b0b0b0b
+ffffffffbeccccebb2d66d2bb78687bb2262622bb87878bbbfffffffffffffffffffffffffffffffffffffff6878786bbbd66dbbbdd66ddbbbb6bbbbbbb6bbbb
+ffffffffb0ecce0bb286682bb78087bb2c0c0c2bb80808bbbfffffffffffffffffffffffffffffffffffffff6808086bbbbddbbbb1b11b1bbbb8bbbbbbb8bbbb
+ffffffffb0deed0bb026620bb62226bb0088800bb62226bbbfffffffffffffffffffffffffffffffffffffff7888887bbbbbbbbbbbbbbbbbbbb2bbbbbbb2bbbb
+ffffffffbbeccebbbbb00bbbbbbbbbbbbbbbbbbbbbbbbbbbffffffffffffffffffffffffffffffffffffffff50bbb05bbbbbbbbbbbbbbbbbbbb0bbbbbb0b0bbb
 d66dddddddd6fffdddd776ddddddddddddddddddddd666ddddddddddddd6666dddddddddddddddddddddddddddddddddddddddddd19999999999999977777777
-76665555551ffff1d576de65d5577655d5555555d5766665d5555555d566777655555555d555555555555555d766777755555555d49495594999924976666665
-76665805555f4441d76deee5d576de65d5556555d5766665d5888885d767666d65555555d554777777777455d7ddfff755555555d19425599922999976666665
-177d22055d5ffff1d66d11e5d76deee5d5576655d5677725d5555555d767666d65555555d544ff7fff7ff445d7777f7765555777d495f5f4f412141976666665
-d1d55505555f1011d66d01e5d66d11e5d55d7d55d566dd25d5522255d766ddd665555555d504777778617405d4447ff7265557f6d19565656599995976666665
-6555550515df1001d66d0e55d66d01e5d55ddd55d566dd25d5555555d676666625555555d544ff7ff6d1f445d4047777655777fdd49995555594495976666665
-d6d6d55555551005d56dd555d66d0e55d555d555d556dd55d5552555d667ddd225666655d504777771177405d44444442657ffffd19495805594495976666665
-d6d6d555d55d5555d5555555d56dd555d5555555d5555555d5522255d66d11d226680765d544ff7fff7ff445d55544445557ff7fd49992205594495955555555
-dddddddd55d555d5ddddd776ddddddddddd666ddddddddddddddddddd56d11d2762206d6d504777777777405d76677775557ff7fd195594095999959dddddddd
-d555555515555155d55576de65555555d5766665d5555555d5522255d55d11d5767606d6d544ff7fff7ff445d7ddfff755577777d495594495977779d5ddddd5
-d555555a5d55d555d5576deee5558055d5766665d5556555d5552555d5555555766d0d66d542222222222245d7777f77655444449999529925777777d55ddd55
-d5aaa99a55515d5dd5566d11e5522055d5677725d5576655d5555555d555555567666662d528028020200225d4447ff7265804809429444444776666d555d555
-d5aaa55ad5555555d5566d01e5555055d566dd25d55d7d55d5522255d5555555667dd722d522022022200225d4047777652202209999242424766666d5551555
-d5a1199a55d51555d5566d0ed5555055d566dd25d55ddd55d5555555d555555566d11d22d551011011111115d444444426550550944242424296666dd5511155
+76665555551ffff1d576db65d5577655d5555555d5766665d5555555d566777655555555d555555555555555d766777755555555d49495594999924976666665
+76665c05555f4441d76dbbb5d576db65d5556555d5766665d5888885d767666d65555555d554777777777455d7ddfff755555555d19425599922999976666665
+177dee055d5ffff1d66d11b5d76dbbb5d5576655d5677725d5555555d767666d65555555d544ff7fff7ff445d7777f7765555777d495f5f4f412141976666665
+d1d55505555f1011d66d01b5d66d11b5d55d7d55d566dd25d5522255d766ddd665555555d504777778617405d4447ff7265557f6d19565656599995976666665
+6555550515df1001d66d0b55d66d01b5d55ddd55d566dd25d5555555d676666625555555d544ff7ff6d1f445d4047777655777fdd49995555594495976666665
+d6d6d55555551005d56dd555d66d0b55d555d555d556dd55d5552555d667ddd225666655d504777771177405d44444442657ffffd19495c05594495976666665
+d6d6d555d55d5555d5555555d56dd555d5555555d5555555d5522255d66d11d2266c0765d544ff7fff7ff445d55544445557ff7fd4999ee05594495955555555
+dddddddd55d555d5ddddd776ddddddddddd666ddddddddddddddddddd56d11d276ee06d6d504777777777405d76677775557ff7fd195594095999959dddddddd
+d555555515555155d55576db65555555d5766665d5555555d5522255d55d11d5767606d6d544ff7fff7ff445d7ddfff755577777d495594495977779d5ddddd5
+d555555a5d55d555d5576dbbb555c055d5766665d5556555d5552555d5555555766d0d66d542222222222245d7777f77655444449999529925777777d55ddd55
+d5aaa99a55515d5dd5566d11b55ee055d5677725d5576655d5555555d555555567666662d52c02c020200225d4447ff7265c04c09429444444776666d555d555
+d5aaa55ad5555555d5566d01b5555055d566dd25d55d7d55d5522255d5555555667dd722d5ee0ee022200225d404777765ee0ee09999242424766666d5551555
+d5a1199a55d51555d5566d0bd5555055d566dd25d55ddd55d5555555d555555566d11d22d551011011111115d444444426550550944242424296666dd5511155
 d544445a15555515d5556dd5d5555555d556dd55d555d555d5888885d555555556d11d25d555011011111155d555444455550550944242424294ddd2d5111115
 d5151515555d5555d5555555d5555555d5555555d5555555d5555555d555555555d11d55d555511111111555d555222255555555d555555555594425d1111111
-dddd666666ddddddddd7778666666dddddddddddddddddddddddd666666666660000000000000000000000000000000000000000000000000000000000000000
-d566ddddd61111106667d22ddddd657667555555d557755555555ddddd4ddddd0000000000000000000000000000000000000000000000000000000000000000
+dddd666666ddddddddd777c666666dddddddddddddddddddddddd666666666660000000000000000000000000000000000000000000000000000000000000000
+d566ddddd61111106667deeddddd657667555555d557755555555ddddd4ddddd0000000000000000000000000000000000000000000000000000000000000000
 d5dddd000066dd666dd7dd0dd6666dddddd56765d566969666655ddddd4ddd5d0000000000000000000000000000000000000000000000000000000000000000
 d5dd0000001111dd6dd7660dd6dd611111ddddd5d5ddadadddd55ddd5ddd5ddd0000000000000000000000000000000000000000000000000000000000000000
 d50000000066dd106dd11666666d7055011111157777a7a711555ddddd55d5dd0000000000000000000000000000000000000000000000000000000000000000
@@ -1635,8 +1666,8 @@ d5555555551111106d76611111177050554214257d9d9d971155544d5555dd440000000000000000
 d551f6155566dd666d55d5dd66611005554254257da76767115767dddd5d5ddd0000000000000000000000000000000000000000000000000000000000000000
 d550f605551111dd6ddd6ddd711110255542542575776d675576667d5ddddd5d0000000000000000000000000000000000000000000000000000000000000000
 d555f655551d6d106d777777711110455542542575777777766767667d4d5ddd0000000000000000000000000000000000000000000000000000000000000000
-d5516615551d6d106d7011111ddd6445555555557d780777767767767d4ddddd0000000000000000000000000000000000000000000000000000000000000000
-d5505505551d6d106770d1d11ddd7055555555557d220dddd666d66d755555550000000000000000000000000000000000000000000000000000000000000000
+d5516615551d6d106d7011111ddd6445555555557d7c0777767767767d4ddddd0000000000000000000000000000000000000000000000000000000000000000
+d5505505551d6d106770d1d11ddd7055555555557dee0dddd666d66d755555550000000000000000000000000000000000000000000000000000000000000000
 d5555555551d6d10ddd0d1d116777055555555557ddd0d777d66d6dd765555550000000000000000000000000000000000000000000000000000000000000000
 d55555555510d010ddd0d1dd111115dddddd5555777757707dddddd77d6755550000000000000000000000000000000000000000000000000000000000000000
 d555550f050aaa000001d1111111105555555555ddddddd07777777776d755550000000000000000000000000000000000000000000000000000000000000000
