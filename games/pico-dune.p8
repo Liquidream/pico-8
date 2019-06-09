@@ -315,7 +315,16 @@ function m_map_obj_tree(objref, x,y)
   --printh("objref.type=="..objref.type)
   -- building props?        
   if objref.type==2 then
-    add(buildings,newobj)
+    -- prepare the map?
+    local xpos=flr(x/8)
+    local ypos=flr(y/8)
+    local slabs=(objref.id==2 or objref.id==3)
+    for xx=0,objref.w-1 do
+      for yy=0,objref.h-1 do
+        mset(xpos+xx, ypos+yy, slabs and 19 or 95)
+      end
+    end
+    if (not slabs) add(buildings,newobj)
   end
   -- unit props
   if objref.type==1 then
@@ -1056,18 +1065,20 @@ function collisions()
       -- place object
       local xpos=flr((cursor.x+camx)/8)
       local ypos=flr((cursor.y+camy)/8)
-      -- slabs?
-      if (selected_obj.build_obj.id==3 or selected_obj.build_obj.id==4) then
-       for xx=0,selected_obj.build_obj.spr_w-1 do
-        for yy=0,selected_obj.build_obj.spr_h-1 do
-          mset(xpos+xx, ypos+yy, 19)
-        end
-       end
-      else
+      -- update underlying map
+      -- local slabs=(selected_obj.build_obj.id==3 or selected_obj.build_obj.id==4)
+      -- --if (selected_obj.build_obj.id==3 or selected_obj.build_obj.id==4) then
+      --  for xx=0,selected_obj.build_obj.spr_w-1 do
+      --   for yy=0,selected_obj.build_obj.spr_h-1 do
+      --     mset(xpos+xx, ypos+yy, slabs and 19 or 95)
+      --   end
+      --  end
+      -- --else
+      -- if not slabs then
        -- normal obj placement
        local objref = selected_obj.build_obj.ref
        m_map_obj_tree(objref,xpos*8,ypos*8)
-      end
+      --end
       -- reset build
       selected_obj.build_obj.life=0
       sfx(61)
