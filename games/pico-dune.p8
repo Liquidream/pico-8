@@ -594,7 +594,33 @@ function update_level()
 end
 
 
-function do_attack(attacker, victim)
+function do_attack(attacker, target)
+
+  -- todo:
+  --  1) move to within firing range of target
+  --  2) turn to face?
+  --  3) commence firing
+  --  4) repeat 1-4 until target destroyed
+  attacker.target=target
+  attacker.cor = cocreate(function(attacker)
+    if dist(attacker.x,attacker.y,target.x,target.y) > attacker.range then
+      -- move to within firing range of target
+    end
+
+    --2 
+    -- rotate to face target
+    local a=atan2(attacker.x-target.x, attacker.y-target.y)
+    --printh("  >> target angle="..a)
+    while (attacker.r != a) do
+      turntowardtarget(attacker, a)
+    end
+
+  end)
+
+  -- 0=idle, 1=pathfinding, 2=moving, 3=attacking, 4=guarding?
+  -- unit.prev_state = unit.state
+  -- unit.state = 2
+  -- unit.cor = cocreate(function(unit)
 
 end
 
@@ -992,7 +1018,7 @@ function collisions()
     if (selected_obj.owner==1 and selected_obj.type==1 and selected_obj!=last_selected_obj) sfx(62)
     
     -- clicked enemy object, last clicked ours... attack?
-    if (selected_obj.owner==2 and last_selected_obj.type==1) do_attack(last_selected_obj, selected_obj)
+    if (selected_obj.owner==2 and last_selected_obj.type==1) do_attack(last_selected_obj, selected_obj) selected_obj=nil
 
   -- deselect?
   else 
