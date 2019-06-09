@@ -6,7 +6,7 @@ __lua__
 -- (with support from my patrons)
 
 -- global flags
-debug_mode=false
+debug_mode=true
 debug_collision=false
 
 -- fields
@@ -88,10 +88,10 @@ obj_data=[[id|name|obj_spr|ico_spr|map_spr|type|w|h|trans_col|parent_id|req_id|r
 ]]..
 -- buildings
 [[1|cONSTRUCTION yARD|64|128||2|2|2|nil|nil|nil|1||100|nil||400||||||aLL STRUCTURES ARE BUILT BY THE CONSTRUCTION YARD.||||factory_click
-2|wINDTRAP|66|130||2|2|2|nil|1|1|1||300|100||200|||||10|tHE WINDTRAP SUPPLIES POWER TO YOUR BASE. wITHOUT POWER YOUR STRUCTURES WILL DECAY.|init_windtrap|||
+2|lARGE cONCRETE sLAB|19|162||2|2|2|nil|1|1|4||20|nil||0||||||uSE CONCRETE TO MAKE A STURDY FOUNDATION FOR YOUR STRUCTURES.||||
 3|sMALL cONCRETE sLAB|19|160||2|1|1|nil|1|1|1||5|nil||0||||||uSE CONCRETE TO MAKE A STURDY FOUNDATION FOR YOUR STRUCTURES.||||
-4|lARGE cONCRETE sLAB|19|162||2|2|2|nil|1|1|4||20|nil||0||||||uSE CONCRETE TO MAKE A STURDY FOUNDATION FOR YOUR STRUCTURES.||||
-5|dEFENSIVE wALL|79|164||2|1|1|nil|1|7|4||50|nil||50||||||tHE wALL IS USED FOR PASSIVE DEFENSE.||||
+4|dEFENSIVE wALL|79|164||2|1|1|nil|1|7|4||50|nil||50||||||tHE wALL IS USED FOR PASSIVE DEFENSE.||||
+5|wINDTRAP|66|130||2|2|2|nil|1|1|1||300|100||200|||||10|tHE WINDTRAP SUPPLIES POWER TO YOUR BASE. wITHOUT POWER YOUR STRUCTURES WILL DECAY.|init_windtrap|||
 6|sPICE rEFINERY|68|132||2|3|2|nil|1|2|1||400|30||450||||||tHE rEFINERY CONVERTS SPICE INTO CREDITS.||||
 7|rADAR oUTPOST|73|136||2|2|2|nil|1|2|2||400|30||500||||||tHE oUTPOST PROVIDES RADAR AND AIDS CONTROL OF DISTANT VEHICLES.||||
 8|sPICE sTORAGE sILO|71|134||2|2|2|nil|1|6|2||150|5||150||||||tHE sPICE SILO IS USED TO STORE REFINED SPICE.||||
@@ -100,9 +100,9 @@ obj_data=[[id|name|obj_spr|ico_spr|map_spr|type|w|h|trans_col|parent_id|req_id|r
 11|lIGHT vEHICLE fACTORY|96|140||2|2|2|nil|1|6|2||400|20||350||||||tHE lIGHT fACTORY PRODUCES LIGHT ATTACK VEHICLES.||||factory_click
 12|hEAVY vEHICLE fACTORY|98|142||2|3|2|nil|1|6|3||600|20||200||||||tHE hEAVY fACTORY PRODUCES HEAVY ATTACK VEHICLES.||||factory_click
 13|hI-tECH fACTORY|101|166||2|3|2|nil|1|12|5||500|35||400||||||tHE hI-tECH fACTORY PRODUCES FLYING VEHICLES.||||factory_click
-14|cANNON tURRET|60|170||2|1|1|nil|1|7|5||125|10||200||||||tHE cANNON tURRET IS USED FOR SHORT RANGE ACTIVE DEFENSE.||||
-15|rOCKET tURRET|61|172||2|1|1|nil|1|7|6||250|20||200||||||tHE rOCKET/cANNON TURRET IS USED FOR BOTH SHORT AND MEDIUM RANGE ACTIVE DEFENSE.||||
-16|rEPAIR fACILITY||||2|3|2|nil|1|12|5||700|20||200||||||tHE rEPAIR fACILITY IS USED TO REPAIR YOUR VEHICLES.||||
+14|rEPAIR fACILITY||||2|3|2|nil|1|12|5||700|20||200||||||tHE rEPAIR fACILITY IS USED TO REPAIR YOUR VEHICLES.||||
+15|cANNON tURRET|60|170||2|1|1|nil|1|7|5||125|10||200||||||tHE cANNON tURRET IS USED FOR SHORT RANGE ACTIVE DEFENSE.||||
+16|rOCKET tURRET|61|172||2|1|1|nil|1|7|6||250|20||200||||||tHE rOCKET/cANNON TURRET IS USED FOR BOTH SHORT AND MEDIUM RANGE ACTIVE DEFENSE.||||
 17|sTARPORT||||2|3|3|nil|1|6|6||500|50||500||||||tHE sTARPORT IS USED TO ORDER AND RECEIVED SHIPMENTS FROM c.h.o.a.m.||||factory_click
 18|hOUSE OF ix||||2|2|2|nil|1|12|5||500|40||400||||||tHE ix rESEARCH fACILITY ADVANCES YOUR hOUSE'S TECHNOLOGY.||||
 19|pALACE||||2|3|3|nil|1|17|8||999|80||1000||||||tHIS IS YOUR pALACE.||||factory_click
@@ -130,6 +130,10 @@ obj_data=[[id|name|obj_spr|ico_spr|map_spr|type|w|h|trans_col|parent_id|req_id|r
 -- other
 [[38|sARDAUKAR||||1|1|1|11|nil|nil|4||0||5|110|0.1|1||||tHE sARDULAR ARE THE eMPEROR'S ELITE TROOPS. WITH SUPERIOR FIREPOWER AND ARMOUR.||||
 39|sANDWORM||||1|1|1|11|nil|nil|3||0||300|1000|0.35|0||||tHE sAND wORMS ARE INDIGEONOUS TO dUNE. aTTRACTED BY VIBRATIONS, ALMOST IMPOSSIBLE TO DESTROY, WILL CONSUME ANYTHING THAT MOVES.||||]]
+
+
+
+
 
 
 
@@ -205,7 +209,7 @@ function discover_objs()
        local flags=fget(spr_val)
 
        local owner=0  -- 0=auto, 1=player, 2=computer/ai
-       if(spr_val>0)printh("mpos="..mx..","..my.." - spr_val="..spr_val)
+       --if(spr_val>0)printh("mpos="..mx..","..my.." - spr_val="..spr_val)
        -- handle player start pos (const yard) as a special case
        if i==1 and spr_val==1 then
         -- found player start position
@@ -214,7 +218,9 @@ function discover_objs()
         -- create player const yard
         owner=1        
         objref=obj_data[1]
-       elseif i==2 then
+
+       elseif i==2
+        and spr_val!=19 then --don't create "concrete" as objs
         -- find object for id
         for o in all(
          obj_data) do
@@ -248,7 +254,7 @@ function m_map_obj_tree(objref, x,y, owner)
   for o in all(obj_data) do
     --printh("o.parent="..(o.parent_id!=nil and o.parent_id or "nil"))
     if (o.parent_id!=nil and o.parent_id==newobj.id) then
-    --printh("found child: "..o.name)
+    printh("found child: "..o.name)
     -- set type==4 (build icon!)
     local build_obj = m_obj_from_ref(o, 109,0, 4, newobj, nil, nil, function(self)
       -- build icon clicked
@@ -284,7 +290,6 @@ function m_map_obj_tree(objref, x,y, owner)
   -- player-controlled or ai?
   -- note: this whole thing may not be needed 
   -- as once we have plr start pos, that might be all we need
-  --finish this!!!!! #######
   if owner==0 then
     if dist(x,y,pstartx,pstarty)<75 then
     newobj.owner=1 -- 0=auto, 1=player, 2=computer/ai
@@ -346,7 +351,7 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
      end
      -- rotating obj?
      if self.r then
-      rspr(self.obj_spr%16*8,flr(self.obj_spr/16)*8, self.x, self.y+1, .25-self.r, 1, self.trans_col, self.owner==2 and 8 or 5)
+      rspr(self.obj_spr%16*8,flr(self.obj_spr/16)*8, self.x, self.y+1, .25-self.r, 1, self.trans_col, self.owner==2 and 11 or 5)
       rspr(self.obj_spr%16*8,flr(self.obj_spr/16)*8, self.x, self.y, .25-self.r, 1, self.trans_col)      
      -- norm sprite
      else      
@@ -924,7 +929,8 @@ function collisions()
   -- deselect?
   else 
     -- do we have a unit selected?
-    if selected_obj and selected_obj.type==1 then
+    if selected_obj and selected_obj.type==1
+    and selected_obj.owner==1 then
       move_unit_pos(selected_obj, flr((camx+cursx)/8), flr((camy+cursy)/8))
     end
     
