@@ -219,16 +219,13 @@ function discover_objs()
        local objref=nil
        local spr_val=mget(mx,my)
        local flags=fget(spr_val)
-
-       local owner=0  -- 0=auto, 1=player, 2=computer/ai
-       --if(spr_val>0)printh("mpos="..mx..","..my.." - spr_val="..spr_val)
+       
        -- handle player start pos (const yard) as a special case
        if i==1 and spr_val==1 then
         -- found player start position
         pstartx=mx*8
         pstarty=my*8
         -- create player const yard
-        owner=1        
         objref=obj_data[1]
 
        elseif i==2
@@ -241,7 +238,7 @@ function discover_objs()
        end
        
        if objref!=nil then
-         m_map_obj_tree(objref, mx*8,my*8, owner)
+         m_map_obj_tree(objref, mx*8,my*8)
 
          if objref.type==2 then
            mset(mx,my,20)        
@@ -254,7 +251,7 @@ function discover_objs()
  end
 end
 
-function m_map_obj_tree(objref, x,y, owner)
+function m_map_obj_tree(objref, x,y)
   local newobj=m_obj_from_ref(objref, x,y, objref.type, nil, _g[objref.func_init], _g[objref.func_draw], _g[objref.func_update], nil)
   -- set type==3 (icon!)
   newobj.ico_obj=m_obj_from_ref(objref, 109,0, 3, newobj, nil, nil, _g[objref.func_onclick])
@@ -302,11 +299,10 @@ function m_map_obj_tree(objref, x,y, owner)
   -- player-controlled or ai?
   -- note: this whole thing may not be needed 
   -- as once we have plr start pos, that might be all we need
-  if (owner==0) owner = dist(x,y,pstartx,pstarty)<75 and 1 or 2
-  newobj.owner=owner
+  newobj.owner = dist(x,y,pstartx,pstarty)<75 and 1 or 2
 
   -- 0=auto, 1=player, 2=computer/ai
-  if owner==1 then
+  if newobj.owner==1 then
     newobj.faction=p_faction
     newobj.col1=p_col1
     newobj.col2=p_col2
