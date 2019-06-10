@@ -252,7 +252,7 @@ function m_map_obj_tree(objref, x,y)
   local newobj=m_obj_from_ref(objref, x,y, objref.type, nil, _g[objref.func_init], _g[objref.func_draw], _g[objref.func_update], nil)
   -- set type==3 (icon!)
   newobj.ico_obj=m_obj_from_ref(objref, 109,0, 3, newobj, nil, nil, _g[objref.func_onclick])
-  newobj.life=placement_damage and 50 or 100 -- unless built without concrete
+  newobj.life=placement_damage and objref.hitpoint/2 or objref.hitpoint -- unless built without concrete
   
   -- factory?
   newobj.build_objs={}
@@ -312,6 +312,7 @@ function m_map_obj_tree(objref, x,y)
   --printh("objref.type=="..objref.type)
   -- building props?        
   if objref.type==2 then
+    newobj.deathsfx=53
     -- prepare the map?
     local xpos=flr(x/8)
     local ypos=flr(y/8)
@@ -325,6 +326,7 @@ function m_map_obj_tree(objref, x,y)
   end
   -- unit props
   if objref.type==1 then
+   newobj.deathsfx=54
     if (newobj.norotate!=1) newobj.r=flr(rnd(8))*.125
     -- combat stuff
     newobj.fire=function(self)
@@ -399,14 +401,15 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
      end
      -- exploding?
      if self.state==5 then
-      spr(19, self.x+rnd(self.w), self.y+rnd(self.h))
+      palt(11,true)
+      spr(19, self.x+rnd(self.w)-4, self.y+rnd(self.h)-4)
      end
  
      if (debug_collision) draw_hitbox(self)
    end,
    update=function(self)
      -- check for death
-     if (self.life<=0 and self.death_time==nil) self.state=5 self.death_time=t()+1     
+     if (self.life<=0 and self.death_time==nil) self.state=5 self.death_time=t()+1 sfx(self.deathsfx)
      if self.death_time and t()>self.death_time then
       if self.type==2 then
        -- building?
@@ -419,7 +422,7 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
       else
        -- unit
        del(units,self)
-      end
+      end      
      end
 
      -- animated colour cycle (if applicable)
