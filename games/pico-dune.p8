@@ -329,7 +329,7 @@ function m_map_obj_tree(objref, x,y)
     -- combat stuff
     newobj.fire=function(self)
       printh(t().."> fire!!!")
-      --self.target.life-=self.arms
+      self.target.life-=self.arms
     end
     add(units,newobj)
   end
@@ -354,7 +354,6 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
   spr_h=ref_obj.h or 1, --
   life=0,
   frame=0,
-  --faction=0, -- 0=None, 1=Atreides, 2=Ordos, 3=Harkonnen
   fire_cooldown=0,
   get_hitbox=function(self)
     return {
@@ -367,7 +366,7 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
    draw=func_draw or function(self)--, x,y) 
      pal()
      palt(0,false)
-     if (self.trans_col) palt(self.trans_col,true)
+     if (self.trans_col) palt(self.trans_col,true)     
      -- faction?
      if (self.faction) pal(12,self.col1) pal(14,self.col2)
      -- colour anim?
@@ -398,11 +397,32 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
         spr(self.obj_spr, self.x, self.y, self.w/8, self.h/8)
        end
      end
+     -- exploding?
+     if self.state==5 then
+      spr(19, self.x+rnd(self.w), self.y+rnd(self.h))
+     end
  
      if (debug_collision) draw_hitbox(self)
    end,
    update=function(self)
-     -- default functionality?    
+     -- check for death
+     if (self.life<=0 and self.death_time==nil) self.state=5 self.death_time=t()+1     
+     if self.death_time and t()>self.death_time then
+      if self.type==2 then
+       -- building?
+       for xx=0,self.ref.w-1 do
+        for yy=0,self.ref.h-1 do
+          mset(self.x/8+xx, self.y/8+yy, 7)
+        end
+       end
+       del(buildings,self)
+      else
+       -- unit
+       del(units,self)
+      end
+     end
+
+     -- animated colour cycle (if applicable)
      if self.framecount!=nil then
       self.frame+=1
       if (self.frame > self.framecount) then
@@ -419,6 +439,8 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
        end
       end
      end
+    
+
    end,
    setpos=function(self,x,y)
     self.x=x
@@ -645,7 +667,7 @@ function do_attack(attacker, target)
     end
   end)
 
-  -- 0=idle, 1=pathfinding, 2=moving, 3=attacking, 4=guarding?
+  -- 0=idle/guareding, 1=pathfinding, 2=moving, 3=attacking, 5=exploding
   -- unit.prev_state = unit.state
   -- unit.state = 2
   -- unit.cor = cocreate(function(unit)
@@ -1633,14 +1655,14 @@ bb17771bb1bbb1bbd55d5555d55555555555d55d55d5155555d155d5d5555111fffff9f9fff99999
 bb177771bb171bbb55d551d555d515555d155d555555d55d15555555d1555101ffff999999999f999999ffff999f99f9fffffffffff89999ffffffffffffffff
 bb17711bbbb1bbbb1555555515555515555555515d155d55f51ffd5fd5555111fff99f9f99fff9f9f9f99fff9f99f99fffffffff99999f99ffffffffffffffff
 bbb11bbbbbbbbbbbf55d5515555d55555155d55f55555551ffffffffd5515555ffff99f9ff9f99999f99fffff99f99f9ffffffff99fff9f9ffffffffffffffff
-b7bbbb7bffffffffffffffffffffffffffffffffffffffffffffffff55d555d555d555d555d555d555d2444444444444444444d555dd244444444444444442d5
-77bbbb77fffffffffff77ffffffffffffffffffff888888ff6ffffff155551551555515515555155155244444444444444444455155024444444444444444055
-bbbbbbbbffffffffff79ff7ffffffffffffffffff8a8888fffffff6f5d55d555555555555555d5555d24444444444444444444455d5104444444444444442155
-bbbbbbbbfffffffff79f779ffffffffffffffffff888888fffffffff555155555555555551555d5d55244444444444444444444d555112444444444444420d5d
-bbbbbbbbfffffffffff799fffffffffffffffffff888888fffffffffd55555555544444444455555d52444444444444444444445d55510022244444222201555
-bbbbbbbbffffffffff799ffffffffffffffffffff888888ffff6ffff55d55544444444444444455555244444444444444444442555d515100022222000015555
-77bbbb77ffffffffff79fffffffffffffffffffff888888fffffffff155554444444444444444515155244444444444444444415155555151100000111155515
-b7bbbb7bfffffffff7ffffffffffffffffffffffffffffffffffffff555524444444444444444455555244444444444444444255555d555555111115555d5555
+b7bbbb7bffffffffffffffffbb88888bffffffffffffffffffffffff55d555d555d555d555d555d555d2444444444444444444d555dd244444444444444442d5
+77bbbb77fffffffffff77fffb8899998fffffffff888888ff6ffffff155551551555515515555155155244444444444444444455155024444444444444444055
+bbbbbbbbffffffffff79ff7f8999a98bfffffffff8a8888fffffff6f5d55d555555555555555d5555d24444444444444444444455d5104444444444444442155
+bbbbbbbbfffffffff79f779f889aa988fffffffff888888fffffffff555155555555555551555d5d55244444444444444444444d555112444444444444420d5d
+bbbbbbbbfffffffffff799ffb89aa998fffffffff888888fffffffffd55555555544444444455555d52444444444444444444445d55510022244444222201555
+bbbbbbbbffffffffff799fff899aa98bfffffffff888888ffff6ffff55d55544444444444444455555244444444444444444442555d515100022222000015555
+77bbbb77ffffffffff79ffff88999988fffffffff888888fffffffff155554444444444444444515155244444444444444444415155555151100000111155515
+b7bbbb7bfffffffff7ffffffb88898bbffffffffffffffffffffffff555524444444444444444455555244444444444444444255555d555555111115555d5555
 000000000bbbbbb000000000bbbbb1b1000000001b1bbbbb00000000bbbbbbbb0000000001bbbb1010000000bbbbbbb0000000010bbbbbbb00000000ffffffff
 001bb1000bbbbbb0bbb1b000bbb1bb000000bbbb00bb1bbb1b1b1b1bbbbbbbbb000000000bbbbbb0b0000000bbbbb1000000000b00bbbbbbb000000bffffffff
 01bbbb100bbbbbb0bbbb1b00bb1b0000000b1bbb0001b1bbbbbbbbbbbbbbbbbb00b0b00001bbbb101b000000bbbb1b00000000b1001bbbbbb1b1b1bbffffffff
@@ -1884,7 +1906,7 @@ f000f000f0000fffff79f000000000ffff79ffffffffffffffffffffffffffffffffffffffffffff
 fffffffff7fffffff7fffffff7fffffff7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff7fffffff7ffffff
 
 __gff__
-0000020202020401000000000000000000000200000000010101010101010101010101010000000000000101010000000001010101010000000001000000000001010101010102010101010101010100010101010101020101010101010101010101010101010101000000000000000001010101010101010000000000000000
+0000020202020400000000000000000000000200000000010101010101010101010101010000000000000101010000000001010101010000000001000000000001010101010102010101010101010100010101010101020101010101010101010101010101010101000000000000000001010101010101010000000000000000
 0000000000000000000001010000000000000000000000000000010100000000000000000000000001010000000000000000000000000000010100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 __map__
 0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000015151500000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000151515
