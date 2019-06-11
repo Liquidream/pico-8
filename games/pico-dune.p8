@@ -670,6 +670,8 @@ function do_attack(unit, target)
    --  1) move to within firing range of target
    if dist(unit.x,unit.y,target.x,target.y) > unit.range then
     -- move to within firing range of target
+
+    --https://stackoverflow.com/questions/3330181/algorithm-for-finding-nearest-object-on-2d-grid
    end
    
    -- 2) turn to face target
