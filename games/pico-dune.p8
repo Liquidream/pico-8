@@ -330,8 +330,9 @@ function m_map_obj_tree(objref, x,y)
     if (newobj.norotate!=1) newobj.r=flr(rnd(8))*.125
     -- combat stuff
     newobj.fire=function(self)
-      printh(t().."> fire!!!")
       self.target.life-=self.arms
+      self.target.hit=1 --0=none, 1=bullet, 2=missile
+      sfx(self.arms<100 and 60 or 58)
     end
     add(units,newobj)
   end
@@ -399,11 +400,17 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
         spr(self.obj_spr, self.x, self.y, self.w/8, self.h/8)
        end
      end
+     
+     -- hit? temporary code!
+     if self.hit then
+      spr(19, self.x+rnd(self.w)-4, self.y+rnd(self.h)-4)      
+      self.hit=nil
+     end
      -- exploding?
      if self.state==5 then
       palt(11,true)
       spr(19, self.x+rnd(self.w)-4, self.y+rnd(self.h)-4)
-     end
+     end     
  
      if (debug_collision) draw_hitbox(self)
    end,
@@ -442,9 +449,12 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
        end
       end
      end
-    
-
    end,
+
+   -- hit=function(self, amount)
+   --  self.life-=amount
+   -- end
+
    setpos=function(self,x,y)
     self.x=x
     self.y=y
@@ -644,30 +654,37 @@ function update_level()
  last_selected_subobj = selected_subobj
 end
 
+function do_guard(unit) 
+ -- 0=idle/guareding, 1=pathfinding, 2=moving, 3=attacking, 5=exploding
+ unit.state = 3
+ unit.cor = nil -- todo: this!!
+end
 
-function do_attack(attacker, target)
-
-  --  4) repeat 1-4 until target destroyed
-  attacker.target=target
-  attacker.cor = cocreate(function(attacker)
-    while target!=nil do
-      -- todo:
-      --  1) move to within firing range of target
-      if dist(attacker.x,attacker.y,target.x,target.y) > attacker.range then
-        -- move to within firing range of target
-      end
-
-      -- 2) turn to face target
-      local a=atan2(attacker.x-target.x, attacker.y-target.y)
-      while (attacker.r != a) do
-        turntowardtarget(attacker, a)
-      end
-
-      -- 3) commence firing
-      attacker.fire_cooldown-=.1
-      --printh("attacker.fire_cooldown="..attacker.fire_cooldown)
-      if (attacker.fire_cooldown<=0) attacker.fire(attacker) attacker.fire_cooldown=100*attacker.arms printh("attacker.arms="..attacker.arms)
-    end
+function do_attack(unit, target)
+ -- 0=idle/guareding, 1=pathfinding, 2=moving, 3=attacking, 5=exploding
+ unit.state = 3
+ unit.target=target
+ unit.cor = cocreate(function(self)
+  while target.life>0 do
+   -- todo:
+   --  1) move to within firing range of target
+   if dist(unit.x,unit.y,target.x,target.y) > unit.range then
+    -- move to within firing range of target
+   end
+   
+   -- 2) turn to face target
+   local a=atan2(unit.x-target.x, unit.y-target.y)
+   while (unit.r != a) do
+    turntowardtarget(unit, a)
+   end
+   
+   -- 3) commence firing
+   unit.fire_cooldown-=.1
+   if (unit.fire_cooldown<=0) unit.fire(unit) unit.fire_cooldown=100*unit.arms
+   
+  end -- 4) repeat 1-3 until target destroyed
+  -- reset to guard
+  do_guard(self)
   end)
 
   -- 0=idle/guareding, 1=pathfinding, 2=moving, 3=attacking, 5=exploding
