@@ -205,7 +205,7 @@ function _init()
  camx=44
  camy=8
 
- music(9)
+ --music(9)
 end
 
 -- analyse current map & spawn objs  
@@ -696,19 +696,31 @@ function do_attack(unit, target)
 
 end
 
+function is_free_tile(x,y)
+ printh("is_free_tile("..x..","..y..")")
+ return not fget(mget(x,y), 0) 
+   and object_tiles[x..","..y]==nil
+end
 
-function move_unit_pos(unit,x,y)
-  unit.path="init"
-  -- mouse  
-    
+function move_unit_pos(unit,x,y,dist)
+ printh("move_unit_pos("..x..","..y..","..dist..")")
+  unit.path="init"   
   -- check target valid
-  if fget(mget(x,y), 0) 
-   or object_tiles[x..","..y] then
-   -- abort as target invalid
-   printh("aborting pathfinding - invalid target")
-   return
-  end
-  --printh("goal="..goal.x..","..goal.y)
+  if not is_free_tile(x,y) then
+    -- target tile occupied
+    -- move as close as possible
+    for xx=x-1,x+1 do  -- todo: increment this out by one, on every unsuccessful pass
+     for yy=y-1,y+1 do
+      if (is_free_tile(xx,yy)) x=xx y=yy goto found_free_tile
+     end
+    end
+    -- abort as target invalid
+    printh("aborting pathfinding - invalid target")
+    
+    return    
+   end
+   ::found_free_tile::
+   --printh("goal="..goal.x..","..goal.y)
 
   -- create co-routine to find path (over number of cycles)  
   unit.tx = x
