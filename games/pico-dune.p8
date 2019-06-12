@@ -670,16 +670,18 @@ function do_attack(unit, target)
    --  1) move to within firing range of target
    if dist(unit.x,unit.y,target.x,target.y) > unit.range then
     -- move to within firing range of target
-
+    move_unit_pos(unit,flr(target.x/8),flr(target.y/8),unit.range)
+    printh("1.2")
     --https://stackoverflow.com/questions/3330181/algorithm-for-finding-nearest-object-on-2d-grid
    end
    
+   printh("2.0")
    -- 2) turn to face target
    local a=atan2(unit.x-target.x, unit.y-target.y)
    while (unit.r != a) do
     turntowardtarget(unit, a)
    end
-   
+   printh("1.2")
    -- 3) commence firing
    unit.fire_cooldown-=.1
    if (unit.fire_cooldown<=0) unit.fire(unit) unit.fire_cooldown=100*unit.arms
@@ -702,8 +704,8 @@ function is_free_tile(x,y)
    and object_tiles[x..","..y]==nil
 end
 
-function move_unit_pos(unit,x,y,dist)
- printh("move_unit_pos("..x..","..y..","..dist..")")
+function move_unit_pos(unit,x,y,dist_to_keep)
+ printh("move_unit_pos("..x..","..y..","..(dist_to_keep or "nil")..")")
   unit.path="init"   
   -- check target valid
   if not is_free_tile(x,y) then
@@ -769,14 +771,20 @@ function move_unit_pos(unit,x,y,dist)
         local step_x = scaled_speed * (node.x*8 - unit.x) / distance
         local step_y = scaled_speed * (node.y*8 - unit.y) / distance 
         for i = 0, distance/scaled_speed-1 do
-        unit.x+=step_x
-        unit.y+=step_y
-        yield()
+         unit.x+=step_x
+         unit.y+=step_y
+         yield()
         end
         unit.x,unit.y = node.x*8, node.y*8
 
         -- reveal fog?
-        reveal_fow(unit)-- .x,unit.y)
+        reveal_fow(unit)
+
+        -- are we close enough?
+        if dist(unit.x,unit.y,unit.tx,unit.ty) <= (dist_to_keep or 0) then
+         -- stop now
+         break
+        end
       end
 
       -- arrived?
