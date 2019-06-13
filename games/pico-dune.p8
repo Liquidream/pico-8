@@ -655,6 +655,7 @@ function update_level()
 end
 
 function do_guard(unit) 
+ printh("do_guard()!!")
  -- 0=idle/guareding, 1=pathfinding, 2=moving, 3=attacking, 5=exploding
  unit.state = 3
  unit.cor = nil -- todo: this!!
@@ -678,14 +679,18 @@ function do_attack(unit, target)
    printh("2.0")
    -- 2) turn to face target
    local a=atan2(unit.x-target.x, unit.y-target.y)
+   printh("unit.r="..unit.r)
+   printh("a="..a)
    while (unit.r != a) do
     turntowardtarget(unit, a)
    end
-   printh("1.2")
+   printh("3")
    -- 3) commence firing
-   unit.fire_cooldown-=.1
-   if (unit.fire_cooldown<=0) unit.fire(unit) unit.fire_cooldown=100*unit.arms
+   printh("unit.fire_cooldown="..unit.fire_cooldown)
+   unit.fire_cooldown-=1
+   if (unit.fire_cooldown<=0) unit.fire(unit) unit.fire_cooldown=unit.arms
    
+   yield()
   end -- 4) repeat 1-3 until target destroyed
   -- reset to guard
   do_guard(self)
@@ -730,7 +735,9 @@ function move_unit_pos(unit,x,y,dist_to_keep)
   -- 0=idle, 1=pathfinding, 2=moving, 3=attacking, 4=guarding?
   unit.prev_state = unit.state
   unit.state = 1
-  unit.cor = cocreate(function(unit) 
+
+  --unit.cor = cocreate(function(unit) 
+   
     -- findpath_cor --------------------------------------
     unit.path = find_path(
                    { x = flr(unit.x/8), y = flr(unit.y/8) },
@@ -747,7 +754,9 @@ function move_unit_pos(unit,x,y,dist_to_keep)
     -- 0=idle, 1=pathfinding, 2=moving, 3=attacking, 4=guarding?
     unit.prev_state = unit.state
     unit.state = 2
-    unit.cor = cocreate(function(unit)
+
+  --  unit.cor = cocreate(function(unit)
+
       -- movepath_cor ------------------------------------
       unit.state=2 --moving
       -- loop all path nodes...
@@ -783,6 +792,7 @@ function move_unit_pos(unit,x,y,dist_to_keep)
         -- are we close enough?
         if dist(unit.x,unit.y,unit.tx,unit.ty) <= (dist_to_keep or 0) then
          -- stop now
+         stop("stop!!! close enough!")
          break
         end
       end
@@ -792,9 +802,9 @@ function move_unit_pos(unit,x,y,dist_to_keep)
 
       -- todo: set map/path data that tile is now occupied
 
-    end) -- end movepath_cor 
+--    end) -- end movepath_cor 
 
-  end) -- end findpath_cor
+--  end) -- end findpath_cor
 
 end
 
@@ -1147,7 +1157,11 @@ function collisions()
     -- do we have a unit selected?
     if selected_obj and selected_obj.type==1
     and selected_obj.owner==1 then
-      move_unit_pos(selected_obj, flr((camx+cursx)/8), flr((camy+cursy)/8))
+
+     selected_obj.cor = cocreate(function(unit)
+       move_unit_pos(unit, flr((camx+cursx)/8), flr((camy+cursy)/8))
+      end)
+
     end
     
     -- placement? (temp code!)
