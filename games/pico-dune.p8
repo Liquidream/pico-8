@@ -669,9 +669,9 @@ function do_attack(unit, target)
   while target.life>0 do
    -- todo:
    --  1) move to within firing range of target
-   if dist(unit.x,unit.y,target.x,target.y) > unit.range then
+   if dist(unit.x,unit.y,target.x,target.y) > unit.range*5 then
     -- move to within firing range of target
-    move_unit_pos(unit,flr(target.x/8),flr(target.y/8),unit.range)
+    move_unit_pos(unit,flr(target.x/8),flr(target.y/8),unit.range*5)
     printh("1.2")
     --https://stackoverflow.com/questions/3330181/algorithm-for-finding-nearest-object-on-2d-grid
    end
@@ -790,9 +790,12 @@ function move_unit_pos(unit,x,y,dist_to_keep)
         reveal_fow(unit)
 
         -- are we close enough?
-        if dist(unit.x,unit.y,unit.tx,unit.ty) <= (dist_to_keep or 0) then
+        local d=dist(unit.x,unit.y,unit.tx*8,unit.ty*8)
+        printh("        dist = "..d)
+        printh("dist_to_keep = "..tostr(dist_to_keep))
+        if d <= (dist_to_keep or 0) then
          -- stop now
-         stop("stop!!! close enough!")
+         printh("stop!!! close enough!")
          break
         end
       end
