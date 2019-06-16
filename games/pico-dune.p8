@@ -1196,8 +1196,16 @@ function check_hover_select(obj)
     selected_subobj = obj
     printh("selected_subobj selected!")
    else
+    -- is object hidden by fow?
+    local xpos=flr((cursor.x+camx)/8)
+    local ypos=flr((cursor.y+camy)/8)
+    printh("fow[xpos][ypos]="..fow[xpos][ypos])
+    printh("clickedsomething="..tostr(clickedsomething))
+    if (fow[xpos][ypos]!=16) printh("return!!") return
+    printh(">>>>>>>")
     -- avoid certain objects from selection
     --if (obj.parent==nil and obj.id==3 or obj.id==4) return
+
     selected_obj = obj
    end
    clickedsomething=true
