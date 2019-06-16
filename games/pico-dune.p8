@@ -253,7 +253,8 @@ function m_map_obj_tree(objref, x,y)
   -- set type==3 (icon!)
   newobj.ico_obj=m_obj_from_ref(objref, 109,0, 3, newobj, nil, nil, _g[objref.func_onclick])
   newobj.life=placement_damage and objref.hitpoint/2 or objref.hitpoint -- unless built without concrete
-  
+  printh("objref.name="..tostr(objref.name))
+  printh("newobj.life="..tostr(newobj.life))
   -- factory?
   newobj.build_objs={}
   -- go through all ref's and see if any valid for this building
@@ -388,8 +389,10 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
          rectfill(self.x-1,self.y-1,self.x+16,self.y+19,0)
          -- draw health/progress
          local this=self.type==4 and self or self.parent
-         local col = this.build_step and 12 or (this.life<33 and 8 or this.life<66 and 10 or 11)
-         if (this.life>0) rectfill(self.x,self.y+17,self.x+(15*this.life/100),self.y+18,col)
+         local hp=this.ref.hitpoint
+         local col = this.build_step and 12 or (this.life<hp*.33 and 8 or this.life<hp*.66 and 10 or 11)         
+         local val = this.build_step and (15*this.life/100) or (15*this.life/hp)         
+         if (this.life>0) rectfill(self.x,self.y+17,self.x+val,self.y+18,col)
        end
        -- non-rotational sprite
        if self.type>2 then 
@@ -426,6 +429,7 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
         end
        end
        del(buildings,self)
+       if(selected_obj==self)selected_obj=nil
       else
        -- unit
        del(units,self)
@@ -450,10 +454,6 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
       end
      end
    end,
-
-   -- hit=function(self, amount)
-   --  self.life-=amount
-   -- end
 
    setpos=function(self,x,y)
     self.x=x
@@ -1153,7 +1153,7 @@ function collisions()
     if (selected_obj.owner==1 and selected_obj.type==1 and selected_obj!=last_selected_obj) sfx(62)
     
     -- clicked enemy object, last clicked ours... attack?
-    if (selected_obj.owner==2 and last_selected_obj.type==1) do_attack(last_selected_obj, selected_obj) selected_obj=nil
+    if (selected_obj.owner==2 and last_selected_obj and last_selected_obj.type==1) do_attack(last_selected_obj, selected_obj) selected_obj=nil
 
   -- deselect?
   else 
@@ -1201,66 +1201,6 @@ function check_hover_select(obj)
    clickedsomething=true
   end
 end
-
-function collide_event(o1, o2)
- 
- -- player collisions
- -- if o1.type==type_player then
-  
- --  -- player touching laser?
- --  if (o2.type==type_laser 
- --   or (o2.type==type_pressure_pad and p1.grounded))
- --   and not o2.triggered 
- --   and not o2.done then
- --   -- trigger alarm
- --   sfx(63,2) --alarm
- --   o2.triggered=true
- --   o2.alarm_cooldown=100
- --   -- noise
- --   sound_monitor:add_noise(40)
-
- --  -- player on stairs?
- --  elseif o2.type==type_stairs then
- --   o1.close_object=o2
-  
- --  -- player in front of present drop?
- --  elseif o2.type==type_present_drop 
- --   and not o2.done then
- --   o1.close_object=o2
-
- --  end
-
- -- -- ball collisions
- -- elseif o1.type==type_ball then
- --  if o2.type==type_dog then
- --   --ball collided with dog
- --   o2.done=true
- --   o2.state=4
- --   -- kill ball
- --   del(curr_level.objects,o1)
- --   del(curr_level.balls,o1)
- --  end
- 
- -- --snow spray collisions
- -- elseif o1.type==type_snowspray then
- --  if o2.type==type_camera
- --   and p1.flipx==(o2.spr==49) then
- --   o2.done=true
- --  end
-
- -- --snow globe collisions
- -- elseif o1.type==type_snowglobe then
- --  if o2.type==type_laser 
- --   and (o2.spr==23 or o2.spr==26)
- --   and not o2.done then
- --   o2:deactivate()
- --   sfx(55,3)
- --  end
-
- -- end
-
-end
-
 
 
 -- object shared methods
