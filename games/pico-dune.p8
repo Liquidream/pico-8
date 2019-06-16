@@ -238,7 +238,7 @@ function discover_objs()
        end
        
        if objref!=nil then
-         m_map_obj_tree(objref, mx*8,my*8)         
+         m_map_obj_tree(objref, mx*8,my*8)
          if objref.type==1 then
            mset(mx,my,17)
          end
@@ -252,7 +252,7 @@ function m_map_obj_tree(objref, x,y)
   local newobj=m_obj_from_ref(objref, x,y, objref.type, nil, _g[objref.func_init], _g[objref.func_draw], _g[objref.func_update], nil)
   -- set type==3 (icon!)
   newobj.ico_obj=m_obj_from_ref(objref, 109,0, 3, newobj, nil, nil, _g[objref.func_onclick])
-  newobj.life=placement_damage and objref.hitpoint/2 or objref.hitpoint -- unless built without concrete
+  newobj.life=placement_damage and objref.hitpoint/2 or objref.hitpoint -- unless built without concrete  
   printh("objref.name="..tostr(objref.name))
   printh("newobj.life="..tostr(newobj.life))
   -- factory?
@@ -308,6 +308,8 @@ function m_map_obj_tree(objref, x,y)
     newobj.faction=ai_faction
     newobj.col1=ai_col1
     newobj.col2=ai_col2
+    --make ai icons un-clickable
+    newobj.ico_obj.func_onclick=nil
   end
 
   --printh("objref.type=="..objref.type)
@@ -904,7 +906,7 @@ function draw_ui()
  if selected_obj and selected_obj.ico_obj then
   selected_obj.ico_obj:setpos(109,20)
   selected_obj.ico_obj:draw()--109,20)  
-  if selected_obj.build_obj then
+  if selected_obj.build_obj and selected_obj.owner==1 then
     selected_obj.build_obj:setpos(109,44) 
     selected_obj.build_obj:draw()--109,44)  
    end
