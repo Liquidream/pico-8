@@ -851,6 +851,23 @@ draw_fow()
 end
 
 
+function draw_radar()
+ local size=33
+ local x,y=92,92
+ rectfill(x-1,y-1,x+size+1,y+size+1,1)
+ rectfill(x,y,x+size,y+size,0)
+ 
+ -- low res
+ --if (has radar-outpost and enough power) then
+ 
+ --else
+  for _,building in pairs(buildings) do 
+   pset(x+building.x/2/8,y+building.y/2/8,building.col1)
+  end
+ --end
+
+end
+
 
 function draw_ui()
  -- ui (score, mouse, etc.)
@@ -918,6 +935,8 @@ function draw_ui()
            sxpos+selected_obj.build_obj.w, sypos+selected_obj.build_obj.h, placement_pos_ok and 11 or 8)
   fillp()
  end
+
+ draw_radar()
 
  if show_menu then
   -- test
