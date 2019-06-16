@@ -41,7 +41,7 @@ ui_controls={}
 _g={}
 _g.factory_click=function(self)
   menu_pos=1
-  --printh("todo: load construction yard menu...")
+  printh("todo: load construction yard menu...")
   selected_subobj=self.parent.build_objs[1]
   -- create buttons
   m_button(6,89,"⬆️",function(self)   
@@ -58,25 +58,16 @@ _g.factory_click=function(self)
    --menu_pos=min(menu_pos+1,#show_menu.parent.build_objs-2)
   end, 10)
   m_button(32,88,"build",function(self)
-   --printh(">>> build clicked!")
    show_menu=nil
    selected_obj.build_obj=last_selected_subobj
    last_selected_subobj:func_onclick()
   end)
   m_button(96,88,"close",function(self)
-   --printh(">>> close clicked!")
    show_menu=nil
   end)
   -- show build menu
   show_menu=self
 end
--- _g.draw_slab=function(self)
---   for xx=0,self.spr_w-1 do
---    for yy=0,self.spr_h-1 do
---     spr(19, self.x+(xx*8), self.y+(yy*8))
---    end
---   end
--- end
 _g.init_windtrap=function(self)
   self.col_cycle = {
     {11,12},
@@ -252,21 +243,19 @@ function m_map_obj_tree(objref, x,y)
   local newobj=m_obj_from_ref(objref, x,y, objref.type, nil, _g[objref.func_init], _g[objref.func_draw], _g[objref.func_update], nil)
   -- set type==3 (icon!)
   newobj.ico_obj=m_obj_from_ref(objref, 109,0, 3, newobj, nil, nil, _g[objref.func_onclick])
-  newobj.life=placement_damage and objref.hitpoint/2 or objref.hitpoint -- unless built without concrete  
-  printh("objref.name="..tostr(objref.name))
-  printh("newobj.life="..tostr(newobj.life))
+  newobj.life=placement_damage and objref.hitpoint/2 or objref.hitpoint -- unless built without concrete
   -- factory?
   newobj.build_objs={}
   -- go through all ref's and see if any valid for this building
   for o in all(obj_data) do
     --printh("o.parent="..(o.parent_id!=nil and o.parent_id or "nil"))
     if (o.parent_id!=nil and o.parent_id==newobj.id) then
-    printh("found child: "..o.name)
+    --printh("found child: "..o.name)
     -- set type==4 (build icon!)
     local build_obj = m_obj_from_ref(o, 109,0, 4, newobj, nil, nil, function(self)
       -- build icon clicked
-      printh("build item clicked...")
-      printh("name=.."..self.name)
+      --printh("build item clicked...")
+      --printh("name=.."..self.name)
       if show_menu then
         -- select building
         selected_obj=self
@@ -312,7 +301,6 @@ function m_map_obj_tree(objref, x,y)
     newobj.ico_obj.func_onclick=nil
   end
 
-  --printh("objref.type=="..objref.type)
   -- building props?        
   if objref.type==2 then
     newobj.deathsfx=53
@@ -462,15 +450,11 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
     self.y=y
    end
   }
- --end
 
  -- copy ref properties to object (where empty!)
  for k,v in pairs(ref_obj) do
   if obj[k]==nil and v!="" then
-   --printh(">>>>> copying: "..k.." = "..tostr(v).." (type:"..type(v)..")")
    obj[k] = v
-  --else
-   --printh(">>>>>>>> SKIPPING - already has value")
   end
  end
 
@@ -526,7 +510,6 @@ function _draw()
   --printh("cpu: "..flr(stat(1)*100).."% mem: "..(flr(stat(0)/2048*100)).."% fps: "..stat(7))--,2,109,8,0)
   if (debug_mode) printo("cpu: "..flr(stat(1)*100).."%\nmem: "..(flr(stat(0)/2048*100)).."%\nfps: "..stat(7),2,109,8,0)
 
- -- print(a[1][2],20,20,7)
 end
 
 
@@ -616,8 +599,6 @@ function update_level()
   mouse_btn = stat(34)
   left_button_clicked = (mouse_btn>0 and last_mouse_btn != mouse_btn) or btnp(4)
   
-  --printh(tostr(left_button_clicked))
-
   -- keyboard input
   for k=0,1 do
    if(btn(k))keyx+=k*2-1
@@ -674,45 +655,32 @@ function do_attack(unit, target)
    if dist(unit.x,unit.y,target.x,target.y) > unit.range*5 then
     -- move to within firing range of target
     move_unit_pos(unit,flr(target.x/8),flr(target.y/8),unit.range*5)
-    printh("1.2")
-    --https://stackoverflow.com/questions/3330181/algorithm-for-finding-nearest-object-on-2d-grid
    end
-   
-   printh("2.0")
    -- 2) turn to face target
-   local a=atan2(unit.x-target.x, unit.y-target.y)
-   printh("unit.r="..unit.r)
-   printh("a="..a)
+   local a=atan2(unit.x-target.x, unit.y-target.y)   
    while (unit.r != a) do
     turntowardtarget(unit, a)
    end
-   printh("3")
    -- 3) commence firing
-   printh("unit.fire_cooldown="..unit.fire_cooldown)
    unit.fire_cooldown-=1
    if (unit.fire_cooldown<=0) unit.fire(unit) unit.fire_cooldown=unit.arms
    
-   yield()
+    yield()
   end -- 4) repeat 1-3 until target destroyed
   -- reset to guard
   do_guard(self)
-  end)
-
-  -- 0=idle/guareding, 1=pathfinding, 2=moving, 3=attacking, 5=exploding
-  -- unit.prev_state = unit.state
-  -- unit.state = 2
-  -- unit.cor = cocreate(function(unit)
+ end)
 
 end
 
 function is_free_tile(x,y)
- printh("is_free_tile("..x..","..y..")")
+ --printh("is_free_tile("..x..","..y..")")
  return not fget(mget(x,y), 0) 
    and object_tiles[x..","..y]==nil
 end
 
 function move_unit_pos(unit,x,y,dist_to_keep)
- printh("move_unit_pos("..x..","..y..","..(dist_to_keep or "nil")..")")
+ --printh("move_unit_pos("..x..","..y..","..(dist_to_keep or "nil")..")")
   unit.path="init"   
   -- check target valid
   if not is_free_tile(x,y) then
@@ -729,7 +697,6 @@ function move_unit_pos(unit,x,y,dist_to_keep)
     return    
    end
    ::found_free_tile::
-   --printh("goal="..goal.x..","..goal.y)
 
   -- create co-routine to find path (over number of cycles)  
   unit.tx = x
@@ -737,79 +704,69 @@ function move_unit_pos(unit,x,y,dist_to_keep)
   -- 0=idle, 1=pathfinding, 2=moving, 3=attacking, 4=guarding?
   unit.prev_state = unit.state
   unit.state = 1
-
-  --unit.cor = cocreate(function(unit) 
    
-    -- findpath_cor --------------------------------------
-    unit.path = find_path(
-                   { x = flr(unit.x/8), y = flr(unit.y/8) },
-                   { x = unit.tx, y = unit.ty},
-                   manhattan_distance,
-                   flag_cost,
-                   map_neighbors,
-                   function (node) return shl(node.y, 8) + node.x end,
-                   nil)  
+  -- findpath_cor --------------------------------------
+  unit.path = find_path(
+                  { x = flr(unit.x/8), y = flr(unit.y/8) },
+                  { x = unit.tx, y = unit.ty},
+                  manhattan_distance,
+                  flag_cost,
+                  map_neighbors,
+                  function (node) return shl(node.y, 8) + node.x end,
+                  nil)  
 
-    -- todo: check path valid???
+  -- todo: check path valid???
 
-    -- now auto-move to path 
-    -- 0=idle, 1=pathfinding, 2=moving, 3=attacking, 4=guarding?
-    unit.prev_state = unit.state
-    unit.state = 2
+  -- now auto-move to path 
+  -- 0=idle, 1=pathfinding, 2=moving, 3=attacking, 4=guarding?
+  unit.prev_state = unit.state
+  unit.state = 2
 
-  --  unit.cor = cocreate(function(unit)
+  -- movepath_cor ------------------------------------
+  unit.state=2 --moving
+  -- loop all path nodes...
+  for i=#unit.path-1,1,-1 do
+    local node=unit.path[i]
 
-      -- movepath_cor ------------------------------------
-      unit.state=2 --moving
-      -- loop all path nodes...
-      for i=#unit.path-1,1,-1 do
-        local node=unit.path[i]
-
-        if not unit.norotate then
-          -- rotate to angle
-          local dx=unit.x-(node.x*8)
-          local dy=unit.y-(node.y*8)
-          local a=atan2(dx,dy)
-          --printh("  >> target angle="..a)
-          while (unit.r != a) do
-            turntowardtarget(unit, a)
-          end
-        end
-        
-        -- move to new position
-        local scaled_speed = unit.speed or .5
-        local distance = sqrt((node.x*8 - unit.x) ^ 2 + (node.y*8 - unit.y) ^ 2)
-        local step_x = scaled_speed * (node.x*8 - unit.x) / distance
-        local step_y = scaled_speed * (node.y*8 - unit.y) / distance 
-        for i = 0, distance/scaled_speed-1 do
-         unit.x+=step_x
-         unit.y+=step_y
-         yield()
-        end
-        unit.x,unit.y = node.x*8, node.y*8
-
-        -- reveal fog?
-        reveal_fow(unit)
-
-        -- are we close enough?
-        local d=dist(unit.x,unit.y,unit.tx*8,unit.ty*8)
-        printh("        dist = "..d)
-        printh("dist_to_keep = "..tostr(dist_to_keep))
-        if d <= (dist_to_keep or 0) then
-         -- stop now
-         printh("stop!!! close enough!")
-         break
-        end
+    if not unit.norotate then
+      -- rotate to angle
+      local dx=unit.x-(node.x*8)
+      local dy=unit.y-(node.y*8)
+      local a=atan2(dx,dy)
+      --printh("  >> target angle="..a)
+      while (unit.r != a) do
+        turntowardtarget(unit, a)
       end
+    end
+    
+    -- move to new position
+    local scaled_speed = unit.speed or .5
+    local distance = sqrt((node.x*8 - unit.x) ^ 2 + (node.y*8 - unit.y) ^ 2)
+    local step_x = scaled_speed * (node.x*8 - unit.x) / distance
+    local step_y = scaled_speed * (node.y*8 - unit.y) / distance 
+    for i = 0, distance/scaled_speed-1 do
+      unit.x+=step_x
+      unit.y+=step_y
+      yield()
+    end
+    unit.x,unit.y = node.x*8, node.y*8
 
-      -- arrived?
-      unit.state=1 --idle
+    -- reveal fog?
+    reveal_fow(unit)
 
-      -- todo: set map/path data that tile is now occupied
+    -- are we close enough?
+    local d=dist(unit.x,unit.y,unit.tx*8,unit.ty*8)
+    printh("        dist = "..d)
+    printh("dist_to_keep = "..tostr(dist_to_keep))
+    if d <= (dist_to_keep or 0) then
+      -- stop now
+      printh("stop!!! close enough!")
+      break
+    end
+  end
 
---    end) -- end movepath_cor 
-
---  end) -- end findpath_cor
+  -- arrived?
+  unit.state=1 --idle
 
 end
 
@@ -940,21 +897,15 @@ function draw_ui()
   placement_damage=false
   local w=selected_obj.build_obj.ref.w
   local h=selected_obj.build_obj.ref.h
-  -- printh("mxpos=,"..mxpos)
-  -- printh("mypos=,"..mypos)
-  -- printh("checking xx -1,"..w)
-  -- printh("checking yy -1,"..h)
+
   for xx=-1,w do
     for yy=-1,h do
      if xx==-1 or xx==w or yy==-1 or yy==h then     
       -- check edges
-      --printh("  > edge check "..mxpos+xx..","..mypos+yy.." = "..mget(mxpos+xx, mypos+yy))
       if (mget(mxpos+xx, mypos+yy)>=63) placement_pos_ok=true
      else
       -- check inner
-      --printh("  > "..mxpos+xx..","..mypos+yy.." = "..tostr(object_tiles[mxpos+xx..","..mypos+yy]))
       local val=mget(mxpos+xx, mypos+yy)
-      --printh("  > mget="..val)
       if (val>=2 and val<=7) placement_damage=true
       if (object_tiles[mxpos+xx..","..mypos+yy] or val==0 or (val>=7 and val<63) or val>63) placement_inner_invalid=true
      end
@@ -1155,7 +1106,7 @@ function collisions()
     if (selected_obj.owner==1 and selected_obj.type==1 and selected_obj!=last_selected_obj) sfx(62)
     
     -- clicked enemy object, last clicked ours... attack?
-    if (selected_obj.owner==2 and last_selected_obj and last_selected_obj.type==1) do_attack(last_selected_obj, selected_obj) selected_obj=nil
+    if (selected_obj.owner==2 and last_selected_obj and last_selected_obj.type==1 and last_selected_obj.owner==1) do_attack(last_selected_obj, selected_obj) selected_obj=nil
 
   -- deselect?
   else 
@@ -1172,7 +1123,8 @@ function collisions()
     -- placement? (temp code!)
     if selected_obj 
      and selected_obj.build_obj 
-     and selected_obj.build_obj.life>=100 then
+     and selected_obj.build_obj.life>=100
+     and placement_pos_ok then
       -- place object
       local xpos=flr((cursor.x+camx)/8)
       local ypos=flr((cursor.y+camy)/8)
@@ -1184,6 +1136,7 @@ function collisions()
     end
 
     if (not show_menu) selected_obj=nil
+    --if (not show_menu and placement_pos_ok) selected_obj=nil
   end 
  end
 
@@ -1194,18 +1147,11 @@ function check_hover_select(obj)
   if left_button_clicked and obj.hover then
    if show_menu then
     selected_subobj = obj
-    printh("selected_subobj selected!")
    else
     -- is object hidden by fow?
     local xpos=flr((cursor.x+camx)/8)
     local ypos=flr((cursor.y+camy)/8)
-    printh("fow[xpos][ypos]="..fow[xpos][ypos])
-    printh("clickedsomething="..tostr(clickedsomething))
-    if (fow[xpos][ypos]!=16) printh("return!!") return
-    printh(">>>>>>>")
-    -- avoid certain objects from selection
-    --if (obj.parent==nil and obj.id==3 or obj.id==4) return
-
+    if (obj.type<=2 and fow[xpos][ypos]!=16) return
     selected_obj = obj
    end
    clickedsomething=true
@@ -1286,22 +1232,6 @@ end
 -- explode object data
 function explode_data()
  str_arrays=split(obj_data,"|","\n")
- ---------------------------------
- -- printh("------------------")
- -- printh("test 1:"..#str_arrays)
- -- printh("test 4:"..str_arrays[1][1])
- -- printh("test 5:"..str_arrays[2][1])
- -- printh("test 5.1:"..str_arrays[2][11])
- -- --test 6
- -- --_g[a[2][11]]()
- -- --test 7
- -- new_obj={
- --   name="test obj",
- --   draw=_g[str_arrays[3][20]]
- -- }
- -- new_obj:draw()
- ---------------------------------
-
  new_data={}
  -- loop all objects
  for i=2,#str_arrays-1 do
@@ -1313,15 +1243,14 @@ function explode_data()
    if (j!=2 and j<23) val=tonum(val)
    new_obj[str_arrays[1][j]]=val
   end
-  --printh(">>>>"..str_arrays[i][1])
   new_data[tonum(str_arrays[i][1])]=new_obj
  end
  -- replace with exploded data
  obj_data=new_data
- -- test new structure!
- printh("test 8:"..obj_data[2].name)
- printh("test 98:"..obj_data[2].id)
- printh("test 98b:"..obj_data[2].func_init)
+--  -- test new structure!
+--  printh("test 8:"..obj_data[2].name)
+--  printh("test 98:"..obj_data[2].id)
+--  printh("test 98b:"..obj_data[2].func_init)
 end
 
 
@@ -1401,13 +1330,7 @@ pi = 3.14159
 turnspeed = .5 * (pi/180)
 
 function turntowardtarget(unit, targetangle)
-   diff = targetangle-unit.r
-  --  printh("unit.r="..unit.r)
-  --  printh("targetangle="..targetangle)
-  --  printh("diff="..diff)
-  --  printh("turnspeed="..turnspeed)
-  --  printh("-")
-   
+   diff = targetangle-unit.r   
    -- never turn more than 180
    if diff > 0.5 then
     --printh("big angle 1")
@@ -1416,12 +1339,6 @@ function turntowardtarget(unit, targetangle)
     --printh("big angle 2")
     diff += 1
    end
-
-   -- fake delay
-   -- for sleep=1,20 do
-   --  yield()
-   -- end
-
    if diff > turnspeed then
     unit.r += turnspeed
    elseif diff < -turnspeed then
@@ -1433,12 +1350,9 @@ function turntowardtarget(unit, targetangle)
 
    -- make sure that our rotation value always stays within a "one-cycle" range
    if (unit.r > pi) unit.r-=2*pi
-   if (unit.r < -pi) unit.r+=2*pi
-   
-   -- fake delay
-   --for sleep=1,20 do
-    yield()
-   --end
+   if (unit.r < -pi) unit.r+=2*pi   
+
+   yield()   
 end
 
 
@@ -1477,23 +1391,10 @@ end
 -- maybe adds the node to neighbors table
 -- (if flag zero is unset at this position)
 function maybe_add(nx, ny, ntable)
- --printh("testing:"..nx..","..ny)
  if (
   not fget(mget(nx,ny), 0) 
   and object_tiles[nx..","..ny]==nil
  )
-
-  -- todo:: parse entire map into chunks of higher-level connected regions
-  --        - each chunk represents 16x16 tiles
-  --        - just need to check that there is a connection
-  --        - then use a* on the higher level to traverse longer than 1-screen
-  --        - use normal/detailed a* when traversing within each chunk 
-  --          (series of paths, joining a complete journey)
-
-  -- (tried capping max path, still uses a lot of cpu)
-  -- and nx>start.x-8 and nx<start.x+8
-  -- and ny>start.y-8 and ny<start.y+8
-
   then 
    add(ntable, {x=nx, y=ny}) 
  end
