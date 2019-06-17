@@ -855,14 +855,14 @@ function draw_radar()
  local size=33
  local x,y=92,92
  rectfill(x-1,y-1,x+size+1,y+size+1,1)
- rectfill(x,y,x+size,y+size,0)
  
-
+ 
  -- https://youtu.be/T337FK6L0h0?t=2891
-
+ 
  --if (has radar-outpost and enough power) then
- local hq = true
+  local hq = true
   
+  rectfill(x,y,x+size,y+size,hq and 15 or 0)
   --else
    --end
    
@@ -882,11 +882,18 @@ function draw_radar()
      local posy=flr(unit.y/8)
      -- if our unit, or ai not under fog of war
      if unit.owner==1 or fow[posx][posy]==16 then
-      pset(x+unit.x/2/8,y+unit.y/2/8,unit.col1)
-     end
+      pset(x+unit.x/2/8,y+unit.y/2/8,unit.col1)     
     end
    end
 
+   -- fow
+   for i=-2,66 do
+    for l=-2,66 do
+     if(fow[i][l]!=16)pset(x+i,y+l,0)
+    end
+   end   
+  end
+  
 end
 
 
