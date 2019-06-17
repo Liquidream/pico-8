@@ -857,14 +857,35 @@ function draw_radar()
  rectfill(x-1,y-1,x+size+1,y+size+1,1)
  rectfill(x,y,x+size,y+size,0)
  
- -- low res
+
+ -- https://youtu.be/T337FK6L0h0?t=2891
+
  --if (has radar-outpost and enough power) then
- 
- --else
-  for _,building in pairs(buildings) do 
-   pset(x+building.x/2/8,y+building.y/2/8,building.col1)
-  end
- --end
+ local hq = true
+  
+  --else
+   --end
+   
+   -- structures
+   for _,building in pairs(buildings) do 
+    local posx=flr(building.x/8)
+    local posy=flr(building.y/8)
+    -- if our building, or ai not under fog of war
+    if building.owner==1 or (hq and fow[posx][posy]==16) then
+     pset(x+building.x/2/8,y+building.y/2/8,building.col1)
+    end
+   end
+   -- units
+   if hq then
+    for _,unit in pairs(units) do
+     local posx=flr(unit.x/8)
+     local posy=flr(unit.y/8)
+     -- if our unit, or ai not under fog of war
+     if unit.owner==1 or fow[posx][posy]==16 then
+      pset(x+unit.x/2/8,y+unit.y/2/8,unit.col1)
+     end
+    end
+   end
 
 end
 
