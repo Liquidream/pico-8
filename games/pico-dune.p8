@@ -852,11 +852,10 @@ end
 
 
 function draw_radar()
- local size=33
- local x,y=92,92
- rectfill(x-1,y-1,x+size+1,y+size+1,1)
- 
- 
+ local size=31
+ local x,y=93,93
+ rectfill(x-1,y-1,x+size+1,y+size+1,p_col2)
+  
  -- https://youtu.be/T337FK6L0h0?t=2891
  
  --if (has radar-outpost and enough power) then
@@ -887,9 +886,9 @@ function draw_radar()
    end
 
    -- fow
-   for i=-2,66 do
-    for l=-2,66 do
-     if(fow[i][l]!=16)pset(x+i,y+l,0)
+   for i=0,62,2 do
+    for l=0,62,2 do
+     if(fow[i][l]!=16)pset(x+i/2,y+l/2,0)
     end
    end   
   end
