@@ -888,11 +888,16 @@ function draw_radar()
    -- fow
    for i=0,62,2 do
     for l=0,62,2 do
+     -- todo: poss look at tile spr and if not fow, get col?
      if(fow[i][l]!=16)pset(x+i/2,y+l/2,0)
     end
    end   
   end
   
+  -- draw "view"
+  local cx=x+camx/16
+  local cy=y+camy/16
+  rect(cx,cy, cx+7,cy+7, 7)
 end
 
 
