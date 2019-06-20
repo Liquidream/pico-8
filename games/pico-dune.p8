@@ -860,11 +860,31 @@ function draw_radar()
  -- https://youtu.be/T337FK6L0h0?t=2891
  
  --if (has radar-outpost and enough power) then
-  local hq = true
+ 
+ local hq = true
   
-  rectfill(x,y,x+size,y+size,hq and 15 or 0)
-  --else
-   --end
+ rectfill(x,y,x+size,y+size,0)
+ --rectfill(x,y,x+size,y+size,hq and 15 or 0)
+  
+
+   
+   -- fow
+   if hq then
+    for i=0,62,2 do
+     for l=0,62,2 do
+      -- todo: poss look at tile spr and if not fow, get col?
+      local mx=i/2
+      local my=l/2
+      local mspr=mget(mx,my)
+      local sx=(mspr*8)%128
+      local sy=(mspr*8)/16
+      local col=sget(sx,sy)
+      pset(x+mx,y+my,col)
+      --if(fow[i][l]==16) pset(x+mx,y+my,col)
+      --if(fow[i][l]!=16)pset(x+i/2,y+l/2,0)
+     end
+    end
+   end
    
    -- structures
    for _,building in pairs(buildings) do 
@@ -885,14 +905,6 @@ function draw_radar()
       pset(x+unit.x/2/8,y+unit.y/2/8,unit.col1)     
     end
    end
-
-   -- fow
-   for i=0,62,2 do
-    for l=0,62,2 do
-     -- todo: poss look at tile spr and if not fow, get col?
-     if(fow[i][l]!=16)pset(x+i/2,y+l/2,0)
-    end
-   end   
   end
   
   -- draw "view"
