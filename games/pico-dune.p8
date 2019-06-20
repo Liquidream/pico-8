@@ -598,6 +598,7 @@ function update_level()
   mouse_y = stat(33)
   mouse_btn = stat(34)
   left_button_clicked = (mouse_btn>0 and last_mouse_btn != mouse_btn) or btnp(4)
+  left_button_down = (mouse_btn>0) or btn(4)
   
   -- keyboard input
   for k=0,1 do
@@ -1143,20 +1144,10 @@ function collisions()
    --if (selected_obj.build_obj) check_hover_select(selected_obj.build_obj)
    ui_collision_mode=false
  end
- 
-
+  
  -- clicked something?
  if left_button_clicked then
-  -- check for radar click
-  if not show_menu 
-   and cursx>93 and cursx<125
-   and cursy>93 and cursy<125 then
-    -- clicked radar
-    camx=(cursx-92)*16
-    camy=(cursy-93)*16
-
-
-  elseif clickedsomething then
+  if clickedsomething then
    --show_menu=nil
     -- object "button"?
     if (not show_menu and selected_obj.func_onclick and selected_obj.parent!=nil) selected_obj:func_onclick() selected_obj=last_selected_obj
@@ -1198,7 +1189,17 @@ function collisions()
     if (not show_menu) selected_obj=nil
     --if (not show_menu and placement_pos_ok) selected_obj=nil
   end 
- end
+  
+ elseif left_button_down then
+  -- check for radar click
+  if not show_menu 
+   and cursx>93 and cursx<125
+   and cursy>93 and cursy<125 then
+   -- clicked radar
+   camx=(cursx-92)*16
+   camy=(cursy-93)*16
+  end
+ end --if buttonclicked
 
 end
 
