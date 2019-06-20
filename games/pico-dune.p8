@@ -870,16 +870,16 @@ function draw_radar()
    
    -- fow
    if hq then
-    for i=0,62,2 do
-     for l=0,62,2 do
+    for i=0,124,4 do
+     for l=0,124,4 do
       -- todo: poss look at tile spr and if not fow, get col?
       local mx=i/2
       local my=l/2
       local mspr=mget(mx,my)
       local sx=(mspr*8)%128
       local sy=(mspr*8)/16
-      local col=sget(sx,sy)
-      pset(x+mx,y+my,col)
+      local col=sget(sx+4,sy)
+      pset(x+mx/2,y+my/2,col!=11 and col or 15)
       --if(fow[i][l]==16) pset(x+mx,y+my,col)
       --if(fow[i][l]!=16)pset(x+i/2,y+l/2,0)
      end
@@ -1205,11 +1205,12 @@ function collisions()
  elseif left_button_down then
   -- check for radar click
   if not show_menu 
-   and cursx>93 and cursx<125
-   and cursy>93 and cursy<125 then
+   and cursx>93 and cursx<120
+   and cursy>93 and cursy<120 then
    -- clicked radar
-   camx=(cursx-92)*16
-   camy=(cursy-93)*16
+   camx=min((cursx-94)*16, 400)
+   camy=min((cursy-94)*16, 400)
+   printh("camx="..camx)
   end
  end --if buttonclicked
 
