@@ -1158,8 +1158,19 @@ function collisions()
    ui_collision_mode=false
  end
   
+    -- check for radar click
+ if left_button_down
+    and not show_menu 
+    and cursx>93 and cursx<120
+    and cursy>93 and cursy<120 then
+      -- clicked radar
+      camx=min((cursx-94)*16, 400)
+      camy=min((cursy-94)*16, 400)
+      printh("camx="..camx)
+
  -- clicked something?
- if left_button_clicked then
+ elseif left_button_clicked then
+ 
   if clickedsomething then
    --show_menu=nil
     -- object "button"?
@@ -1203,16 +1214,6 @@ function collisions()
     --if (not show_menu and placement_pos_ok) selected_obj=nil
   end 
   
- elseif left_button_down then
-  -- check for radar click
-  if not show_menu 
-   and cursx>93 and cursx<120
-   and cursy>93 and cursy<120 then
-   -- clicked radar
-   camx=min((cursx-94)*16, 400)
-   camy=min((cursy-94)*16, 400)
-   printh("camx="..camx)
-  end
  end --if buttonclicked
 
 end
