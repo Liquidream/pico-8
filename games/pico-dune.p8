@@ -674,6 +674,18 @@ function do_attack(unit, target)
 
 end
 
+-- todo: this needs to work outwards, up to max dist!
+function find_closest_free_tile(x,y,max_dist)  
+  -- ...to the target pos
+  for dist=1,max_dist or 64 do
+    for xx=x-dist,x+dist do  -- todo: increment this out by one, on every unsuccessful pass
+      for yy=y-dist,y+dist do
+        if ((xx==x-dist or xx==x+dist or yy==y-dist or yy==y+dist) and (is_free_tile(xx,yy))) return xx,yy
+      end
+    end
+  end
+end
+
 function is_free_tile(x,y)
  --printh("is_free_tile("..x..","..y..")")
  return not fget(mget(x,y), 0) 
@@ -687,17 +699,18 @@ function move_unit_pos(unit,x,y,dist_to_keep)
   if not is_free_tile(x,y) then
     -- target tile occupied
     -- move as close as possible
-    for xx=x-1,x+1 do  -- todo: increment this out by one, on every unsuccessful pass
-     for yy=y-1,y+1 do
-      if (is_free_tile(xx,yy)) x=xx y=yy goto found_free_tile
-     end
-    end
+    x,y=find_closest_free_tile(x,y)
+    -- for xx=x-1,x+1 do  -- todo: increment this out by one, on every unsuccessful pass
+    --  for yy=y-1,y+1 do
+    --   if (is_free_tile(xx,yy)) x=xx y=yy goto found_free_tile
+    --  end
+    -- end
     -- abort as target invalid
-    printh("aborting pathfinding - invalid target")
+    --printh("aborting pathfinding - invalid target")
     
-    return    
-   end
-   ::found_free_tile::
+    --return    
+  end
+   --::found_free_tile::
 
   -- create co-routine to find path (over number of cycles)  
   unit.tx = x
