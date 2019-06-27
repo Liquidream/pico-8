@@ -6,7 +6,7 @@ __lua__
 -- (with support from my patrons)
 
 -- global flags
-debug_mode=true
+debug_mode=false
 debug_collision=false
 
 -- data flags (eventually pulled from cartdata)
@@ -113,7 +113,7 @@ obj_data=[[id|name|obj_spr|ico_spr|map_spr|type|w|h|trans_col|parent_id|req_id|r
 -- units
 [[20|lIGHT iNFANTRY (X3)|62|174||1|1|1|11|9|9|2|AO|60||4|50|0.05|2|1|63|10|iNFANTRY ARE LIGHTLY ARMOURED FOOTSOLDIERS, WITH LIMITED FIRING RANGE AND SPEED.||||
 21|hEAVY tROOPERS (X3)|62|194||1|1|1|11|10|9|3|HO|100||8|110|0.1|3|1|63|10|tROOPERS ARE HEAVILY ARMOURED FOOTSOLDIERS, WITH IMPROVED FIRING RANGE AND SPEED.|||
-22|tRIKE||204||1|1|1|11|11||2||150||8|100|0.6|3||||tHE tRIKE IS A LIGHTLY-ARMOURED, 3-WHEELED VEHICLE, WITH LIMITED FIRING RANGE, BUT RAPID SPEED.||||
+22|tRIKE|54|204||1|1|1|11|11||2||150||8|100|0.6|3||||tHE tRIKE IS A LIGHTLY-ARMOURED, 3-WHEELED VEHICLE, WITH LIMITED FIRING RANGE, BUT RAPID SPEED.||||
 23|qUAD||||1|1|1|11|11||3||200||10|130|0.5|3||||tHE qUAD IS A LIGHTLY-ARMOURED, 4-WHEELED VEHICLE. sLOWER THAN THE tRIKE, BUT STRONGER ARMOUR AND FIREPOWER.||||
 24|cOMBAT tANK|51|196||1|1|1|11|12|7|4||300||38|200|0.25|4||||tHE cOMBAT tANK IS A MEDIUM ARMOURED TANK, FIRES HIGH-EXPLOSIVE ROUNDS.||||
 25|sIEGE tANK|50|198||1|1|1|11|12|7|6||600||45|300|0.2|5||||tHE mISSILE tANK IS A MEDIUM ARMOURED TANK, WHICH FIRES MISSILES. lONG-RANGE, BUT INACCURATE.||||
@@ -133,7 +133,6 @@ obj_data=[[id|name|obj_spr|ico_spr|map_spr|type|w|h|trans_col|parent_id|req_id|r
 -- other
 [[38|sARDAUKAR||||1|1|1|11|nil|nil|4||0||5|110|0.1|1||||tHE sARDULAR ARE THE eMPEROR'S ELITE TROOPS. WITH SUPERIOR FIREPOWER AND ARMOUR.||||
 39|sANDWORM||||1|1|1|11|nil|nil|3||0||300|1000|0.35|0||||tHE sAND wORMS ARE INDIGEONOUS TO dUNE. aTTRACTED BY VIBRATIONS, ALMOST IMPOSSIBLE TO DESTROY, WILL CONSUME ANYTHING THAT MOVES.||||]]
-
 
 
 
@@ -272,8 +271,16 @@ function m_map_obj_tree(objref, x,y)
             self.life=(self.spent/self.cost)*100
             yield()
           end
-          -- ready to place!
+          -- const complete!
           sfx(56)
+          -- auto-deploy units
+          if self.ref.type==1 then
+            -- find nearest point to factory
+            local ux,uy=find_closest_free_tile((self.parent.x+8)/8, (self.parent.y+16)/8)  
+            m_map_obj_tree(self.ref,ux*8,uy*8)
+            -- reset build
+            self.life=0
+          end
         end)
       end
     end)
@@ -687,7 +694,7 @@ function find_closest_free_tile(x,y,max_dist)
 end
 
 function is_free_tile(x,y)
- --printh("is_free_tile("..x..","..y..")")
+ printh("is_free_tile("..x..","..y..")")
  return not fget(mget(x,y), 0) 
    and object_tiles[x..","..y]==nil
 end
@@ -959,6 +966,7 @@ function draw_ui()
  -- placement?
  if selected_obj 
   and selected_obj.build_obj 
+  and selected_obj.build_obj.ref.type==2
   and selected_obj.build_obj.life>=100 then
   -- draw placement
   -- (todo: improve this code!)
@@ -1670,14 +1678,14 @@ b7bbbb7bfffffffff7ffffffb88898bbffffffffffffffffffffffff555524444444444444444455
 01bbbb10000b0b00bbb1b0001b00000000b1bbbb000000b1bbbbbbbbbb1b1b1b0bbbbbb00bbbbbb0bb1b0000bbbbb1000001b1bb00b1bbbbbbbbbbbbffffffff
 001bb10000000000bbbb0000b0000000000b1bbb0000000b1b1b1b1bb000000b0bbbbbb001bbbb10bbb1bb00bbbbbb0000bb1bbb001bbbbbbbbbbbbbffffffff
 0000000000000000bbb0bbbb10000000000000000000000100000000000000000bbbbbb00bbbbbb0bbbbb1b1bbbbbbb01b1bbbbb0bbbbbbbbbbbbbbbffffffff
-ffffffffbbeeeebbb08dd80bbbbbbbbbb28882bbbbbbbbbbffffffffffffffffffffffffffffffff50bbb05bbbb76bbbbbb76bbbb6bbb6bbb6bbb6bbdddddddd
-ffffffffb0cccc0bb2d77d2bb68d86bb0888880bb68886bbbfffffffffffffffffffffffffffffff6888886bbbb76bbbbbb76bbbb8bbb8bbb8bbb8bbd5555555
-ffffffffb0cccc0bb867768bb7d7d7bb0828280bb8ddd8bbbfffffffffffffffffffffffffffffff68d8d86bbbbddbbbb7b55b7bb2bbb2bbb2bbb2bbd5555555
-ffffffffbeccccebb867768bb7d6d7bb2868682bb86868bbbfffffffffffffffffffffffffffffff6868686bbbd66dbbb651156bb0bbb0bb0b0b0b0bd5555555
-ffffffffbeccccebb2d66d2bb78687bb2262622bb87878bbbfffffffffffffffffffffffffffffff6878786bbbd66dbbbdd66ddbbbb6bbbbbbb6bbbbd5555555
-ffffffffb0ecce0bb286682bb78087bb2c0c0c2bb80808bbbfffffffffffffffffffffffffffffff6808086bbbbddbbbb1b11b1bbbb8bbbbbbb8bbbbd5555555
-ffffffffb0deed0bb026620bb62226bb0088800bb62226bbbfffffffffffffffffffffffffffffff7888887bbbbbbbbbbbbbbbbbbbb2bbbbbbb2bbbbd5555555
-ffffffffbbeccebbbbb00bbbbbbbbbbbbbbbbbbbbbbbbbbbffffffffffffffffffffffffffffffff50bbb05bbbbbbbbbbbbbbbbbbbb0bbbbbb0b0bbbd5555555
+ffffffffbbeeeebbb08dd80bbbbbbbbbb28882bbbbbbbbbbbbbbbbbbffffffffffffffffffffffff50bbb05bbbb76bbbbbb76bbbb6bbb6bbb6bbb6bbdddddddd
+ffffffffb0cccc0bb2d77d2bb68d86bb0888880bb68886bbb02820bbffffffffffffffffffffffff6888886bbbb76bbbbbb76bbbb8bbb8bbb8bbb8bbd5555555
+ffffffffb0cccc0bb867768bb7d7d7bb0828280bb8ddd8bbb0d6d0bbffffffffffffffffffffffff68d8d86bbbbddbbbb7b55b7bb2bbb2bbb2bbb2bbd5555555
+ffffffffbeccccebb867768bb7d6d7bb2868682bb86868bbbb8c8bbbffffffffffffffffffffffff6868686bbbd66dbbb651156bb0bbb0bb0b0b0b0bd5555555
+ffffffffbeccccebb2d66d2bb78687bb2262622bb87878bbbb888bbbffffffffffffffffffffffff6878786bbbd66dbbbdd66ddbbbb6bbbbbbb6bbbbd5555555
+ffffffffb0ecce0bb286682bb78087bb2c0c0c2bb80808bbbb707bbbffffffffffffffffffffffff6808086bbbbddbbbb1b11b1bbbb8bbbbbbb8bbbbd5555555
+ffffffffb0deed0bb026620bb62226bb0088800bb62226bbbbb0bbbbffffffffffffffffffffffff7888887bbbbbbbbbbbbbbbbbbbb2bbbbbbb2bbbbd5555555
+ffffffffbbeccebbbbb00bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbffffffffffffffffffffffff50bbb05bbbbbbbbbbbbbbbbbbbb0bbbbbb0b0bbbd5555555
 d66dddddddd6fffdddd776ddddddddddddddddddddd666ddddddddddddd6666dddddddddddddddddddddddddddddddddddddddddd19999999999999977777777
 76665555551ffff1d576db65d5577655d5555555d5766665d5555555d566777655555555d555555555555555d766777755555555d49495594999924976666665
 76665c05555f4441d76dbbb5d576db65d5556555d5766665d5ccccc5d767666d65555555d554777777777455d7ddfff755555555d19425599922999976666665
@@ -1905,7 +1913,7 @@ f000f000f0000fffff79f000000000ffff79ffffffffffffffffffffffffffffffffffffffffffff
 fffffffff7fffffff7fffffff7fffffff7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff7fffffff7ffffff
 
 __gff__
-0000020202020400000000000000000000000200000000010101010101010101010101010000000000000101010000000001010101010000000001000000000001010101010102010101010101010100010101010101020101010101010101010101010101010101000000000000000001010101010101010000000000000000
+0000020202020400000000000000000000000200000000010101010101010101010101010000000000000101010000000001010101010100000001000000000001010101010102010101010101010100010101010101020101010101010101010101010101010101000000000000000001010101010101010000000000000000
 0000000000000000000001010000000000000000000000000000010100000000000000000000000001010000000000000000000000000000010100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 __map__
 0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000012121212120000000000000000000000000015151500000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000151515
