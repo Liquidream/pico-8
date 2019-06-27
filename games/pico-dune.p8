@@ -875,6 +875,7 @@ end
 
 
 hq=false
+last_hq=hq
 has_radar=false
 radar_frame=0
 
@@ -896,15 +897,15 @@ function draw_radar()
   end  
   last_hq=hq
 
-  if radar_frame>0 and radar_frame<45 then
+  if radar_frame>0 and radar_frame<60 then
     radar_frame+=radar_dir
     printh("radar_frame="..radar_frame)
     -- draw radar anim
     clip(
       max(x+(size/2)-radar_frame,x),
-      max(y+(size/2)-(radar_frame>24 and radar_frame%24 or 0),y), --y+size/2,
+      max(y+(size/2)-(radar_frame>20 and radar_frame-20 or 0),y), --y+size/2,
       min(radar_frame*2,size),
-      min((radar_frame>24 and radar_frame%24 or 1)*2,size))
+      min((radar_frame>20 and radar_frame-20 or 1)*2,size))
     for i=1,300 do
       pset(x+rnd(size),y+rnd(size),5+rnd(3))
     end
