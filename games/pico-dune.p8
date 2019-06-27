@@ -41,7 +41,6 @@ ui_controls={}
 _g={}
 _g.factory_click=function(self)
   menu_pos=1
-  printh("todo: load construction yard menu...")
   selected_subobj=self.parent.build_objs[1]
   -- create buttons
   m_button(6,89,"⬆️",function(self)   
@@ -877,26 +876,45 @@ end
 
 hq=false
 has_radar=false
-last_hq=hq
+radar_frame=0
 
 function draw_radar()
- local size=31
- local x,y=93,93
- rectfill(x-1,y-1,x+size+1,y+size+1,p_col2)
+  local size=31
+  local x,y=93,93
+  rectfill(x-1,y-1,x+size+1,y+size+1,p_col2)
   
- -- https://youtu.be/T337FK6L0h0?t=2891
- 
- if (has_radar) hq=true
- --if (has radar-outpost and enough power) then
- 
- --local hq = true
+  -- has radar-outpost and enough power?
+  if (has_radar) hq=true
   
- rectfill(x,y,x+size,y+size,0)
+  rectfill(x,y,x+size,y+size,0)
+
+  -- anim?
+  -- https://youtu.be/T337FK6L0h0?t=2891
+  if hq!=last_hq then
+    radar_frame=1
+    radar_dir=1
+  end  
+  last_hq=hq
+
+  if radar_frame>0 and radar_frame<45 then
+    radar_frame+=radar_dir
+    printh("radar_frame="..radar_frame)
+    -- draw radar anim
+    clip(
+      max(x+(size/2)-radar_frame,x),
+      max(y+(size/2)-(radar_frame>24 and radar_frame%24 or 0),y), --y+size/2,
+      min(radar_frame*2,size),
+      min((radar_frame>24 and radar_frame%24 or 1)*2,size))
+    for i=1,300 do
+      pset(x+rnd(size),y+rnd(size),5+rnd(3))
+    end
+    return
+  end
    
-   -- fow
-   if hq then
+  -- fow
+  if hq then
     for i=0,124,4 do
-     for l=0,124,4 do
+      for l=0,124,4 do
       -- todo: poss look at tile spr and if not fow, get col?
       local mx=i/2
       local my=l/2
@@ -906,35 +924,36 @@ function draw_radar()
       local sy=(mspr*8)/16
       local col=sget(sx+4,sy)
       if(fow[i/2][l/2]==16) pset(x+(i/2)/2,y+(l/2)/2,col!=11 and col or 15)
-     end
+      end
     end
-   end
+  end
    
-   -- structures
-   for _,building in pairs(buildings) do 
+  -- structures
+  for _,building in pairs(buildings) do 
     local posx=flr(building.x/8)
     local posy=flr(building.y/8)
     -- if our building, or ai not under fog of war
     if building.owner==1 or (hq and fow[posx][posy]==16) then
-     pset(x+building.x/2/8,y+building.y/2/8,building.col1)
+      pset(x+building.x/2/8,y+building.y/2/8,building.col1)
     end
-   end
-   -- units
-   if hq then
+  end
+  -- units
+  if hq then
     for _,unit in pairs(units) do
-     local posx=flr(unit.x/8)
-     local posy=flr(unit.y/8)
-     -- if our unit, or ai not under fog of war
-     if unit.owner==1 or fow[posx][posy]==16 then
-      pset(x+unit.x/2/8,y+unit.y/2/8,unit.col1)     
+      local posx=flr(unit.x/8)
+      local posy=flr(unit.y/8)
+      -- if our unit, or ai not under fog of war
+      if unit.owner==1 or fow[posx][posy]==16 then
+        pset(x+unit.x/2/8,y+unit.y/2/8,unit.col1)     
+      end
     end
-   end
   end
   
-  -- draw "view"
+  -- draw "view" bounds
   local cx=x+camx/16
   local cy=y+camy/16
   rect(cx,cy, cx+7,cy+7, 7)
+
 end
 
 
