@@ -507,6 +507,8 @@ end
 function _update60()  --game_update
 
  update_level()
+
+ update_ai()
  
  -- update positions of pathfinding "blocker" objects
  if (t()%1==0) update_obj_tiles()
@@ -613,29 +615,6 @@ function update_level()
   left_button_clicked = (mouse_btn>0 and last_mouse_btn != mouse_btn) or btnp(4)
   left_button_down = (mouse_btn>0) or btn(4)
   right_button_clicked = btnp(5)
-
-  -- debug test!!!
-  if (btnp(4)) set_loop(9, false)
-  if (btnp(5)) set_loop(9, true)
-  -- if right_button_clicked then
-  --   -- unset the loop flag
-  --   local addr = 0x3100
-  --   local pattern = 9
-  --   local channel = 1 -- 0..3 (+1 to get 2nd channel's byte)
-
-  --   -- "Bit 7 of the second byte (channel 2) is "end pattern loop."
-  --   --  > https://pico-8.fandom.com/wiki/Memory#Music
-  --   -- Byte 1 bit 7 is the loop end flag
-  --   --  > https://www.lexaloffle.com/bbs/?tid=2341
-  --   local val=peek(addr + pattern + channel)
-  --   local loop_bit=band(val,0x07)
-  --   printh("loop val b4 = "..tostr(loop_bit))
-
-  --   loop_bit=bor(val,0x07)
-  --   poke(addr + pattern + channel, loop_bit)
-  --   printh("loop val after = "..tostr(loop_bit))
-
-  -- end
   
   -- keyboard input
   for k=0,1 do
@@ -850,7 +829,9 @@ end
 function update_ai()
   if (t()==1) then
     -- todo: find the first ai unit and attack player
-    
+    local unit=units[#units]
+    local target=units[1]
+    do_attack(unit, target)
   end
 end
 
@@ -1339,14 +1320,12 @@ end
 --other helper functions
 --------------------------------
 
+-- set/unset the loop flag
+-- for specified pattern
 function set_loop(pattern, enabled)
- printh("set_Loop = "..tostr(enabled))
-  -- set/unset the loop flag
-  -- for specified pattern
   local addr = 0x3100
   local channel = 1 -- 0..3 (+1 to get 2nd channel's byte)
 	pattern*=4 -- find right byte (each pattern has 4 channels)
-
 	local val=peek(addr + pattern + channel)
   if ((band(val, 128) > 0) != enabled) val=bxor(val,128)
   poke(addr+pattern+channel, val)  
