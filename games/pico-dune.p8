@@ -434,11 +434,11 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
         end
        end
        del(buildings,self)
-       if(selected_obj==self)selected_obj=nil
       else
        -- unit
        del(units,self)
       end      
+      if(selected_obj==self)selected_obj=nil
      end
 
      -- animated colour cycle (if applicable)
@@ -667,13 +667,14 @@ function do_guard(unit)
 
    -- todo: check for attack
    --printh("do_guard() > check for hit, id="..self.ref.id)
-   if (self.ref.id==25 and self.owner==1) printh("HIT id("..self.ref.id.."="..tostr(self.hit))
+   --if (self.ref.id==25 and self.owner==1) printh("HIT id("..self.ref.id.."="..tostr(self.hit))
    if self.hit>0 then 
     printh("do_guard() > HIT!!")
     self.hit=0
     -- switch music?
     if (music_state!=1)music_state=1 music(0)
-    do_attack(self, self.hitby)
+    -- can we retaliate?
+    if (self.arms>0) do_attack(self, self.hitby)
    end
    yield()
   end
@@ -860,7 +861,7 @@ function update_ai()
     -- todo: find the first ai unit and attack player
     local unit=units[#units]
     local target=units[3]
-    do_attack(unit, target)
+    --do_attack(unit, target)
   end
 end
 
