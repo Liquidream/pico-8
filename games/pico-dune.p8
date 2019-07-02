@@ -6,7 +6,7 @@ __lua__
 -- (with support from my patrons)
 
 -- global flags
-debug_mode=false
+debug_mode=true
 debug_collision=false
 
 -- data flags (eventually pulled from cartdata)
@@ -100,7 +100,7 @@ obj_data=[[id|name|obj_spr|ico_spr|map_spr|type|w|h|trans_col|parent_id|req_id|r
 4|dEFENSIVE wALL|79|164||2|1|1|nil|1|7|4||50|nil||50||||||tHE wALL IS USED FOR PASSIVE DEFENSE.||||
 5|wINDTRAP|66|130||2|2|2|nil|1|1|1||300|100||200|||||10|tHE WINDTRAP SUPPLIES POWER TO YOUR BASE. wITHOUT POWER YOUR STRUCTURES WILL DECAY.|init_windtrap|||
 6|sPICE rEFINERY|68|132||2|3|2|nil|1|2|1||400|30||450||||||tHE rEFINERY CONVERTS SPICE INTO CREDITS.||||
-7|rADAR oUTPOST|73|136||2|2|2|nil|1|2|2||40|30||500||||||tHE oUTPOST PROVIDES RADAR AND AIDS CONTROL OF DISTANT VEHICLES.||||
+7|rADAR oUTPOST|73|136||2|2|2|nil|1|2|2||400|30||500||||||tHE oUTPOST PROVIDES RADAR AND AIDS CONTROL OF DISTANT VEHICLES.||||
 8|sPICE sTORAGE sILO|71|134||2|2|2|nil|1|6|2||150|5||150||||||tHE sPICE SILO IS USED TO STORE REFINED SPICE.||||
 9|bARRACKS|75|168||2|2|2|nil|1|7|2||300|10||300||||||tHE bARRACKS IS USED TO TRAIN YOUR lIGHT INFANTRY.||||factory_click
 10|wor tROOPER fACILITY|77|138||2|2|2|nil|1|7|2||400|10||400||||||wor IS USED TO TRAIN YOUR hEAVY INFANTRY.||||factory_click
@@ -108,15 +108,15 @@ obj_data=[[id|name|obj_spr|ico_spr|map_spr|type|w|h|trans_col|parent_id|req_id|r
 12|hEAVY vEHICLE fACTORY|98|142||2|3|2|nil|1|6|3||600|20||200||||||tHE hEAVY fACTORY PRODUCES HEAVY ATTACK VEHICLES.||||factory_click
 13|hI-tECH fACTORY|101|166||2|3|2|nil|1|12|5||500|35||400||||||tHE hI-tECH fACTORY PRODUCES FLYING VEHICLES.||||factory_click
 14|rEPAIR fACILITY||||2|3|2|nil|1|12|5||700|20||200||||||tHE rEPAIR fACILITY IS USED TO REPAIR YOUR VEHICLES.||||
-15|cANNON tURRET|60|170||2|1|1|nil|1|7|5||125|10||200||||||tHE cANNON tURRET IS USED FOR SHORT RANGE ACTIVE DEFENSE.||||
-16|rOCKET tURRET|61|172||2|1|1|nil|1|7|6||250|20||200||||||tHE rOCKET/cANNON TURRET IS USED FOR BOTH SHORT AND MEDIUM RANGE ACTIVE DEFENSE.||||
+15|cANNON tURRET|59|170||2|1|1|nil|1|7|5||125|10||200||||||tHE cANNON tURRET IS USED FOR SHORT RANGE ACTIVE DEFENSE.||||
+16|rOCKET tURRET|60|172||2|1|1|nil|1|7|6||250|20||200||||||tHE rOCKET/cANNON TURRET IS USED FOR BOTH SHORT AND MEDIUM RANGE ACTIVE DEFENSE.||||
 17|sTARPORT||||2|3|3|nil|1|6|6||500|50||500||||||tHE sTARPORT IS USED TO ORDER AND RECEIVED SHIPMENTS FROM c.h.o.a.m.||||factory_click
 18|hOUSE OF ix||||2|2|2|nil|1|12|5||500|40||400||||||tHE ix rESEARCH fACILITY ADVANCES YOUR hOUSE'S TECHNOLOGY.||||
 19|pALACE||||2|3|3|nil|1|17|8||999|80||1000||||||tHIS IS YOUR pALACE.||||factory_click
 ]]..
 -- units
-[[20|lIGHT iNFANTRY (X3)|62|174||1|1|1|11|9|9|2|AO|60||4|50|0.05|2|1|63|10|iNFANTRY ARE LIGHTLY ARMOURED FOOTSOLDIERS, WITH LIMITED FIRING RANGE AND SPEED.||||
-21|hEAVY tROOPERS (X3)|62|194||1|1|1|11|10|9|3|HO|100||8|110|0.1|3|1|63|10|tROOPERS ARE HEAVILY ARMOURED FOOTSOLDIERS, WITH IMPROVED FIRING RANGE AND SPEED.|||
+[[20|lIGHT iNFANTRY (X3)|61|174||1|1|1|11|9|9|2|AO|60||4|50|0.05|2|1|62|10|iNFANTRY ARE LIGHTLY ARMOURED FOOTSOLDIERS, WITH LIMITED FIRING RANGE AND SPEED.||||
+21|hEAVY tROOPERS (X3)|61|194||1|1|1|11|10|9|3|HO|100||8|110|0.1|3|1|62|10|tROOPERS ARE HEAVILY ARMOURED FOOTSOLDIERS, WITH IMPROVED FIRING RANGE AND SPEED.|||
 22|tRIKE|54|204||1|1|1|11|11||2||150||8|100|0.6|3||||tHE tRIKE IS A LIGHTLY-ARMOURED, 3-WHEELED VEHICLE, WITH LIMITED FIRING RANGE, BUT RAPID SPEED.||||
 23|qUAD||||1|1|1|11|11||3||200||10|130|0.5|3||||tHE qUAD IS A LIGHTLY-ARMOURED, 4-WHEELED VEHICLE. sLOWER THAN THE tRIKE, BUT STRONGER ARMOUR AND FIREPOWER.||||
 24|cOMBAT tANK|51|196||1|1|1|11|12|7|4||300||38|200|0.25|4||||tHE cOMBAT tANK IS A MEDIUM ARMOURED TANK, FIRES HIGH-EXPLOSIVE ROUNDS.||||
@@ -137,9 +137,6 @@ obj_data=[[id|name|obj_spr|ico_spr|map_spr|type|w|h|trans_col|parent_id|req_id|r
 -- other
 [[38|sARDAUKAR||||1|1|1|11|nil|nil|4||0||5|110|0.1|1||||tHE sARDULAR ARE THE eMPEROR'S ELITE TROOPS. WITH SUPERIOR FIREPOWER AND ARMOUR.||||
 39|sANDWORM||||1|1|1|11|nil|nil|3||0||300|1000|0.35|0||||tHE sAND wORMS ARE INDIGEONOUS TO dUNE. aTTRACTED BY VIBRATIONS, ALMOST IMPOSSIBLE TO DESTROY, WILL CONSUME ANYTHING THAT MOVES.||||]]
-
-
-
 
 
 
@@ -336,9 +333,12 @@ function m_map_obj_tree(objref, x,y)
     newobj.fire=function(self)
       self.target.life-=self.arms
       self.target.hit=1 --0=none, 1=bullet, 2=missile
+      self.target.hitby=self
       sfx(self.arms<100 and 60 or 58)
-    end
+    end    
     add(units,newobj)
+    -- default to guard
+    do_guard(newobj)
   end
   reveal_fow(newobj)
 end
@@ -362,6 +362,7 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
   life=0,
   frame=0,
   fire_cooldown=0,
+  hit=0,
   get_hitbox=function(self)
     return {
      x=self.x,
@@ -408,9 +409,10 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
      end
      
      -- hit? temporary code!
-     if self.hit then
+     if self.hit>0 then
+      printh("draw HIT!!!! - id="..self.ref.id)
       spr(19, self.x+rnd(self.w)-4, self.y+rnd(self.h)-4)      
-      self.hit=nil
+      --self.hit=0
      end
      -- exploding?
      if self.state==5 then
@@ -508,7 +510,7 @@ function _update60()  --game_update
 
  update_level()
 
- update_ai()
+ update_ai()  -- ai overall decision making (not individual units)
  
  -- update positions of pathfinding "blocker" objects
  if (t()%1==0) update_obj_tiles()
@@ -658,15 +660,34 @@ function do_guard(unit)
  printh("do_guard()!!")
  -- 0=idle/guareding, 1=pathfinding, 2=moving, 3=attacking, 5=exploding
  unit.state = 3
- unit.cor = nil -- todo: this!!
+ --unit.cor = nil -- todo: this!!
+ unit.cor = cocreate(function(self)
+  while true do  
+   -- todo: be on look-out
+
+   -- todo: check for attack
+   --printh("do_guard() > check for hit, id="..self.ref.id)
+   if (self.ref.id==25 and self.owner==1) printh("HIT id("..self.ref.id.."="..tostr(self.hit))
+   if self.hit>0 then 
+    printh("do_guard() > HIT!!")
+    self.hit=0
+    -- switch music?
+    if (music_state!=1)music_state=1 music(0)
+    do_attack(self, self.hitby)
+   end
+   yield()
+  end
+ end)
 end
 
 function do_attack(unit, target)
+ printh("do_attack()...")
  -- 0=idle/guareding, 1=pathfinding, 2=moving, 3=attacking, 5=exploding
  unit.state = 3
  unit.target=target
  unit.cor = cocreate(function(self)
   while target.life>0 do
+  self.hit=0
    -- todo:
    --  1) move to within firing range of target
    if dist(unit.x,unit.y,target.x,target.y) > unit.range*5 then
@@ -674,16 +695,24 @@ function do_attack(unit, target)
     move_unit_pos(unit,flr(target.x/8),flr(target.y/8),unit.range*5)
    end
    -- 2) turn to face target
-   local a=atan2(unit.x-target.x, unit.y-target.y)   
-   while (unit.r != a) do
-    turntowardtarget(unit, a)
+   if not unit.norotate then
+    local a=atan2(unit.x-target.x, unit.y-target.y)   
+    while (unit.r != a) do
+      turntowardtarget(unit, a)
+      self.hit=0
+    end
    end
    -- 3) commence firing
    unit.fire_cooldown-=1
    if (unit.fire_cooldown<=0) unit.fire(unit) unit.fire_cooldown=unit.arms
    
-    yield()
+   yield()
   end -- 4) repeat 1-3 until target destroyed
+
+  -- reset music back (will set again if more attackers)
+  set_loop(5, false) 
+  music_state=0
+
   -- reset to guard
   do_guard(self)
  end)
@@ -830,7 +859,7 @@ function update_ai()
   if (t()==1) then
     -- todo: find the first ai unit and attack player
     local unit=units[#units]
-    local target=units[1]
+    local target=units[3]
     do_attack(unit, target)
   end
 end
@@ -1965,7 +1994,7 @@ __map__
 0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000012121212120000000000000000000000000016161600000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000161616
 0000000000000000000000000000000000000000000000000000000000000000000000000000000000121200000000121200000000000000000000000000000016000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000016
 1212000000000000001616160000003300000000000008090a00000000000000000000000000000000001212121212120000000000000000000003030300000016000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000016
-12121200000000161616163e4b0000000000000000080909090a000000000000000000000000000000000000000012000000000000000000000303030303030000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+12121200000000161616163d4b0000000000000000080909090a000000000000000000000000000000000000000012000000000000000000000303030303030000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 121212121212000016161600141400000000000809090909090a000000000000000000000000000000000000000000000000030303030303030303030303030000000012121212000000000000000000120012000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 121212120000003216004d004214000000080b09090909090c00000000000000000000000000000000000000000000000000000003000000000303030303030000001212121212121200000000000000121212000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 121212160000000000000002040000080b09090d0909090c0000000000120000000000000000030303030303030303030000000000000000000003030303030000121212121212000000000000001212121212000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
@@ -2069,7 +2098,7 @@ __music__
 00 21232263
 00 21226263
 00 08092262
-03 08090a0b
+01 08090a0b
 02 080c0a0b
 00 080c0a0b
 00 0d0e0f0b
