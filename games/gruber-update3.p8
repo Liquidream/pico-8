@@ -1,99 +1,71 @@
 pico-8 cartridge // http://www.pico-8.com
 version 18
 __lua__
--- pico-dune
--- by paul nicholas
--- (with support from my patrons)
-
--- global flags
-debug_mode=true
-debug_collision=false
-
--- data flags (eventually pulled from cartdata)
-p_faction=3 -- 0=None, 1=Atreides, 2=Ordos, 3=Harkonnen
-p_col1=8
-p_col2=2
-ai_faction=1
-ai_col1=12
-ai_col2=1
-
-
--- constants
---### do this in main cart, pre-game!
---faction_cols={12,1,  11,3,  8,2}
---faction_cols[plr_faction*2], faction_cols[plr_faction*2-1]
-
--- fields
-camx,camy=0,0
-cursx,cursy=0,0
-keyx,keyy=0,0
-selected_obj=nil
-credits=2335
-_t=0
-hq=false
-last_hq=hq
-has_radar=false
-radar_frame=0
-music_state=0 -- 0=normal, 1=battle
-
---cor=nil
+a=true
+b=false
+c=3
+d=8
+e=2
+f=1
+g=12
+i=1
+j,k=0,0
+l,m=0,0
+n,o=0,0
+p=nil
+q=2335
+r=0
+s=false
+u=s
+v=false
+x=0
+y=0
 count=0
-units={}
-object_tiles={}
-buildings={}
-ui_controls={}
-
-_g={}
-_g.factory_click=function(self)
-  menu_pos=1
-  selected_subobj=self.parent.build_objs[1]
-  -- create buttons
-  m_button(6,89,"⬆️",function(self)   
-   --sel_build_item_idx-=1
-   sel_build_item_idx=mid(1,sel_build_item_idx-1,#selected_obj.build_objs)
-   selected_subobj = selected_obj.build_objs[sel_build_item_idx]
-   if (sel_build_item_idx<menu_pos) menu_pos-=1
-   --menu_pos=max(menu_pos-1,1)
-  end, 10)
-  m_button(17,89,"⬇️",function(self)
-   sel_build_item_idx=mid(1,sel_build_item_idx+1,#selected_obj.build_objs)
-   selected_subobj = selected_obj.build_objs[sel_build_item_idx]
-   if (sel_build_item_idx>menu_pos+2) menu_pos=min(menu_pos+1,#show_menu.parent.build_objs-2)
-   --menu_pos=min(menu_pos+1,#show_menu.parent.build_objs-2)
-  end, 10)
-  m_button(32,88,"build",function(self)
-   show_menu=nil
-   selected_obj.build_obj=last_selected_subobj
-   last_selected_subobj:func_onclick()
-  end)
-  m_button(96,88,"close",function(self)
-   show_menu=nil
-  end)
-  -- show build menu
-  show_menu=self
+z={}
+ba={}
+bb={}
+bc={}
+bd={}
+bd.factory_click=function(self)
+be=1
+bf=self.bg.bh[1]
+bi(6,89,"⬆️",function(self)
+bj=mid(1,bj-1,#p.bh)
+bf=p.bh[bj]
+if(bj<be) be-=1
+end,10)
+bi(17,89,"⬇️",function(self)
+bj=mid(1,bj+1,#p.bh)
+bf=p.bh[bj]
+if(bj>be+2) be=min(be+1,#bk.bg.bh-2)
+end,10)
+bi(32,88,"build",function(self)
+bk=nil
+p.bl=bm
+bm:func_onclick()
+end)
+bi(96,88,"close",function(self)
+bk=nil
+end)
+bk=self
 end
-_g.init_windtrap=function(self)
-  self.col_cycle = {
-    {11,12},
-    {11,12},
-    {11,12},
-    {11,12},
-    {11,13},
-    {11,1},
-    {11,1},
-    {11,1},
-    {11,1},
-    {11,13},
-  }
-  self.col_cycle_pos=1
+bd.init_windtrap=function(self)
+self.bn={
+{11,12},
+{11,12},
+{11,12},
+{11,12},
+{11,13},
+{11,1},
+{11,1},
+{11,1},
+{11,1},
+{11,13},
+}
+self.bo=1
 end
-
-
-
--- object data
-obj_data=[[id|name|obj_spr|ico_spr|map_spr|type|w|h|trans_col|parent_id|req_id|req_level|req_faction|cost|power|arms|hitpoint|speed|range|norotate|altframe|framecount|description|func_init|func_draw|func_update|func_onclick
+bp=[[id|name|obj_spr|ico_spr|map_spr|type|w|h|trans_col|parent_id|req_id|req_level|req_faction|cost|power|arms|hitpoint|speed|range|norotate|altframe|framecount|description|func_init|func_draw|func_update|func_onclick
 ]]..
--- buildings
 [[1|cONSTRUCTION yARD|64|128||2|2|2|nil|nil|nil|1||100|nil||400||||||aLL STRUCTURES ARE BUILT BY THE CONSTRUCTION YARD.||||factory_click
 2|lARGE cONCRETE sLAB|63|162||2|2|2|nil|1|1|4||20|nil||0||||||uSE CONCRETE TO MAKE A STURDY FOUNDATION FOR YOUR STRUCTURES.||||
 3|sMALL cONCRETE sLAB|63|160||2|1|1|nil|1|1|1||5|nil||0||||||uSE CONCRETE TO MAKE A STURDY FOUNDATION FOR YOUR STRUCTURES.||||
@@ -114,7 +86,6 @@ obj_data=[[id|name|obj_spr|ico_spr|map_spr|type|w|h|trans_col|parent_id|req_id|r
 18|hOUSE OF ix||||2|2|2|nil|1|12|5||500|40||400||||||tHE ix rESEARCH fACILITY ADVANCES YOUR hOUSE'S TECHNOLOGY.||||
 19|pALACE||||2|3|3|nil|1|17|8||999|80||1000||||||tHIS IS YOUR pALACE.||||factory_click
 ]]..
--- units
 [[20|lIGHT iNFANTRY (X3)|61|174||1|1|1|11|9|9|2|AO|60||4|50|0.05|2|1|62|10|iNFANTRY ARE LIGHTLY ARMOURED FOOTSOLDIERS, WITH LIMITED FIRING RANGE AND SPEED.||||
 21|hEAVY tROOPERS (X3)|61|194||1|1|1|11|10|9|3|HO|100||8|110|0.1|3|1|62|10|tROOPERS ARE HEAVILY ARMOURED FOOTSOLDIERS, WITH IMPROVED FIRING RANGE AND SPEED.|||
 22|tRIKE|54|204||1|1|1|11|11||2||150||8|150|0.6|3||||tHE tRIKE IS A LIGHTLY-ARMOURED, 3-WHEELED VEHICLE, WITH LIMITED FIRING RANGE, BUT RAPID SPEED.||||
@@ -134,1607 +105,1004 @@ obj_data=[[id|name|obj_spr|ico_spr|map_spr|type|w|h|trans_col|parent_id|req_id|r
 36|dEVIATOR||||1|1|1|11|12|13|7|O|750||0|120|0.3|7||||tHE oRDOS dEVIATOR IS A STANDARD mISSILE tANK, WHICH FIRES UNIQUE NERVE GAS MISSILES THAT MAY TEMPORARILY CHANGE ENEMY LOYALTY.||||
 37|sABOTEUR||||1|1|1|11|19||8|O|0||150|40|0.4|2||||tHE sABOTEUR IS A SPECIAL MILITARY UNIT, TRAINED AT AN oRDOS pALACE. cAN DESTRY ALMOST ANY STRUCTURE OR VEHICLE.||||
 ]]..
--- other
 [[38|sARDAUKAR||||1|1|1|11|nil|nil|4||0||5|110|0.1|1||||tHE sARDULAR ARE THE eMPEROR'S ELITE TROOPS. WITH SUPERIOR FIREPOWER AND ARMOUR.||||
 39|sANDWORM||||1|1|1|11|nil|nil|3||0||300|1000|0.35|0||||tHE sAND wORMS ARE INDIGEONOUS TO dUNE. aTTRACTED BY VIBRATIONS, ALMOST IMPOSSIBLE TO DESTROY, WILL CONSUME ANYTHING THAT MOVES.||||]]
-
-
-
-
-
---[[
-  ## messages ##
-There isn't enough open concrete to place this structure. You may proceed, but without enough concrete the building will need repairs.
-
-You have successfully completed your mission.
-
-]]
-
---p8 functions
---------------------------------
-
 function _init()
- printh("-- init -------------") 
- -- enable mouse
- poke(0x5f2d, 1)
-
- cartdata("pn_picodune") 
-
- explode_data()
-
- -- starting mode 
- -- (1=normal, 2=build menu, 3=???)
- curr_mode = 1
-
- -- init the game/title
- level_init()
- ticks=0
-
- -- create cursor ui "object" (for collisions)
- cursor = {
-  x=0,
-  y=0,
-  w=8,
-  h=8,
-  spr=0,
-  get_hitbox=function(self)
-   return {
-    x=self.x+(not ui_collision_mode and camx or 0)+2,
-    y=self.y+(not ui_collision_mode and camy or 0)+1,
-    w=1,
-    h=1
-   }
-  end,
-  draw=function(self)   
-   spr((selected_obj and (selected_obj.type==1)) and 1 or self.obj_spr, 
-    self.x, self.y, self.w/8, self.h/8)
-  end
- }
-
- discover_objs()
-
- camx=44
- camy=8
-
- music(9)
+printh("-- init -------------")
+poke(0x5f2d,1)
+cartdata("pn_picodune")
+bq()
+br=1
+bs()
+bt=0
+cursor={
+bu=0,
+bv=0,
+w=8,
+h=8,
+spr=0,
+bw=function(self)
+return{
+bu=self.bu+(not bx and j or 0)+2,
+bv=self.bv+(not bx and k or 0)+1,
+w=1,
+h=1
+}
+end,
+by=function(self)
+spr((p and(p.type==1)) and 1 or self.obj_spr,
+self.bu,self.bv,self.w/8,self.h/8)
 end
-
--- analyse current map & spawn objs  
-function discover_objs()
-  -- make 2 passes
-  -- (first find the player start pos/const yard)
-  -- (second finds everything else)
-  for i=1,2 do
-   for my=0,31 do
-     for mx=0,127 do
-       local objref=nil
-       local spr_val=mget(mx,my)
-       local flags=fget(spr_val)
-       
-       -- handle player start pos (const yard) as a special case
-       if i==1 and spr_val==1 then
-        -- found player start position
-        pstartx=mx*8
-        pstarty=my*8
-        -- create player const yard
-        objref=obj_data[1]
-
-       elseif i==2
-        and spr_val!=63 then --don't create "concrete" as objs
-        -- find object for id
-        for o in all(
-         obj_data) do
-         if (o.obj_spr!=nil and o.obj_spr==spr_val) objref=o break       
-        end
-       end
-       
-       if objref!=nil then
-         m_map_obj_tree(objref, mx*8,my*8)
-         if objref.type==1 then
-           mset(mx,my,17)
-         end
-       end
-     end
-   end
- end
+}
+bz()
+j=44
+k=8
+music(9)
 end
-
-function m_map_obj_tree(objref, x,y)
-  local newobj=m_obj_from_ref(objref, x,y, objref.type, nil, _g[objref.func_init], _g[objref.func_draw], _g[objref.func_update], nil)
-  -- set type==3 (icon!)
-  newobj.ico_obj=m_obj_from_ref(objref, 109,0, 3, newobj, nil, nil, _g[objref.func_onclick])
-  newobj.life=placement_damage and objref.hitpoint/2 or objref.hitpoint -- unless built without concrete
-  -- factory?
-  newobj.build_objs={}
-  -- go through all ref's and see if any valid for this building
-  for o in all(obj_data) do
-    --printh("o.parent="..(o.parent_id!=nil and o.parent_id or "nil"))
-    if (o.parent_id!=nil and o.parent_id==newobj.id) then
-    --printh("found child: "..o.name)
-    -- set type==4 (build icon!)
-    local build_obj = m_obj_from_ref(o, 109,0, 4, newobj, nil, nil, function(self)
-      -- build icon clicked
-      --printh("build item clicked...")
-      --printh("name=.."..self.name)
-      if show_menu then
-        -- select building
-        selected_obj=self
-      else
-        --auto build
-        self.build_step=5/self.cost
-        self.cor=cocreate(function(self)        
-          -- build object
-          self.buildstep=0
-          self.spent=0
-          while self.spent<self.cost do
-            self.buildstep+=1
-            if (self.buildstep>3)self.buildstep=0 credits-=1 sfx(63) self.spent+=1
-            self.life=(self.spent/self.cost)*100
-            yield()
-          end
-          -- const complete!
-          sfx(56)
-          -- auto-deploy units
-          if self.ref.type==1 then
-            -- find nearest point to factory
-            local ux,uy=find_closest_free_tile((self.parent.x+8)/8, (self.parent.y+16)/8)  
-            m_map_obj_tree(self.ref,ux*8,uy*8)
-            -- reset build
-            self.life=0
-          end
-        end)
-      end
-    end)
-
-    add(newobj.build_objs,build_obj)
-    newobj.build_obj=newobj.build_objs[1]
-    end
-  end
-
-  -- player-controlled or ai?
-  -- note: this whole thing may not be needed 
-  -- as once we have plr start pos, that might be all we need
-  newobj.owner = dist(x,y,pstartx,pstarty)<75 and 1 or 2
-
-  -- 0=auto, 1=player, 2=computer/ai
-  if newobj.owner==1 then
-    newobj.faction=p_faction
-    newobj.col1=p_col1
-    newobj.col2=p_col2
-  else
-    newobj.faction=ai_faction
-    newobj.col1=ai_col1
-    newobj.col2=ai_col2
-    --make ai icons un-clickable
-    newobj.ico_obj.func_onclick=nil
-  end
-
-  -- building props?        
-  if objref.type==2 then
-    newobj.deathsfx=53
-    -- prepare the map?
-    local xpos=flr(x/8)
-    local ypos=flr(y/8)
-    local slabs=(objref.id==2 or objref.id==3)
-    for xx=0,objref.w-1 do
-      for yy=0,objref.h-1 do
-        mset(xpos+xx, ypos+yy, slabs and 63 or 95)
-      end
-    end
-    if (not slabs) add(buildings,newobj)
-    -- other building stuff
-    if(newobj.id==7 and newobj.owner==1)has_radar=true
-  end
-  -- unit props
-  if objref.type==1 then
-   newobj.deathsfx=54
-    if (newobj.norotate!=1) newobj.r=flr(rnd(8))*.125
-    -- combat stuff
-    newobj.fire=function(self)
-      printh("fire...")
-      printh("life b4="..self.target.life)
-      self.target.life-=self.arms
-      printh("life after="..self.target.life)
-      self.target.hit=1 --0=none, 1=bullet, 2=missile
-      self.target.hitby=self
-      sfx(self.arms<100 and 60 or 58)
-    end    
-    add(units,newobj)
-    -- default to guard
-    do_guard(newobj)
-  end
-  reveal_fow(newobj)
+function bz()
+for ca=1,2 do
+for cb=0,31 do
+for cc=0,127 do
+local cd=nil
+local ce=mget(cc,cb)
+local cf=fget(ce)
+if ca==1 and ce==1 then
+cg=cc*8
+ch=cb*8
+cd=bp[1]
+elseif ca==2
+and ce!=63 then
+for ci in all(
+bp) do
+if(ci.obj_spr!=nil and ci.obj_spr==ce) cd=ci break
 end
-
-function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, func_onclick)
- local _w=(ref_obj.w or 1)*8 -- pixel dimensions
- local _h=(ref_obj.h or 1)*8 --
- local obj={
-  ref=ref_obj,
-  x=x,
-  y=y,
-  z=1, -- defaults
-  type=in_type, -- 1=unit, 2=structure, 3=obj_status_icon, 4=build_icon, 9=worm
-  parent=parent,
-  func_onclick=func_onclick,
-  w=_w,
-  h=_h,
-  orig_spr=ref_obj.obj_spr,
-  spr_w=ref_obj.w or 1, -- defaults
-  spr_h=ref_obj.h or 1, --
-  life=0,
-  frame=0,
-  fire_cooldown=0,
-  hit=0,
-  get_hitbox=function(self)
-    return {
-     x=self.x,
-     y=self.y,
-     w=(self.type>2 and 16 or self.w)-1,
-     h=(self.type>2 and 16 or self.h)-1
-    }
-   end,
-   draw=func_draw or function(self)--, x,y) 
-     pal()
-     palt(0,false)
-     if (self.trans_col) palt(self.trans_col,true)     
-     -- faction?
-     if (self.faction) pal(12,self.col1) pal(14,self.col2)
-     -- colour anim?
-     if self.col_cycle then
-       pal(self.col_cycle[self.col_cycle_pos][1],
-           self.col_cycle[self.col_cycle_pos][2])
-     end
-     -- rotating obj?
-     if self.r then
-      rspr(self.obj_spr%16*8,flr(self.obj_spr/16)*8, self.x, self.y+1, .25-self.r, 1, self.trans_col, 5)
-      rspr(self.obj_spr%16*8,flr(self.obj_spr/16)*8, self.x, self.y, .25-self.r, 1, self.trans_col)      
-     -- norm sprite
-     else      
-       -- icon mode?
-       if self.type>2 then
-         rectfill(self.x-1,self.y-1,self.x+16,self.y+19,0)
-         -- draw health/progress
-         local this=self.type==4 and self or self.parent
-         local hp=this.ref.hitpoint
-         local col = this.build_step and 12 or (this.life<hp*.33 and 8 or this.life<hp*.66 and 10 or 11)         
-         local val = this.build_step and (15*this.life/100) or (15*this.life/hp)         
-         if (this.life>0) rectfill(self.x,self.y+17,self.x+val,self.y+18,col)
-       end
-       -- non-rotational sprite
-       if self.type>2 then 
-        -- icon
-        spr(self.ico_spr, self.x, self.y, 2, 2)
-       else
-        -- building
-        spr(self.obj_spr, self.x, self.y, self.w/8, self.h/8)
-       end
-     end
-     
-     -- hit? temporary code!
-     if self.hit>0 then
-      printh("draw HIT!!!! - id="..self.ref.id)
-      spr(19, self.x+rnd(self.w)-4, self.y+rnd(self.h)-4)      
-      --self.hit=0
-     end
-     -- exploding?
-     if self.state==5 then
-      palt(11,true)
-      spr(19, self.x+rnd(self.w)-4, self.y+rnd(self.h)-4)
-     end     
- 
-     if (debug_collision) draw_hitbox(self)
-   end,
-   update=function(self)
-     -- check for death
-     if (self.life<=0 and self.death_time==nil) self.state=5 self.death_time=t()+1 sfx(self.deathsfx)
-     if self.death_time and t()>self.death_time then
-      if self.type==2 then
-       -- building?
-       for xx=0,self.ref.w-1 do
-        for yy=0,self.ref.h-1 do
-          mset(self.x/8+xx, self.y/8+yy, 14)
-        end
-       end
-       del(buildings,self)
-      else
-       -- unit
-       del(units,self)
-      end      
-      if(selected_obj==self)selected_obj=nil
-     end
-
-     -- animated colour cycle (if applicable)
-     if self.framecount!=nil then
-      self.frame+=1
-      if (self.frame > self.framecount) then
-       self.frame=0
-       -- alternate moving frame?
-       if self.altframe 
-        and self.state==2 then
-         self.obj_spr=self.orig_spr+(self.altframe-self.obj_spr)
-       end
- 
-       if self.col_cycle then
-         self.col_cycle_pos+=1
-         if (self.col_cycle_pos>#self.col_cycle) self.col_cycle_pos=1
-       end
-      end
-     end
-   end,
-
-   setpos=function(self,x,y)
-    self.x=x
-    self.y=y
-   end
-  }
-
- -- copy ref properties to object (where empty!)
- for k,v in pairs(ref_obj) do
-  if obj[k]==nil and v!="" then
-   obj[k] = v
-  end
- end
-
- -- finally, init obj
- if (func_init) func_init(obj)
-
- return obj
 end
-
-
-function reveal_fow(object)
- -- only reveal if
- -- > player
- -- > firing ai
- if(object.owner!=1 and object.state!=3)return
-
- local size = object.type==2 and 3 or 2
- -- clear group of tiles
- for xx=-size,size do
-  for yy=-size,size do
-    -- clear tile
-    local posx=flr(object.x/8)+xx
-    local posy=flr(object.y/8)+yy    
-    fow[posx][posy]=16 
-    test_tile(posx,posy)
-    -- update neighborhood
-    for dy=-1,1 do
-        for dx=-1,1 do
-          test_tile(posx+dx,posy+dy)
-        end
-    end
-  end
- end
+if cd!=nil then
+cj(cd,cc*8,cb*8)
+if cd.type==1 then
+mset(cc,cb,17)
 end
-
-
-function _update60()  --game_update
-
- update_level()
-
- update_ai()  -- ai overall decision making (not individual units)
- 
- -- update positions of pathfinding "blocker" objects
- if (t()%1==0) update_obj_tiles()
- _t+=1
 end
-
-
+end
+end
+end
+end
+function cj(cd,bu,bv)
+local ck=cl(cd,bu,bv,cd.type,nil,bd[cd.func_init],bd[cd.func_draw],bd[cd.func_update],nil)
+ck.cm=cl(cd,109,0,3,ck,nil,nil,bd[cd.func_onclick])
+ck.cn=co and cd.hitpoint/2 or cd.hitpoint
+ck.bh={}
+for ci in all(bp) do
+if(ci.parent_id!=nil and ci.parent_id==ck.id) then
+local bl=cl(ci,109,0,4,ck,nil,nil,function(self)
+if bk then
+p=self
+else
+self.cp=5/self.cost
+self.cq=cocreate(function(self)
+self.cr=0
+self.cs=0
+while self.cs<self.cost do
+self.cr+=1
+if(self.cr>3) self.cr=0 q-=1 sfx(63) self.cs+=1
+self.cn=(self.cs/self.cost)*100
+yield()
+end
+sfx(56)
+if self.ct.type==1 then
+local cu,cv=cw((self.bg.bu+8)/8,(self.bg.bv+16)/8)
+cj(self.ct,cu*8,cv*8)
+self.cn=0
+end
+end)
+end
+end)
+add(ck.bh,bl)
+ck.bl=ck.bh[1]
+end
+end
+ck.cx=cy(bu,bv,cg,ch)<75 and 1 or 2
+if ck.cx==1 then
+ck.cz=c
+ck.da=d
+ck.db=e
+else
+ck.cz=f
+ck.da=g
+ck.db=i
+ck.cm.func_onclick=nil
+end
+if cd.type==2 then
+ck.dc=53
+local dd=flr(bu/8)
+local de=flr(bv/8)
+local df=(cd.id==2 or cd.id==3)
+for dg=0,cd.w-1 do
+for dh=0,cd.h-1 do
+mset(dd+dg,de+dh,df and 63 or 95)
+end
+end
+if(not df) add(bb,ck)
+if(ck.id==7 and ck.cx==1) v=true
+end
+if cd.type==1 then
+ck.dc=54
+if(ck.norotate!=1) ck.di=flr(rnd(8))*.125
+ck.dj=function(self)
+printh("fire...")
+printh("life b4="..self.dk.cn)
+self.dk.cn-=self.arms
+printh("life after="..self.dk.cn)
+self.dk.dl=1
+self.dk.dm=self
+sfx(self.arms<100 and 60 or 58)
+end
+add(z,ck)
+dn(ck)
+end
+dp(ck)
+end
+function cl(dq,bu,bv,dr,bg,func_init,func_draw,func_onclick)
+local ds=(dq.w or 1)*8
+local dt=(dq.h or 1)*8
+local du={
+ct=dq,
+bu=bu,
+bv=bv,
+dv=1,
+type=dr,
+bg=bg,
+func_onclick=func_onclick,
+w=ds,
+h=dt,
+dw=dq.obj_spr,
+dx=dq.w or 1,
+dy=dq.h or 1,
+cn=0,
+dz=0,
+ea=0,
+dl=0,
+bw=function(self)
+return{
+bu=self.bu,
+bv=self.bv,
+w=(self.type>2 and 16 or self.w)-1,
+h=(self.type>2 and 16 or self.h)-1
+}
+end,
+by=func_draw or function(self)
+pal()
+palt(0,false)
+if(self.trans_col) palt(self.trans_col,true)
+if(self.cz) pal(12,self.da) pal(14,self.db)
+if self.bn then
+pal(self.bn[self.bo][1],
+self.bn[self.bo][2])
+end
+if self.di then
+eb(self.obj_spr%16*8,flr(self.obj_spr/16)*8,self.bu,self.bv+1,.25-self.di,1,self.trans_col,5)
+eb(self.obj_spr%16*8,flr(self.obj_spr/16)*8,self.bu,self.bv,.25-self.di,1,self.trans_col)
+else
+if self.type>2 then
+rectfill(self.bu-1,self.bv-1,self.bu+16,self.bv+19,0)
+local ec=self.type==4 and self or self.bg
+local ed=ec.ct.hitpoint
+local ee=ec.cp and 12 or(ec.cn<ed*.33 and 8 or ec.cn<ed*.66 and 10 or 11)
+local ef=ec.cp and(15*ec.cn/100) or(15*ec.cn/ed)
+if(ec.cn>0) rectfill(self.bu,self.bv+17,self.bu+ef,self.bv+18,ee)
+end
+if self.type>2 then
+spr(self.ico_spr,self.bu,self.bv,2,2)
+else
+spr(self.obj_spr,self.bu,self.bv,self.w/8,self.h/8)
+end
+end
+if self.dl>0 then
+printh("draw HIT!!!! - id="..self.ct.id)
+spr(19,self.bu+rnd(self.w)-4,self.bv+rnd(self.h)-4)
+end
+if self.eg==5 then
+palt(11,true)
+spr(19,self.bu+rnd(self.w)-4,self.bv+rnd(self.h)-4)
+end
+if(b) eh(self)
+end,
+ei=function(self)
+if(self.cn<=0 and self.ej==nil) self.eg=5 self.ej=t()+1 sfx(self.dc)
+if self.ej and t()>self.ej then
+if self.type==2 then
+for dg=0,self.ct.w-1 do
+for dh=0,self.ct.h-1 do
+mset(self.bu/8+dg,self.bv/8+dh,14)
+end
+end
+del(bb,self)
+else
+del(z,self)
+end
+if(p==self) p=nil
+end
+if self.framecount!=nil then
+self.dz+=1
+if(self.dz>self.framecount) then
+self.dz=0
+if self.altframe
+and self.eg==2 then
+self.obj_spr=self.dw+(self.altframe-self.obj_spr)
+end
+if self.bn then
+self.bo+=1
+if(self.bo>#self.bn) self.bo=1
+end
+end
+end
+end,
+ek=function(self,bu,bv)
+self.bu=bu
+self.bv=bv
+end
+}
+for el,em in pairs(dq) do
+if du[el]==nil and em!=""then
+du[el]=em
+end
+end
+if(func_init) func_init(du)
+return du
+end
+function dp(en)
+if(en.cx!=1 and en.eg!=3) return
+local eo=en.type==2 and 3 or 2
+for dg=-eo,eo do
+for dh=-eo,eo do
+local ep=flr(en.bu/8)+dg
+local eq=flr(en.bv/8)+dh
+er[ep][eq]=16
+es(ep,eq)
+for et=-1,1 do
+for eu=-1,1 do
+es(ep+eu,eq+et)
+end
+end
+end
+end
+end
+function _update60()
+ev()
+ew()
+if(t()%1==0) ex()
+r+=1
+end
 function _draw()
- -- draw the map, objects - everything except ui
- draw_level()
- -- draw score, mouse, etc.
- draw_ui()
-  
-  --printh("cpu: "..flr(stat(1)*100).."% mem: "..(flr(stat(0)/2048*100)).."% fps: "..stat(7))--,2,109,8,0)
-  if (debug_mode) printo("cpu: "..flr(stat(1)*100).."%\nmem: "..(flr(stat(0)/2048*100)).."%\nfps: "..stat(7),2,109,8,0)
-
+ey()
+ez()
+if(a) fa("cpu: "..flr(stat(1)*100).."%\nmem: "..(flr(stat(0)/2048*100)).."%\nfps: "..stat(7),2,109,8,0)
 end
-
-
--- init related
---------------------------------
-function level_init()
- -- todo: parse map data into objects
-
- -- init fog of war?
- fow={}
- for i=-2,66 do
-  fow[i]={}
-  for l=-2,66 do
-   fow[i][l]=0
-  end
- end
-
+function bs()
+er={}
+for ca=-2,66 do
+er[ca]={}
+for fb=-2,66 do
+er[ca][fb]=0
 end
-
--- fog of war
-function draw_fow()
- local mapx=flr(camx/8)
- local mapy=flr(camy/8)
- for xx=mapx-1,mapx+16 do
-  for yy=mapy-1,mapy+16 do
-    if fow[xx][yy]!=0 and fow[xx][yy]!=16 then
-
-     palt(11,true)
-
-     spr(fow[xx][yy]+31,xx*8,yy*8)
-
-
-    elseif fow[xx][yy]<16 then
-     rectfill(xx*8, yy*8, xx*8+7, yy*8+7, 0)
-    end
-  end
- end
 end
-
-
-
--- https://www.lexaloffle.com/bbs/?tid=30902
-function test_tile(x,y) 
- 
- -- bail (outside testtile bounds)
- if (x<0 or x>#fow or y<0 or y>#fow) return
-	
-  -- figure out bitmask
-  local mask = 0
-
-	if fow[x][y]!=0 then
-  
-    -- north has tile?
-		if (fow[x][y-1]>0) mask+=1
-	
-    -- east has tile?
-		if (fow[x-1][y]>0) mask+=2
-	
-    -- south has tile?
-		if (fow[x+1][y]>0) mask+=4
-	
-    -- west has tile?
-		if (fow[x][y+1]>0) mask+=8
-		
-    fow[x][y]=1 + mask
-	end
-
 end
-
--- update related
---------------------------------
-
-function update_obj_tiles() 
- object_tiles={}
- -- (The pico-8 map is a 128x32 (or 128x64 using shared space))
- for _,unit in pairs(units) do  
-  object_tiles[flr(unit.x/8)..","..flr(unit.y/8)]=1
- end
+function fc()
+local fd=flr(j/8)
+local fe=flr(k/8)
+for dg=fd-1,fd+16 do
+for dh=fe-1,fe+16 do
+if er[dg][dh]!=0 and er[dg][dh]!=16 then
+palt(11,true)
+spr(er[dg][dh]+31,dg*8,dh*8)
+elseif er[dg][dh]<16 then
+rectfill(dg*8,dh*8,dg*8+7,dh*8+7,0)
 end
-
-function update_level()
- 
-  
-  -- mouse control
-  mouse_x = stat(32)
-  mouse_y = stat(33)
-  mouse_btn = stat(34)
-  left_button_clicked = (mouse_btn>0 and last_mouse_btn != mouse_btn) or btnp(4)
-  left_button_down = (mouse_btn>0) or btn(4)
-  right_button_clicked = btnp(5)
-  
-  -- keyboard input
-  for k=0,1 do
-   if(btn(k))keyx+=k*2-1
-   if(btn(k+2))keyy+=k*2-1
-  end
-
- -- update cursor pos
- cursx = mid(0,mouse_x+keyx,127) -- mouse xpos
- cursy = mid(0,mouse_y+keyy,127) -- mouse ypos
-  
- cursor.x = cursx
- cursor.y = cursy
-
- --
- -- game mode
- --
- if not show_menu then 
-  -- auto-scroll (pan) map
-  if (cursx<4) camx-=2
-  if (cursx>123) camx+=2
-  if (cursy<4) camy-=2
-  if (cursy>123) camy+=2
-
-  -- lock cam to map
-  camx=mid(camx,384)  --896
-  camy=mid(camy,384)  --128
- end
-
- update_coroutines()
-
- collisions()
-
- ticks+=1
- last_mouse_btn = mouse_btn
- last_selected_obj = selected_obj
- last_selected_subobj = selected_subobj
 end
-
-function do_guard(unit) 
- printh("do_guard()!!")
- -- 0=idle/guareding, 1=pathfinding, 2=moving, 3=attacking, 5=exploding
- unit.state = 3
- --unit.cor = nil -- todo: this!!
- unit.cor = cocreate(function(self)
-  while true do  
-   -- todo: be on look-out
-
-   -- todo: check for attack
-   --printh("do_guard() > check for hit, id="..self.ref.id)
-   --if (self.ref.id==25 and self.owner==1) printh("HIT id("..self.ref.id.."="..tostr(self.hit))
-   if self.hit>0 then 
-    printh("do_guard() > HIT!!")    
-    self.hit-=0.5
-    --self.hit=0
-    -- switch music?
-    if (music_state!=1)music_state=1 music(0)
-    -- can we retaliate?
-    if (self.arms>0) do_attack(self, self.hitby)
-   end
-   yield()
-  end
- end)
 end
-
-function do_attack(unit, target)
- printh("do_attack()...")
- -- 0=idle/guareding, 1=pathfinding, 2=moving, 3=attacking, 5=exploding
- unit.state = 3
- unit.target=target
- unit.cor = cocreate(function(self)
-  while target.life>0 do
-  self.hit-=0.5
-    --self.hit=0
-   -- todo:
-   --  1) move to within firing range of target
-   if dist(unit.x,unit.y,target.x,target.y) > unit.range*5 then
-    -- move to within firing range of target
-    move_unit_pos(unit,flr(target.x/8),flr(target.y/8),unit.range*5)
-   end
-   -- 2) turn to face target
-   if not unit.norotate then
-    local a=atan2(unit.x-target.x, unit.y-target.y)   
-    while (unit.r != a) do
-      turntowardtarget(unit, a)
-      self.hit-=0.5
-    --self.hit=0
-    end
-   end
-   -- 3) commence firing
-   unit.fire_cooldown-=1
-   if (unit.fire_cooldown<=0) unit.fire(unit) unit.fire_cooldown=unit.arms*2
-   
-   yield()
-  end -- 4) repeat 1-3 until target destroyed
-
-  -- reset music back (will set again if more attackers)
-  set_loop(5, false) 
-  music_state=0
-
-  -- reset to guard
-  do_guard(self)
- end)
-
 end
-
--- todo: this needs to work outwards, up to max dist!
-function find_closest_free_tile(x,y,max_dist)  
-  -- ...to the target pos
-  for dist=1,max_dist or 64 do
-    for xx=x-dist,x+dist do  -- todo: increment this out by one, on every unsuccessful pass
-      for yy=y-dist,y+dist do
-        if ((xx==x-dist or xx==x+dist or yy==y-dist or yy==y+dist) and (is_free_tile(xx,yy))) return xx,yy
-      end
-    end
-  end
+function es(bu,bv)
+if(bu<0 or bu>#er or bv<0 or bv>#er) return
+local ff=0
+if er[bu][bv]!=0 then
+if(er[bu][bv-1]>0) ff+=1
+if(er[bu-1][bv]>0) ff+=2
+if(er[bu+1][bv]>0) ff+=4
+if(er[bu][bv+1]>0) ff+=8
+er[bu][bv]=1+ff
 end
-
-function is_free_tile(x,y)
- printh("is_free_tile("..x..","..y..")")
- return not fget(mget(x,y), 0) 
-   and object_tiles[x..","..y]==nil
 end
-
-function move_unit_pos(unit,x,y,dist_to_keep)
- --printh("move_unit_pos("..x..","..y..","..(dist_to_keep or "nil")..")")
-  unit.path="init"   
-  -- check target valid
-  if not is_free_tile(x,y) then
-    -- target tile occupied
-    -- move as close as possible
-    x,y=find_closest_free_tile(x,y)
-    -- for xx=x-1,x+1 do  -- todo: increment this out by one, on every unsuccessful pass
-    --  for yy=y-1,y+1 do
-    --   if (is_free_tile(xx,yy)) x=xx y=yy goto found_free_tile
-    --  end
-    -- end
-    -- abort as target invalid
-    --printh("aborting pathfinding - invalid target")
-    
-    --return    
-  end
-   --::found_free_tile::
-
-  -- create co-routine to find path (over number of cycles)  
-  unit.tx = x
-  unit.ty = y
-  -- 0=idle, 1=pathfinding, 2=moving, 3=attacking, 4=guarding?
-  unit.prev_state = unit.state
-  unit.state = 1
-   
-  -- findpath_cor --------------------------------------
-  unit.path = find_path(
-                  { x = flr(unit.x/8), y = flr(unit.y/8) },
-                  { x = unit.tx, y = unit.ty},
-                  manhattan_distance,
-                  flag_cost,
-                  map_neighbors,
-                  function (node) return shl(node.y, 8) + node.x end,
-                  nil)  
-
-  -- todo: check path valid???
-
-  -- now auto-move to path 
-  -- 0=idle, 1=pathfinding, 2=moving, 3=attacking, 4=guarding?
-  unit.prev_state = unit.state
-  unit.state = 2
-
-  -- movepath_cor ------------------------------------
-  unit.state=2 --moving
-  -- loop all path nodes...
-  for i=#unit.path-1,1,-1 do
-    local node=unit.path[i]
-
-    if not unit.norotate then
-      -- rotate to angle
-      local dx=unit.x-(node.x*8)
-      local dy=unit.y-(node.y*8)
-      local a=atan2(dx,dy)
-      --printh("  >> target angle="..a)
-      while (unit.r != a) do
-        turntowardtarget(unit, a)
-      end
-    end
-    
-    -- move to new position
-    local scaled_speed = unit.speed or .5
-    local distance = sqrt((node.x*8 - unit.x) ^ 2 + (node.y*8 - unit.y) ^ 2)
-    local step_x = scaled_speed * (node.x*8 - unit.x) / distance
-    local step_y = scaled_speed * (node.y*8 - unit.y) / distance 
-    for i = 0, distance/scaled_speed-1 do
-      unit.x+=step_x
-      unit.y+=step_y
-      yield()
-    end
-    unit.x,unit.y = node.x*8, node.y*8
-
-    -- reveal fog?
-    reveal_fow(unit)
-
-    -- are we close enough?
-    local d=dist(unit.x,unit.y,unit.tx*8,unit.ty*8)
-    printh("        dist = "..d)
-    printh("dist_to_keep = "..tostr(dist_to_keep))
-    if d <= (dist_to_keep or 0) then
-      -- stop now
-      printh("stop!!! close enough!")
-      break
-    end
-  end
-
-  -- arrived?
-  unit.state=1 --idle
-
+function ex()
+ba={}
+for fg,fh in pairs(z) do
+ba[flr(fh.bu/8)..","..flr(fh.bv/8)]=1
 end
-
-
-function update_coroutines()
- -- update all unit coroutines 
- -- (pathfinding, moving, attacking, etc.)
- for _,unit in pairs(units) do 
-  update_cor(unit)
- end
- -- update all building coroutines
- -- (building, repairing, etc.)
- for _,building in pairs(buildings) do 
-  update_cor(building)
-  update_cor(building.build_obj)
- end
 end
-
-function update_cor(obj)
- if obj then
-  if obj.cor and costatus(obj.cor) != 'dead' then
-    assert(coresume(obj.cor, obj))
-  else
-    obj.cor = nil
-  end
- end
+function ev()
+fi=stat(32)
+fj=stat(33)
+fk=stat(34)
+fl=(fk>0 and fm!=fk) or btnp(4)
+fn=(fk>0) or btn(4)
+fo=btnp(5)
+for el=0,1 do
+if(btn(el)) n+=el*2-1
+if(btn(el+2)) o+=el*2-1
 end
-
--- ai strategy code (attack, build, repair, etc.)
-function update_ai()
-  if (t()==1) then
-    -- todo: find the first ai unit and attack player
-    local unit=units[#units]
-    local target=units[3]
-    do_attack(unit, target)
-  end
+l=mid(0,fi+n,127)
+m=mid(0,fj+o,127)
+cursor.bu=l
+cursor.bv=m
+if not bk then
+if(l<4) j-=2
+if(l>123) j+=2
+if(m<4) k-=2
+if(m>123) k+=2
+j=mid(j,384)
+k=mid(k,384)
 end
-
--- draw related
---------------------------------
-function draw_level()
- -- draw the map, objects - everything except ui
-	cls"15"
- --draw_sand?()
- 
- camera(camx,camy)
- 
- palt()
- --p1:draw()
- pal()
-
- -- temp fudge
- palt(0,false) 
- palt(11,true)
- 
- map(0,0, 0,0, 64,32)
- map(64,0, 0,256, 64,32)
-
- -- debug pathfinding
- --if (debug_mode) draw_pathfinding()
-
- if path != nil and path != "init" then
-  spr(144, path[1].x*8, path[1].y*8)
- end
-
- -- buildings
- for _,building in pairs(buildings) do 
-  building:update()
-  building:draw()
-  -- draw selected reticule
-  if (building == selected_obj) then 
-   rect(selected_obj.x, selected_obj.y, 
-        selected_obj.x+selected_obj.w-1, selected_obj.y+selected_obj.h-1, 
-        7)
-  end
- end
- 
- -- draw units
- palt(11,true)
- for _,unit in pairs(units) do
-  unit:update()
-  unit:draw()
-  -- draw selected reticule
-  if (unit == selected_obj) then   
-   palt(11,true)
-   spr(16, selected_obj.x, selected_obj.y)
-  end
- end
-
- -- draw fog-of-war
- draw_fow()
+fp()
+fq()
+bt+=1
+fm=fk
+fr=p
+bm=bf
 end
-
-
-
-function draw_radar()
-  local size=31
-  local x,y=93,93
-  rectfill(x-1,y-1,x+size+1,y+size+1,p_col2)
-  
-  -- has radar-outpost and enough power?
-  if (has_radar) hq=true
-  
-  rectfill(x,y,x+size,y+size,0)
-
-  -- anim?
-  -- https://youtu.be/T337FK6L0h0?t=2891
-  if hq!=last_hq then
-    radar_frame=1
-    radar_dir=1
-    sfx(55)
-  end  
-  last_hq=hq
-
-  if radar_frame>0 and radar_frame<60 then
-    radar_frame+=radar_dir
-    -- draw radar anim
-    clip(
-      max(x+(size/2)-radar_frame,x),
-      max(y+(size/2)-(radar_frame>20 and radar_frame-20 or 0),y), --y+size/2,
-      min(radar_frame*2,size),
-      min((radar_frame>20 and radar_frame-20 or 1)*2,size))
-    for i=1,300 do
-      pset(x+rnd(size),y+rnd(size),5+rnd(3))
-    end
-    return
-  end
-   
-  -- fow
-  if hq then
-    for i=0,124,4 do
-      for l=0,124,4 do
-      -- todo: poss look at tile spr and if not fow, get col?
-      local mx=i/2
-      local my=l/2
-      if(my>=32)mx+=64 my%=32
-      local mspr=mget(mx,my)
-      local sx=(mspr*8)%128
-      local sy=(mspr*8)/16
-      local col=sget(sx+4,sy)
-      if(fow[i/2][l/2]==16) pset(x+(i/2)/2,y+(l/2)/2,col!=11 and col or 15)
-      end
-    end
-  end
-   
-  -- structures
-  for _,building in pairs(buildings) do 
-    local posx=flr(building.x/8)
-    local posy=flr(building.y/8)
-    -- if our building, or ai not under fog of war
-    if building.owner==1 or (hq and fow[posx][posy]==16) then
-      pset(x+building.x/2/8,y+building.y/2/8,building.col1)
-    end
-  end
-  -- units
-  if hq then
-    for _,unit in pairs(units) do
-      local posx=flr(unit.x/8)
-      local posy=flr(unit.y/8)
-      -- if our unit, or ai not under fog of war
-      if unit.owner==1 or fow[posx][posy]==16 then
-        pset(x+unit.x/2/8,y+unit.y/2/8,unit.col1)     
-      end
-    end
-  end
-  
-  -- draw "view" bounds
-  local cx=x+camx/16
-  local cy=y+camy/16
-  rect(cx,cy, cx+7,cy+7, 7)
-
+function dn(fh)
+printh("do_guard()!!")
+fh.eg=3
+fh.cq=cocreate(function(self)
+while true do
+if self.dl>0 then
+printh("do_guard() > HIT!!")
+self.dl-=0.5
+if(y!=1) y=1 music(0)
+if(self.arms>0) fs(self,self.dm)
 end
-
-
-function draw_ui()
- -- ui (score, mouse, etc.)
- camera(0,0)
- pal()
- -- selected objects?
- palt(0,false) 
- 
- -- object menu icon/buttons?
- if selected_obj and selected_obj.ico_obj then
-  selected_obj.ico_obj:setpos(109,20)
-  selected_obj.ico_obj:draw()--109,20)  
-  if selected_obj.build_obj and selected_obj.owner==1 then
-    selected_obj.build_obj:setpos(109,44) 
-    selected_obj.build_obj:draw()--109,44)  
-   end
- end
- 
---  if selected_obj and selected_obj==2 then
---   selected_obj:draw(109,20,true)  
---  end
- 
- -- radar 
---  rectfill(94, 94, 125, 125, 0)
---  rect(94, 94, 125, 125, 5)
-
- -- score
- printo("00"..flr(credits), 103,2, 7)
- 
- -- placement?
- if selected_obj 
-  and selected_obj.build_obj 
-  and selected_obj.build_obj.ref.type==2
-  and selected_obj.build_obj.life>=100 then
-  -- draw placement
-  -- (todo: improve this code!)
-  local mxpos=flr((cursor.x+camx)/8)
-  local mypos=flr((cursor.y+camy)/8)
-  local sxpos=mxpos*8-camx
-  local sypos=mypos*8-camy
-
-  -- check ok to place
-  placement_pos_ok=false
-  placement_inner_invalid=false
-  placement_damage=false
-  local w=selected_obj.build_obj.ref.w
-  local h=selected_obj.build_obj.ref.h
-
-  for xx=-1,w do
-    for yy=-1,h do
-     if xx==-1 or xx==w or yy==-1 or yy==h then     
-      -- check edges
-      if (mget(mxpos+xx, mypos+yy)>=63) placement_pos_ok=true
-     else
-      -- check inner
-      local val=mget(mxpos+xx, mypos+yy)
-      if (val>=2 and val<=7) placement_damage=true
-      if (object_tiles[mxpos+xx..","..mypos+yy] or val==0 or (val>=8 and val<63) or val>63) placement_inner_invalid=true
-     end
-    end
-  end
-  if (placement_inner_invalid)placement_pos_ok=false
-
-  fillp("0b1110110110110111.1")
-  rectfill(sxpos, sypos,
-           sxpos+selected_obj.build_obj.w, sypos+selected_obj.build_obj.h, placement_pos_ok and 11 or 8)
-  fillp()
- end
-
- draw_radar()
-
- if show_menu then
-  -- test
-  draw_dialog(121,73,p_col2, p_col1)
-
-  -- build menu?
-  if selected_obj.build_objs then
-    rectfill(6,30,27,97,0)
-    for i=1,#selected_obj.build_objs do
-     local curr_item=selected_obj.build_objs[i]
-     if i>=menu_pos and i<=menu_pos+2 then
-      curr_item:setpos(9,32+((i-menu_pos)*19))
-      curr_item:draw()
-     else
-      -- hide!
-      curr_item:setpos(-16,16)
-     end
-     -- draw selected reticule
-     if (selected_subobj == curr_item) then 
-      sel_build_item_idx=i
-      rect(curr_item.x-2, curr_item.y-2, 
-          curr_item.x+17, curr_item.y+17, 
-          7)
-
-      print(selected_subobj.name,30,31,7)
-      print("cOST:"..selected_subobj.cost,85,38,9)
-      yoff=0
-      local desc_lines=create_text_lines(selected_subobj.description, 23)
-      for l in all(desc_lines) do
-       print(l,30,44+yoff,6)
-       yoff+=6
-      end
-
-     end
-    end
-  end
-
-  -- ui elements (buttons)?
-  for _,controls in pairs(ui_controls) do 
-    --controls:update()
-    controls:draw()
-  end
- end
-
- -- cursor
- palt(11,true)
- cursor:draw()
+yield()
 end
-
-function draw_dialog(w,h,bgcol,bordercol)
- fillp(0xA5A5.8)
- rectfill(0,0,127,127,0)
- fillp()
-
- rectfill(64-w/2, 64-h/2, 64+w/2, 64+h/2, bgcol)
- rect(64-w/2+1, 64-h/2+1, 64+w/2-1, 64+h/2-1, bordercol) 
+end)
 end
-
-function m_button(x,y,text,func_onclick,_w)
-local obj={
-  x=x,
-  y=y,
-  w=_w or #text*4+2,
-  h=8,
-  text=text,
-  get_hitbox=function(self)
-    return {
-     x=self.x,
-     y=self.y,
-     w=self.w,
-     h=self.h
-    }
-   end,
-  draw=function(self)
-    if(#text>1)rectfill(self.x,self.y,self.x+self.w,self.y+self.h, 7)
-    if(#text>1)rectfill(self.x+1,self.y+1,self.x+self.w-1,self.y+self.h-1, self.hover and 12 or 6)
-    print(self.text,self.x+2,self.y+2,(#text>1) and 0 or (self.hover and 12 or 7))
-
-    if (debug_collision) draw_hitbox(self)
-  end,
-  func_onclick = func_onclick
- }
- add(ui_controls,obj)
+function fs(fh,dk)
+printh("do_attack()...")
+fh.eg=3
+fh.dk=dk
+fh.cq=cocreate(function(self)
+while dk.cn>0 do
+self.dl-=0.5
+if cy(fh.bu,fh.bv,dk.bu,dk.bv)>fh.range*5 then
+ft(fh,flr(dk.bu/8),flr(dk.bv/8),fh.range*5)
 end
-
--- auto-break message into lines
-function create_text_lines(msg, max_line_length) --, comma_is_newline)
-	--  > ";" new line, shown immediately
-	local lines={}
-	local currline=""
-	local curword=""
-	local curchar=""
-	
-	local upt=function(max_length)
-		if #curword + #currline > max_length then
-			add(lines,currline)
-			currline=""
-		end
-		currline=currline..curword
-		curword=""
-	end
-
-	for i = 1, #msg do
-		curchar=sub(msg,i,i)
-		curword=curword..curchar
-		
-		if curchar == " "
-		 or #curword > max_line_length-1 then
-			upt(max_line_length)
-		
-		elseif #curword>max_line_length-1 then
-			curword=curword.."-"
-			upt(max_line_length)
-
-		elseif curchar == ";" then 
-			-- line break
-			currline=currline..sub(curword,1,#curword-1)
-			curword=""
-			upt(0)
-		end
-	end
-
-	upt(max_line_length)
-	if currline!="" then
-		add(lines,currline)
-	end
-
-	return lines
+if not fh.norotate then
+local fu=atan2(fh.bu-dk.bu,fh.bv-dk.bv)
+while(fh.di!=fu) do
+fv(fh,fu)
+self.dl-=0.5
 end
-
--- function draw_pathfinding()
---  -- debug pathfinding 
---  if path != nil and path != "init" then
---   draw_path(path, 1, 1)
---   draw_path(path, 0, 12)
---  end
--- end
-
--- function draw_path(path, dy, clr)
---  local p = path[1]
---  for i = 2, #path do
---   local n = path[i]
---    line(p.x * 8 + 4 + dy - camx, p.y * 8 + 4 + dy - camy, n.x * 8 + 4 + dy - camx, n.y * 8 + 4 + dy - camy, clr)
---   p = n
---  end
--- end
-
-
--- game flow / collisions
---------------------------------
-
-
-
--- check all collisions
-function collisions()
- 
- clickedsomething=false
-
- -- check cursor/ui collisions
- if not show_menu then  
-  -- unit collisions
-  foreach(units, check_hover_select)
-  -- building collisions 
-  foreach(buildings, check_hover_select)
- end
- -- selected obj ui collision
- if selected_obj then
-   ui_collision_mode=true
-   if (selected_obj.ico_obj and not show_menu) check_hover_select(selected_obj.ico_obj)
-   foreach(selected_obj.build_objs, check_hover_select)
-   foreach(ui_controls, check_hover_select)
-   --if (selected_obj.build_obj) check_hover_select(selected_obj.build_obj)
-   ui_collision_mode=false
- end
-  
-    -- check for radar click
- if left_button_down
-    and not show_menu 
-    and cursx>93 and cursx<120
-    and cursy>93 and cursy<120 then
-      -- clicked radar
-      camx=min((cursx-94)*16, 400)
-      camy=min((cursy-94)*16, 400)
-
- -- clicked something?
- elseif left_button_clicked then
- 
-  if clickedsomething then
-   --show_menu=nil
-    -- object "button"?
-    if (not show_menu and selected_obj.func_onclick and selected_obj.parent!=nil) selected_obj:func_onclick() selected_obj=last_selected_obj
-    if (show_menu and selected_subobj.text and selected_subobj.func_onclick) selected_subobj:func_onclick() --selected_subobj=last_selected_subobj
-  
-    -- clicked own unit, first time?
-    if (selected_obj.owner==1 and selected_obj.type==1 and selected_obj!=last_selected_obj) sfx(62)
-    
-    -- clicked enemy object, last clicked ours... attack?
-    if (selected_obj.owner==2 and last_selected_obj and last_selected_obj.type==1 and last_selected_obj.owner==1) do_attack(last_selected_obj, selected_obj) selected_obj=nil
-
-  -- deselect?
-  else 
-    -- do we have a unit selected?
-    if selected_obj and selected_obj.type==1
-    and selected_obj.owner==1 then
-
-     selected_obj.cor = cocreate(function(unit)
-       move_unit_pos(unit, flr((camx+cursx)/8), flr((camy+cursy)/8))
-      end)
-
-    end
-    
-    -- placement? (temp code!)
-    if selected_obj 
-     and selected_obj.build_obj 
-     and selected_obj.build_obj.life>=100
-     and placement_pos_ok then
-      -- place object
-      local xpos=flr((cursor.x+camx)/8)
-      local ypos=flr((cursor.y+camy)/8)
-      local objref = selected_obj.build_obj.ref
-      m_map_obj_tree(objref,xpos*8,ypos*8)            
-      -- reset build
-      selected_obj.build_obj.life=0
-      sfx(61)
-    end
-
-    if (not show_menu) selected_obj=nil
-    --if (not show_menu and placement_pos_ok) selected_obj=nil
-  end 
-  
- end --if buttonclicked
-
 end
-
-function check_hover_select(obj)
-  obj.hover = collide(cursor, obj)
-  if left_button_clicked and obj.hover then
-   if show_menu then
-    selected_subobj = obj
-   else
-    -- is object hidden by fow?
-    local xpos=flr((cursor.x+camx)/8)
-    local ypos=flr((cursor.y+camy)/8)
-    if (obj.type<=2 and fow[xpos][ypos]!=16) return
-    selected_obj = obj
-   end
-   clickedsomething=true
-  end
+fh.ea-=1
+if(fh.ea<=0) fh.dj(fh) fh.ea=fh.arms*2
+yield()
 end
-
-
--- object shared methods
---------------------------------
-function _set_anim(self,anim)
- if(anim==self.curanim)return--early out.
- local a=self.anims[anim]
- self.animtick=a.ticks--ticks count down.
- self.curanim=anim
- self.curframe=1
+fw(5,false)
+y=0
+dn(self)
+end)
 end
-
-function _update_anim(self)
---anim tick
- self.animtick-=1
- if self.animtick<=0 then
-  self.curframe+=1
-  local a=self.anims[self.curanim]
-  self.animtick=a.ticks--reset timer
-  if self.curframe>#a.frames then
-   self.curframe=1--loop
-  end
-  -- store the spr frame
-  self.obj_spr=a.frames[self.curframe]
-  
- end
+function cw(bu,bv,fx)
+for cy=1,fx or 64 do
+for dg=bu-cy,bu+cy do
+for dh=bv-cy,bv+cy do
+if((dg==bu-cy or dg==bu+cy or dh==bv-cy or dh==bv+cy) and(fy(dg,dh))) return dg,dh
 end
-
---other helper functions
---------------------------------
-
--- set/unset the loop flag
--- for specified pattern
-function set_loop(pattern, enabled)
-  local addr = 0x3100
-  local channel = 1 -- 0..3 (+1 to get 2nd channel's byte)
-	pattern*=4 -- find right byte (each pattern has 4 channels)
-	local val=peek(addr + pattern + channel)
-  if ((band(val, 128) > 0) != enabled) val=bxor(val,128)
-  poke(addr+pattern+channel, val)  
 end
-
---print string with outline.
-function printo(str,startx,
- starty,col,
- col_bg)
- for xx = -1, 1 do
- for yy = -1, 1 do
- print(str, startx+xx, starty+yy, col_bg)
- end
- end
- print(str,startx,starty,col)
 end
-
-function collide(o1, o2)
- local hb1=o1:get_hitbox()
- local hb2=o2:get_hitbox()
- 
- if hb1.x < hb2.x + hb2.w and
-  hb1.x + hb1.w > hb2.x and
-  hb1.y < hb2.y + hb2.h and
-  hb1.y + hb1.h >hb2.y 
- then
-  return true
-  --collide_event(o1, o2)
- else
-  return false
- end
 end
-
-function draw_hitbox(obj)
- --reset_draw_pal()
- local hb=obj:get_hitbox()
- rect(hb.x,hb.y,hb.x+hb.w,hb.y+hb.h,obj.hover and 11 or 8)
- --rect(hb.x,hb.y,hb.x+hb.w,hb.y+hb.h,selected_obj==obj and 7 or obj.hover and 11 or 8)
- --set_goggle_pal()
+function fy(bu,bv)
+printh("is_free_tile("..bu..","..bv..")")
+return not fget(mget(bu,bv),0)
+and ba[bu..","..bv]==nil
 end
-
-function alternate()
- return flr(t())%2==0
+function ft(fh,bu,bv,fz)
+fh.ga="init"
+if not fy(bu,bv) then
+bu,bv=cw(bu,bv)
 end
-
-
--- explode object data
-function explode_data()
- str_arrays=split(obj_data,"|","\n")
- new_data={}
- -- loop all objects
- for i=2,#str_arrays-1 do
-  new_obj={}
-  -- loop all properties
-  for j=1,#str_arrays[i] do
-   local val=str_arrays[i][j]
-   -- convert all but the text columns to numbers
-   if (j!=2 and j<23) val=tonum(val)
-   new_obj[str_arrays[1][j]]=val
-  end
-  new_data[tonum(str_arrays[i][1])]=new_obj
- end
- -- replace with exploded data
- obj_data=new_data
---  -- test new structure!
---  printh("test 8:"..obj_data[2].name)
---  printh("test 98:"..obj_data[2].id)
---  printh("test 98b:"..obj_data[2].func_init)
+fh.gb=bu
+fh.gc=bv
+fh.gd=fh.eg
+fh.eg=1
+fh.ga=ge(
+{bu=flr(fh.bu/8),bv=flr(fh.bv/8)},
+{bu=fh.gb,bv=fh.gc},
+gf,
+gg,
+gh,
+function(gi) return shl(gi.bv,8)+gi.bu end,
+nil)
+fh.gd=fh.eg
+fh.eg=2
+fh.eg=2
+for ca=#fh.ga-1,1,-1 do
+local gi=fh.ga[ca]
+if not fh.norotate then
+local eu=fh.bu-(gi.bu*8)
+local et=fh.bv-(gi.bv*8)
+local fu=atan2(eu,et)
+while(fh.di!=fu) do
+fv(fh,fu)
 end
-
-
--- split string
--- https://www.lexaloffle.com/bbs/?tid=32520
- function split(str,d,dd)
- local a={}
- local c=0
- local s=''
- local tk=''
- 
- if dd~=nil then str=split(str,dd) end
- while #str>0 do
-  if type(str)=='table' then
-   s=str[1]
-   add(a,split(s,d))
-   del(str,s)
-  else
-   s=sub(str,1,1)
-   str=sub(str,2)
-   if s==d then 
-    add(a,tk)
-    tk=''
-   else
-    tk=tk..s
-   end
-  end
- end
- add(a,tk)
- return a
- end
-
--- rotate sprite
--- by freds72
--- https://www.lexaloffle.com/bbs/?pid=52525#p52541
-local rspr_clear_col=0
-
-function rspr(sx,sy,x,y,a,w,trans,single_col)
-	local ca,sa=cos(a),sin(a)
-	local srcx,srcy,addr,pixel_pair
-	local ddx0,ddy0=ca,sa
-	local mask=shl(0xfff8,(w-1))
-	w*=4
-	ca*=w-0.5
-	sa*=w-0.5
-	local dx0,dy0=sa-ca+w,-ca-sa+w
-	w=2*w-1
-	for ix=0,w do
-		srcx,srcy=dx0,dy0
-		for iy=0,w do
-			if band(bor(srcx,srcy),mask)==0 then
-				local c=sget(sx+srcx,sy+srcy)
-				if (c!=trans) pset(x+ix,y+iy, single_col or c)
-			--else
-				--pset(x+ix,y+iy,rspr_clear_col)
-			end
-			srcx-=ddy0
-			srcy+=ddx0
-		end
-		dx0+=ddx0
-		dy0+=ddy0
-	end
 end
-
--- fixed sqrt to avoid overflow
--- https://www.lexaloffle.com/bbs/?tid=29528
-function dist(x1,y1,x2,y2)
- return abs(sqrt(((x1-x2)/1000)^2+((y1-y2)/1000)^2)*1000)
+local gj=fh.speed or .5
+local gk=sqrt((gi.bu*8-fh.bu)^2+(gi.bv*8-fh.bv)^2)
+local gl=gj*(gi.bu*8-fh.bu)/gk
+local gm=gj*(gi.bv*8-fh.bv)/gk
+for ca=0,gk/gj-1 do
+fh.bu+=gl
+fh.bv+=gm
+yield()
 end
-
-
---
--- pathfinding-related
---
-
-pi = 3.14159
-turnspeed = .5 * (pi/180)
-
-function turntowardtarget(unit, targetangle)
-   diff = targetangle-unit.r   
-   -- never turn more than 180
-   if diff > 0.5 then
-    --printh("big angle 1")
-    diff -= 1
-   elseif diff < -0.5 then
-    --printh("big angle 2")
-    diff += 1
-   end
-   if diff > turnspeed then
-    unit.r += turnspeed
-   elseif diff < -turnspeed then
-    unit.r -= turnspeed
-   else
-    -- we're already very close
-    unit.r = targetangle
-   end
-
-   -- make sure that our rotation value always stays within a "one-cycle" range
-   if (unit.r > pi) unit.r-=2*pi
-   if (unit.r < -pi) unit.r+=2*pi   
-
-   yield()   
+fh.bu,fh.bv=gi.bu*8,gi.bv*8
+dp(fh)
+local gn=cy(fh.bu,fh.bv,fh.gb*8,fh.gc*8)
+printh("        dist = "..gn)
+printh("dist_to_keep = "..tostr(fz))
+if gn<=(fz or 0) then
+printh("stop!!! close enough!")
+break
 end
-
-
-
-
-
--- makes the cost of entering a
--- node 4 if flag 1 is set on
--- that map square and zero
--- otherwise
--- unless the new node is a 
--- diagonal, in which case
--- make it cost a bit more
-function flag_cost(from, node, graph)
- -- get the standard cost of the tile (grass vs. mud/water)
- local base_cost = fget(mget(node.x, node.y), 1) and 4 or 1
- -- make diagonals cost a little more than normal tiles
- -- (this helps negate "wiggling" in close quarters)
- if (from.x != node.x and from.y != node.y) return base_cost+1
- return base_cost
 end
-
-
--- returns any neighbor map
--- position at which flag zero
--- is unset
-function map_neighbors(node, graph)
- local neighbors = {}
- for xx = -1, 1 do
-  for yy = -1, 1 do
-   if (xx!=0 or yy!=0) maybe_add(node.x+xx, node.y+yy, neighbors)
-  end
- end return neighbors
+fh.eg=1
 end
-
--- maybe adds the node to neighbors table
--- (if flag zero is unset at this position)
-function maybe_add(nx, ny, ntable)
- if (
-  not fget(mget(nx,ny), 0) 
-  and object_tiles[nx..","..ny]==nil
- )
-  then 
-   add(ntable, {x=nx, y=ny}) 
- end
- --printh("test passed.")
+function fp()
+for fg,fh in pairs(z) do
+go(fh)
 end
-
--- estimates the cost from a to
--- b by assuming that the graph
--- is a regular grid and all
--- steps cost 1.
-function manhattan_distance(a, b)
- return abs(a.x - b.x) + abs(a.y - b.y)
+for fg,gp in pairs(bb) do
+go(gp)
+go(gp.bl)
 end
-
-
--- pathfinder
--- by @casualeffects
-
--- i minimized the number of
--- tokens as far as possible
--- without hurting readability
--- or performance. you can save
--- another four tokens and a
--- lot of characters by
--- minifying if you don't care
--- about reading the code.
-
--- returns the shortest path, in
--- reverse order, or nil if the
--- goal is unreachable.
---
--- from the graphics codex
--- http://graphicscodex.com
-function find_path
- (start,
-  goal,
-  estimate,
-  edge_cost,
-  neighbors, 
-  node_to_id, 
-  graph)
-  
-  -- the final step in the
-  -- current shortest path
-  local shortest, 
-  -- maps each node to the step
-  -- on the best known path to
-  -- that node
-  best_table = {
-   last = start,
-   cost_from_start = 0,
-   cost_to_goal = estimate(start, goal, graph)
-  }, {}
- 
-  best_table[node_to_id(start, graph)] = shortest
- 
-  -- array of frontier paths each
-  -- represented by their last
-  -- step, used as a priority
-  -- queue. elements past
-  -- frontier_len are ignored
-  local frontier, frontier_len, goal_id, max_number = {shortest}, 1, node_to_id(goal, graph), 32767.99
- 
-  -- while there are frontier paths
-  while frontier_len > 0 do
- 
-   -- find and extract the shortest path
-   local cost, index_of_min = max_number
-   for i = 1, frontier_len do
-    local temp = frontier[i].cost_from_start + frontier[i].cost_to_goal
-    if (temp <= cost) index_of_min,cost = i,temp
-   end
-  
-   -- efficiently remove the path 
-   -- with min_index from the
-   -- frontier path set
-   shortest = frontier[index_of_min]
-   frontier[index_of_min], shortest.dead = frontier[frontier_len], true
-   frontier_len -= 1
- 
-   -- last node on the currently
-   -- shortest path
-   local p = shortest.last
-   
-   if node_to_id(p, graph) == goal_id then
-    -- we're done.  generate the
-    -- path to the goal by
-    -- retracing steps. reuse
-    -- 'p' as the path
-    p = {goal}
- 
-    while shortest.prev do
-     shortest = best_table[node_to_id(shortest.prev, graph)]
-     add(p, shortest.last)
-    end
- 
-    -- we've found the shortest path
-    return p
-   end -- if
- 
-   -- consider each neighbor n of
-   -- p which is still in the
-   -- frontier queue
-   for n in all(neighbors(p, graph)) do
-    -- find the current-best
-    -- known way to n (or
-    -- create it, if there isn't
-    -- one)
-    local id = node_to_id(n, graph)
-    local old_best, new_cost_from_start =
-     best_table[id],
-     shortest.cost_from_start + edge_cost(p, n, graph)
-    
-    if not old_best then
-     -- create an expensive
-     -- dummy path step whose
-     -- cost_from_start will
-     -- immediately be
-     -- overwritten
-     old_best = {
-      last = n,
-      cost_from_start = max_number,
-      cost_to_goal = estimate(n, goal, graph)
-     }
- 
-     -- insert into queue
-     frontier_len += 1
-     frontier[frontier_len], best_table[id] = old_best, old_best
-    end -- if old_best was nil
- 
-    -- have we discovered a new
-    -- best way to n?
-    if not old_best.dead and old_best.cost_from_start > new_cost_from_start then
-     -- update the step at this
-     -- node
-     old_best.cost_from_start, old_best.prev = new_cost_from_start, p
-    end -- if
-   end -- for each neighbor
-   
-   count+=1
-   if count>10 then
-    count=1
-    yield()
-   end
-   --count%=100
-   --yield()
-
-  end -- while frontier not empty
- 
-  -- unreachable, so implicitly
-  -- return nil
- end
- 
-
-
-
-
-
-
-
-
+end
+function go(du)
+if du then
+if du.cq and costatus(du.cq)!='dead'then
+assert(coresume(du.cq,du))
+else
+du.cq=nil
+end
+end
+end
+function ew()
+if(t()==1) then
+local fh=z[#z]
+local dk=z[3]
+fs(fh,dk)
+end
+end
+function ey()
+cls"15"
+camera(j,k)
+palt()
+pal()
+palt(0,false)
+palt(11,true)
+map(0,0,0,0,64,32)
+map(64,0,0,256,64,32)
+if ga!=nil and ga!="init"then
+spr(144,ga[1].bu*8,ga[1].bv*8)
+end
+for fg,gp in pairs(bb) do
+gp:ei()
+gp:by()
+if(gp==p) then
+rect(p.bu,p.bv,
+p.bu+p.w-1,p.bv+p.h-1,
+7)
+end
+end
+palt(11,true)
+for fg,fh in pairs(z) do
+fh:ei()
+fh:by()
+if(fh==p) then
+palt(11,true)
+spr(16,p.bu,p.bv)
+end
+end
+fc()
+end
+function gq()
+local eo=31
+local bu,bv=93,93
+rectfill(bu-1,bv-1,bu+eo+1,bv+eo+1,e)
+if(v) s=true
+rectfill(bu,bv,bu+eo,bv+eo,0)
+if s!=u then
+x=1
+gr=1
+sfx(55)
+end
+u=s
+if x>0 and x<60 then
+x+=gr
+clip(
+max(bu+(eo/2)-x,bu),
+max(bv+(eo/2)-(x>20 and x-20 or 0),bv),
+min(x*2,eo),
+min((x>20 and x-20 or 1)*2,eo))
+for ca=1,300 do
+pset(bu+rnd(eo),bv+rnd(eo),5+rnd(3))
+end
+return
+end
+if s then
+for ca=0,124,4 do
+for fb=0,124,4 do
+local cc=ca/2
+local cb=fb/2
+if(cb>=32) cc+=64 cb%=32
+local gs=mget(cc,cb)
+local gt=(gs*8)%128
+local gu=(gs*8)/16
+local ee=sget(gt+4,gu)
+if(er[ca/2][fb/2]==16) pset(bu+(ca/2)/2,bv+(fb/2)/2,ee!=11 and ee or 15)
+end
+end
+end
+for fg,gp in pairs(bb) do
+local ep=flr(gp.bu/8)
+local eq=flr(gp.bv/8)
+if gp.cx==1 or(s and er[ep][eq]==16) then
+pset(bu+gp.bu/2/8,bv+gp.bv/2/8,gp.da)
+end
+end
+if s then
+for fg,fh in pairs(z) do
+local ep=flr(fh.bu/8)
+local eq=flr(fh.bv/8)
+if fh.cx==1 or er[ep][eq]==16 then
+pset(bu+fh.bu/2/8,bv+fh.bv/2/8,fh.da)
+end
+end
+end
+local gv=bu+j/16
+local gw=bv+k/16
+rect(gv,gw,gv+7,gw+7,7)
+end
+function ez()
+camera(0,0)
+pal()
+palt(0,false)
+if p and p.cm then
+p.cm:ek(109,20)
+p.cm:by()
+if p.bl and p.cx==1 then
+p.bl:ek(109,44)
+p.bl:by()
+end
+end
+fa("00"..flr(q),103,2,7)
+if p
+and p.bl
+and p.bl.ct.type==2
+and p.bl.cn>=100 then
+local gx=flr((cursor.bu+j)/8)
+local gy=flr((cursor.bv+k)/8)
+local gz=gx*8-j
+local ha=gy*8-k
+hb=false
+hc=false
+co=false
+local w=p.bl.ct.w
+local h=p.bl.ct.h
+for dg=-1,w do
+for dh=-1,h do
+if dg==-1 or dg==w or dh==-1 or dh==h then
+if(mget(gx+dg,gy+dh)>=63) hb=true
+else
+local ef=mget(gx+dg,gy+dh)
+if(ef>=2 and ef<=7) co=true
+if(ba[gx+dg..","..gy+dh] or ef==0 or(ef>=8 and ef<63) or ef>63) hc=true
+end
+end
+end
+if(hc) hb=false
+fillp("0b1110110110110111.1")
+rectfill(gz,ha,
+gz+p.bl.w,ha+p.bl.h,hb and 11 or 8)
+fillp()
+end
+gq()
+if bk then
+hd(121,73,e,d)
+if p.bh then
+rectfill(6,30,27,97,0)
+for ca=1,#p.bh do
+local he=p.bh[ca]
+if ca>=be and ca<=be+2 then
+he:ek(9,32+((ca-be)*19))
+he:by()
+else
+he:ek(-16,16)
+end
+if(bf==he) then
+bj=ca
+rect(he.bu-2,he.bv-2,
+he.bu+17,he.bv+17,
+7)
+print(bf.name,30,31,7)
+print("cOST:"..bf.cost,85,38,9)
+hf=0
+local hg=hh(bf.description,23)
+for fb in all(hg) do
+print(fb,30,44+hf,6)
+hf+=6
+end
+end
+end
+end
+for fg,hi in pairs(bc) do
+hi:by()
+end
+end
+palt(11,true)
+cursor:by()
+end
+function hd(w,h,hj,hk)
+fillp(0xA5A5.8)
+rectfill(0,0,127,127,0)
+fillp()
+rectfill(64-w/2,64-h/2,64+w/2,64+h/2,hj)
+rect(64-w/2+1,64-h/2+1,64+w/2-1,64+h/2-1,hk)
+end
+function bi(bu,bv,hl,func_onclick,ds)
+local du={
+bu=bu,
+bv=bv,
+w=ds or#hl*4+2,
+h=8,
+hl=hl,
+bw=function(self)
+return{
+bu=self.bu,
+bv=self.bv,
+w=self.w,
+h=self.h
+}
+end,
+by=function(self)
+if(#hl>1) rectfill(self.bu,self.bv,self.bu+self.w,self.bv+self.h,7)
+if(#hl>1) rectfill(self.bu+1,self.bv+1,self.bu+self.w-1,self.bv+self.h-1,self.hm and 12 or 6)
+print(self.hl,self.bu+2,self.bv+2,(#hl>1) and 0 or(self.hm and 12 or 7))
+if(b) eh(self)
+end,
+func_onclick=func_onclick
+}
+add(bc,du)
+end
+function hh(hn,ho)
+local hp={}
+local hq=""
+local hr=""
+local hs=""
+local ht=function(hu)
+if#hr+#hq>hu then
+add(hp,hq)
+hq=""
+end
+hq=hq..hr
+hr=""
+end
+for ca=1,#hn do
+hs=sub(hn,ca,ca)
+hr=hr..hs
+if hs==" "
+or#hr>ho-1 then
+ht(ho)
+elseif#hr>ho-1 then
+hr=hr.."-"
+ht(ho)
+elseif hs==";"then
+hq=hq..sub(hr,1,#hr-1)
+hr=""
+ht(0)
+end
+end
+ht(ho)
+if hq!=""then
+add(hp,hq)
+end
+return hp
+end
+function fq()
+hv=false
+if not bk then
+foreach(z,hw)
+foreach(bb,hw)
+end
+if p then
+bx=true
+if(p.cm and not bk) hw(p.cm)
+foreach(p.bh,hw)
+foreach(bc,hw)
+bx=false
+end
+if fn
+and not bk
+and l>93 and l<120
+and m>93 and m<120 then
+j=min((l-94)*16,400)
+k=min((m-94)*16,400)
+elseif fl then
+if hv then
+if(not bk and p.func_onclick and p.bg!=nil) p:func_onclick() p=fr
+if(bk and bf.hl and bf.func_onclick) bf:func_onclick()
+if(p.cx==1 and p.type==1 and p!=fr) sfx(62)
+if(p.cx==2 and fr and fr.type==1 and fr.cx==1) fs(fr,p) p=nil
+else
+if p and p.type==1
+and p.cx==1 then
+p.cq=cocreate(function(fh)
+ft(fh,flr((j+l)/8),flr((k+m)/8))
+end)
+end
+if p
+and p.bl
+and p.bl.cn>=100
+and hb then
+local dd=flr((cursor.bu+j)/8)
+local de=flr((cursor.bv+k)/8)
+local cd=p.bl.ct
+cj(cd,dd*8,de*8)
+p.bl.cn=0
+sfx(61)
+end
+if(not bk) p=nil
+end
+end
+end
+function hw(du)
+du.hm=hx(cursor,du)
+if fl and du.hm then
+if bk then
+bf=du
+else
+local dd=flr((cursor.bu+j)/8)
+local de=flr((cursor.bv+k)/8)
+if(du.type<=2 and er[dd][de]!=16) return
+p=du
+end
+hv=true
+end
+end
+function hy(self,hz)
+if(hz==self.ia) return
+local fu=self.ib[hz]
+self.ic=fu.bt
+self.ia=hz
+self.ie=1
+end
+function ig(self)
+self.ic-=1
+if self.ic<=0 then
+self.ie+=1
+local fu=self.ib[self.ia]
+self.ic=fu.bt
+if self.ie>#fu.ih then
+self.ie=1
+end
+self.obj_spr=fu.ih[self.ie]
+end
+end
+function fw(ii,ij)
+local ik=0x3100
+local il=1
+ii*=4
+local ef=peek(ik+ii+il)
+if((band(ef,128)>0)!=ij) ef=bxor(ef,128)
+poke(ik+ii+il,ef)
+end
+function fa(im,io,
+ip,ee,
+iq)
+for dg=-1,1 do
+for dh=-1,1 do
+print(im,io+dg,ip+dh,iq)
+end
+end
+print(im,io,ip,ee)
+end
+function hx(ir,is)
+local it=ir:bw()
+local iu=is:bw()
+if it.bu<iu.bu+iu.w and
+it.bu+it.w>iu.bu and
+it.bv<iu.bv+iu.h and
+it.bv+it.h>iu.bv
+then
+return true
+else
+return false
+end
+end
+function eh(du)
+local iv=du:bw()
+rect(iv.bu,iv.bv,iv.bu+iv.w,iv.bv+iv.h,du.hm and 11 or 8)
+end
+function iw()
+return flr(t())%2==0
+end
+function bq()
+ix=iy(bp,"|","\n")
+iz={}
+for ca=2,#ix-1 do
+ja={}
+for jb=1,#ix[ca] do
+local ef=ix[ca][jb]
+if(jb!=2 and jb<23) ef=tonum(ef)
+ja[ix[1][jb]]=ef
+end
+iz[tonum(ix[ca][1])]=ja
+end
+bp=iz
+end
+function iy(im,gn,jc)
+local fu={}
+local jd=0
+local je=''
+local jf=''
+if jc~=nil then im=iy(im,jc) end
+while#im>0 do
+if type(im)=='table'then
+je=im[1]
+add(fu,iy(je,gn))
+del(im,je)
+else
+je=sub(im,1,1)
+im=sub(im,2)
+if je==gn then
+add(fu,jf)
+jf=''
+else
+jf=jf..je
+end
+end
+end
+add(fu,jf)
+return fu
+end
+local jg=0
+function eb(gt,gu,bu,bv,fu,w,jh,ji)
+local jj,jk=cos(fu),sin(fu)
+local jl,jm,ik,jn
+local jo,jp=jj,jk
+local ff=shl(0xfff8,(w-1))
+w*=4
+jj*=w-0.5
+jk*=w-0.5
+local jq,jr=jk-jj+w,-jj-jk+w
+w=2*w-1
+for js=0,w do
+jl,jm=jq,jr
+for jt=0,w do
+if band(bor(jl,jm),ff)==0 then
+local jd=sget(gt+jl,gu+jm)
+if(jd!=jh) pset(bu+js,bv+jt,ji or jd)
+end
+jl-=jp
+jm+=jo
+end
+jq+=jo
+jr+=jp
+end
+end
+function cy(ju,jv,jw,jx)
+return abs(sqrt(((ju-jw)/1000)^2+((jv-jx)/1000)^2)*1000)
+end
+jy=3.14159
+jz=.5*(jy/180)
+function fv(fh,ka)
+kb=ka-fh.di
+if kb>0.5 then
+kb-=1
+elseif kb<-0.5 then
+kb+=1
+end
+if kb>jz then
+fh.di+=jz
+elseif kb<-jz then
+fh.di-=jz
+else
+fh.di=ka
+end
+if(fh.di>jy) fh.di-=2*jy
+if(fh.di<-jy) fh.di+=2*jy
+yield()
+end
+function gg(kc,gi,kd)
+local ke=fget(mget(gi.bu,gi.bv),1) and 4 or 1
+if(kc.bu!=gi.bu and kc.bv!=gi.bv) return ke+1
+return ke
+end
+function gh(gi,kd)
+local kf={}
+for dg=-1,1 do
+for dh=-1,1 do
+if(dg!=0 or dh!=0) kg(gi.bu+dg,gi.bv+dh,kf)
+end
+end return kf
+end
+function kg(kh,ki,kj)
+if(
+not fget(mget(kh,ki),0)
+and ba[kh..","..ki]==nil
+)
+then
+add(kj,{bu=kh,bv=ki})
+end
+end
+function gf(fu,kk)
+return abs(fu.bu-kk.bu)+abs(fu.bv-kk.bv)
+end
+function ge
+(kl,
+km,
+kn,
+ko,
+kf,
+kp,
+kd)
+local kq,
+kr={
+ks=kl,
+kt=0,
+ku=kn(kl,km,kd)
+},{}
+kr[kp(kl,kd)]=kq
+local kv,kw,kx,ky={kq},1,kp(km,kd),32767.99
+while kw>0 do
+local cost,kz=ky
+for ca=1,kw do
+local la=kv[ca].kt+kv[ca].ku
+if(la<=cost) kz,cost=ca,la
+end
+kq=kv[kz]
+kv[kz],kq.lb=kv[kw],true
+kw-=1
+local lc=kq.ks
+if kp(lc,kd)==kx then
+lc={km}
+while kq.ld do
+kq=kr[kp(kq.ld,kd)]
+add(lc,kq.ks)
+end
+return lc
+end
+for le in all(kf(lc,kd)) do
+local id=kp(le,kd)
+local lf,lg=
+kr[id],
+kq.kt+ko(lc,le,kd)
+if not lf then
+lf={
+ks=le,
+kt=ky,
+ku=kn(le,km,kd)
+}
+kw+=1
+kv[kw],kr[id]=lf,lf
+end
+if not lf.lb and lf.kt>lg then
+lf.kt,lf.ld=lg,lc
+end
+end
+count+=1
+if count>10 then
+count=1
+yield()
+end
+end
+end
 __gfx__
 bbbbbbbbbbb1bbbbf5d555d555d555d55d555d5fffffffff1d5155555d555d5fffffffff99f99999ffffffffffffffff9f99f9f9ff9f9999ddddddddffffffff
 bb11bbbbbb171bbb1555515d15555155d51555515dfffd5f5155d55dd5155551ffff9fff9f9999f9fff9fffffffffffff99f99f999f99899d5555555ffffffff
@@ -1869,29 +1237,29 @@ __label__
 000000000000000000000000000000fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff1000000000000000000000000000000
 0000000000000000000000000000001fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff1f000007770777077707770777077700
 000000000000000000000000000000f1fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff1000007070707000700070007070000
-0000000000000000000000000000001fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff1f000007070707077700770077077700
-000000000000000000000000000000f1fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff1000007070707070000070007000700
-0000000000000000000000000000001fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff000007770777077707770777077700
+0000000000000000f00000000000001fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff1ff0f007070707077700770077077700
+000f00000000000000000000000000f1fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff1000007070707070000070007000700
+0000000000000000ff0000000000001fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff000007770777077707770777077700
 00000000000000000000000000000ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff00000000000000000000000000000
-0000000000000000000100000000fffffffffffffffffffffffffffffffffffffffffffffffffff66ffffffffffffffffff00000000000000000000000000000
-0000000000000000000ff000000ff6fffffff6fffffff6ffffffffffffffffffffffffffffffff2277fffffffffffffff1000000000000000000000000000000
-000000000000000000f1f1f1f1ffffffff6fffffff6fffffff6ffffffffffffffffffffffffff220877fffffffffffff1f000000000000000000000000000000
-000000000000000001ffff1f1ffffffffffffffffffffffffffffffffffffffffffffffffffff6886d76fffffffffffff1000000000000000000000000000000
-00000000000000000f1ffffffffffffffffffffffffffffffffffffffffffffffffffffffffff578d786ffffffffffff1f000000000000000000000000000000
-0000000000000001f1fffffffffffff6fffffff6fffffff6ffffffffffffffffffffffffffffff57d8d5fffffffffffff1000000000000000000000000000000
-00000000000000ff1ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff5685fffffffffffffff000000000000000000000000000000
-0000000000001f1fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff55fffffffffffffffff00000000000000000000000000000
-000100000000fffffffffffffffffffffffffffffffff6fff6ffddddddddddddddddfffffffffffffffffffffffffffffff00000000000000000000000000000
-000ff000000ff6fffffff6fffffff6fffffff6fffffff8fff8ffd766777755555555fffffffffffffffffffffffffffff1000000000000000000000000000000
+0000000000000000000100000000fffffffffffffffffffffffffffffffffffffffffffffffffff66ffffffffffffffffff0000000000000ffffffffffffffff
+0000000000000000fffffffffffff6fffffff6fffffff6ffffffffffffffffffffffffffffffff2277fffffffffffffff1000000000000000000000000000000
+000000000000000000f1f1f1f1ffffffff6fffffff6fffffff6ffffffffffffffffffffffffff220877fffffffffffff1f00000000000000f000000ff000000f
+0000000000000000f1ffff1f1ffffffffffffffffffffffffffffffffffffffffffffffffffff6886d76fffffffffffff10000000000ffff0000000000000000
+000000000000ffff0f1ffffffffffffffffffffffffffffffffffffffffffffffffffffffffff578d786ffffffffffff1f000000000000f0ffffffffffffffff
+00000000000f0001f1fffffffffffff6fffffff6fffffff6ffffffffffffffffffffffffffffff57d8d5fffffffffffff1fff000ffff00000000000000000000
+fffffff0ffff00ff1ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff5685fffffffffffffff000000000000000000000000000000
+0000000000001f1fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff55fffffffffffffffff000000000000000000000000f0000
+000100000000fffffffffffffffffffffffffffffffff6fff6ffddddddddddddddddffffffffffffffffffffffffffffffff0000000000000000000000000000
+000ff000000ff6fffffff6fffffff6fffffff6fffffff8fff8ffd766777755555555fffffffffffffffffffffffffffff1ffff0000fffff00000000000fffff0
 00f1f1f1f1ffffffff6fffffff6fffffff6fffffff6ff2fff2ffd7ddfff755555555ffffffffffffffffffffffffffff1f000000000000000000000000000000
-01ffff1f1fffffffffffffffffffffffffffffffffff0f0f0f0fd7777f7765555777fffffffffffffffffffffffffffff1000000000000000000000000000000
-0f1ffffffffffffffffffffffffffffffffffffffffffff6ffffd4447ff7265557f6ffffffffffffffffffffffffffff1f000000000000000000000000000000
-f1fffffffffffff6fffffff6fffffff6fffffff6fffffff8ffffd4047777655777fdfffffffffffffffffffffffffffff1000000000000000000000000000000
-1ffffffffffffffffffffffffffffffffffffffffffffff2ffffd44444442657ffffffffffffffffffffffffffffffffff000000000000000000000000000000
-ffffffffffffffffffffffffffffffffffffffffffffff0f0fffd55544445557ff7ffffffffffffffffffffffffffffffff00000000000000000000000000000
-ffffffffffffffffffffffffffffffffffffffffffffffffffffd76677775557ff7ffffffffffffffffffffffffffffffff00000000000000000000000000000
-7ffffffffffffffffffff6fffffff6fffffff6ffffffffffffffd7ddfff755577777fffffffffffffffffffffffffffff1000000000000000000000000000000
-ff7fffffffffffffffffffffff6fffffff6fffffff6fffffffffd7777f7765544444ffffffffffffffffffffffffffff1f000000000000000000000000000000
+01ffff1f1fffffffffffffffffffffffffffffffffff0f0f0f0fd7777f7765555777fffffffffffffffffffffffffffff1000f000000000000000f0000000000
+0f1ffffffffffffffffffffffffffffffffffffffffffff6ffffd4447ff7265557f6ffffffffffffffffffffffffffff1f000ff00000000000000000ffffffff
+f1fffffffffffff6fffffff6fffffff6fffffff6fffffff8ffffd4047777655777fdfffffffffffffffffffffffffffff1000000ffffffff00000000ffffffff
+1ffffffffffffffffffffffffffffffffffffffffffffff2ffffd44444442657ffffffffffffffffffffffffffffffffff0000000000000000000000ffffffff
+ffffffffffffffffffffffffffffffffffffffffffffffff0fffd55544445557ff7ffffffffffffffffffffffffffffffff00000ffffffff00000000ffffffff
+ffffffffffffffffffffffffffffffffffffffffffffffffffffd76677775557ff7ffffffffffffffffffffffffffffffff000000000000000000000ffffffff
+7ffffffffffffffffffff6fffffff6fffffff6ffffffffffffffd7ddfff755577777fffffffffffffffffffffffffffff1000000ffffffff00000000ffffffff
+ff7fffffffffffffffffffffff6fffffff6fffffff6fffffffffd7777f7765544444ffffffffffffffffffffffffffff1f0000000000000000000000ffffffff
 779fffffffffffffffffffffffffffffffffffffffffffffffffd4447ff726580480fffffffffffffffffffffffffffff1000000000000000000000000000000
 99ffffffffffffffffffffffffffffffffffffffffffffffffffd404777765220220ffffffffffffffffffffffffffff1f000000000000000000000000000000
 9ffffffffffffffffffffff6fffffff6fffffff6ffffffffffffd444444426550550fffffffffffffffffffffffffffff1000000000000000000000000000000
@@ -1949,50 +1317,50 @@ ffffffffffffff55555fffffffffdddd666666ddddddddddddddddd7778666666dddddddddddffff
 fffff6fffffff6ffffffffffffffd566ddddd6111110d55555556667d22ddddd657667555555ffffffff5155d55d155551551550244444444444444444441551
 ffffffffff6fffffff6fffffffffd5dddd000066dd66d55555556dd7dd0dd6666dddddd56765ffffffff555d51555d55d5555d51044444444444444444445515
 ffffffffffffffffffffffffffffd5dd0000001111ddd55555556dd7660dd6dd611111ddddd5ffffffffd5555d5555515d5d5551124444444444444444445150
-ffffffffffffffffffffffffffffd50000000066dd10d55555556dd11666666d705501111115ffffffff55d151d5d5515155d551110222414142444141444400
+ffffffffffffffffffffffffffffd50000000066dd1fd55555556dd11666666d705501111115ffffffff55d151d5d5515155d551110222414142444141444400
 fffffff6fffffff6ffffffffffffd555555555111110d55555556d7661111117705055421425ffffffff15151515551515155515151000121210441414141400
 ffffffffffffffffffffffffffffd551f6155566dd66d55555556d55d5dd6661100555425425fffffffff000000f100000051000000510000001400000044000
-ffffffffffffffffffffffffffffd550f605551111ddd55555556ddd6ddd7111102555425425ffffffff00000000000000000000000000000000000000001000
-ffffffffffffffffffffffffffffd555f655551d6d10ffffffff6d7777777111104555425425fffffff000000000000000000000000000000000000000000000
-1ffffffffffff6ffffffffffffffd5516615551d6d10ffffffff6d7011111ddd644555555555fffff10000000000000000000000000000000000000000000000
-f1ffffffffffffffff6fffffffffd5505505551d6d10ffffffff6770d1d11ddd705555555555ffff1f0000000000000000000000000000000000000000000000
+ffffffffffffffffffffffffffffd550f605551111ddd55555556ddd6ddd7111102555425425ffffffff00000000000f00000000000000000000000000001000
+ffffffffffffffffffffffffffffd555f655551d6d10ffffffff6d7777777111104555425425fffffff0000f0f0f0f0000000000000000000000000000000000
+1ffffffffffff6ffffffffffffffd5516615551d6d10ffffffff6d7011111ddd644555555555fffff1000000000000f000000000000000000000000000000000
+f1ffffffffffffffff6fffffffffd5505505551d6d10ffffffff6770d1d11ddd705555555555ffff1f0000000000000000000000000f00000000000000000000
 0f1fffffffffffffffffffffffffd5555555551d6d10ffffffffddd0d1d11677705555555555fffff10000000000000000000000000000000000000000000000
 01ffffffffffffffffffffffffffd55555555510d010ffffffffddd0d1dd111115dddddd5555ffff1f0000000000222222222222222222222222222222222200
-00f1fffffffffff6ffffffffffffd555550f050aaa00ffffffff0001d1111111105555555555fffff10000000000200777777770000000000000000000000200
+00f1fffffffffff6ffffffffffffd555550f050aaa00ffffffff0001d1111111105555555555fffff1000000000020f777777770000000000000000000000200
 000fffffffffffffffffffffffffd55f0f5555555555ffffffff00111ddd111115dddddd5555ffffff0000000000200700080070000000000000000000000200
-0001ffffffffffffffffffffffffd555555555555555ffffffff011111111111105555555555fffffff000000000200700880070000000000000000000000200
+0001ffffffffffffffffffffffffd555555555555555ffffffff011111111111105555555555fffffff00000000020070088007000000000f000000000000200
 00000ffffffffffffffffffffffffffffffffffffffffffffffffffffffff5d555d555d555d5fffffff000000000200708000070000000000000000000000200
-000000ffffffffffffffffffffffffffffffffffffffffffffffffffffff1555515d15555155fffff10000000000200700800070000000000000000000000200
-0000001fffffffffffffffffffffffffffffffffffffffffffffffffffff5d55d5515d55d555ffff1f0000000000200708080070000000000000000000000200
-000000f1ffffffffffffffffffffffffffffffffffffffffffffffffffff55515d5555515d5dfffff10000000000200700000070000000000000000000000200
-0000001fffffffffffffffffffffffffffffffffffffffffffffffffffffd55d5555d5555555ffff1f0000000000200777777770000000000000000000000200
+000000ffffffffffffffffffffffffffffffffffffffffffffffffffffff1555515d15555155fffff10f00000000200700800070000000000000000000000200
+0000001fffffffffffffffffffffffffffffffffffffffffffffffffffff5d55d5515d55d555ffff1f0000000000200708080f70000000000000000000000200
+000000f1ffffffffffffffffffffffffffffffffffffffffffffffffffff55515d5555515d5dfffff1000000000020f700000070000000000000000000000200
+0000001fffffffffffffffffffffffffffffffffffffffffffffffffffffd55d5555d5555555ffff1f000000000020077777777000000000000f000000000200
 000000f1ffffffffffffffffffffffffffffffffffffffffffffffffffff55d551d555d51555fffff10000000000200000000000000000000000000000000200
-0000001fffffffffffffffffffffffffffffffffffffffffffffffffffff1555555515555515ffffff0000000000200000000000000000000000000000000200
+0000001fffffffffffffffffffffffffffffffffffffffffffffffffffff1555555515555515ffffff0000000000200000000000f00000000000000000000200
 00000ffffffffffffffffffffffffffffffffffffffffffffffffffffffff55d5515555d5555fffffff000000000200000000000000000000000000000000200
 00000fffffffffffffffffffffffffffffffffffffffffffffffffffffff1d5155555d555d5ffffff1f100000000200000000000000000000000000000000200
 000000fffffffffffffff688886ff6fffffff6ffffffffffffffffffffff5155d55dd5155551fff1ff0000000000200000000000000000000000000000000200
-0000001ffffffffffffff2076d8fffffff6fffffff6fffffffffffffffff555d5155155d55d5ff1f000000000000200000000000000000000000000000000200
+0000001ffffffffffffff2076d8fffffff6fffffff6fffffffffffffffff555d5155155d55d5ff1f0000000000002000000000000f0000000000000000000200
 000000f1fffffffffffff2888d8fffffffffffffffffffffffffffffffffd5555d5555d51555f1f0000000000000200000000000000000000000000000000200
 0000001ffffffffffffff2076d8ffffffffffffffffffff1f1fffff1f1ff55d151d55551d15dff00000000000000200000000000000000000000000000000200
-000000f1fffffffffffff688886ffff6fffffff6ffffff1f1f1fff1f1f1f151515155d151d151f00000000000000200000000000000000000000000000000200
-0000001ffffffffffffff555555ffffffffffffffffff000000ff000000ff000000f50000001f000000000000000200000000000000000000000000000000200
-00000fffffffffffffffffffffffffffffffffffffff000000000000000000000000000000001000000000000000200000000000000000000000000000000200
+000000f1fffffffffffff688886ffff6fffffff6ffffff1f1f1fff1f1f1f151515155d151d151f00000000000000200000000000000000000f000f00000f02f0
+0f00001ffffffffffffff555555ffffffffffffffffff000000ff000000ff000000f50000001f00000000000000020000f000000000000000000000000000200
+00000fffffffffffffffffffffffffffffffffffffff0000000000000000000000000000000f100f00f0000000002000000000000f0000000000000000000200
 00000ffffffffffffffffffffffffffffffffffffff0000000000000000000000000000000000000000000000000200000000000000000000000000000000200
-000000fffffffffffffffffffffffffffffff6fff100000000000000000000000000000000000000000000000000200000000000000000000000000000000200
-0000001fffffffffffffffffffffffffffffffff1f00000000000000000000000000000000000000000000000000200000000000000000000000000000000200
-000000f1fffffffffffffffffffffffffffffffff100000000000000000000000000000000000000000000000000200000000000000000000000110000000200
-0000001fffffffffffffffffffffffffffffffff1f00000000000000000000000000000000000000000000000000200000000000000000000000171000000200
+000000fffffffffffffffffffffffffffffff6fff1000000000000000000000000000000000000000000000000002000000000000000000000f0000000000200
+0000001fffffffffffffffffffffffffffffffff1f00000000000000000000000000000000000000000000000000200000f00000000000000000000000000200
+0f0000f1fffffffffffffffffffffffffffffffff100000000000000000000000000000000000000000000000000200000000000000000000000110000000200
+0000001fffffffffffffffffffffffffffffffff1f0000000000000000000f000000000000000000000000000000200000000000000000000000171000000200
 000000f1fffffffffffffffffffffffffffffff6f100000000000000000000000000000000000000000000000000200000000000000000000000177100000200
-0000001fffffffffffffffffffffffffffffffffff00000000000000000000000000000000000000000000000000200000000000000000000000177710000200
+0000001fffffffffffffffffffffffffffffffffff000000000000000000000000000000000000000f00000000002000000000000000f0000000177710000200
 00000ffffffffffffffffffffffffffffffffffffff0000000000000000000000000000000000000000000000000200000000000000000000000177771000200
-00001f1ffffffffffffffffffffffffffffffffff1f1000000000000000000000000000000000000000000000000200000000000000000000000177110000200
-000000ff1ffffffffffffffffffffffffffffff1ff00000000000000000000000000000000000000000000000000200000000000000000000000011000000200
-00000001f1ffffffffffffffffffffffffffff1f0000000000000000000000000000000000000000000000000000200000000000000000000000000000000200
+00001f1ffffffffffffffffffffffffffffffffff1f1f00000000000000000000000000000000000000000000000200f000f00f00f0000000000177110000200
+ff0000ff1ffffffffffffffffffffffffffffff1ff00000000000000000000000000000000000000000000000000200000000000000000000000011000000200
+00000001f1ffffffffffffffffffffffffffff1f000000000000000f00f0000f0000000000000000000000000000200000000000000000000000000000000200
 000000000f1ffffffffffffffffffffffffff1f00000000000000000000000000000000000000000000000000000200000000000000000000000000000000200
 0000000001fffff1f1fffff1f1fffff1f1ffff000000000000000000000000000000000000000000000000000000200000000000000000000000000000000200
-0000000000f1ff1f1f1fff1f1f1fff1f1f1f1f000000000000000000000000000000000000000000000000000000222222222222222222222222222222222200
-00000000000ff000000ff000000ff000000ff0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
-00000000000100000000000000000000000010000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+0000000000f1ff1f1f1fff1f1f1fff1f1f1f1f00000000000000000000000f000000000000000000000000000000222222222222222222222222222222222200
+00000000000ff000000ff000000ff000000ff000000000000000000000000000f000f00000000000000000000000000000000000000000000000000000000000
+0000000000010000f000000000000000000010000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 
 __gff__
 0000020202020202000000000000000000000200000000010101010101010101010101010000000000000101010000000001010101010100000000000000000001010101010102010101010101010100010101010101020101010101010101010101010101010101000000000000000001010101010101010000000000000000
