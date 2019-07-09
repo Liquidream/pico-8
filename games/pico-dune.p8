@@ -615,9 +615,10 @@ function update_radar_data()
      -- look at tile spr and if not fow, get col?
      local mx=i/2
      local my=l/2
-     if(my>=32)mx+=64 my%=32
+     if(my>=32)mx+=64 my-=32
      local mspr=mget(mx,my)
      local sx=(mspr*8)%128
+     --local sx=max((mspr*8)%128,1)  
      local sy=(mspr*8)/16
      local col=sget(sx+4,sy)
      radar_data[((i/2)/2)..((l/2)/2)] = col!=11 and col or 15
