@@ -34,6 +34,7 @@ hq=false
 last_hq=hq
 has_radar=false
 radar_frame=0
+radar_data={}
 music_state=0 -- 0=normal, 1=battle
 
 --cor=nil
@@ -487,7 +488,7 @@ function reveal_fow(object)
  -- only reveal if
  -- > player
  -- > firing ai
- if(object.owner!=1 and object.state!=3)return
+ if(object.owner!=1 and object.state!=4)return
 
  local size = object.type==2 and 3 or 2
  -- clear group of tiles
@@ -517,6 +518,7 @@ function _update60()  --game_update
  
  -- update positions of pathfinding "blocker" objects
  if (t()%1==0) update_obj_tiles()
+ if (t()%1.5==0) update_radar_data()
  _t+=1
 end
 
@@ -602,6 +604,50 @@ end
 -- update related
 --------------------------------
 
+
+function update_radar_data() 
+ printh("update radar!!")
+ radar_data={}
+ -- fow
+ if hq then
+   for i=0,124,4 do
+     for l=0,124,4 do
+     -- look at tile spr and if not fow, get col?
+     local mx=i/2
+     local my=l/2
+     if(my>=32)mx+=64 my%=32
+     local mspr=mget(mx,my)
+     local sx=(mspr*8)%128
+     local sy=(mspr*8)/16
+     local col=sget(sx+4,sy)
+     if(fow[i/2][l/2]==16) radar_data[((i/2)/2)..((l/2)/2)] = col!=11 and col or 15
+     end
+   end
+ end
+  
+ -- structures
+ for _,building in pairs(buildings) do 
+   local posx=flr(building.x/8)
+   local posy=flr(building.y/8)
+   -- if our building, or ai not under fog of war
+   if building.owner==1 or (hq and fow[posx][posy]==16) then
+    radar_data[flr(building.x/2/8)..flr(building.y/2/8)] = building.col1
+   end
+ end
+ -- units
+ if hq then
+   for _,unit in pairs(units) do
+     local posx=flr(unit.x/8)
+     local posy=flr(unit.y/8)
+     -- if our unit, or ai not under fog of war
+     if unit.owner==1 or fow[posx][posy]==16 then
+      radar_data[flr(unit.x/2/8)..flr(unit.y/2/8)] = unit.col1
+     end
+   end
+ end
+
+end
+
 function update_obj_tiles() 
  object_tiles={}
  -- (The pico-8 map is a 128x32 (or 128x64 using shared space))
@@ -661,8 +707,8 @@ end
 
 function do_guard(unit) 
  printh("do_guard()!!")
- -- 0=idle/guareding, 1=pathfinding, 2=moving, 3=attacking, 5=exploding
- unit.state = 3
+ -- 0=idle/guarding, 1=pathfinding, 2=moving, 3=attacking, 4=firing, 5=exploding
+ unit.state = 0
  --unit.cor = nil -- todo: this!!
  unit.cor = cocreate(function(self)
   while true do  
@@ -767,7 +813,7 @@ function move_unit_pos(unit,x,y,dist_to_keep)
   -- create co-routine to find path (over number of cycles)  
   unit.tx = x
   unit.ty = y
-  -- 0=idle, 1=pathfinding, 2=moving, 3=attacking, 4=guarding?
+  -- 0=idle/guarding, 1=pathfinding, 2=moving, 3=attacking, 4=firing, 5=exploding
   unit.prev_state = unit.state
   unit.state = 1
    
@@ -783,8 +829,7 @@ function move_unit_pos(unit,x,y,dist_to_keep)
 
   -- todo: check path valid???
 
-  -- now auto-move to path 
-  -- 0=idle, 1=pathfinding, 2=moving, 3=attacking, 4=guarding?
+  -- now auto-move to path
   unit.prev_state = unit.state
   unit.state = 2
 
@@ -832,7 +877,7 @@ function move_unit_pos(unit,x,y,dist_to_keep)
   end
 
   -- arrived?
-  unit.state=1 --idle
+  unit.state=0 --idle
 
 end
 
@@ -961,42 +1006,11 @@ function draw_radar()
     return
   end
    
-  -- fow
-  if hq then
-    for i=0,124,4 do
-      for l=0,124,4 do
-      -- todo: poss look at tile spr and if not fow, get col?
-      local mx=i/2
-      local my=l/2
-      if(my>=32)mx+=64 my%=32
-      local mspr=mget(mx,my)
-      local sx=(mspr*8)%128
-      local sy=(mspr*8)/16
-      local col=sget(sx+4,sy)
-      if(fow[i/2][l/2]==16) pset(x+(i/2)/2,y+(l/2)/2,col!=11 and col or 15)
-      end
-    end
-  end
-   
-  -- structures
-  for _,building in pairs(buildings) do 
-    local posx=flr(building.x/8)
-    local posy=flr(building.y/8)
-    -- if our building, or ai not under fog of war
-    if building.owner==1 or (hq and fow[posx][posy]==16) then
-      pset(x+building.x/2/8,y+building.y/2/8,building.col1)
-    end
-  end
-  -- units
-  if hq then
-    for _,unit in pairs(units) do
-      local posx=flr(unit.x/8)
-      local posy=flr(unit.y/8)
-      -- if our unit, or ai not under fog of war
-      if unit.owner==1 or fow[posx][posy]==16 then
-        pset(x+unit.x/2/8,y+unit.y/2/8,unit.col1)     
-      end
-    end
+  -- TODO draw radar data here!
+  for xx=1,size do
+   for yy=1,size do
+    if (radar_data[xx..yy]) pset(x+xx,y+yy,radar_data[xx..yy])
+   end
   end
   
   -- draw "view" bounds
@@ -2011,7 +2025,7 @@ __map__
 1212121212001634000014140500000003031718190300000012000000000000000000000303031d1b1f0303030303030303030300000003030303030303000000000000000000000012121212121212000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 00121200120016160060033f6205050006031d1e1b190000000000000000000000000000030303031a030303030303030300000000000000030303030303030000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 00000000120000160006060002030300000217191b1c0000000000000000001200000003030303031d1f0303030000000000000000000000000000000003030000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
-0000001212000000000000000003030000061d1e1e1f00000000000000000012000000030303030303030303030300000000000012000000000000000000030000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+0000001212000000000000000049030000061d1e1e1f00000000000000000012000000030303030303030303030300000000000012000000000000000000030000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 0000000000000000351616000006070000000206060000000000000000121212000003030303030303030303030303000000120012121212121200000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 0000000000000000000016000012121200000000000000001200001212120000000003030303030303030303030303030000120000000000000000000000000000000000000000000000000000000000000000000000000000121212121212120000000000000000000000000000000000000000000000000000000000000000
 0000121212120000000000001212121212120000000000001212121200000000000003030000000000000000000303030000001200120000000000000000000000000000000000000000000000000000000000000000000012121212121212120000000000000000000000000000000000000000000000000000000000000000
