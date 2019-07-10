@@ -517,8 +517,8 @@ function _update60()  --game_update
  update_ai()  -- ai overall decision making (not individual units)
  
  -- update positions of pathfinding "blocker" objects
- if (t()%1==0) update_obj_tiles()
- if (t()%1.5==0) update_radar_data()
+ if (t()%1==0 and t()%2==0) update_obj_tiles()
+ if (t()%1==0 and t()%2!=0) update_radar_data()
  _t+=1
 end
 
@@ -621,36 +621,36 @@ function update_radar_data()
      --local sx=max((mspr*8)%128,1)  
      local sy=(mspr*8)/16
      local col=sget(sx+4,sy)
-     radar_data[((i/2)/2)..((l/2)/2)] = col!=11 and col or 15
-     --if(fow[i/2][l/2]==16) radar_data[((i/2)/2)..((l/2)/2)] = col!=11 and col or 15
+     if(fow[i/2][l/2]==16) radar_data[((i/2)/2)..","..((l/2)/2)] = col!=11 and col or 15
      end
    end
  end
   
  -- -- structures
- -- for _,building in pairs(buildings) do 
- --   local posx=flr(building.x/8)
- --   local posy=flr(building.y/8)
- --   -- if our building, or ai not under fog of war
- --   if building.owner==1 or (hq and fow[posx][posy]==16) then
- --    radar_data[flr(building.x/2/8)..flr(building.y/2/8)] = building.col1
- --   end
- -- end
- -- -- units
- -- if hq then
- --   for _,unit in pairs(units) do
- --     local posx=flr(unit.x/8)
- --     local posy=flr(unit.y/8)
- --     -- if our unit, or ai not under fog of war
- --     if unit.owner==1 or fow[posx][posy]==16 then
- --      radar_data[flr(unit.x/2/8)..flr(unit.y/2/8)] = unit.col1
- --     end
- --   end
- -- end
+ for _,building in pairs(buildings) do 
+   local posx=flr(building.x/8)
+   local posy=flr(building.y/8)
+   -- if our building, or ai not under fog of war
+   if building.owner==1 or (hq and fow[posx][posy]==16) then
+    radar_data[flr(building.x/2/8)..","..flr(building.y/2/8)] = building.col1
+   end
+ end
+ -- units
+ if hq then
+   for _,unit in pairs(units) do
+     local posx=flr(unit.x/8)
+     local posy=flr(unit.y/8)
+     -- if our unit, or ai not under fog of war
+     if unit.owner==1 or fow[posx][posy]==16 then
+      radar_data[flr(unit.x/2/8)..","..flr(unit.y/2/8)] = unit.col1
+     end
+   end
+ end
 
 end
 
 function update_obj_tiles() 
+printh("update_obj_tiles!!")
  object_tiles={}
  -- (The pico-8 map is a 128x32 (or 128x64 using shared space))
  for _,unit in pairs(units) do  
@@ -970,7 +970,7 @@ function draw_level()
  end
 
  -- draw fog-of-war
- --draw_fow()
+ draw_fow()
 end
 
 
@@ -1011,7 +1011,7 @@ function draw_radar()
   -- TODO draw radar data here!
   for xx=0,size do
    for yy=0,size do
-    if (radar_data[xx..yy]) pset(x+xx,y+yy,radar_data[xx..yy])
+    if (radar_data[xx..","..yy]) pset(x+xx,y+yy,radar_data[xx..","..yy])
    end
   end
   

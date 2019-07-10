@@ -82,22 +82,28 @@ function update_radar_data()
 
  printh("update radar!!")
  radar_data={}
+ zoom=1
  -- landscape/fow
  if hq then
-   for i=0,124,4 do
-     for l=0,124,4 do
-     -- look at tile spr and if not fow, get col?
-     local mx=i/2
-     local my=l/2
-     printh("mx,my="..mx..","..my)
+   for i=0,127,zoom do
+     for l=0,127,zoom do
+     --look at tile spr and if not fow, get col?
+     local mx=i/zoom
+     local my=l/zoom
+     --printh("mx,my="..mx..","..my)
      --if(my>=32)mx+=64 my-=32
      local mspr=mget(mx,my)
-     local sx=(mspr*8)%128
+     local sx=i--(mspr*8)%128
      --local sx=max((mspr*8)%128,1)  
-     local sy=(mspr*8)/16
-     local col=sget(sx+4,sy)
-     radar_data[flr(mx/2)..flr(my/2)] = col!=11 and col or 15
-     --if(fow[i/2][l/2]==16) radar_data[((i/2)/2)..((l/2)/2)] = col!=11 and col or 15
+     local sy=l--(mspr*8)/16
+     local col=sget(sx,sy)
+     radar_data[i..l] = col!=11 and col or 15
+     radar_data[flr(mx/zoom)..","..flr(my/zoom)] = col!=11 and col or 15     
+
+          
+      --radar_data[i..","..l] = sget(i,l)
+
+
      end
    end
  end
@@ -131,8 +137,9 @@ end
 
 
 function draw_radar()
-  local size=31
-  local x,y=93,93
+  local size=127
+  local x,y=0,0
+  --local x,y=93,93
   rectfill(x-1,y-1,x+size+1,y+size+1,p_col2)
   
   -- has radar-outpost and enough power?
@@ -143,7 +150,10 @@ function draw_radar()
   -- TODO draw radar data here!
   for xx=0,size do
    for yy=0,size do
-    if (radar_data[xx..yy]) pset(x+xx,y+yy,radar_data[xx..yy])
+
+     --pset(xx,yy, sget(xx,yy))
+    --pset(xx,yy,radar_data[xx..yy]) --printh("xx,yy="..xx..","..yy)
+    if (radar_data[xx..","..yy]) pset(xx,yy,radar_data[xx..","..yy]) --printh("xx,yy="..xx..","..yy)
    end
   end
   
@@ -152,6 +162,7 @@ function draw_radar()
   -- local cy=y+camy/16
   -- rect(cx,cy, cx+7,cy+7, 7)
 
+  --stop()
 end
 
 
