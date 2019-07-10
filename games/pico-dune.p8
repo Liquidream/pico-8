@@ -517,8 +517,8 @@ function _update60()  --game_update
  update_ai()  -- ai overall decision making (not individual units)
  
  -- update positions of pathfinding "blocker" objects
- if (t()%1==0 and t()%2==0) update_obj_tiles()
- if (t()%1==0 and t()%2!=0) update_radar_data()
+ if (t()%1==0 and t()%2!=0) update_obj_tiles()
+ if (t()%1==0 and t()%2==0) update_radar_data()
  _t+=1
 end
 
@@ -1589,6 +1589,10 @@ function maybe_add(nx, ny, ntable)
  if (
   not fget(mget(nx,ny), 0) 
   and object_tiles[nx..","..ny]==nil
+  and nx>=0
+  and ny>=0
+  and nx<=63
+  and ny<=63
  )
   then 
    add(ntable, {x=nx, y=ny}) 
