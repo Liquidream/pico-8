@@ -35,7 +35,7 @@ last_hq=hq
 has_radar=false
 radar_frame=0
 radar_data={}
-music_state=0 -- 0=normal, 1=battle
+music_state=0 -- 0=normal, 1=battle, 2=leaving_battle
 
 --cor=nil
 count=0
@@ -336,7 +336,7 @@ function m_map_obj_tree(objref, x,y)
       printh("life after="..self.target.life)
       self.target.hit=1 --0=none, 1=bullet, 2=missile
       self.target.hitby=self
-      sfx(self.arms<100 and 60 or 58)
+      sfx(self.arms<100 and 60 or 58, 3)
     end    
     add(units,newobj)
     -- default to guard
@@ -413,8 +413,7 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
      -- hit? temporary code!
      if self.hit>0 then
       printh("draw HIT!!!! - id="..self.ref.id)
-      spr(19, self.x+rnd(self.w)-4, self.y+rnd(self.h)-4)      
-      --self.hit=0
+      spr(19, self.x+rnd(self.w)-4, self.y+rnd(self.h)-4)
      end
      -- exploding?
      if self.state==5 then
@@ -426,7 +425,7 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
    end,
    update=function(self)
      -- check for death
-     if (self.life<=0 and self.death_time==nil) self.state=5 self.death_time=t()+1 sfx(self.deathsfx)
+     if (self.life<=0 and self.death_time==nil) self.state=5 self.death_time=t()+1 sfx(self.deathsfx, 3)
      if self.death_time and t()>self.death_time then
       if self.type==2 then
        -- building?
@@ -509,6 +508,8 @@ end
 
 
 function _update60()  --game_update
+
+ printh("pattern="..stat(24))
 
  update_level()
 
@@ -717,12 +718,14 @@ function do_guard(unit)
    -- todo: check for attack
    --printh("do_guard() > check for hit, id="..self.ref.id)
    --if (self.ref.id==25 and self.owner==1) printh("HIT id("..self.ref.id.."="..tostr(self.hit))
+
    if self.hit>0 then 
-    printh("do_guard() > HIT!!")    
-    self.hit-=0.5
-    --self.hit=0
-    -- switch music?
-    if (music_state!=1)music_state=1 music(0)
+    printh("do_guard() > HIT!!")        
+    self.hit=0
+    -- reinstate loop
+    set_loop(5, true)
+    -- switch music (if passed the loop point)?    
+    if (music_state==0 or stat(24)>5) music_state=1 music(0) printh("#### switch music! ####")    
     -- can we retaliate?
     if (self.arms>0) do_attack(self, self.hitby)
    end
@@ -738,8 +741,7 @@ function do_attack(unit, target)
  unit.target=target
  unit.cor = cocreate(function(self)
   while target.life>0 do
-  self.hit-=0.5
-    --self.hit=0
+   self.hit=0
    -- todo:
    --  1) move to within firing range of target
    if dist(unit.x,unit.y,target.x,target.y) > unit.range*5 then
@@ -751,8 +753,7 @@ function do_attack(unit, target)
     local a=atan2(unit.x-target.x, unit.y-target.y)   
     while (unit.r != a) do
       turntowardtarget(unit, a)
-      self.hit-=0.5
-    --self.hit=0
+      self.hit=0
     end
    end
    -- 3) commence firing
@@ -764,7 +765,8 @@ function do_attack(unit, target)
 
   -- reset music back (will set again if more attackers)
   set_loop(5, false) 
-  music_state=0
+  printh("#### reset music state flag = 2 ####")
+  music_state=2
 
   -- reset to guard
   do_guard(self)
