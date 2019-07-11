@@ -509,8 +509,6 @@ end
 
 function _update60()  --game_update
 
- printh("pattern="..stat(24))
-
  update_level()
 
  update_ai()  -- ai overall decision making (not individual units)
@@ -604,8 +602,7 @@ end
 --------------------------------
 
 
-function update_radar_data() 
- printh("update radar!!")
+function update_radar_data()
  radar_data={}
  -- landscape/fow
  if hq then
@@ -648,8 +645,7 @@ function update_radar_data()
 
 end
 
-function update_obj_tiles() 
-printh("update_obj_tiles!!")
+function update_obj_tiles()
  object_tiles={}
  -- (The pico-8 map is a 128x32 (or 128x64 using shared space))
  for _,unit in pairs(units) do  
@@ -725,7 +721,7 @@ function do_guard(unit)
     -- reinstate loop
     set_loop(5, true)
     -- switch music (if passed the loop point)?    
-    if (music_state==0 or stat(24)>5) music_state=1 music(0) printh("#### switch music! ####")    
+    if (music_state==0 or stat(24)>5) music_state=1 music(0)
     -- can we retaliate?
     if (self.arms>0) do_attack(self, self.hitby)
    end
@@ -765,7 +761,6 @@ function do_attack(unit, target)
 
   -- reset music back (will set again if more attackers)
   set_loop(5, false) 
-  printh("#### reset music state flag = 2 ####")
   music_state=2
 
   -- reset to guard
@@ -869,11 +864,11 @@ function move_unit_pos(unit,x,y,dist_to_keep)
 
     -- are we close enough?
     local d=dist(unit.x,unit.y,unit.tx*8,unit.ty*8)
-    printh("        dist = "..d)
-    printh("dist_to_keep = "..tostr(dist_to_keep))
+    -- printh("        dist = "..d)
+    -- printh("dist_to_keep = "..tostr(dist_to_keep))
     if d <= (dist_to_keep or 0) then
       -- stop now
-      printh("stop!!! close enough!")
+      --printh("stop!!! close enough!")
       break
     end
   end
