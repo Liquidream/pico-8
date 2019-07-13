@@ -276,7 +276,7 @@ function m_map_obj_tree(objref, x,y)
           -- auto-deploy units
           if self.ref.type==1 then
             -- find nearest point to factory
-            local ux,uy=find_closest_free_tile((self.parent.x+8)/8, (self.parent.y+16)/8)  
+            local ux,uy=ping((self.parent.x+8)/8, (self.parent.y+16)/8, is_free_tile)  
             m_map_obj_tree(self.ref,ux*8,uy*8)
             -- reset build
             self.life=0
@@ -777,17 +777,30 @@ function do_attack(unit, target)
 
 end
 
--- todo: this needs to work outwards, up to max dist!
-function find_closest_free_tile(x,y,max_dist)  
+-- ping out from initial pos, calling function for each "ripple"
+-- until func returns true, then return position
+function ping(x,y,func,max_dist)
   -- ...to the target pos
   for dist=1,max_dist or 64 do
     for xx=x-dist,x+dist do  -- todo: increment this out by one, on every unsuccessful pass
       for yy=y-dist,y+dist do
-        if ((xx==x-dist or xx==x+dist or yy==y-dist or yy==y+dist) and (is_free_tile(xx,yy))) return xx,yy
+        if ((xx==x-dist or xx==x+dist or yy==y-dist or yy==y+dist) and (func(xx,yy))) return xx,yy
       end
     end
   end
 end
+
+-- work outwards, up to max dist!
+-- function find_closest_free_tile(x,y,max_dist)  
+--   -- ...to the target pos
+--   for dist=1,max_dist or 64 do
+--     for xx=x-dist,x+dist do  -- todo: increment this out by one, on every unsuccessful pass
+--       for yy=y-dist,y+dist do
+--         if ((xx==x-dist or xx==x+dist or yy==y-dist or yy==y+dist) and (is_free_tile(xx,yy))) return xx,yy
+--       end
+--     end
+--   end
+-- end
 
 function is_free_tile(x,y)
  printh("is_free_tile("..x..","..y..")")
@@ -802,7 +815,7 @@ function move_unit_pos(unit,x,y,dist_to_keep)
   if not is_free_tile(x,y) then
     -- target tile occupied
     -- move as close as possible
-    x,y=find_closest_free_tile(x,y)
+    x,y=ping(x,y,is_free_tile) 
     -- for xx=x-1,x+1 do  -- todo: increment this out by one, on every unsuccessful pass
     --  for yy=y-1,y+1 do
     --   if (is_free_tile(xx,yy)) x=xx y=yy goto found_free_tile
@@ -840,46 +853,52 @@ function move_unit_pos(unit,x,y,dist_to_keep)
 
   -- movepath_cor ------------------------------------
   unit.state=2 --moving
-  -- loop all path nodes...
-  for i=#unit.path-1,1,-1 do
-    local node=unit.path[i]
 
-    if not unit.norotate then
-      -- rotate to angle
-      local dx=unit.x-(node.x*8)
-      local dy=unit.y-(node.y*8)
-      local a=atan2(dx,dy)
-      --printh("  >> target angle="..a)
-      while (unit.r != a) do
-        turntowardtarget(unit, a)
+  -- loop all path nodes...
+  --printh("unit.path="..type(unit.path))
+  if unit.path!=nil then
+
+    for i=#unit.path-1,1,-1 do
+      local node=unit.path[i]
+
+      if not unit.norotate then
+        -- rotate to angle
+        local dx=unit.x-(node.x*8)
+        local dy=unit.y-(node.y*8)
+        local a=atan2(dx,dy)
+        --printh("  >> target angle="..a)
+        while (unit.r != a) do
+          turntowardtarget(unit, a)
+        end
+      end
+      
+      -- move to new position
+      local scaled_speed = unit.speed or .5
+      local distance = sqrt((node.x*8 - unit.x) ^ 2 + (node.y*8 - unit.y) ^ 2)
+      local step_x = scaled_speed * (node.x*8 - unit.x) / distance
+      local step_y = scaled_speed * (node.y*8 - unit.y) / distance 
+      for i = 0, distance/scaled_speed-1 do
+        unit.x+=step_x
+        unit.y+=step_y
+        yield()
+      end
+      unit.x,unit.y = node.x*8, node.y*8
+
+      -- reveal fog?
+      reveal_fow(unit)
+
+      -- are we close enough?
+      local d=dist(unit.x,unit.y,unit.tx*8,unit.ty*8)
+      -- printh("        dist = "..d)
+      -- printh("dist_to_keep = "..tostr(dist_to_keep))
+      if d <= (dist_to_keep or 0) then
+        -- stop now
+        --printh("stop!!! close enough!")
+        break
       end
     end
-    
-    -- move to new position
-    local scaled_speed = unit.speed or .5
-    local distance = sqrt((node.x*8 - unit.x) ^ 2 + (node.y*8 - unit.y) ^ 2)
-    local step_x = scaled_speed * (node.x*8 - unit.x) / distance
-    local step_y = scaled_speed * (node.y*8 - unit.y) / distance 
-    for i = 0, distance/scaled_speed-1 do
-      unit.x+=step_x
-      unit.y+=step_y
-      yield()
-    end
-    unit.x,unit.y = node.x*8, node.y*8
 
-    -- reveal fog?
-    reveal_fow(unit)
-
-    -- are we close enough?
-    local d=dist(unit.x,unit.y,unit.tx*8,unit.ty*8)
-    -- printh("        dist = "..d)
-    -- printh("dist_to_keep = "..tostr(dist_to_keep))
-    if d <= (dist_to_keep or 0) then
-      -- stop now
-      --printh("stop!!! close enough!")
-      break
-    end
-  end
+  end -- path nil (can happen if unit is "pinned in")
 
   -- arrived?
   unit.state=0 --idle
@@ -944,9 +963,9 @@ function draw_level()
  -- debug pathfinding
  --if (debug_mode) draw_pathfinding()
 
- if path != nil and path != "init" then
-  spr(144, path[1].x*8, path[1].y*8)
- end
+--  if path != nil and path != "init" then
+--   spr(144, path[1].x*8, path[1].y*8)
+--  end
 
  -- buildings
  for _,building in pairs(buildings) do 
@@ -2023,11 +2042,11 @@ __gff__
 __map__
 0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000012121212120000000000000000000000000016161600000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000161616
 0000000000000000000000000000000000000000000000000000000000000000000000000000000000121200000000121200000000000000000000000000000016000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000016
-1212000000000000001616160000003300000000000008090a00000000000000000000000000000000001212121212120000000000000000000003030300000016000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000016
-12121200000000161616163d4b0000000000000000080909090a000000000000000000000000000000000000000012000000000000000000000303030303030000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
-121212121212000016161600141400000000000809090909090a000000000000000000000000000000000000000000000000030303030303030303030303030000000012121212000000000000000000120012000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
-121212120000003216004d004214000000080b09090909090c00000000000000000000000000000000000000000000000000000003000000000303030303030000001212121212121200000000000000121212000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
-121212160000000000000002040000080b09090d0909090c0000000000120000000000000000030303030303030303030000000000000000000003030303030000121212121212000000000000001212121212000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+1212000000000000001616163d3d3d3300000000000008090a00000000000000000000000000000000001212121212120000000000000000000003030300000016000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000016
+12121200000000161616163d4b003d3d3d00000000080909090a000000000000000000000000000000000000000012000000000000000000000303030303030000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+12121212121200001616160014143d3d3d00000809090909090a000000000000000000000000000000000000000000000000030303030303030303030303030000000012121212000000000000000000120012000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+121212120000003216004d0042143d3d3d080b09090909090c00000000000000000000000000000000000000000000000000000003000000000303030303030000001212121212121200000000000000121212000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+121212160000000000000002043d3d080b09090d0909090c0000000000120000000000000000030303030303030303030000000000000000000003030303030000121212121212000000000000001212121212000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 000000120000000000441414040000000c09090909090c000000121212000000000000000003030303171819030303030303000000000000000003030303030012120000000000000000000000121212121200000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 00121212000016000014141400310000003665050500000000001200000000000000000000030303171b1b1b190303030303000000000000000000030303030012000000000000000000000000121212120000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 1212121212000016000601140000000002050303030000000012120000000000000000000003031a1b1b1e1e1e1e03030303030000000000000000000303030000000000000000000012120000121212120000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
