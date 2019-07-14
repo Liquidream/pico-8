@@ -656,8 +656,8 @@ end
 function update_obj_tiles()
  object_tiles={}
  -- (The pico-8 map is a 128x32 (or 128x64 using shared space))
- for _,unit in pairs(units) do  
-  object_tiles[flr(unit.x/8)..","..flr(unit.y/8)]=1
+ for k,unit in pairs(units) do  
+  object_tiles[flr(unit.x/8)..","..flr(unit.y/8)]=k --1
  end
 end
 
@@ -717,12 +717,9 @@ function do_guard(unit)
  --unit.cor = nil -- todo: this!!
  unit.cor = cocreate(function(self)
   while true do  
-   -- todo: be on look-out
-
-   -- todo: check for attack
-   --printh("do_guard() > check for hit, id="..self.ref.id)
-   --if (self.ref.id==25 and self.owner==1) printh("HIT id("..self.ref.id.."="..tostr(self.hit))
-
+   -- be on look-out
+   if (rnd(500)<1 and self.arms>0) ping(flr(self.x/8),flr(self.y/8),is_danger_tile,self.range,self)
+   -- check for attack
    if self.hit>0 and self.state==0 then 
     printh("do_guard() > HIT!!")        
     --self.hit=0
@@ -777,35 +774,35 @@ function do_attack(unit, target)
 
 end
 
--- ping out from initial pos, calling function for each "ripple"
+-- ping out from initial pos, calling func for each "ripple"
 -- until func returns true, then return position
-function ping(x,y,func,max_dist)
+-- source = unit doing ping
+function ping(x,y,func,max_dist,source)
   -- ...to the target pos
+  -- printh("funct = "..tostr(func))
+  -- printh("unit id = "..(source and source.id or ""))
+  -- printh("max_dist = "..tostr(max_dist))
   for dist=1,max_dist or 64 do
     for xx=x-dist,x+dist do  -- todo: increment this out by one, on every unsuccessful pass
       for yy=y-dist,y+dist do
-        if ((xx==x-dist or xx==x+dist or yy==y-dist or yy==y+dist) and (func(xx,yy))) return xx,yy
+        if ((xx==x-dist or xx==x+dist or yy==y-dist or yy==y+dist) and (func(xx,yy,source))) return xx,yy
       end
     end
-  end
+    -- give others a chance!
+    yield()
+  end  
 end
-
--- work outwards, up to max dist!
--- function find_closest_free_tile(x,y,max_dist)  
---   -- ...to the target pos
---   for dist=1,max_dist or 64 do
---     for xx=x-dist,x+dist do  -- todo: increment this out by one, on every unsuccessful pass
---       for yy=y-dist,y+dist do
---         if ((xx==x-dist or xx==x+dist or yy==y-dist or yy==y+dist) and (is_free_tile(xx,yy))) return xx,yy
---       end
---     end
---   end
--- end
 
 function is_free_tile(x,y)
  printh("is_free_tile("..x..","..y..")")
  return not fget(mget(x,y), 0) 
    and object_tiles[x..","..y]==nil
+end
+
+function is_danger_tile(x,y,source)
+--  printh("unit: "..source.id.." - is_danger_tile("..x..","..y..")")
+ local unit=units[object_tiles[x..","..y]]
+ if (unit!=null and unit.owner!=source.owner) do_attack(source, unit)
 end
 
 function move_unit_pos(unit,x,y,dist_to_keep)
@@ -815,18 +812,8 @@ function move_unit_pos(unit,x,y,dist_to_keep)
   if not is_free_tile(x,y) then
     -- target tile occupied
     -- move as close as possible
-    x,y=ping(x,y,is_free_tile) 
-    -- for xx=x-1,x+1 do  -- todo: increment this out by one, on every unsuccessful pass
-    --  for yy=y-1,y+1 do
-    --   if (is_free_tile(xx,yy)) x=xx y=yy goto found_free_tile
-    --  end
-    -- end
-    -- abort as target invalid
-    --printh("aborting pathfinding - invalid target")
-    
-    --return    
+    x,y=ping(x,y,is_free_tile)
   end
-   --::found_free_tile::
 
   -- create co-routine to find path (over number of cycles)  
   unit.tx = x
