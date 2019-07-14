@@ -330,13 +330,16 @@ function m_map_obj_tree(objref, x,y)
     if (newobj.norotate!=1) newobj.r=flr(rnd(8))*.125
     -- combat stuff
     newobj.fire=function(self)
+      -- now firing
+      self.state=4      
       printh("fire...")
       printh("life b4="..self.target.life)
       self.target.life-=self.arms
       printh("life after="..self.target.life)
       self.target.hit=1 --0=none, 1=bullet, 2=missile
       self.target.hitby=self
-      sfx(self.arms<100 and 60 or 58, 3)
+      sfx(self.arms<100 and 60 or 58, 3)      
+      reveal_fow(self)
     end    
     add(units,newobj)
     -- default to guard
@@ -493,7 +496,8 @@ function reveal_fow(object)
  -- only reveal if
  -- > player
  -- > firing ai
- if(object.owner!=1 and object.state!=4)return
+ -- 0=idle/guarding, 1=pathfinding, 2=moving, 3=attacking, 4=firing, 5=exploding
+ if(object.owner!=1 and object.state!=4) return
 
  local size = object.type==2 and 3 or 2
  -- clear group of tiles
