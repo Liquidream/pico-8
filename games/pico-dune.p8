@@ -743,8 +743,18 @@ function do_guard(unit)
      ping(unit,flr(self.x/8),flr(self.y/8),
       function(unit,x,y)
         printh("unit looking for spice!")
+        local val=mget(x,y)
+        if (val>=8 and val<=13) then
+         printh("found spice at "..x..","..y)
+         move_unit_pos(unit,x,y)
+         unit.state=6
+         return true
+        end
       end,
       10)
+      -- test harvest
+      mset(flr(self.x/8),flr(self.y/8),0)
+      self.state=0
     end
     -- todo: harvest spice
     -- todo: return to refinery when full
@@ -823,8 +833,8 @@ end
 
 function is_danger_tile(unit,x,y)
 --  printh("unit: "..unit.id.." - is_danger_tile("..x..","..y..")")
- local unit=units[object_tiles[x..","..y]]
- if (unit!=null and unit.owner!=unit.owner) do_attack(unit, unit)
+ local target=units[object_tiles[x..","..y]]
+ if (target!=null and target.owner!=unit.owner) do_attack(unit, target) return true
 end
 
 function move_unit_pos(unit,x,y,dist_to_keep)
