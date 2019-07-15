@@ -276,7 +276,7 @@ function m_map_obj_tree(objref, x,y)
           -- auto-deploy units
           if self.ref.type==1 then
             -- find nearest point to factory
-            local ux,uy=ping((self.parent.x+8)/8, (self.parent.y+16)/8, is_free_tile)  
+            local ux,uy=ping(self,(self.parent.x+8)/8, (self.parent.y+16)/8, is_free_tile)  
             m_map_obj_tree(self.ref,ux*8,uy*8)
             -- reset build
             self.life=0
@@ -716,13 +716,14 @@ end
 
 function do_guard(unit) 
  printh("do_guard()!!")
- -- 0=idle/guarding, 1=pathfinding, 2=moving, 3=attacking, 4=firing, 5=exploding
+ -- 0=idle/guarding, 1=pathfinding, 2=moving, 3=attacking, 4=firing, 5=exploding, 
+ --(6=harvesting, 7=returning, 8=offloading)
  unit.state = 0
  --unit.cor = nil -- todo: this!!
  unit.cor = cocreate(function(self)
-  while true do  
+  while true do   
    -- be on look-out
-   if (rnd(500)<1 and self.arms>0) ping(flr(self.x/8),flr(self.y/8),is_danger_tile,self.range,self)
+   if (rnd(500)<1 and self.arms>0) ping(unit,flr(self.x/8),flr(self.y/8),is_danger_tile,self.range)
    -- check for attack
    if self.hit>0 and self.state==0 then 
     printh("do_guard() > HIT!!")        
@@ -734,6 +735,23 @@ function do_guard(unit)
     -- can we retaliate?
     if (self.arms>0) do_attack(self, self.hitby)
    end
+   -- if a harvester....
+   if self.id==27 then
+    --printh("harvester! state ="..self.state)
+    if self.state<6 then
+     -- todo: look for nearest spice
+     ping(unit,flr(self.x/8),flr(self.y/8),
+      function(unit,x,y)
+        printh("unit looking for spice!")
+      end,
+      10)
+    end
+    -- todo: harvest spice
+    -- todo: return to refinery when full
+   end
+   
+   -- if other unit type (carrier, worm, etc.)
+
    yield()
   end
  end)
@@ -781,7 +799,7 @@ end
 -- ping out from initial pos, calling func for each "ripple"
 -- until func returns true, then return position
 -- source = unit doing ping
-function ping(x,y,func,max_dist,source)
+function ping(unit,x,y,func,max_dist)
   -- ...to the target pos
   -- printh("funct = "..tostr(func))
   -- printh("unit id = "..(source and source.id or ""))
@@ -789,7 +807,7 @@ function ping(x,y,func,max_dist,source)
   for dist=1,max_dist or 64 do
     for xx=x-dist,x+dist do  -- todo: increment this out by one, on every unsuccessful pass
       for yy=y-dist,y+dist do
-        if ((xx==x-dist or xx==x+dist or yy==y-dist or yy==y+dist) and (func(xx,yy,source))) return xx,yy
+        if ((xx==x-dist or xx==x+dist or yy==y-dist or yy==y+dist) and (func(unit,xx,yy))) return xx,yy
       end
     end
     -- give others a chance!
@@ -797,26 +815,26 @@ function ping(x,y,func,max_dist,source)
   end  
 end
 
-function is_free_tile(x,y)
+function is_free_tile(unit,x,y)
  printh("is_free_tile("..x..","..y..")")
  return not fget(mget(x,y), 0) 
    and object_tiles[x..","..y]==nil
 end
 
-function is_danger_tile(x,y,source)
---  printh("unit: "..source.id.." - is_danger_tile("..x..","..y..")")
+function is_danger_tile(unit,x,y)
+--  printh("unit: "..unit.id.." - is_danger_tile("..x..","..y..")")
  local unit=units[object_tiles[x..","..y]]
- if (unit!=null and unit.owner!=source.owner) do_attack(source, unit)
+ if (unit!=null and unit.owner!=unit.owner) do_attack(unit, unit)
 end
 
 function move_unit_pos(unit,x,y,dist_to_keep)
  --printh("move_unit_pos("..x..","..y..","..(dist_to_keep or "nil")..")")
   unit.path="init"   
   -- check target valid
-  if not is_free_tile(x,y) then
+  if not is_free_tile(nil,x,y) then
     -- target tile occupied
     -- move as close as possible
-    x,y=ping(x,y,is_free_tile)
+    x,y=ping(unit,x,y,is_free_tile)
   end
 
   -- create co-routine to find path (over number of cycles)  
