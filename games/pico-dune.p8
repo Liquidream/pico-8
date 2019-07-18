@@ -736,26 +736,33 @@ function do_guard(unit)
     -- can we retaliate?
     if (self.arms>0) do_attack(self, self.hitby)
    end
+
    -- if a harvester....
-   if self.id==27 then
-    --printh("harvester! state ="..self.state)
-    if self.state<6 then
+   if self.id==27 then    
+    if self.state==0 then
      -- todo: look for nearest spice
      ping(unit,flr(self.x/8),flr(self.y/8),
       function(unit,x,y)
-        printh("unit looking for spice!")
+        --printh("unit looking for spice!")
         local val=mget(x,y)
         if (val>=2 and val<=8) then
-         printh("found spice at "..x..","..y)
+         --printh("found spice at "..x..","..y)
          move_unit_pos(unit,x,y)
+         -- switch to harvesting
          unit.state=6
          return true
         end
       end,
-      10)
-      -- test harvest
-      -- clear spice tile
-      -- (and depleat surrounding tiles)
+      10)      
+    else
+     -- harvest spice
+     self.curr_tile = (self.curr_tile or 0)+1
+     self.capacity = (self.capacity or 0)+1
+     --printh("self.curr_tile="..self.curr_tile)
+     -- done current spot?
+     if self.curr_tile > 200 then      
+      self.curr_tile=0
+      -- (clear spice tile + depleat surrounding tiles)
       local xpos=flr(self.x/8)
       local ypos=flr(self.y/8)
       for yy=-1,1 do
@@ -766,13 +773,12 @@ function do_guard(unit)
        )
        end
       end
-      
-
+      -- go back to guard (look for more to harvest)
       self.state=0
-    end
-    -- todo: harvest spice
+     end    
     -- todo: return to refinery when full
-   end
+    end --if state==
+   end  -- if harvester
    
    -- if other unit type (carrier, worm, etc.)
 
@@ -965,12 +971,14 @@ end
 
 -- ai strategy code (attack, build, repair, etc.)
 function update_ai()
-  if (t()==1) then
-    -- todo: find the first ai unit and attack player
-    local unit=units[#units]
-    local target=units[3]
-    do_attack(unit, target)
-  end
+ 
+ -- TEST - find the first ai unit and attack player
+  -- if (t()==1) then
+  --   local unit=units[#units]
+  --   local target=units[3]
+  --   do_attack(unit, target)
+  -- end
+
 end
 
 -- draw related
