@@ -238,7 +238,7 @@ function discover_objs()
  end
 end
 
-function m_map_obj_tree(objref, x,y)
+function m_map_obj_tree(objref, x,y, factory)
   printh("name=.."..objref.name)
   local newobj=m_obj_from_ref(objref, x,y, objref.type, nil, _g[objref.func_init], _g[objref.func_draw], _g[objref.func_update], nil)
   -- set type==3 (icon!)
@@ -278,7 +278,7 @@ function m_map_obj_tree(objref, x,y)
           if self.ref.type==1 then
             -- find nearest point to factory
             local ux,uy=ping(self,(self.parent.x+8)/8, (self.parent.y+16)/8, is_free_tile)  
-            m_map_obj_tree(self.ref,ux*8,uy*8)
+            m_map_obj_tree(self.ref,ux*8,uy*8, self)
             -- reset build
             self.life=0
           end
@@ -295,6 +295,9 @@ function m_map_obj_tree(objref, x,y)
   -- note: this whole thing may not be needed 
   -- as once we have plr start pos, that might be all we need
   newobj.owner = dist(x,y,pstartx,pstarty)<75 and 1 or 2
+
+  -- store the factory that made it (mostly for harvesters)
+  newobj.made_at = factory
 
   -- 0=auto, 1=player, 2=computer/ai
   if newobj.owner==1 then
@@ -324,6 +327,14 @@ function m_map_obj_tree(objref, x,y)
     if (not slabs) add(buildings,newobj)
     -- other building stuff
     if(newobj.id==7 and newobj.owner==1)has_radar=true
+    -- refinery?
+    if newobj.id==6 then
+     printh(">>> newrefinery")
+     -- auto create a harvester
+     -- todo: have freighter deploy it
+     local ux,uy=ping(newobj,(newobj.x+8)/8, (newobj.y+16)/8, is_free_tile)  
+     m_map_obj_tree(obj_data[7],ux*8,uy*8, newobj)
+    end
   end
   -- unit props
   if objref.type==1 then
@@ -740,7 +751,7 @@ function do_guard(unit)
    -- if a harvester....
    if self.id==27 then    
     if self.state==0 then
-     -- todo: look for nearest spice
+     -- look for nearest spice
      ping(unit,flr(self.x/8),flr(self.y/8),
       function(unit,x,y)
         --printh("unit looking for spice!")
@@ -774,9 +785,20 @@ function do_guard(unit)
        end
       end
       -- go back to guard (look for more to harvest)
-      self.state=0
-     end    
-    -- todo: return to refinery when full
+      self.state=0     
+     end
+     -- are we full?
+     if self.capacity > 200 then
+      -- return to refinery when full
+      self.state=7 -- kinda pointless, as gets replaced with "moving"
+      move_unit_pos(self, (self.made_at.x+16)/8, self.made_at.y/8)
+      --local ux,uy=ping(self,(self.parent.x+8)/8, (self.parent.y+16)/8, is_free_tile)  
+      self.state=8
+      self.r=0
+      self.x=self.made_at.x+16
+      self.y=self.made_at.y+4
+     end
+
     end --if state==
    end  -- if harvester
    
@@ -2089,7 +2111,7 @@ __map__
 121212120000003216004d144214000000020503030303030600000000000000000000000000000000000000000000000000000003000000000303030303030000001212121212121200000000000000121212000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 1212121600000000000014141414000205030307030303060000000000120000000000000000030303030303030303030000000000000000000003030303030000121212121212000000000000001212121212000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 00000012000000000044140a0b00000006030303030306000000121212000000000000000003030303171819030303030303000000000000000003030303030012120000000000000000000000121212121200000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
-00121212000016000014140a00310000003665141400000000001200000000000000000000030303171b1b1b190303030303000000000000000000030303030012000000000000000000000000121212120000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+00121212000016000014140a00000000003665141400000000001200000000000000000000030303171b1b1b190303030303000000000000000000030303030012000000000000000000000000121212120000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 1212121212000016000d011400000000090c1414140000000012120000000000000000000003031a1b1b1e1e1e1e03030303030000000000000000000303030000000000000000000012120000121212120000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 1212121212001634000014140c0000000a0a1718190a00000012000000000000000000000303031d1b1f0303030303030303030300000003030303030303000000000000000000000012121212121212000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 00121200120016160060143f62140e000d0a1d1e1b190000000000000000000000000000030303031a030303030303030300000000000000030303030303030000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
