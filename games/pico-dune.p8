@@ -333,31 +333,40 @@ function m_map_obj_tree(objref, x,y, made_at)
      -- auto create a harvester
      -- todo: have freighter deploy it
      local ux,uy=ping(newobj,(newobj.x+16)/8, (newobj.y+8)/8, is_free_tile)
-     m_map_obj_tree(obj_data[27],ux*8,uy*8, newobj)
+     local harvester=m_map_obj_tree(obj_data[27],ux*8,uy*8, newobj)
+     harvester.capacity=0
     end
   end
   -- unit props
   if objref.type==1 then
    newobj.deathsfx=54
     if (newobj.norotate!=1) newobj.r=flr(rnd(8))*.125
-    -- combat stuff
-    newobj.fire=function(self)
-      -- now firing
-      self.state=4      
-      printh("fire...")
-      printh("life b4="..self.target.life)
-      self.target.life-=self.arms
-      printh("life after="..self.target.life)
-      self.target.hit=1 --0=none, 1=bullet, 2=missile
-      self.target.hitby=self
-      sfx(self.arms<100 and 60 or 58, 3)      
-      reveal_fow(self)
-    end    
+    if newobj.id < 27 then
+     -- combat stuff
+     newobj.fire=function(self)
+       -- now firing
+       self.state=4      
+       printh("fire...")
+       printh("life b4="..self.target.life)
+       self.target.life-=self.arms
+       printh("life after="..self.target.life)
+       self.target.hit=1 --0=none, 1=bullet, 2=missile
+       self.target.hitby=self
+       sfx(self.arms<100 and 60 or 58, 3)      
+       reveal_fow(self)
+     end
+
+    else
+     -- non-fighting units     
+    end
+
     add(units,newobj)
     -- default to guard
     do_guard(newobj)
   end
   reveal_fow(newobj)
+  -- return final obj
+  return newobj
 end
 
 function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, func_onclick)
@@ -752,6 +761,7 @@ function do_guard(unit)
    -- if a harvester....
    if self.id==27 then    
     if self.state==0 then
+     if self.capacity<200 then
      -- look for nearest spice
      ping(unit,flr(self.x/8),flr(self.y/8),
       function(unit,x,y)
@@ -765,7 +775,28 @@ function do_guard(unit)
          return true
         end
       end,
-      10)      
+      10)  
+
+     -- is carrying spice & close to refinary
+     else--if dist(self.x,self.y,self.made_at.x,self.made_at.y)<22 then  
+
+      -- unloading
+      while self.capacity>0 do
+      printh("unloading....")
+      printh(dist(self.x,self.y,self.made_at.x,self.made_at.y))
+      printh("pos="..self.x..","..self.y)
+      self.state=8
+      self.r=.25
+      self.x=self.made_at.x+16
+      self.y=self.made_at.y+4
+       self.capacity-=.1
+       credits+=1 sfx(63)
+       yield()
+      end
+      self.capacity=0
+     end
+
+
     elseif self.state==6 then
      -- harvest spice
      self.curr_tile = (self.curr_tile or 0)+1
@@ -789,16 +820,11 @@ function do_guard(unit)
       self.state=0     
      end
      -- are we full?
-     if self.capacity > 200 then
+     if self.capacity >= 200 then
       printh("capacity!!!!")
       -- return to refinery when full
-      self.state=7 -- kinda pointless, as gets replaced with "moving"
+      self.state=0 -- kinda pointless, as gets replaced with "moving"
       move_unit_pos(self, (self.made_at.x+16)/8, self.made_at.y/8)
-      --local ux,uy=ping(self,(self.parent.x+8)/8, (self.parent.y+16)/8, is_free_tile)  
-      self.state=8
-      self.r=.25
-      self.x=self.made_at.x+16
-      self.y=self.made_at.y+4
      end
 
     end --if state==
@@ -810,6 +836,7 @@ function do_guard(unit)
   end
  end)
 end
+
 
 function do_attack(unit, target)
  printh("do_attack()...")
