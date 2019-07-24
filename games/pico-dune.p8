@@ -1423,6 +1423,7 @@ function collisions()
 
      selected_obj.cor = cocreate(function(unit)
        move_unit_pos(unit, flr((camx+cursx)/8), flr((camy+cursy)/8))
+       do_guard(unit)
       end)
 
     end
@@ -1460,7 +1461,19 @@ function check_hover_select(obj)
     local xpos=flr((cursor.x+camx)/8)
     local ypos=flr((cursor.y+camy)/8)
     if (obj.type<=2 and fow[xpos][ypos]!=16) return
-    selected_obj = obj
+    -- was our harvester selected before click?
+    if selected_obj and selected_obj.id==27 and selected_obj.owner==1 then
+     -- send harvester to refinery
+     selected_obj.cor = cocreate(function(unit)
+      move_unit_pos(unit, xpos, ypos)
+      do_guard(unit)
+      unit.state=6
+     end)
+     return -- register "no click"
+    else 
+     -- somethign else clicked (e.g. building) - so select it
+     selected_obj = obj
+    end    
    end
    clickedsomething=true
   end
