@@ -1420,7 +1420,7 @@ function collisions()
     if selected_obj 
      and selected_obj.type==1
      and selected_obj.owner==1 
-     and selected_obj.id!=27 then
+     and (selected_obj.id!=27 or selected_obj.state!=7) then
 
      selected_obj.cor = cocreate(function(unit)
        move_unit_pos(unit, flr((camx+cursx)/8), flr((camy+cursy)/8))
@@ -1466,6 +1466,7 @@ function check_hover_select(obj)
     -- was our harvester selected before click?
     if selected_obj and selected_obj.id==27 and selected_obj.owner==1 then
      -- send harvester to refinery
+     selected_obj.state=7
      selected_obj.cor = cocreate(function(unit)
       move_unit_pos(unit, xpos, ypos)
       printh("after move_unit_pos on click return!")
