@@ -741,15 +741,16 @@ function update_level()
  last_selected_subobj = selected_subobj
 end
 
-function do_guard(unit) 
- printh("do_guard()!!")
+function do_guard(unit, start_state) 
+ printh("do_guard()!! - start_state="..tostr(start_state))
 
  -- 0=idle/guarding, 1=pathfinding, 2=moving, 3=attacking, 4=firing, 5=exploding, 
  --(6=harvesting, 7=returning, 8=offloading)
- unit.state = 0
+ unit.state = start_state or 0
  --unit.cor = nil -- todo: this!!
  unit.cor = cocreate(function(self)
   while true do
+   if (self.id==27) printh("harvester state == "..self.state)
    -- be on look-out
    if (rnd(500)<1 and self.arms>0) ping(self,flr(self.x/8),flr(self.y/8),is_danger_tile,self.range)
    -- check for attack
@@ -766,8 +767,9 @@ function do_guard(unit)
 
    -- if a harvester....
    if self.id==27 then
-    if self.state==0 then
-     if self.capacity<700 then
+    if self.state==0 or self.state==7 then
+     if self.capacity<700 
+      and self.state!=7 then 
      -- look for nearest spice
      ping(self,flr(self.x/8),flr(self.y/8),
       function(unit,x,y)
@@ -830,11 +832,8 @@ function do_guard(unit)
      if self.capacity >= 700 then
       printh("capacity!!!!")
       -- return to refinery when full
-      self.state=0 -- kinda pointless, as gets replaced with "moving"
-      printh("##### pre move home")
-      self.unique="1234"
+      self.state=0 -- kinda pointless?, as gets replaced with "moving"
       move_unit_pos(self, (self.made_at.x+16)/8, self.made_at.y/8)
-      printh("##### post move home")
      end
 
     end --if state==
@@ -1002,7 +1001,7 @@ function move_unit_pos(unit,x,y,dist_to_keep)
 
   -- arrived?
   unit.state=0 --idle
-
+  printh("arrived!!")
 end
 
 
@@ -1410,7 +1409,7 @@ function collisions()
     if (show_menu and selected_subobj.text and selected_subobj.func_onclick) selected_subobj:func_onclick() --selected_subobj=last_selected_subobj
   
     -- clicked own unit, first time?
-    if (selected_obj.owner==1 and selected_obj.type==1 and selected_obj!=last_selected_obj) sfx(62)
+    if (selected_obj.owner==1 and selected_obj.type==1 and selected_obj!=last_selected_obj) sfx(62) printh("selected_obj.state = "..selected_obj.state)
     
     -- clicked enemy object, last clicked ours... attack?
     if (selected_obj.owner==2 and last_selected_obj and last_selected_obj.type==1 and last_selected_obj.owner==1) do_attack(last_selected_obj, selected_obj) selected_obj=nil
@@ -1418,11 +1417,14 @@ function collisions()
   -- deselect?
   else 
     -- do we have a unit selected?
-    if selected_obj and selected_obj.type==1
-    and selected_obj.owner==1 then
+    if selected_obj 
+     and selected_obj.type==1
+     and selected_obj.owner==1 
+     and selected_obj.id!=27 then
 
      selected_obj.cor = cocreate(function(unit)
        move_unit_pos(unit, flr((camx+cursx)/8), flr((camy+cursy)/8))
+       printh(">>>>123")
        do_guard(unit)
       end)
 
@@ -1466,8 +1468,9 @@ function check_hover_select(obj)
      -- send harvester to refinery
      selected_obj.cor = cocreate(function(unit)
       move_unit_pos(unit, xpos, ypos)
-      do_guard(unit)
-      unit.state=6
+      printh("after move_unit_pos on click return!")
+      do_guard(unit, 7)
+      --unit.state=7
      end)
      return -- register "no click"
     else 
