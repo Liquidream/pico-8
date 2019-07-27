@@ -91,6 +91,36 @@ _g.init_windtrap=function(self)
   }
   self.col_cycle_pos=1
 end
+_g.init_refinery=function(self)
+  self.col_cycle = {
+    {11,p_col1},
+    {10,p_col1},
+    {9,p_col1},
+    {9,p_col1},
+    {9,p_col1},
+    {9,p_col1},
+  }
+  self.col_cycle_pos=1
+end
+_g.draw_refinery=function(self)
+  pal()
+  palt(0,false)
+  pal(11,p_col2)
+  pal(10,p_col2)
+  pal(9,p_col2)
+  if self.incoming then
+    -- colour anim?
+    if self.col_cycle then
+      pal(self.col_cycle[self.col_cycle_pos][1],
+          self.col_cycle[self.col_cycle_pos][2])
+    end
+  else
+    pal(11,p_col1)
+    self.col_cycle_pos=1
+  end
+  spr(self.obj_spr, self.x, self.y, self.w/8, self.h/8)
+end
+
 
 
 
@@ -103,7 +133,7 @@ obj_data=[[id|name|obj_spr|ico_spr|map_spr|type|w|h|trans_col|parent_id|req_id|r
 3|sMALL cONCRETE sLAB|63|160||2|1|1|nil|1|1|1||5|nil||0||||||uSE CONCRETE TO MAKE A STURDY FOUNDATION FOR YOUR STRUCTURES.||||
 4|dEFENSIVE wALL|79|164||2|1|1|nil|1|7|4||50|nil||50||||||tHE wALL IS USED FOR PASSIVE DEFENSE.||||
 5|wINDTRAP|66|130||2|2|2|nil|1|1|1||300|100||200|||||10|tHE WINDTRAP SUPPLIES POWER TO YOUR BASE. wITHOUT POWER YOUR STRUCTURES WILL DECAY.|init_windtrap|||
-6|sPICE rEFINERY|68|132||2|3|2|nil|1|2|1||400|30||450||||||tHE rEFINERY CONVERTS SPICE INTO CREDITS.||||
+6|sPICE rEFINERY|68|132||2|3|2|nil|1|2|1||400|30||450|||||10|tHE rEFINERY CONVERTS SPICE INTO CREDITS.|init_refinery|draw_refinery||
 7|rADAR oUTPOST|73|136||2|2|2|nil|1|2|2||400|30||500||||||tHE oUTPOST PROVIDES RADAR AND AIDS CONTROL OF DISTANT VEHICLES.||||
 8|sPICE sTORAGE sILO|71|134||2|2|2|nil|1|6|2||150|5||150||||||tHE sPICE SILO IS USED TO STORE REFINED SPICE.||||
 9|bARRACKS|75|168||2|2|2|nil|1|7|2||300|10||300||||||tHE bARRACKS IS USED TO TRAIN YOUR lIGHT INFANTRY.||||factory_click
@@ -141,6 +171,8 @@ obj_data=[[id|name|obj_spr|ico_spr|map_spr|type|w|h|trans_col|parent_id|req_id|r
 -- other
 [[38|sARDAUKAR||||1|1|1|11|nil|nil|4||0||5|110|0.1|1||||tHE sARDULAR ARE THE eMPEROR'S ELITE TROOPS. WITH SUPERIOR FIREPOWER AND ARMOUR.||||
 39|sANDWORM||||1|1|1|11|nil|nil|3||0||300|1000|0.35|0||||tHE sAND wORMS ARE INDIGEONOUS TO dUNE. aTTRACTED BY VIBRATIONS, ALMOST IMPOSSIBLE TO DESTROY, WILL CONSUME ANYTHING THAT MOVES.||||]]
+
+
 
 
 
@@ -335,7 +367,7 @@ function m_map_obj_tree(objref, x,y, last_fact)
     if newobj.id==6 and newobj.parent==nil then
      -- auto create a harvester
      -- todo: have freighter deploy it
-     local ux,uy=ping(newobj,(newobj.x+16)/8, (newobj.y+8)/8, is_free_tile)
+     local ux,uy=ping(newobj,(newobj.x+32)/8, (newobj.y+8)/8, is_free_tile)
      local harvester=m_map_obj_tree(obj_data[27],ux*8,uy*8, newobj)
      harvester.capacity=0
     end
@@ -803,6 +835,8 @@ function do_guard(unit, start_state)
      -- is carrying spice & close to refinary
      elseif self.state==9 then --dist(self.x,self.y,self.last_fact.x,self.last_fact.y)<22 then  
 
+      self.last_fact.incoming=false
+
       -- unloading
       while self.capacity>0 do
        --printh("unloading...  capacity="..self.capacity)
@@ -827,7 +861,8 @@ function do_guard(unit, start_state)
      and self.state!=7 then
       --printh("capacity!!!!")
       -- return to refinery when full
-      self.state=7 -- kinda pointless?, as gets replaced with "moving"
+      self.state=7      
+      self.last_fact.incoming=true
       move_unit_pos(self, (self.last_fact.x+16)/8, self.last_fact.y/8)
       printh(" self.state=9 >>>>>>>>")
       self.state=9
@@ -1508,6 +1543,7 @@ function check_hover_select(obj)
     if obj.id==6 and selected_obj and selected_obj.id==27 and selected_obj.owner==1 then
      -- send harvester to refinery
      selected_obj.state=7
+     selected_obj.last_fact.incoming=true
      selected_obj.cor = cocreate(function(unit)      
       -- update last factory (in case changed)
       unit.last_fact=obj
@@ -2014,19 +2050,19 @@ ffffffffb0deed0bb0e66e0bb6eee6bb00ccc00bb6eee6bbbbb0bbbbffffffffffffffffffffffff
 ffffffffbbeccebbbbb00bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbffffffffffffffffffffffffffffffffbbbbbbbbbbbbbbbbbbb0bbbbbb0b0bbbd5555555
 d66dddddddd6fffdddd776ddddddddddddddddddddd666ddddddddddddd6666dddddddddddddddddddddddddddddddddddddddddd19999999999999977777777
 76665555551ffff1d576db65d5577655d5555555d5766665d5555555d566777655555555d555555555555555d766777755555555d49495594999924976666665
-76665c05555f4441d76dbbb5d576db65d5556555d5766665d5ccccc5d767666d65555555d554777777777455d7ddfff755555555d19425599922999976666665
+76665c05555f4441d76dbbb5d576db65d5556555d5766665d5bbbbb5d767666d65555555d554777777777455d7ddfff755555555d19425599922999976666665
 177dee055d5ffff1d66d11b5d76dbbb5d5576655d5677725d5555555d767666d65555555d544ff7fff7ff445d7777f7765555777d495f5f4f412141976666665
-d1d55505555f1011d66d01b5d66d11b5d55d7d55d566dd25d55eee55d766ddd665555555d504777778617405d4447ff7265557f6d19565656599995976666665
+d1d55505555f1011d66d01b5d66d11b5d55d7d55d566dd25d55aaa55d766ddd665555555d504777778617405d4447ff7265557f6d19565656599995976666665
 6555550515df1001d66d0b55d66d01b5d55ddd55d566dd25d5555555d676666625555555d544ff7ff6d1f445d4047777655777fdd49995555594495976666665
-d6d6d55555551005d56dd555d66d0b55d555d555d556dd55d555e555d667ddd225666655d504777771177405d44444442657ffffd19495c05594495976666665
-d6d6d555d55d5555d5555555d56dd555d5555555d5555555d55eee55d66d11d2266c0765d544ff7fff7ff445d55544445557ff7fd4999ee05594495955555555
+d6d6d55555551005d56dd555d66d0b55d555d555d556dd55d5559555d667ddd225666655d504777771177405d44444442657ffffd19495c05594495976666665
+d6d6d555d55d5555d5555555d56dd555d5555555d5555555d5599955d66d11d2266c0765d544ff7fff7ff445d55544445557ff7fd4999ee05594495955555555
 dddddddd55d555d5ddddd776ddddddddddd666ddddddddddddddddddd56d11d276ee06d6d504777777777405d76677775557ff7fd195594095999959dddddddd
-d555555515555155d55576db65555555d5766665d5555555d55eee55d55d11d5767606d6d544ff7fff7ff445d7ddfff755577777d495594495977779d5ddddd5
-d555555a5d55d555d5576dbbb555c055d5766665d5556555d555e555d5555555766d0d66d542222222222245d7777f77655444449999529925777777d55ddd55
+d555555515555155d55576db65555555d5766665d5555555d5599955d55d11d5767606d6d544ff7fff7ff445d7ddfff755577777d495594495977779d5ddddd5
+d555555a5d55d555d5576dbbb555c055d5766665d5556555d5559555d5555555766d0d66d542222222222245d7777f77655444449999529925777777d55ddd55
 d5aaa99a55515d5dd5566d11b55ee055d5677725d5576655d5555555d555555567666662d52c02c020200225d4447ff7265c04c09429444444776666d555d555
-d5aaa55ad5555555d5566d01b5555055d566dd25d55d7d55d55eee55d5555555667dd722d5ee0ee022200225d404777765ee0ee09999242424766666d5551555
+d5aaa55ad5555555d5566d01b5555055d566dd25d55d7d55d55aaa55d5555555667dd722d5ee0ee022200225d404777765ee0ee09999242424766666d5551555
 d5a1199a55d51555d5566d0bd5555055d566dd25d55ddd55d5555555d555555566d11d22d551011011111115d444444426550550944242424296666dd5511155
-d544445a15555515d5556dd5d5555555d556dd55d555d555d5ccccc5d555555556d11d25d555011011111155d555444455550550944242424294ddd2d5111115
+d544445a15555515d5556dd5d5555555d556dd55d555d555d5bbbbb5d555555556d11d25d555011011111155d555444455550550944242424294ddd2d5111115
 d5151515555d5555d5555555d5555555d5555555d5555555d5555555d555555555d11d55d555511111111555d555222255555555d555555555594425d1111111
 dddd666666ddddddddd777c666666dddddddddddddddddddddddd66666666666ffffffff99f99999ffffffffffffffff9f99f9f9ff9f9999ff9fffff00000000
 d566ddddd61111106667deeddddd657667555555d557755555555ddddd4dddddffff9fff9f9999f9fff9fffffffffffff99f99f999f99899ffff9fff00000000
