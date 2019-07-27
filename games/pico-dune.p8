@@ -776,7 +776,7 @@ function do_guard(unit, start_state)
    if self.id==27 then
     if self.state==0 or self.state==7 or self.state==9 then
      if self.capacity<700 
-      and self.state!=7 then 
+      and self.state!=7 and self.state!=9 then 
       
       local sx,sy
       local tx,ty=flr(self.x/8),flr(self.y/8)
@@ -811,6 +811,8 @@ function do_guard(unit, start_state)
        self.x=self.last_fact.x+16
        self.y=self.last_fact.y+4
        self.capacity-=1
+       -- if selected, deselect
+       if (selected_obj==self)selected_obj=nil
        -- only make money if human player
        if (self.owner==1) p_credits+=1 sfx(63)
        yield()
@@ -1499,18 +1501,22 @@ function check_hover_select(obj)
     local xpos=flr((cursor.x+camx)/8)
     local ypos=flr((cursor.y+camy)/8)
     if (obj.type<=2 and fow[xpos][ypos]!=16) return
-    -- was our harvester selected before click?
-    if selected_obj and selected_obj.id==27 and selected_obj.owner==1 then
+
+    -- clicking a harvester unloading?
+    if (obj.id==27 and obj.state==8) return
+    -- was our harvester selected before clicking a refinery?
+    if obj.id==6 and selected_obj and selected_obj.id==27 and selected_obj.owner==1 then
      -- send harvester to refinery
      selected_obj.state=7
      selected_obj.cor = cocreate(function(unit)      
       -- update last factory (in case changed)
       unit.last_fact=obj
-      move_unit_pos(unit, xpos, ypos)
+      move_unit_pos(unit, (obj.x+16)/8, ypos)
       printh("after move_unit_pos on click return!")
       do_guard(unit, 9)
      end)
      return -- register "no click"
+
     else 
      -- somethign else clicked (e.g. building) - so select it
      selected_obj = obj
