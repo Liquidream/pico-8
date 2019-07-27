@@ -1093,7 +1093,7 @@ function draw_level()
  end
 
  -- draw fog-of-war
- --draw_fow()
+ draw_fow()
 end
 
 
