@@ -805,9 +805,7 @@ function do_guard(unit, start_state)
 
       -- unloading
       while self.capacity>0 do
-       printh("unloading...  capacity="..self.capacity)
-       --printh(dist(self.x,self.y,self.made_at.x,self.made_at.y))
-       --printh("pos="..self.x..","..self.y)
+       --printh("unloading...  capacity="..self.capacity)
        self.state=8
        self.r=.25
        self.x=self.made_at.x+16
@@ -846,7 +844,7 @@ function do_guard(unit, start_state)
      end
      -- are we full?
      if self.capacity >= 700 then
-      printh("capacity!!!!")
+      --printh("capacity!!!!")
       -- return to refinery when full
       self.state=0 -- kinda pointless?, as gets replaced with "moving"
       move_unit_pos(self, (self.made_at.x+16)/8, self.made_at.y/8)
@@ -854,11 +852,10 @@ function do_guard(unit, start_state)
 
      -- spice clouds 
      --unit.r+=.01
-     local cx,cy = sin(unit.r+.75)*5,-cos(unit.r+.75)*5
-     if (rnd(5)<1) add_particle(unit.x+cx+3.5+rnd(4)-2,unit.y+cy+3.5+rnd(4)-2, 2, 0,0,.05, -.005, 20,{4,9,7},nil)
-     --if (rnd(5)<1) add_particle(unit.x+cx+3.5,unit.y+cy+3.5, 2, 0,0,.05, -.005, 2,{4,9,7},nil)
-     --if (rnd(5)<1) add_particle(unit.x+rnd(6)-3,unit.y+rnd(6)-3, 2, 0,0,.05, -.005, 30,{4,9,7},nil)
-
+     local r=unit.r+.75+rnd(.2)-.1 
+     local cx,cy = sin(r)*5.5,-cos(r)*5.5
+     if (rnd(5)<1) add_particle(unit.x+cx+3.5,unit.y+cy+3.5, 1, 0,0,.15, -.01, 20,{2,4,15},nil)
+     
     end --if state==
    end  -- if harvester
    
@@ -1946,6 +1943,7 @@ function update_particles()
 end
 
 function draw_particles()
+  fillp(0xa5a5.8)
   for k,p in pairs(particles) do
     -- patterns
     -- filled = 0x0/0xff
@@ -1956,6 +1954,7 @@ function draw_particles()
     local col=flr((#p.cols/p.life_orig)*p.life)+1
     circfill(p.x,p.y,p.r,p.cols[col])
   end
+  fillp()
 end
 
 
