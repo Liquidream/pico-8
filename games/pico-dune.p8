@@ -753,7 +753,7 @@ function do_guard(unit, start_state)
  printh("do_guard()!! - start_state="..tostr(start_state))
 
  -- 0=idle/guarding, 1=pathfinding, 2=moving, 3=attacking, 4=firing, 5=exploding, 
- --(6=harvesting, 7=returning, 8=offloading)
+ --(6=harvesting, 7=returning, 9=ready-to-unload, 8=offloading)
  unit.state = start_state or 0
  --unit.cor = nil -- todo: this!!
  unit.cor = cocreate(function(self)
@@ -774,7 +774,7 @@ function do_guard(unit, start_state)
 
    -- if a harvester....
    if self.id==27 then
-    if self.state==0 or self.state==7 then
+    if self.state==0 or self.state==7 or self.state==9 then
      if self.capacity<700 
       and self.state!=7 then 
       
@@ -801,7 +801,7 @@ function do_guard(unit, start_state)
         unit.state=6
       end
      -- is carrying spice & close to refinary
-     else--if dist(self.x,self.y,self.made_at.x,self.made_at.y)<22 then  
+     elseif self.state==9 then --dist(self.x,self.y,self.made_at.x,self.made_at.y)<22 then  
 
       -- unloading
       while self.capacity>0 do
@@ -820,9 +820,24 @@ function do_guard(unit, start_state)
       self.state=0
      end
 
+    -- are we full?
+    elseif self.capacity >= 700 
+     and self.state!=7 then
+      --printh("capacity!!!!")
+      -- return to refinery when full
+      self.state=7 -- kinda pointless?, as gets replaced with "moving"
+      move_unit_pos(self, (self.made_at.x+16)/8, self.made_at.y/8)
+      printh(" self.state=9 >>>>>>>>")
+      self.state=9
 
      -- harvesting spice
     elseif self.state==6 then
+
+     -- spice clouds
+     local r=unit.r+.75+rnd(.2)-.1 
+     local cx,cy = sin(r)*5.5,-cos(r)*5.5
+     if (rnd(5)<1) add_particle(unit.x+cx+3.5,unit.y+cy+3.5, 1, 0,0,.15, -.01, 20,{2,4,15},nil)
+     
 
      spice_tiles[unit:getTilePosIndex()] = (spice_tiles[unit:getTilePosIndex()] or 1400)-1
      self.capacity = (self.capacity or 0)+1
@@ -842,19 +857,18 @@ function do_guard(unit, start_state)
       -- go back to guard (look for more to harvest)
       self.state=0     
      end
-     -- are we full?
-     if self.capacity >= 700 then
-      --printh("capacity!!!!")
-      -- return to refinery when full
-      self.state=0 -- kinda pointless?, as gets replaced with "moving"
-      move_unit_pos(self, (self.made_at.x+16)/8, self.made_at.y/8)
-     end
+    --  -- are we full?
+    --  if self.capacity >= 700 then
+    --   --printh("capacity!!!!")
+    --   -- return to refinery when full
+    --   self.state=0 -- kinda pointless?, as gets replaced with "moving"
+    --   move_unit_pos(self, (self.made_at.x+16)/8, self.made_at.y/8)
+    --  end
 
-     -- spice clouds 
-     --unit.r+=.01
-     local r=unit.r+.75+rnd(.2)-.1 
-     local cx,cy = sin(r)*5.5,-cos(r)*5.5
-     if (rnd(5)<1) add_particle(unit.x+cx+3.5,unit.y+cy+3.5, 1, 0,0,.15, -.01, 20,{2,4,15},nil)
+    --  -- spice clouds
+    --  local r=unit.r+.75+rnd(.2)-.1 
+    --  local cx,cy = sin(r)*5.5,-cos(r)*5.5
+    --  if (rnd(5)<1) add_particle(unit.x+cx+3.5,unit.y+cy+3.5, 1, 0,0,.15, -.01, 20,{2,4,15},nil)
      
     end --if state==
    end  -- if harvester
@@ -1447,7 +1461,6 @@ function collisions()
 
      selected_obj.cor = cocreate(function(unit)
        move_unit_pos(unit, flr((camx+cursx)/8), flr((camy+cursy)/8))
-       printh(">>>>123")
        do_guard(unit)
       end)
 
@@ -1493,8 +1506,7 @@ function check_hover_select(obj)
      selected_obj.cor = cocreate(function(unit)
       move_unit_pos(unit, xpos, ypos)
       printh("after move_unit_pos on click return!")
-      do_guard(unit, 7)
-      --unit.state=7
+      do_guard(unit, 9)
      end)
      return -- register "no click"
     else 
