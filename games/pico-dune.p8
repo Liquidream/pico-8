@@ -46,6 +46,7 @@ buildings={}
 ui_controls={}
 spice_tiles={}
 
+
 _g={}
 _g.factory_click=function(self)
   menu_pos=1
@@ -735,10 +736,17 @@ function update_level()
 
  collisions()
 
+ update_particles()
+
  ticks+=1
  last_mouse_btn = mouse_btn
  last_selected_obj = selected_obj
  last_selected_subobj = selected_subobj
+end
+
+function is_spice_tile(x,y)
+  local val=mget(x,y)
+  return val>=2 and val<=8
 end
 
 function do_guard(unit, start_state) 
@@ -750,7 +758,7 @@ function do_guard(unit, start_state)
  --unit.cor = nil -- todo: this!!
  unit.cor = cocreate(function(self)
   while true do
-   if (self.id==27) printh("harvester state == "..self.state)
+   if (self.id==27) add_particle(unit.x,unit.y,0, 0,0,.5, -.1, 10,{4,9,15},nil)
    -- be on look-out
    if (rnd(500)<1 and self.arms>0) ping(self,flr(self.x/8),flr(self.y/8),is_danger_tile,self.range)
    -- check for attack
@@ -770,21 +778,35 @@ function do_guard(unit, start_state)
     if self.state==0 or self.state==7 then
      if self.capacity<700 
       and self.state!=7 then 
-     -- look for nearest spice
-     ping(self,flr(self.x/8),flr(self.y/8),
-      function(unit,x,y)
-        --printh("unit looking for spice!")
-        local val=mget(x,y)
-        if (val>=2 and val<=8) then
-         --printh("found spice at "..x..","..y)
-         move_unit_pos(unit,x,y)
-         -- switch to harvesting
-         unit.state=6
-         return true
-        end
-      end,
-      10) 
-
+      
+      local sx,sy
+      local tx,ty=flr(self.x/8),flr(self.y/8)
+      if is_spice_tile(tx,ty) then
+        sx,sy=tx,ty
+      else
+        -- look for nearest spice
+        ping(self,flr(self.x/8),flr(self.y/8),
+          function(unit,x,y)
+            --printh("unit looking for spice!")
+            if is_spice_tile(x,y) then
+            -- local val=mget(x,y)
+            -- if (val>=2 and val<=8) then
+            --printh("found spice at "..x..","..y)
+            --move_unit_pos(unit,x,y)
+            -- switch to harvesting
+            --unit.state=6
+            sx,sy=x,y
+            return true
+            end
+          end,
+        10) 
+      end
+      -- found spice?
+      if sx and sy then
+        move_unit_pos(unit,sx,sy)
+        -- switch to harvesting
+        unit.state=6
+      end
      -- is carrying spice & close to refinary
      else--if dist(self.x,self.y,self.made_at.x,self.made_at.y)<22 then  
 
@@ -1091,6 +1113,9 @@ function draw_level()
    spr(16, selected_obj.x, selected_obj.y)
   end
  end
+
+ -- particles
+ draw_particles()
 
  -- draw fog-of-war
  draw_fow()
@@ -1889,10 +1914,48 @@ function find_path
  end
  
 
+--
+-- particle related
+-- (loosly inspired by @casualeffects' fast particle system)
+--
+particles={}
 
+function add_particle(x, y, r, dx, dy, dr, ddy, life, cols, patterns)
+  local p={
+    x=x,y=y,r=r,dx=dx,dy=dy,dr=dr,
+    life=0,ddy=ddy or 0.0625,
+    cols=cols or {7,6,5}, patterns=patterns,
+    y_orig=y, life_orig=life or 8
+  }
+  add(particles, p)
+end
 
+function update_particles()
+  for k,p in pairs(particles) do
+    -- acceleration
+   p.dy += p.ddy
+   -- advance state
+   p.x += p.dx
+   p.y += p.dy
+   p.r += p.dr
+   p.life += 1
+   -- check for dead
+   if(p.life>=p.life_orig)del(particles,p)
+  end
+end
 
-
+function draw_particles()
+  for k,p in pairs(particles) do
+    -- patterns
+    -- filled = 0x0/0xff
+    -- check1 = 0XA5A5
+    -- check2 = 0XA0A0
+    -- check3 = 0X8020
+    --
+    local col=flr((#p.cols/p.life_orig)*p.life)+1
+    circfill(p.x,p.y,p.r,p.cols[col])
+  end
+end
 
 
 
