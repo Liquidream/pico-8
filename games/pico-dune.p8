@@ -8,6 +8,7 @@ __lua__
 -- global flags
 debug_mode=true
 debug_collision=false
+--extcmd "rec"
 
 -- data flags (eventually pulled from cartdata)
 p_faction=3 -- 0=None, 1=Atreides, 2=Ordos, 3=Harkonnen
@@ -580,6 +581,8 @@ end
 
 function _update60()  --game_update
 
+ --if (t()==0.4) extcmd "rec"
+
  update_level()
 
  update_ai()  -- ai overall decision making (not individual units)
@@ -812,7 +815,7 @@ function do_guard(unit, start_state)
       
       local sx,sy
       local tx,ty=flr(self.x/8),flr(self.y/8)
-      if is_spice_tile(tx,ty) then
+      if is_spice_tile(tx,ty) and not self.newspot then
         sx,sy=tx,ty
       else
         -- look for nearest spice
@@ -869,12 +872,14 @@ function do_guard(unit, start_state)
      -- harvesting spice
     elseif self.state==6 then
 
+     self.newspot=false
+
      -- spice clouds
      local r=unit.r+.75+rnd(.2)-.1 
      local cx,cy = sin(r)*5.5,-cos(r)*5.5
      if (rnd(5)<1) add_particle(unit.x+cx+3.5,unit.y+cy+3.5, 1, 0,0,.15, -.01, 20,{2,4,9,15}, 0xa5a5.8)
      
-
+     -- update spice tile state
      spice_tiles[unit:getTilePosIndex()] = (spice_tiles[unit:getTilePosIndex()] or 1400)-1
      self.capacity = (self.capacity or 0)+1
      -- done current spot?
@@ -891,20 +896,13 @@ function do_guard(unit, start_state)
        end
       end
       -- go back to guard (look for more to harvest)
-      self.state=0     
+      self.state=0
      end
-    --  -- are we full?
-    --  if self.capacity >= 700 then
-    --   --printh("capacity!!!!")
-    --   -- return to refinery when full
-    --   self.state=0 -- kinda pointless?, as gets replaced with "moving"
-    --   move_unit_pos(self, (self.last_fact.x+16)/8, self.last_fact.y/8)
-    --  end
-
-    --  -- spice clouds
-    --  local r=unit.r+.75+rnd(.2)-.1 
-    --  local cx,cy = sin(r)*5.5,-cos(r)*5.5
-    --  if (rnd(5)<1) add_particle(unit.x+cx+3.5,unit.y+cy+3.5, 1, 0,0,.15, -.01, 20,{2,4,15},nil)
+     -- move around the spice?
+     if self.capacity%300==0 then
+      self.newspot=true
+      self.state=0
+     end
      
     end --if state==
    end  -- if harvester
