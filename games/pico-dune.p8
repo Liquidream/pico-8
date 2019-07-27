@@ -785,16 +785,10 @@ function do_guard(unit, start_state)
         sx,sy=tx,ty
       else
         -- look for nearest spice
-        ping(self,flr(self.x/8),flr(self.y/8),
+        ping(self,tx,ty,
           function(unit,x,y)
-            --printh("unit looking for spice!")
             if is_spice_tile(x,y) then
-            -- local val=mget(x,y)
-            -- if (val>=2 and val<=8) then
-            --printh("found spice at "..x..","..y)
-            --move_unit_pos(unit,x,y)
-            -- switch to harvesting
-            --unit.state=6
+            --found spice
             sx,sy=x,y
             return true
             end
