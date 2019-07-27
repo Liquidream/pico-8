@@ -807,7 +807,7 @@ function do_guard(unit, start_state)
    -- if a harvester....
    if self.id==27 then
     if self.state==0 or self.state==7 or self.state==9 then
-     if self.capacity<700 
+     if self.capacity<=700 
       and self.state!=7 and self.state!=9 then 
       
       local sx,sy
