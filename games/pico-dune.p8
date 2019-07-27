@@ -758,7 +758,6 @@ function do_guard(unit, start_state)
  --unit.cor = nil -- todo: this!!
  unit.cor = cocreate(function(self)
   while true do
-   if (self.id==27) add_particle(unit.x,unit.y,0, 0,0,.5, -.1, 10,{4,9,15},nil)
    -- be on look-out
    if (rnd(500)<1 and self.arms>0) ping(self,flr(self.x/8),flr(self.y/8),is_danger_tile,self.range)
    -- check for attack
@@ -824,8 +823,9 @@ function do_guard(unit, start_state)
      end
 
 
+     -- harvesting spice
     elseif self.state==6 then
-     -- harvest spice
+
      spice_tiles[unit:getTilePosIndex()] = (spice_tiles[unit:getTilePosIndex()] or 1400)-1
      self.capacity = (self.capacity or 0)+1
      -- done current spot?
@@ -851,6 +851,9 @@ function do_guard(unit, start_state)
       self.state=0 -- kinda pointless?, as gets replaced with "moving"
       move_unit_pos(self, (self.made_at.x+16)/8, self.made_at.y/8)
      end
+
+     -- spice clouds 
+     if (rnd(5)<1) add_particle(unit.x+rnd(6)-3,unit.y+rnd(6)-3, 2, 0,0,.05, -.005, 30,{4,9,7},nil)
 
     end --if state==
    end  -- if harvester
