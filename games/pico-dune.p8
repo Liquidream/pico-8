@@ -853,7 +853,11 @@ function do_guard(unit, start_state)
      end
 
      -- spice clouds 
-     if (rnd(5)<1) add_particle(unit.x+rnd(6)-3,unit.y+rnd(6)-3, 2, 0,0,.05, -.005, 30,{4,9,7},nil)
+     --unit.r+=.01
+     local cx,cy = sin(unit.r+.75)*5,-cos(unit.r+.75)*5
+     if (rnd(5)<1) add_particle(unit.x+cx+3.5+rnd(4)-2,unit.y+cy+3.5+rnd(4)-2, 2, 0,0,.05, -.005, 20,{4,9,7},nil)
+     --if (rnd(5)<1) add_particle(unit.x+cx+3.5,unit.y+cy+3.5, 2, 0,0,.05, -.005, 2,{4,9,7},nil)
+     --if (rnd(5)<1) add_particle(unit.x+rnd(6)-3,unit.y+rnd(6)-3, 2, 0,0,.05, -.005, 30,{4,9,7},nil)
 
     end --if state==
    end  -- if harvester
