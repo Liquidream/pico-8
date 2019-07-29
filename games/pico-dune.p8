@@ -994,7 +994,8 @@ function is_danger_tile(unit,x,y)
 end
 
 function move_unit_pos(unit,x,y,dist_to_keep)
- --printh("move_unit_pos("..x..","..y..","..(dist_to_keep or "nil")..")")
+  ::restart_move_unit::
+  printh("move_unit_pos("..x..","..y..","..(dist_to_keep or "nil")..")")
   unit.path="init"   
   -- check target valid
   if not is_free_tile(nil,x,y) then
@@ -1047,6 +1048,9 @@ function move_unit_pos(unit,x,y,dist_to_keep)
         end
       end
       
+      -- check new position/tile is still free
+      if(not is_free_tile(nil,x,y)) goto restart_move_unit
+
       -- move to new position
       local scaled_speed = unit.speed or .5
       local distance = sqrt((node.x*8 - unit.x) ^ 2 + (node.y*8 - unit.y) ^ 2)
