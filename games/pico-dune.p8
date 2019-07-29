@@ -832,8 +832,9 @@ function do_guard(unit, start_state)
       -- found spice?
       if sx and sy then
         move_unit_pos(unit,sx,sy)
+        -- landed on spice tile?
         -- switch to harvesting
-        unit.state=6
+        if (is_spice_tile(flr(unit.x/8),flr(unit.y/8))) unit.state=6
       end
      -- is carrying spice & close to refinary
      elseif self.state==9 then --dist(self.x,self.y,self.last_fact.x,self.last_fact.y)<22 then  
