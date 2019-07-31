@@ -425,6 +425,7 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
   frame=0,
   fire_cooldown=0,
   hit=0,
+  flash_count=1,
   get_hitbox=function(self)
     return {
      x=self.x,
@@ -447,7 +448,7 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
      -- rotating obj?
      if self.r then
       rspr(self.obj_spr%16*8,flr(self.obj_spr/16)*8, self.x, self.y+1, .25-self.r, 1, self.trans_col, 5)
-      rspr(self.obj_spr%16*8,flr(self.obj_spr/16)*8, self.x, self.y, .25-self.r, 1, self.trans_col)      
+      rspr(self.obj_spr%16*8,flr(self.obj_spr/16)*8, self.x, self.y, .25-self.r, 1, self.trans_col, flr(self.flash_count)%2==0 and 7 or nil)
      -- norm sprite
      else      
        -- icon mode?
@@ -487,10 +488,8 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
      if (debug_collision) draw_hitbox(self)
    end,
    update=function(self)
-     -- check for being hit
-
-     -- reset hit flag
-     --self.hit=0
+     -- update targeting flash
+     self.flash_count=max(self.flash_count-.4,1)
 
      -- check for death
      if (self.life<=0 and self.death_time==nil) self.state=5 self.cor=nil self.death_time=t()+1 sfx(self.deathsfx, 3)
@@ -926,7 +925,7 @@ end
 
 function do_attack(unit, target)
  printh("do_attack()...")
- -- 0=idle/guareding, 1=pathfinding, 2=moving, 3=attacking, 5=exploding
+ -- 0=idle/guarding, 1=pathfinding, 2=moving, 3=attacking, 5=exploding
  unit.state = 3
  unit.target=target
  unit.cor = cocreate(function(self)
@@ -1496,7 +1495,7 @@ function collisions()
     if (selected_obj.owner==1 and selected_obj.type==1 and selected_obj!=last_selected_obj) sfx(62) printh("selected_obj.state = "..selected_obj.state)
     
     -- clicked enemy object, last clicked ours... attack?
-    if (selected_obj.owner==2 and last_selected_obj and last_selected_obj.type==1 and last_selected_obj.owner==1) do_attack(last_selected_obj, selected_obj) selected_obj=nil
+    if (selected_obj.owner==2 and last_selected_obj and last_selected_obj.type==1 and last_selected_obj.owner==1) selected_obj.flash_count=10 do_attack(last_selected_obj, selected_obj) selected_obj=nil
 
   -- deselect?
   else 
