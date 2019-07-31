@@ -377,7 +377,7 @@ function m_map_obj_tree(objref, x,y, last_fact)
   if objref.type==1 then
    newobj.deathsfx=54
     if (newobj.norotate!=1) newobj.r=flr(rnd(8))*.125
-    if newobj.id < 27 then
+    if newobj.arms then
      -- combat stuff
      newobj.fire=function(self)
        -- now firing
