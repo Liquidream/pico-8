@@ -470,6 +470,11 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
         spr(self.obj_spr, self.x, self.y, self.w/8, self.h/8)
        end
      end
+
+     -- smoking?
+     if self.type<=2 and self.life<self.ref.hitpoint*.33 then
+      if (rnd(10)<1) add_particle(self.x+3.5,self.y+3.5, 1, .1,-.02,.1, -.01, 40,{10,9,6,5}, rnd(2)<1 and 0xa5a5.8 or 0)
+     end
      
      -- hit? temporary code!
      palt(11,true)
