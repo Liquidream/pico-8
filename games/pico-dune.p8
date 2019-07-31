@@ -886,7 +886,7 @@ function do_guard(unit, start_state)
      -- spice clouds
      local r=unit.r+.75+rnd(.2)-.1 
      local cx,cy = sin(r)*5.5,-cos(r)*5.5
-     if (rnd(5)<1) add_particle(unit.x+cx+3.5,unit.y+cy+3.5, 1, 0,0,.15, -.01, 20,{2,4,9,15}, 0xa5a5.8)
+     if (rnd(5)<1) add_particle(unit.x+cx+3.5,unit.y+cy+3.5, 1, .15,0,.1, -.01, 25,{2,4,9,15}, 0xa5a5.8)
      
      -- update spice tile state
      spice_tiles[unit:getTilePosIndex()] = (spice_tiles[unit:getTilePosIndex()] or 1400)-1
