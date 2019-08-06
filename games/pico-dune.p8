@@ -68,6 +68,8 @@ _g.factory_click=function(self)
   end, 10)
   m_button(32,88,"build",function(self)
    show_menu=nil
+   --destroy ui controls
+   ui_controls={}
    selected_obj.build_obj=last_selected_subobj
    last_selected_subobj:func_onclick()
   end)
@@ -523,7 +525,7 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
        -- unit
        del(units,self)
       end      
-      if(selected_obj==self)printh("setting selected_obj=nil (2)") selected_obj=nil
+      if(selected_obj==self)selected_obj=nil
      end
 
      -- animated colour cycle (if applicable)
@@ -889,7 +891,7 @@ function do_guard(unit, start_state)
         self.y=self.last_fact.y+4
         self.capacity-=1
         -- if selected, deselect
-        if (selected_obj==self)printh("setting selected_obj=nil (3)") selected_obj=nil
+        if (selected_obj==self) selected_obj=nil
         -- only make money if human player
         if (self.owner==1) p_credits+=1 sfx(63)
         yield()
@@ -1501,8 +1503,8 @@ function collisions()
  -- selected obj ui collision
  if selected_obj then
    ui_collision_mode=true
-   if (selected_obj.ico_obj and not show_menu) check_hover_select(selected_obj.ico_obj)
-   foreach(selected_obj.build_objs, check_hover_select)
+   if (selected_obj.ico_obj and not show_menu) check_hover_select(selected_obj.ico_obj)   
+   foreach(selected_obj.build_objs, check_hover_select)   
    foreach(ui_controls, check_hover_select)
    --if (selected_obj.build_obj) check_hover_select(selected_obj.build_obj)
    ui_collision_mode=false
@@ -1523,14 +1525,16 @@ function collisions()
   if clickedsomething then
    --show_menu=nil
     -- object "button"?
- error here when click back to const yard, sometimes!!  if (not show_menu and selected_obj.func_onclick and selected_obj.parent!=nil) selected_obj:func_onclick() printh("setting selected_obj=last_obj (1)") selected_obj=last_selected_obj
+ 
+    --####error here when click back to const yard, sometimes!!  
+    if (not show_menu and selected_obj.func_onclick and selected_obj.parent!=nil) selected_obj:func_onclick() selected_obj=last_selected_obj return
     if (show_menu and selected_subobj.text and selected_subobj.func_onclick) selected_subobj:func_onclick() --selected_subobj=last_selected_subobj
   
     -- clicked own unit, first time?
-    if (selected_obj.owner==1 and selected_obj.type==1 and selected_obj!=last_selected_obj) sfx(62) --printh("selected_obj.state = "..selected_obj.state)
+    if (selected_obj.owner==1 and selected_obj.type==1 and selected_obj!=last_selected_obj) sfx(62)
     
     -- clicked enemy object, last clicked ours... attack?
-    if (selected_obj.owner==2 and last_selected_obj and last_selected_obj.type==1 and last_selected_obj.owner==1) selected_obj.flash_count=10 do_attack(last_selected_obj, selected_obj)printh("setting selected_obj=nil (4)") selected_obj=nil
+    if (selected_obj.owner==2 and last_selected_obj and last_selected_obj.type==1 and last_selected_obj.owner==1) selected_obj.flash_count=10 do_attack(last_selected_obj, selected_obj) selected_obj=nil
 
   -- deselect?
   else 
@@ -1562,7 +1566,7 @@ function collisions()
       sfx(61)
     end
 
-    if (not show_menu) printh("setting selected_obj=nil (1)") selected_obj=nil
+    if (not show_menu) selected_obj=nil
     --if (not show_menu and placement_pos_ok) selected_obj=nil
   end 
   
@@ -1593,7 +1597,7 @@ function check_hover_select(obj)
       -- update last factory (in case changed)
       unit.last_fact=obj
       move_unit_pos(unit, (obj.x+16)/8, ypos)
-      printh("after move_unit_pos on click return!")
+      --printh("after move_unit_pos on click return!")
       do_guard(unit, 9)
      end)
      printh("register NO CLICK!")
@@ -1607,7 +1611,7 @@ function check_hover_select(obj)
    clickedsomething=true
   end
 
-  printh("leaving check_hover_select(obj) - selected_obj="..tostr(selected_obj))
+  --printh("leaving check_hover_select(obj) - selected_obj="..tostr(selected_obj))
 end
 
 
