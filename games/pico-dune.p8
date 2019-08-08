@@ -486,7 +486,7 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
      if self.bullet_x then
       if (self.fire_type==1) then
        -- shell
-       circfill(self.bullet_x,self.bullet_y,0, 8)
+       circfill(self.bullet_x,self.bullet_y,0, rnd(2)<1 and 8 or 9)
       else
        -- missile
        -- line(self.bullet_x, self.bullet_y,
@@ -502,19 +502,20 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
       if (rnd(10)<1) add_particle(self.x+3.5,self.y+3.5, 1, .1,-.02,.1, -.01, 40,{10,9,6,5}, rnd(2)<1 and 0xa5a5.8 or 0)
      end
      
-     -- hit? temporary code!
-     palt(11,true)
-     if self.hit>0 then
-      printh("draw HIT!!!! - id="..self.ref.id)
-      spr(19, self.x+rnd(self.w)-4, self.y+rnd(self.h)-4)
-     end
-     -- exploding?
-     if self.state==5 then      
-      spr(19, self.x+rnd(self.w)-4, self.y+rnd(self.h)-4)
-     end     
+     -- -- hit? temporary code!
+     -- palt(11,true)
+     -- if self.hit>0 then
+     --  printh("draw HIT!!!! - id="..self.ref.id)
+     --  spr(19, self.x+rnd(self.w)-4, self.y+rnd(self.h)-4)
+     -- end
+     -- -- exploding?
+     -- if self.state==5 then      
+     --  spr(19, self.x+rnd(self.w)-4, self.y+rnd(self.h)-4)
+     -- end
 
      -- reset hit flag
-     self.hit-=0.5
+     self.hit=0
+     -- self.hit-=0.5
  
      if (debug_collision) draw_hitbox(self)
    end,
@@ -566,13 +567,18 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
       if dist(
        self.bullet_x,self.bullet_y,
        self.bullet_tx,self.bullet_ty) < 2 then
-        -- kill bullet/missile & do damage
+         --explosion
+         add_particle(self.bullet_x, self.bullet_y, 2, 
+         0,0,.1,0, 20, {7,8,9,10,7}, rnd(2)<1 and 0xa5a5.8 or 0)
+         -- kill bullet/missile & do damage
          self.bullet_x=nil
          printh("life b4="..self.target.life)
          self.target.life-=self.arms
          printh("life after="..self.target.life)
-         self.target.hit=1 --0=none, 1=bullet, 2=missile
+         self.target.hit=self.fire_type --0=none, 1=bullet, 2=missile
+         --self.target.hit=1 --0=none, 1=bullet, 2=missile
          self.target.hitby=self
+         
       end
      end
    end,
