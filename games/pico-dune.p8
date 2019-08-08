@@ -391,9 +391,11 @@ function m_map_obj_tree(objref, x,y, last_fact, owner)
        -- fire bullet/missile
        self.bullet_x=self.x+4
        self.bullet_y=self.y+4
+       self.bullet_tx=self.target.x+4
+       self.bullet_ty=self.target.y+4
        -- normalize dx,dy
-       local dx=self.target.x+4-self.bullet_x
-       local dy=self.target.y+4-self.bullet_y
+       local dx=self.bullet_tx-self.bullet_x
+       local dy=self.bullet_ty-self.bullet_y
        local d=sqrt(dx * dx + dy * dy)
        self.bullet_dx = dx/d
        self.bullet_dy = dy/d
@@ -563,7 +565,7 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
       -- check for target
       if dist(
        self.bullet_x,self.bullet_y,
-       self.target.x,self.target.y) < 4 then
+       self.bullet_tx,self.bullet_ty) < 2 then
         -- kill bullet/missile & do damage
          self.bullet_x=nil
          printh("life b4="..self.target.life)
