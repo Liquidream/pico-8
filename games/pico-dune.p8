@@ -515,7 +515,7 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
 
      -- reset hit flag
      self.hit=0
-     -- self.hit-=0.5
+     --self.hit-=0.5
  
      if (debug_collision) draw_hitbox(self)
    end,
@@ -525,20 +525,25 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
 
      -- check for death
      if (self.life<=0 and self.death_time==nil) self.state=5 self.cor=nil self.death_time=t()+1 sfx(self.deathsfx, 3)
-     if self.death_time and t()>self.death_time then
-      if self.type==2 then
-       -- building?
-       for xx=0,self.ref.w-1 do
-        for yy=0,self.ref.h-1 do
-          mset(self.x/8+xx, self.y/8+yy, 15)
+     if self.death_time then
+      if t()>self.death_time then
+        if self.type==2 then
+        -- building?
+        for xx=0,self.ref.w-1 do
+          for yy=0,self.ref.h-1 do
+            mset(self.x/8+xx, self.y/8+yy, 15)
+          end
         end
-       end
-       del(buildings,self)
+        del(buildings,self)
+        else
+        -- unit
+        del(units,self)
+        end      
+        if(selected_obj==self)selected_obj=nil
       else
-       -- unit
-       del(units,self)
-      end      
-      if(selected_obj==self)selected_obj=nil
+        -- dying
+        if (rnd(2)<1) make_explosion(self.x+rnd(self.w),self.y+rnd(self.h))
+      end
      end
 
      -- animated colour cycle (if applicable)
@@ -568,8 +573,9 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
        self.bullet_x,self.bullet_y,
        self.bullet_tx,self.bullet_ty) < 2 then
          --explosion
-         add_particle(self.bullet_x, self.bullet_y, 2, 
-         0,0,.1,0, 20, {7,8,9,10,7}, rnd(2)<1 and 0xa5a5.8 or 0)
+         make_explosion(self.bullet_x+rnd(8), self.bullet_y+rnd(8))
+        --  add_particle(self.bullet_x+rnd(8), self.bullet_y+rnd(8), 2, 
+        --  0,0,.1,0, 20, {7,8,9,10,7}, rnd(2)<1 and 0xa5a5.8 or 0)
          -- kill bullet/missile & do damage
          self.bullet_x=nil
          printh("life b4="..self.target.life)
@@ -605,6 +611,10 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
  return obj
 end
 
+function make_explosion(x,y)
+ add_particle(x, y, 2, 
+         0,0,.1,0, 20, {7,8,9,10,7}, rnd(2)<1 and 0xa5a5.8 or 0)
+end
 
 function reveal_fow(object)
  -- only reveal if
