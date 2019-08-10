@@ -391,8 +391,8 @@ function m_map_obj_tree(objref, x,y, last_fact, owner)
        -- fire bullet/missile
        self.bullet_x=self.x+4
        self.bullet_y=self.y+4
-       self.bullet_tx=self.target.x+4
-       self.bullet_ty=self.target.y+4
+       self.bullet_tx=self.target.x+self.target.w/2
+       self.bullet_ty=self.target.y+self.target.h/2
        -- normalize dx,dy
        local dx=self.bullet_tx-self.bullet_x
        local dy=self.bullet_ty-self.bullet_y
@@ -573,7 +573,7 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
        self.bullet_x,self.bullet_y,
        self.bullet_tx,self.bullet_ty) < 2 then
          --explosion
-         make_explosion(self.bullet_x+rnd(8), self.bullet_y+rnd(8))
+         make_explosion(self.bullet_x, self.bullet_y)
         --  add_particle(self.bullet_x+rnd(8), self.bullet_y+rnd(8), 2, 
         --  0,0,.1,0, 20, {7,8,9,10,7}, rnd(2)<1 and 0xa5a5.8 or 0)
          -- kill bullet/missile & do damage
