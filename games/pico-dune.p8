@@ -571,20 +571,26 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
       -- check for target
       if dist(
        self.bullet_x,self.bullet_y,
-       self.bullet_tx,self.bullet_ty) < 2 then
-         --explosion
-         make_explosion(self.bullet_x, self.bullet_y)
-        --  add_particle(self.bullet_x+rnd(8), self.bullet_y+rnd(8), 2, 
-        --  0,0,.1,0, 20, {7,8,9,10,7}, rnd(2)<1 and 0xa5a5.8 or 0)
-         -- kill bullet/missile & do damage
-         self.bullet_x=nil
-         --printh("life b4="..self.target.life)
-         self.target.life-=self.arms
-         --printh("life after="..self.target.life)
-         self.target.hit=self.fire_type --0=none, 1=bullet, 2=missile
-         --self.target.hit=1 --0=none, 1=bullet, 2=missile
-         self.target.hitby=self
-         
+       self.bullet_tx,self.bullet_ty) < 2 
+      then
+       --explosion
+       make_explosion(self.bullet_x, self.bullet_y)       
+       -- did it hit (or did unit move)?
+       if dist(
+        self.bullet_x,self.bullet_y,
+        self.target.x+self.target.w/2,
+        self.target.y+self.target.h/2) < 4 
+       then
+        printh("hit target!")
+        self.target.life-=self.arms
+        self.target.hit=self.fire_type --0=none, 1=bullet, 2=missile
+        --self.target.hit=1 --0=none, 1=bullet, 2=missile
+        self.target.hitby=self
+       else
+        printh("miss!!")
+       end
+       -- kill bullet/missile & do damage
+       self.bullet_x=nil
       end
      end
    end,
