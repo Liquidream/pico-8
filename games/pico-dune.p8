@@ -539,8 +539,11 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
          -- unit
          printh("unit death!")
          local gx,gy = flr(self.x/8), flr(self.y/8)
-         todo: need to wrap x/y pos when lower part of map!
-         printh("mspr="..mget(gx,gy))
+         --todo: need to wrap x/y pos when lower part of map!
+         --printh("b4 gx="..gx..", gy="..gy)
+         if (gy>31) gx+=64 gy-=32
+         --printh("af gx="..gx..", gy="..gy)
+         --printh("mspr("..gx..","..gy..")="..mget(gx,gy))
          if (mget(gx,gy)<9) printh("scortch!") mset(gx,gy,20) --scortch sand
          del(units,self)
         end      
