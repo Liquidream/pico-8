@@ -672,8 +672,8 @@ function _update60()  --game_update
  update_ai()  -- ai overall decision making (not individual units)
  
  -- update positions of pathfinding "blocker" objects
---if (t()%1==0) update_obj_tiles()
-if (t()%1==0 and t()%2!=0) update_obj_tiles()
+if (t()%1==0) update_obj_tiles()
+--if (t()%1==0 and t()%2!=0) update_obj_tiles()
 if (t()%1==0 and t()%2==0) update_radar_data()
  _t+=1
 end
@@ -1078,7 +1078,7 @@ end
 function is_danger_tile(unit,x,y)
 --  printh("unit: "..unit.id.." - is_danger_tile("..x..","..y..")")
  local target=units[object_tiles[x..","..y]]
- if (target!=null and target.owner!=unit.owner) do_attack(unit, target) return true
+ if (target!=null and target.owner!=unit.owner and fow[x][y]==16) do_attack(unit, target) return true
 end
 
 function move_unit_pos(unit,x,y,dist_to_keep)
