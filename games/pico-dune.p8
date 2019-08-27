@@ -469,7 +469,7 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
            self.col_cycle[self.col_cycle_pos][2])
      end
      -- rotating obj?
-     if self.r then
+     if self.r and not self.death_time then
       rspr(self.obj_spr%16*8,flr(self.obj_spr/16)*8, self.x, self.y+1, .25-self.r, 1, self.trans_col, 5)
       rspr(self.obj_spr%16*8,flr(self.obj_spr/16)*8, self.x, self.y, .25-self.r, 1, self.trans_col, flr(self.flash_count)%2==0 and 7 or nil)
      -- norm sprite
@@ -536,7 +536,7 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
      self.flash_count=max(self.flash_count-.4,1)
 
      -- check for death
-     if (self.life<=0 and self.death_time==nil) self.state=5 self.cor=nil self.death_time=t()+1 sfx(self.deathsfx, 3)
+     if (self.life<=0 and self.death_time==nil) self.state=5 self.cor=nil self.death_time=t()+(self.type==2 and 1 or .5) sfx(self.deathsfx, 3)
      if self.death_time then
       if t()>self.death_time then
         if self.type==2 then
@@ -558,7 +558,7 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
         if(selected_obj==self)selected_obj=nil
       else
         -- dying
-        if (rnd(2)<1) make_explosion(self.x+rnd(self.w),self.y+rnd(self.h))
+        if (rnd(self.type==2 and 2 or 8)<1) make_explosion(self.x+rnd(self.w),self.y+rnd(self.h))
       end
      end
 
@@ -635,7 +635,7 @@ end
 
 function make_explosion(x,y)
  add_particle(x, y, 2, 
-         0,0,.1,0, 20, {7,8,9,10,7}, rnd(2)<1 and 0xa5a5.8 or 0)
+         0,0,.1,0, 20, {5,7,10,8,9,2}, rnd(2)<1 and 0xa5a5.8 or 0)
 end
 
 function reveal_fow(object)
