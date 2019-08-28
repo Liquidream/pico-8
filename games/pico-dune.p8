@@ -468,9 +468,11 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
            self.col_cycle[self.col_cycle_pos][2])
      end
      -- rotating obj?
-     if self.r and not self.death_time then
-      rspr(self.obj_spr%16*8,flr(self.obj_spr/16)*8, self.x, self.y+1, .25-self.r, 1, self.trans_col, 5)
-      rspr(self.obj_spr%16*8,flr(self.obj_spr/16)*8, self.x, self.y, .25-self.r, 1, self.trans_col, flr(self.flash_count)%2==0 and 7 or nil)
+     if self.r then
+      if not self.death_time then
+       rspr(self.obj_spr%16*8,flr(self.obj_spr/16)*8, self.x, self.y+1, .25-self.r, 1, self.trans_col, 5)
+       rspr(self.obj_spr%16*8,flr(self.obj_spr/16)*8, self.x, self.y, .25-self.r, 1, self.trans_col, flr(self.flash_count)%2==0 and 7 or nil)
+      end
      -- norm sprite
      else      
        -- icon mode?
