@@ -469,7 +469,7 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
      end
      -- rotating obj?
      if self.r then
-      if not self.death_time then
+      if not self.death_time or self.death_time>.025  then
        rspr(self.obj_spr%16*8,flr(self.obj_spr/16)*8, self.x, self.y+1, .25-self.r, 1, self.trans_col, 5)
        rspr(self.obj_spr%16*8,flr(self.obj_spr/16)*8, self.x, self.y, .25-self.r, 1, self.trans_col, flr(self.flash_count)%2==0 and 7 or nil)
       end
@@ -537,9 +537,10 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
      self.flash_count=max(self.flash_count-.4,1)
 
      -- check for death
-     if (self.life<=0 and self.death_time==nil) self.state=5 self.cor=nil self.death_time=t()+(self.type==2 and 1 or .5) sfx(self.deathsfx, 3)
+     if (self.life<=0 and self.death_time==nil) self.state=5 self.cor=nil self.death_time=(self.type==2 and 1 or .5) sfx(self.deathsfx, 3)
      if self.death_time then
-      if t()>self.death_time then
+      self.death_time-=.025
+      if self.death_time<=0 then
         if self.type==2 then
          -- building?
          for xx=0,self.ref.w-1 do
@@ -591,7 +592,7 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
        self.bullet_tx,self.bullet_ty) < 2 
       then
        --explosion
-       make_explosion(self.bullet_x, self.bullet_y, self.fire_type)       
+       make_explosion(self.bullet_x, self.bullet_y, self.fire_type)
        -- did it hit (or did unit move)?
        if dist(
         self.bullet_x,self.bullet_y,
@@ -1075,7 +1076,7 @@ function ping(unit,x,y,func,max_dist)
 end
 
 function is_free_tile(unit,x,y)
- printh("is_free_tile("..x..","..y..")")
+ --printh("is_free_tile("..x..","..y..")")
  return not fget(mget(x,y), 0) 
    and object_tiles[x..","..y]==nil
 end
@@ -1088,11 +1089,11 @@ end
 
 function move_unit_pos(unit,x,y,dist_to_keep)
   ::restart_move_unit::
-  printh("move_unit_pos("..x..","..y..","..(dist_to_keep or "nil")..")")
+  --printh("move_unit_pos("..x..","..y..","..(dist_to_keep or "nil")..")")
   unit.path="init"   
   -- check target valid
   if not is_free_tile(nil,x,y) then   
-   printh("not free tile!")
+   --printh("not free tile!")
     -- target tile occupied
     -- move as close as possible
     x,y=ping(unit,x,y,is_free_tile)
@@ -1161,21 +1162,13 @@ function move_unit_pos(unit,x,y,dist_to_keep)
       reveal_fow(unit)
 
       -- are we close enough?
-      local d=dist(unit.x,unit.y,unit.tx*8,unit.ty*8)
-      -- printh("        dist = "..d)
-      -- printh("dist_to_keep = "..tostr(dist_to_keep))
-      if d <= (dist_to_keep or 0) then
-        -- stop now
-        --printh("stop!!! close enough!")
-        break
-      end
+      if (dist(unit.x,unit.y,unit.tx*8,unit.ty*8) <= (dist_to_keep or 0)) break -- stop now
     end
 
   end -- path nil (can happen if unit is "pinned in")
 
   -- arrived?
   unit.state=0 --idle
-  --printh("arrived!!")
 end
 
 
