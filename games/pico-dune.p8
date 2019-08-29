@@ -591,7 +591,7 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
        self.bullet_tx,self.bullet_ty) < 2 
       then
        --explosion
-       make_explosion(self.bullet_x, self.bullet_y)       
+       make_explosion(self.bullet_x, self.bullet_y, self.fire_type)       
        -- did it hit (or did unit move)?
        if dist(
         self.bullet_x,self.bullet_y,
@@ -634,9 +634,9 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
  return obj
 end
 
-function make_explosion(x,y)
+function make_explosion(x,y,size_type)
  add_particle(x, y, 2, 
-         0,0,.1,0, 20, {5,7,10,8,9,2}, rnd(2)<1 and 0xa5a5.8 or 0)
+         0,0,.1,0, size_type==1 and 5 or 30, {5,7,10,8,9,2}, rnd(2)<1 and 0xa5a5.8 or 0)
 end
 
 function reveal_fow(object)
