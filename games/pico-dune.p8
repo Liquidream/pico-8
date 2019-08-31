@@ -6,7 +6,7 @@ __lua__
 -- (with support from my patrons)
 
 -- global flags
-debug_mode=true
+debug_mode=false
 debug_collision=false
 --extcmd "rec"
 
@@ -448,10 +448,11 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
    end,
    draw=func_draw or function(self)--, x,y) 
      -- abort if off-screen
-     if self.x+self.w<camx
+     if self.type<=2
+      and (self.x+self.w<camx
        or self.x>camx+127
        or self.y+self.h<camy
-       or self.y>camy+127 
+       or self.y>camy+127)
      then
       -- don't draw, as off-screen
       return
@@ -475,7 +476,7 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
       end
      -- norm sprite
      else      
-       -- icon mode?
+       -- icon mode
        if self.type>2 then
          rectfill(self.x-1,self.y-1,self.x+16,self.y+19,0)
          -- draw health/progress
