@@ -810,6 +810,7 @@ function update_radar_data()
 
 end
 
+
 function update_obj_tiles()
  object_tiles={}
  -- (The pico-8 map is a 128x32 (or 128x64 using shared space))
@@ -820,8 +821,6 @@ end
 
 
 function update_level()
- 
-  
   -- mouse control
   mouse_x = stat(32)
   mouse_y = stat(33)
@@ -1145,18 +1144,24 @@ function move_unit_pos(unit,x,y,dist_to_keep)
       
       -- check new position/tile is still free
       if(not is_free_tile(nil,node.x,node.y)) goto restart_move_unit
-
+      
       -- move to new position      
       local scaled_speed = unit.speed or .5
       local distance = sqrt((node.x*8 - unit.x) ^ 2 + (node.y*8 - unit.y) ^ 2)
       local step_x = scaled_speed * (node.x*8 - unit.x) / distance
       local step_y = scaled_speed * (node.y*8 - unit.y) / distance 
       for i = 0, distance/scaled_speed-1 do
+        -- declare intentions (do it here so always present)
+        object_tiles[node.x..","..node.y]=unit
+
         unit.x+=step_x
         unit.y+=step_y
         yield()
       end
       unit.x,unit.y = node.x*8, node.y*8
+
+      -- update tile blocking
+      object_tiles[node.x..","..node.y]=unit
 
       -- reveal fog?
       reveal_fow(unit)
@@ -1264,6 +1269,19 @@ function draw_level()
 
  -- draw fog-of-war
  draw_fow()
+
+
+ -- debug!!!!
+--  local fx=flr(camx/8)
+--  local fy=flr(camy/8)
+--  for x=fx,fx+16 do
+--   for y=fy,fy+16 do
+--     if object_tiles[x..","..y] then
+--       spr(1,x*8,y*8)
+--     end
+--   end
+--  end
+
 end
 
 
