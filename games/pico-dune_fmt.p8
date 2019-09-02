@@ -1,7 +1,7 @@
 pico-8 cartridge // http://www.pico-8.com
 version 8
 __lua__
-a=true
+a=false
 b=false
 c=3
 d=8
@@ -319,10 +319,11 @@ ca=(self.type>2 and 16 or self.ca)-1
 }
 end,
 cj=da or function(self)
-if self.bx+self.bz<k
+if self.type<=2
+and(self.bx+self.bz<k
 or self.bx>k+127
 or self.by+self.ca<l
-or self.by>l+127
+or self.by>l+127)
 then
 return
 end
@@ -335,7 +336,7 @@ pal(self.br[self.bs][1],
 self.br[self.bs][2])
 end
 if self.eg then
-if not self.fk then
+if not self.fk or self.fk>.025 then
 fl(self.bw%16*8,flr(self.bw/16)*8,self.bx,self.by+1,.25-self.eg,1,self.fj,5)
 fl(self.bw%16*8,flr(self.bw/16)*8,self.bx,self.by,.25-self.eg,1,self.fj,flr(self.fi)%2==0 and 7 or nil)
 end
@@ -370,9 +371,10 @@ if(b) ft(self)
 end,
 fu=function(self)
 self.fi=max(self.fi-.4,1)
-if(self.dd<=0 and self.fk==nil) self.ej=5 self.dk=nil self.fk=t()+(self.type==2 and 1 or .5) sfx(self.dx,3)
+if(self.dd<=0 and self.fk==nil) self.ej=5 self.dk=nil self.fk=(self.type==2 and 1 or .5) sfx(self.dx,3)
 if self.fk then
-if t()>self.fk then
+self.fk-=.025
+if self.fk<=0 then
 if self.type==2 then
 for eb=0,self.dn.bz-1 do
 for ec=0,self.dn.ca-1 do
@@ -704,7 +706,6 @@ yield()
 end
 end
 function ds(hd,bx,by)
-printh("is_free_tile("..bx..","..by..")")
 return not fget(mget(bx,by),0)
 and ba[bx..","..by]==nil
 end
@@ -714,10 +715,8 @@ if(en!=ih and en.cw!=hd.cw and gk[bx][by]==16) hu(hd,en) return true
 end
 function hy(hd,bx,by,ii)
 ::restart_move_unit::
-printh("move_unit_pos("..bx..","..by..","..(ii or"nil")..")")
 hd.ij="init"
 if not ds(nil,bx,by) then
-printh("not free tile!")
 bx,by=dr(hd,bx,by,ds)
 end
 hd.hv=bx
@@ -752,16 +751,15 @@ local iu=sqrt((iq.bx*8-hd.bx)^2+(iq.by*8-hd.by)^2)
 local iv=is*(iq.bx*8-hd.bx)/iu
 local iw=is*(iq.by*8-hd.by)/iu
 for cl=0,iu/is-1 do
+ba[iq.bx..","..iq.by]=hd
 hd.bx+=iv
 hd.by+=iw
 yield()
 end
 hd.bx,hd.by=iq.bx*8,iq.by*8
+ba[iq.bx..","..iq.by]=hd
 eu(hd)
-local er=dt(hd.bx,hd.by,hd.hv*8,hd.hw*8)
-if er<=(ii or 0) then
-break
-end
+if(dt(hd.bx,hd.by,hd.hv*8,hd.hw*8)<=(ii or 0)) break
 end
 end
 hd.ej=0
