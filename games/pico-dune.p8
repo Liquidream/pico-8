@@ -5,6 +5,10 @@ __lua__
 -- by paul nicholas
 -- (with support from my patrons)
 
+-- change col 15 (skin) to new light yellow (col 7)
+--https://www.lexaloffle.com/bbs/?tid=35254
+--poke(0x5f1f,128+7)
+
 -- global flags
 debug_mode=true
 debug_collision=false
