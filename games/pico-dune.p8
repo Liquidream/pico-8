@@ -563,7 +563,7 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
          --printh("unit death!")
          local gx,gy = flr(self.x/8), flr(self.y/8)
          if (gy>31) gx+=64 gy-=32
-         if (mget(gx,gy)<9) mset(gx,gy,20) --scortch sand
+         if (wrap_mget(gx,gy)<9) mset(gx,gy,20) --scortch sand
          del(units,self)
         end      
         if(selected_obj==self)selected_obj=nil
@@ -879,7 +879,7 @@ function update_level()
 end
 
 function is_spice_tile(x,y)
-  local val=mget(x,y)
+  local val=wrap_mget(x,y)
   return val>=2 and val<=8
 end
 
@@ -997,8 +997,8 @@ function do_guard(unit, start_state)
       local ypos=flr(self.y/8)
       for yy=-1,1 do
        for xx=-1,1 do
-        val=mget(xpos+xx,ypos+yy)        
-        mset(xpos+xx,ypos+yy,
+        val=wrap_mget(xpos+xx,ypos+yy)        
+        wrap_mset(xpos+xx,ypos+yy,
         (xx==0 and yy==0) and 0 or ((val>1 and val<8) and 8 or val)
        )
        end
@@ -1086,6 +1086,11 @@ end
 function wrap_fget(mx,my,flg)
  if(my>31)mx+=64 my-=32
  return fget(mget(mx,my), flg or 0)
+end
+
+function wrap_mget(mx,my)
+ if(my>31)mx+=64 my-=32
+ return mget(mx,my)
 end
 
 function wrap_mset(mx,my,value)
@@ -1259,16 +1264,16 @@ function draw_level()
 --  end
 
  -- buildings
- -- for _,building in pairs(buildings) do 
- --  building:update()
- --  building:draw()
- --  -- draw selected reticule
- --  if (building == selected_obj) then 
- --   rect(selected_obj.x, selected_obj.y, 
- --        selected_obj.x+selected_obj.w-1, selected_obj.y+selected_obj.h-1, 
- --        7)
- --  end
- -- end
+ for _,building in pairs(buildings) do 
+  building:update()
+  building:draw()
+  -- draw selected reticule
+  if (building == selected_obj) then 
+   rect(selected_obj.x, selected_obj.y, 
+        selected_obj.x+selected_obj.w-1, selected_obj.y+selected_obj.h-1, 
+        7)
+  end
+ end
  
  -- draw units
  palt(11,true)
@@ -1408,10 +1413,10 @@ function draw_ui()
     for yy=-1,h do
      if xx==-1 or xx==w or yy==-1 or yy==h then     
       -- check edges
-      if (mget(mxpos+xx, mypos+yy)>=63) placement_pos_ok=true
+      if (wrap_mget(mxpos+xx, mypos+yy)>=63) placement_pos_ok=true
      else
       -- check inner
-      local val=mget(mxpos+xx, mypos+yy)
+      local val=wrap_mget(mxpos+xx, mypos+yy)
       if (val>=9 and val<=15) placement_damage=true
       if (object_tiles[mxpos+xx..","..mypos+yy] or val==0 or val<8 or val>15) placement_inner_invalid=true
      end
@@ -2433,7 +2438,7 @@ __gff__
 0000000000000000000001010000000000000000000000000000010100000000000000000000000001010000000000000000000000000000010100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 __map__
 0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000012121212120000000000000000000000000016161600000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000161616
-0000000000000000000000000000000016000000000000000000000000000000000000000000000000121200000000121200000000000000000000000000000016020202020202020202020202020202020202020200000000000000000000000000000000000000000000000000000000000000000000000000000000000016
+0000000000000000000000000000000016000000000000000000000000000000000000000000000000121200000000121200000000000000000000000000000016030303030303030303030303030303030303030300000000000000000000000000000000000000000000000000000000000000000000000000000000000016
 1212000000000000001616160000003300001200000008030300000000000000000000000000000000001212121212120000000000000000000003030300000016000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000016
 12121200000000161616163d4b0a000012120000000203030303000000000000000000000000000000000000000012000000000000000000000303030303030000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 1212121212120000161616000a0a001200020502030303030303000000000000000000000000000000000000000000000000030303030303030303030303030000000012121212000000000000000000120012000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
