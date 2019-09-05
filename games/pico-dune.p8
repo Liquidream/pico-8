@@ -1083,10 +1083,10 @@ function ping(unit,x,y,func,max_dist)
   end  
 end
 
-function wrap_fget(mx,my,flg)
- if(my>31)mx+=64 my-=32
- return fget(mget(mx,my), flg or 0)
-end
+-- function wrap_fget(mx,my,flg)
+--  if(my>31)mx+=64 my-=32
+--  return fget(mget(mx,my), flg or 0)
+-- end
 
 function wrap_mget(mx,my)
  if(my>31)mx+=64 my-=32
@@ -1099,7 +1099,7 @@ function wrap_mset(mx,my,value)
 end
 
 function is_free_tile(unit,x,y)
- return not wrap_fget(x,y)
+ return not fget(wrap_mget(x,y),0)
    and object_tiles[x..","..y]==nil
 end
 
@@ -1940,7 +1940,7 @@ end
 -- make it cost a bit more
 function flag_cost(from, node, graph)
  -- get the standard cost of the tile (grass vs. mud/water) 
- local base_cost = wrap_fget(node.x, node.y, 1) and 4 or 1
+ local base_cost = fget(wrap_mget(node.x, node.y), 1) and 4 or 1
  --local base_cost = fget(mget(node.x, node.y), 1) and 4 or 1
 
  -- make diagonals cost a little more than normal tiles
@@ -1966,7 +1966,7 @@ end
 -- (if flag zero is unset at this position)
 function maybe_add(nx, ny, ntable)
  if (
-  not wrap_fget(nx,ny)
+  not fget(wrap_mget(nx,ny),0)
   and object_tiles[nx..","..ny]==nil
   and nx>=0
   and ny>=0
