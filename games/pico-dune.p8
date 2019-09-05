@@ -920,7 +920,7 @@ function do_guard(unit, start_state)
         -- look for nearest spice
         ping(self,tx,ty,
           function(unit,x,y)
-            if is_spice_tile(x,y) then
+            if is_spice_tile(x,y) and rnd(10)<1 then
             --found spice
             sx,sy=x,y
             return true
