@@ -372,7 +372,7 @@ function m_map_obj_tree(objref, x,y, last_fact, owner)
     local slabs=(objref.id==2 or objref.id==3)    
     for xx=0,objref.w-1 do
       for yy=0,objref.h-1 do
-        mset(xpos+xx, ypos+yy, slabs and 63 or 95)
+       wrap_mset(xpos+xx, ypos+yy, slabs and 63 or 95)
       end
     end
     if (not slabs) add(buildings,newobj)
@@ -1088,12 +1088,12 @@ function wrap_fget(mx,my,flg)
  return fget(mget(mx,my), flg or 0)
 end
 
+function wrap_mset(mx,my,value)
+ if(my>31)mx+=64 my-=32
+ mset(mx,my,value)
+end
+
 function is_free_tile(unit,x,y)
- -- mx=x
- -- my=y
- -- if(y>=31)mx+=64 my-=32
- --printh("is_free_tile("..mx..","..my..")")
- --return not fget(mget(mx,my), 0) 
  return not wrap_fget(x,y)
    and object_tiles[x..","..y]==nil
 end
