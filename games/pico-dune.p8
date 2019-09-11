@@ -163,7 +163,7 @@ obj_data=[[id|name|obj_spr|ico_spr|map_spr|type|w|h|trans_col|parent_id|req_id|r
 24|cOMBAT tANK|51|196||1|1|1|11|12|7|4||300||38|200|0.25|4|1||||tHE cOMBAT tANK IS A MEDIUM ARMOURED TANK, FIRES HIGH-EXPLOSIVE ROUNDS.||||
 25|sIEGE tANK|50|198||1|1|1|11|12|7|6||600||45|300|0.2|5|1||||tHE mISSILE tANK IS A MEDIUM ARMOURED TANK, WHICH FIRES MISSILES. lONG-RANGE, BUT INACCURATE.||||
 26|rOCKET lAUNCHER|53|202||1|1|1|11|12|7|5||450||112|100|0.3|9|2||||tHE sIEGE tANK IS A HEAVY ARMOURED TANK, WHICH HAS DUAL CANNONS, BUT IS SLOW.||||
-27|hARVESTER|49|192||1|1|1|11|12||2||300||0|150|0.3|0|||||tHE hARVESTER SEPARATES SPICE FROM THE SAND & RETURNS RAW SPICE TO THE rEFINERY FOR PROCESSING.||||
+27|hARVESTER|49|192||1|1|1|11|12||2||300||0|150|0.1|0|||||tHE hARVESTER SEPARATES SPICE FROM THE SAND & RETURNS RAW SPICE TO THE rEFINERY FOR PROCESSING.||||
 28|cARRYALL||238||1|1|1|11|13|13|5||800||0|100|2|0|||||tHE cARRYALL IS A LIGHTLY ARMOURED AIRCRAFT WITH NO WEAPONS. mAINLY USED TO LIFT+TRANSPORT hARVESTERS.||||
 29|oRNITHOPTER||||1|1|1|11|13|13|7|AO|600||75|5|1.5|5|2||||tHE oRNITHOPTER IS A LIGHTLY ARMOURED AIRCRAFT THAT FIRES ROCKETS. hIGHLY MANOUVERABLE + FASTED AIRCRAFT ON dUNE.||||
 30|mcv||||1|2|1|11|12|7|4||900||0|150|0|0|||||tHE mcv (mOBILE cONSTRUCTION vEHICLE) SCOUT VEHICLE IS USED TO FIND AND DEPLOY NEW BASE LOCATIONS.||||
@@ -905,7 +905,7 @@ function do_guard(unit, start_state)
    -- if a harvester....
    if self.id==27 then
     if self.state==0 or self.state==7 or self.state==9 then
-     if self.capacity<=3000 
+     if self.capacity<=1500 
       and self.state!=7 and self.state!=9 then 
       
       local sx,sy
@@ -952,7 +952,7 @@ function do_guard(unit, start_state)
         -- if selected, deselect
         if (selected_obj==self) selected_obj=nil
         -- only make money if human player
-        if (self.capacity%4==0 and self.owner==1) p_credits+=shr(1,16) sfx(63) --p_credits+=1 
+        if (self.capacity%4==0 and self.owner==1) p_credits+=shr(2,16) sfx(63) --p_credits+=1 
         yield()
        end
        self.capacity=0
@@ -964,7 +964,7 @@ function do_guard(unit, start_state)
      end -- check factory busy
 
     -- are we full?
-    elseif self.capacity >= 3000 
+    elseif self.capacity >= 1500 
      and self.state!=7 then
       --printh("capacity!!!!")
       -- return to refinery when full
@@ -985,8 +985,8 @@ function do_guard(unit, start_state)
      
      -- update spice tile state
      spice_tiles[unit:getTilePosIndex()] = (spice_tiles[unit:getTilePosIndex()] or 10000)-1
-     --harvester takes about 110 secs to fill!
-     self.capacity = (self.capacity or 0)+1
+     --harvester should take about 110 secs to fill!
+     self.capacity = (self.capacity or 0)+.5
      -- done current spot?
      if spice_tiles[unit:getTilePosIndex()] <= 0 then      
       -- (clear spice tile + depleat surrounding tiles)
