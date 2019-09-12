@@ -7,7 +7,7 @@ __lua__
 
 -- global flags
 debug_mode=true
-debug_collision=false
+debug_collision=true
 --extcmd "rec"
 
 -- data flags (eventually pulled from cartdata)
@@ -127,7 +127,9 @@ _g.draw_refinery=function(self)
   end
   spr(self.obj_spr, self.x, self.y, self.w/8, self.h/8)
 end
-
+_g.repair_click=function(self)
+ printh("repair_click!!!")
+end
 
 
 
@@ -177,9 +179,8 @@ obj_data=[[id|name|obj_spr|ico_spr|map_spr|type|w|h|trans_col|parent_id|req_id|r
 ]]..
 -- other
 [[38|sARDAUKAR||||1|1|1|11|nil|nil|4||0||5|110|0.1|1|||||tHE sARDULAR ARE THE eMPEROR'S ELITE TROOPS. WITH SUPERIOR FIREPOWER AND ARMOUR.||||
-39|sANDWORM||||1|1|1|11|nil|nil|3||0||300|1000|0.35|0|30||||tHE sAND wORMS ARE INDIGEONOUS TO dUNE. aTTRACTED BY VIBRATIONS, ALMOST IMPOSSIBLE TO DESTROY, WILL CONSUME ANYTHING THAT MOVES.||||]]
-
-
+39|sANDWORM||||9|1|1|11|nil|nil|3||0||300|1000|0.35|0|30||||tHE sAND wORMS ARE INDIGEONOUS TO dUNE. aTTRACTED BY VIBRATIONS, ALMOST IMPOSSIBLE TO DESTROY, WILL CONSUME ANYTHING THAT MOVES.||||
+80|rEPAIR|47|47||5|1|1|11|nil|nil|||||||||||||||||repair_click]]
 
 
 
@@ -336,6 +337,9 @@ function m_map_obj_tree(objref, x,y, last_fact, owner)
     newobj.build_obj=newobj.build_objs[1]
     end
   end
+  -- repair icon (obj)
+  newobj.repair_obj=m_obj_from_ref(obj_data[80], 109,-20, 5, newobj, nil, nil, _g.repair_click) 
+
 
   -- player-controlled or ai?
   -- note: this whole thing may not be needed 
@@ -429,7 +433,7 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
   x=x,
   y=y,
   z=1, -- defaults
-  type=in_type, -- 1=unit, 2=structure, 3=obj_status_icon, 4=build_icon, 9=worm
+  type=in_type, -- 1=unit, 2=structure, 3=obj_status_icon, 4=build_icon, 5=small_icon, 9=worm
   parent=parent,
   func_onclick=func_onclick,
   w=_w,
@@ -481,7 +485,7 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
      -- norm sprite
      else      
        -- icon mode
-       if self.type>2 then
+       if self.type>2 and self.type<5 then        
          rectfill(self.x-1,self.y-1,self.x+16,self.y+19,0)
          -- draw health/progress
          local this=self.type==4 and self or self.parent
@@ -493,7 +497,9 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
        -- non-rotational sprite
        if self.type>2 then 
         -- icon
-        spr(self.ico_spr, self.x, self.y, 2, 2)
+        spr(self.ico_spr, self.x, self.y,
+         self.type==5 and 1 or 2, 
+         self.type==5 and 1 or 2)
        else
         -- building
         spr(self.obj_spr, self.x, self.y, self.w/8, self.h/8)
@@ -1368,9 +1374,13 @@ function draw_ui()
   selected_obj.ico_obj:setpos(109,20)
   selected_obj.ico_obj:draw()--109,20)  
   if selected_obj.build_obj and selected_obj.owner==1 then
-    selected_obj.build_obj:setpos(109,44) 
-    selected_obj.build_obj:draw()--109,44)  
-   end
+   selected_obj.build_obj:setpos(109,44) 
+   selected_obj.build_obj:draw()--109,44)  
+  end
+  if selected_obj.repair_obj and selected_obj.owner==1 then
+   selected_obj.repair_obj:setpos(109,8) 
+   selected_obj.repair_obj:draw()
+  end
  end
  
 --  if selected_obj and selected_obj==2 then
@@ -1595,7 +1605,7 @@ function collisions()
    if (selected_obj.ico_obj and not show_menu) check_hover_select(selected_obj.ico_obj)   
    foreach(selected_obj.build_objs, check_hover_select)   
    foreach(ui_controls, check_hover_select)
-   --if (selected_obj.build_obj) check_hover_select(selected_obj.build_obj)
+   check_hover_select(selected_obj.repair_obj)
    ui_collision_mode=false
  end
  -- check map collisions
@@ -2189,14 +2199,14 @@ bbbbbbbbfffffffffff799ffb89aa998f6d55d6ff888888fffffffffd55555555544444444455555
 bbbbbbbbffffffffff799fff899aa98bf66dd66ff888888ffff6ffff55d55544444444444444455555244444444444444444442555d515100022222000015555
 77bbbb77ffffffffff79ffff88999988ff6666fff888888fffffffff155554444444444444444515155244444444444444444415155555151100000111155515
 b7bbbb7bfffffffff7ffffffb88898bbf9ffffffffffffffffffffff555524444444444444444455555244444444444444444255555d555555111115555d5555
-000000000bbbbbb000000000bbbbb1b1000000001b1bbbbb00000000bbbbbbbb0000000001bbbb1010000000bbbbbbb0000000010bbbbbbb00000000ffffffff
-001bb1000bbbbbb0bbb1b000bbb1bb000000bbbb00bb1bbb1b1b1b1bbbbbbbbb000000000bbbbbb0b0000000bbbbb1000000000b00bbbbbbb000000bffffffff
-01bbbb100bbbbbb0bbbb1b00bb1b0000000b1bbb0001b1bbbbbbbbbbbbbbbbbb00b0b00001bbbb101b000000bbbb1b00000000b1001bbbbbb1b1b1bbffffffff
-0bbbbbb00b1b1b10bbb1b000b1b0000000b1bbbb00000b1bbbbbbbbbbbbbbbbb0b1b1b000bbbbbb0bb000000bbbbb100000001bb00b1bbbbbb1b1bbbffffffff
-0bbbbbb000b1b1b0bbbb1b00bb000000000b1bbb000001bbbbbbbbbbbbb1b1bb01b1b1b001bbbb10b1b00000bbbb1b0000000b1b001bbbbbbbbbbbbbffffffff
-01bbbb10000b0b00bbb1b0001b00000000b1bbbb000000b1bbbbbbbbbb1b1b1b0bbbbbb00bbbbbb0bb1b0000bbbbb1000001b1bb00b1bbbbbbbbbbbbffffffff
-001bb10000000000bbbb0000b0000000000b1bbb0000000b1b1b1b1bb000000b0bbbbbb001bbbb10bbb1bb00bbbbbb0000bb1bbb001bbbbbbbbbbbbbffffffff
-0000000000000000bbb0bbbb10000000000000000000000100000000000000000bbbbbb00bbbbbb0bbbbb1b1bbbbbbb01b1bbbbb0bbbbbbbbbbbbbbbffffffff
+000000000bbbbbb000000000bbbbb1b1000000001b1bbbbb00000000bbbbbbbb0000000001bbbb1010000000bbbbbbb0000000010bbbbbbb00000000bbbbb57b
+001bb1000bbbbbb0bbb1b000bbb1bb000000bbbb00bb1bbb1b1b1b1bbbbbbbbb000000000bbbbbb0b0000000bbbbb1000000000b00bbbbbbb000000bbbbbb7b1
+01bbbb100bbbbbb0bbbb1b00bb1b0000000b1bbb0001b1bbbbbbbbbbbbbbbbbb00b0b00001bbbb101b000000bbbb1b00000000b1001bbbbbb1b1b1bbbbbb5775
+0bbbbbb00b1b1b10bbb1b000b1b0000000b1bbbb00000b1bbbbbbbbbbbbbbbbb0b1b1b000bbbbbb0bb000000bbbbb100000001bb00b1bbbbbb1b1bbbbbb575bb
+0bbbbbb000b1b1b0bbbb1b00bb000000000b1bbb000001bbbbbbbbbbbbb1b1bb01b1b1b001bbbb10b1b00000bbbb1b0000000b1b001bbbbbbbbbbbbbbb575bbb
+01bbbb10000b0b00bbb1b0001b00000000b1bbbb000000b1bbbbbbbbbb1b1b1b0bbbbbb00bbbbbb0bb1b0000bbbbb1000001b1bb00b1bbbbbbbbbbbb5775bbbb
+001bb10000000000bbbb0000b0000000000b1bbb0000000b1b1b1b1bb000000b0bbbbbb001bbbb10bbb1bb00bbbbbb0000bb1bbb001bbbbbbbbbbbbb1b7bbbbb
+0000000000000000bbb0bbbb10000000000000000000000100000000000000000bbbbbb00bbbbbb0bbbbb1b1bbbbbbb01b1bbbbb0bbbbbbbbbbbbbbbb75bbbbb
 ffffffffbbeeeebbb0cddc0bbbbbbbbbbecccebbbbbbbbbbbbbbbbbbbbbbbbbbffffffffffffffffffffffffbbb76bbbbbb76bbbb6bbb6bbb6bbb6bbdddddddd
 ffffffffb0cccc0bbed77debb6cdc6bb0ccccc0bb6ccc6bbb0ece0bbb0eee0bbffffffffffffffffffffffffbbb76bbbbbb76bbbb8bbb8bbb8bbb8bbd5555555
 ffffffffb0cccc0bbc6776cbb7d7d7bb0cecec0bbcdddcbbb0d6d0bbb0d6d0bbfd5ff5ffffffffffffffffffbbbddbbbb7b55b7bb2bbb2bbb2bbb2bbd5555555
