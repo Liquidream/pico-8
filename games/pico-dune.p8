@@ -860,15 +860,16 @@ function update_level()
   -- lock cam to map
   camx=mid(camx,384)  --896
   camy=mid(camy,384)  --128
- end
-
- update_coroutines()
-
+  
+   update_coroutines()  
+   
+   update_particles()
+   
+   ticks+=1
+  end
+ 
  collisions()
 
- update_particles()
-
- ticks+=1
  last_mouse_btn = mouse_btn
  last_selected_obj = selected_obj
  last_selected_subobj = selected_subobj
@@ -1262,7 +1263,7 @@ function draw_level()
 
  -- buildings
  for _,building in pairs(buildings) do 
-  building:update()
+  if (not show_menu) building:update()
   building:draw()
   -- draw selected reticule
   if (building == selected_obj) then 
@@ -1275,7 +1276,7 @@ function draw_level()
  -- draw units
  palt(11,true)
  for _,unit in pairs(units) do
-  unit:update()
+  if (not show_menu) unit:update()
   unit:draw()
   -- draw selected reticule
   if (unit == selected_obj) then   
