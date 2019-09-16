@@ -7,7 +7,7 @@ __lua__
 
 -- global flags
 debug_mode=true
-debug_collision=false
+debug_collision=true
 --extcmd "rec"
 
 -- data flags (eventually pulled from cartdata)
@@ -450,8 +450,8 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
     return {
      x=self.x,
      y=self.y,
-     w=(self.type>2 and 16 or self.w)-1,
-     h=(self.type>2 and 16 or self.h)-1
+     w=(self.type>2 and self.type<5 and 16 or self.w)-1,
+     h=(self.type>2 and self.type<5 and 16 or self.h)-1
     }
    end,
    draw=func_draw or function(self)--, x,y) 
@@ -1378,7 +1378,7 @@ function draw_ui()
    selected_obj.build_obj:draw()--109,44)  
   end
   if selected_obj.repair_obj and selected_obj.owner==1 then
-   selected_obj.repair_obj:setpos(109,8) 
+   selected_obj.repair_obj:setpos(113,12) 
    selected_obj.repair_obj:draw()
   end
  end
@@ -1605,7 +1605,7 @@ function collisions()
    if (selected_obj.ico_obj and not show_menu) check_hover_select(selected_obj.ico_obj)   
    foreach(selected_obj.build_objs, check_hover_select)   
    foreach(ui_controls, check_hover_select)
-   check_hover_select(selected_obj.repair_obj)
+   if (selected_obj.repair_obj) check_hover_select(selected_obj.repair_obj)
    ui_collision_mode=false
  end
  -- check map collisions
@@ -2199,14 +2199,14 @@ bbbbbbbbfffffffffff799ffb89aa998f6d55d6ff888888fffffffffd55555555544444444455555
 bbbbbbbbffffffffff799fff899aa98bf66dd66ff888888ffff6ffff55d55544444444444444455555244444444444444444442555d515100022222000015555
 77bbbb77ffffffffff79ffff88999988ff6666fff888888fffffffff155554444444444444444515155244444444444444444415155555151100000111155515
 b7bbbb7bfffffffff7ffffffb88898bbf9ffffffffffffffffffffff555524444444444444444455555244444444444444444255555d555555111115555d5555
-000000000bbbbbb000000000bbbbb1b1000000001b1bbbbb00000000bbbbbbbb0000000001bbbb1010000000bbbbbbb0000000010bbbbbbb00000000bbbbb57b
-001bb1000bbbbbb0bbb1b000bbb1bb000000bbbb00bb1bbb1b1b1b1bbbbbbbbb000000000bbbbbb0b0000000bbbbb1000000000b00bbbbbbb000000bbbbbb7b1
-01bbbb100bbbbbb0bbbb1b00bb1b0000000b1bbb0001b1bbbbbbbbbbbbbbbbbb00b0b00001bbbb101b000000bbbb1b00000000b1001bbbbbb1b1b1bbbbbb5775
-0bbbbbb00b1b1b10bbb1b000b1b0000000b1bbbb00000b1bbbbbbbbbbbbbbbbb0b1b1b000bbbbbb0bb000000bbbbb100000001bb00b1bbbbbb1b1bbbbbb575bb
-0bbbbbb000b1b1b0bbbb1b00bb000000000b1bbb000001bbbbbbbbbbbbb1b1bb01b1b1b001bbbb10b1b00000bbbb1b0000000b1b001bbbbbbbbbbbbbbb575bbb
-01bbbb10000b0b00bbb1b0001b00000000b1bbbb000000b1bbbbbbbbbb1b1b1b0bbbbbb00bbbbbb0bb1b0000bbbbb1000001b1bb00b1bbbbbbbbbbbb5775bbbb
-001bb10000000000bbbb0000b0000000000b1bbb0000000b1b1b1b1bb000000b0bbbbbb001bbbb10bbb1bb00bbbbbb0000bb1bbb001bbbbbbbbbbbbb1b7bbbbb
-0000000000000000bbb0bbbb10000000000000000000000100000000000000000bbbbbb00bbbbbb0bbbbb1b1bbbbbbb01b1bbbbb0bbbbbbbbbbbbbbbb75bbbbb
+000000000bbbbbb000000000bbbbb1b1000000001b1bbbbb00000000bbbbbbbb0000000001bbbb1010000000bbbbbbb0000000010bbbbbbb00000000bbbbbbbb
+001bb1000bbbbbb0bbb1b000bbb1bb000000bbbb00bb1bbb1b1b1b1bbbbbbbbb000000000bbbbbb0b0000000bbbbb1000000000b00bbbbbbb000000bbbbbbbbb
+01bbbb100bbbbbb0bbbb1b00bb1b0000000b1bbb0001b1bbbbbbbbbbbbbbbbbb00b0b00001bbbb101b000000bbbb1b00000000b1001bbbbbb1b1b1bbbbbbbbbb
+0bbbbbb00b1b1b10bbb1b000b1b0000000b1bbbb00000b1bbbbbbbbbbbbbbbbb0b1b1b000bbbbbb0bb000000bbbbb100000001bb00b1bbbbbb1b1bbbbbbbbbbb
+0bbbbbb000b1b1b0bbbb1b00bb000000000b1bbb000001bbbbbbbbbbbbb1b1bb01b1b1b001bbbb10b1b00000bbbb1b0000000b1b001bbbbbbbbbbbbbb77bbb77
+01bbbb10000b0b00bbb1b0001b00000000b1bbbb000000b1bbbbbbbbbb1b1b1b0bbbbbb00bbbbbb0bb1b0000bbbbb1000001b1bb00b1bbbbbbbbbbbbbb77777b
+001bb10000000000bbbb0000b0000000000b1bbb0000000b1b1b1b1bb000000b0bbbbbb001bbbb10bbb1bb00bbbbbb0000bb1bbb001bbbbbbbbbbbbbb77bbb77
+0000000000000000bbb0bbbb10000000000000000000000100000000000000000bbbbbb00bbbbbb0bbbbb1b1bbbbbbb01b1bbbbb0bbbbbbbbbbbbbbbbbbbbbbb
 ffffffffbbeeeebbb0cddc0bbbbbbbbbbecccebbbbbbbbbbbbbbbbbbbbbbbbbbffffffffffffffffffffffffbbb76bbbbbb76bbbb6bbb6bbb6bbb6bbdddddddd
 ffffffffb0cccc0bbed77debb6cdc6bb0ccccc0bb6ccc6bbb0ece0bbb0eee0bbffffffffffffffffffffffffbbb76bbbbbb76bbbb8bbb8bbb8bbb8bbd5555555
 ffffffffb0cccc0bbc6776cbb7d7d7bb0cecec0bbcdddcbbb0d6d0bbb0d6d0bbfd5ff5ffffffffffffffffffbbbddbbbb7b55b7bb2bbb2bbb2bbb2bbd5555555
