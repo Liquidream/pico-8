@@ -1378,7 +1378,7 @@ function draw_ui()
    selected_obj.build_obj:draw()--109,44)  
   end
   if selected_obj.repair_obj and selected_obj.owner==1 then
-   selected_obj.repair_obj:setpos(113,12) 
+   selected_obj.repair_obj:setpos(117,28) 
    selected_obj.repair_obj:draw()
   end
  end
@@ -1602,10 +1602,10 @@ function collisions()
  -- selected obj ui collision
  if selected_obj then
    ui_collision_mode=true
-   if (selected_obj.ico_obj and not show_menu) check_hover_select(selected_obj.ico_obj)   
+   if (selected_obj.repair_obj) check_hover_select(selected_obj.repair_obj)
+   if (selected_obj.ico_obj and not show_menu and not clickedsomething) check_hover_select(selected_obj.ico_obj)   
    foreach(selected_obj.build_objs, check_hover_select)   
    foreach(ui_controls, check_hover_select)
-   if (selected_obj.repair_obj) check_hover_select(selected_obj.repair_obj)
    ui_collision_mode=false
  end
  -- check map collisions
