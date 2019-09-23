@@ -636,7 +636,10 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
      if self.repairing then
       printh(t().." repairing")
       if self.life<self.ref.hitpoint then
-       self.life+=.1 p_credits-=shr(1,16) sfx(63)
+       self.life+=.1 
+       #need to find a way to repair slow and cost a few credits
+       p_credits-=shr(1,16) sfx(63)
+       printh("self.life = "..self.life)
       else
        self.repairing = false
       end
