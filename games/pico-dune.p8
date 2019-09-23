@@ -137,7 +137,7 @@ _g.draw_repair=function(self)
 end
 _g.repair_click=function(self)
  printh("repair_click!!!") 
- self.parent.repairing = not self.parent.repairing
+ if (self.parent.life<self.parent.ref.hitpoint) self.parent.repairing = not self.parent.repairing
 end
 
 
@@ -634,8 +634,12 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
 
      -- update repairs?
      if self.repairing then
-      printh("repairing")
-      if (self.life<self.ref.hitpoint) self.life+=.1 p_credits-=shr(1,16) sfx(63)
+      printh(t().." repairing")
+      if self.life<self.ref.hitpoint then
+       self.life+=.1 p_credits-=shr(1,16) sfx(63)
+      else
+       self.repairing = false
+      end
      end
    end,
 
@@ -1392,7 +1396,8 @@ function draw_ui()
    selected_obj.build_obj:setpos(109,44) 
    selected_obj.build_obj:draw()--109,44)  
   end
-  if selected_obj.repair_obj and selected_obj.owner==1 then
+  if selected_obj.life<selected_obj.ref.hitpoint 
+  and selected_obj.repair_obj and selected_obj.owner==1 then
    selected_obj.repair_obj:setpos(117,28) 
    selected_obj.repair_obj:draw()
   end
