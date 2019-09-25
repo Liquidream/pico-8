@@ -16,6 +16,7 @@ p_col1=8
 p_col2=2
 
 p_credits=0
+p_credits+=shr(135,16)
 --p_credits+=shr(2335,16)
 --p_credits=2335
 
@@ -324,7 +325,7 @@ function m_map_obj_tree(objref, x,y, last_fact, owner)
           self.spent=0
           while self.spent<self.cost do
             self.buildstep+=1
-            if (self.buildstep>3)self.buildstep=0 p_credits-=shr(1,16) sfx(63) self.spent+=1 --p_credits-=1
+            if (self.buildstep>3 and transact(-1))self.buildstep=0 self.spent+=1 --p_credits-=shr(1,16) sfx(63)
             self.life=(self.spent/self.cost)*100
             yield()
           end
@@ -637,8 +638,9 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
       printh(t().." repairing")
       if self.life<self.ref.hitpoint then
        self.life+=.1 
-       #need to find a way to repair slow and cost a few credits
-       p_credits-=shr(1,16) sfx(63)
+       --#need to find a way to repair slow and cost a few credits
+       transact(-1)
+       --p_credits-=shr(1,16) sfx(63)
        printh("self.life = "..self.life)
       else
        self.repairing = false
@@ -666,6 +668,13 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
  if (func_init) func_init(obj)
 
  return obj
+end
+
+function transact(amount)
+ if (getscoretext(p_credits)+amount<0) return false
+ p_credits+=(sgn(amount)*shr(1,16))
+ sfx(63)
+ return true
 end
 
 function make_explosion(x,y,size_type)
