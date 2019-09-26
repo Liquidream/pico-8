@@ -17,8 +17,6 @@ p_col2=2
 
 p_credits=0
 p_credits+=shr(135,16)
---p_credits+=shr(2335,16)
---p_credits=2335
 
 ai_faction=1
 ai_col1=12
@@ -672,7 +670,7 @@ end
 
 function transact(amount)
  if (getscoretext(p_credits)+amount<0) return false
- p_credits+=(sgn(amount)*shr(1,16))
+ p_credits+=(sgn(amount)*shr(abs(amount),16))
  sfx(63)
  return true
 end
@@ -990,7 +988,8 @@ function do_guard(unit, start_state)
         -- if selected, deselect
         if (selected_obj==self) selected_obj=nil
         -- only make money if human player
-        if (self.capacity%4==0 and self.owner==1) p_credits+=shr(2,16) sfx(63) --p_credits+=1 
+        if (self.capacity%4==0 and self.owner==1) transact(2) sfx(63)
+        --if (self.capacity%4==0 and self.owner==1) p_credits+=shr(2,16) sfx(63)
         yield()
        end
        self.capacity=0
@@ -1415,20 +1414,9 @@ function draw_ui()
   end
  end
  
---  if selected_obj and selected_obj==2 then
---   selected_obj:draw(109,20,true)  
---  end
- 
- -- radar 
---  rectfill(94, 94, 125, 125, 0)
---  rect(94, 94, 125, 125, 5)
-
  -- score
- --score += shr(15000,16)
  strnum=getscoretext(p_credits) 
  printo(sub("000000", #strnum+1)..strnum, 103,2, 7)
- --printo("00"..getscoretext(p_credits), 103,2, 7)
- --printo("00"..flr(p_credits), 103,2, 7)
  
  -- placement?
  if selected_obj 
