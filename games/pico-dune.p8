@@ -135,7 +135,8 @@ _g.draw_repair=function(self)
  pal()
 end
 _g.repair_click=function(self)
- printh("repair_click!!!") 
+ --printh("repair_click!!!")
+ self.parent.repairstep=0
  if (self.parent.life<self.parent.ref.hitpoint) self.parent.repairing = not self.parent.repairing
 end
 
@@ -316,7 +317,6 @@ function m_map_obj_tree(objref, x,y, last_fact, owner)
         selected_obj=self
       else
         --auto build
-        self.build_step=5/self.cost
         self.cor=cocreate(function(self)        
           -- build object
           self.buildstep=0
@@ -498,8 +498,8 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
          -- draw health/progress
          local this=self.type==4 and self or self.parent
          local hp=this.ref.hitpoint
-         local col = this.build_step and 12 or (this.life<hp*.33 and 8 or this.life<hp*.66 and 10 or 11)         
-         local val = this.build_step and (15*this.life/100) or (15*this.life/hp)         
+         local col = this.buildstep and 12 or (this.life<hp*.33 and 8 or this.life<hp*.66 and 10 or 11)         
+         local val = this.buildstep and (15*this.life/100) or (15*this.life/hp)         
          if (this.life>0) rectfill(self.x,self.y+17,self.x+val,self.y+18,col)
        end
        -- non-rotational sprite
@@ -634,11 +634,10 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
      -- update repairs?
      if self.repairing then
       printh(t().." repairing")
-      if self.life<self.ref.hitpoint then       
-       --#need to find a way to repair slow and cost a few credits
-       if (transact(-1)) self.life+=.1 
-       --p_credits-=shr(1,16) sfx(63)
-       printh("self.life = "..self.life)
+      self.repairstep+=1
+      if self.life<self.ref.hitpoint then      
+       self.life+=.1
+       if (self.repairstep>100 and transact(-1)) self.repairstep=0 
       else
        self.repairing = false
       end
