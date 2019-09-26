@@ -634,10 +634,9 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
      -- update repairs?
      if self.repairing then
       printh(t().." repairing")
-      if self.life<self.ref.hitpoint then
-       self.life+=.1 
+      if self.life<self.ref.hitpoint then       
        --#need to find a way to repair slow and cost a few credits
-       transact(-1)
+       if (transact(-1)) self.life+=.1 
        --p_credits-=shr(1,16) sfx(63)
        printh("self.life = "..self.life)
       else
@@ -670,7 +669,7 @@ end
 
 function transact(amount)
  if (getscoretext(p_credits)+amount<0) return false
- p_credits+=(sgn(amount)*shr(abs(amount),16))
+ p_credits+=sgn(amount)*shr(abs(amount),16)
  sfx(63)
  return true
 end
@@ -989,7 +988,6 @@ function do_guard(unit, start_state)
         if (selected_obj==self) selected_obj=nil
         -- only make money if human player
         if (self.capacity%4==0 and self.owner==1) transact(2) sfx(63)
-        --if (self.capacity%4==0 and self.owner==1) p_credits+=shr(2,16) sfx(63)
         yield()
        end
        self.capacity=0
