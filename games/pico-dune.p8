@@ -41,8 +41,6 @@ has_radar=false
 radar_frame=0
 radar_data={}
 music_state=0 -- 0=normal, 1=battle, 2=leaving_battle
-
---cor=nil
 count=0
 units={}
 object_tiles={}
@@ -135,21 +133,13 @@ _g.draw_repair=function(self)
  pal()
 end
 _g.repair_click=function(self)
---  printh("selected_obj.id == "..selected_obj.id)
---  printh("last_selected_obj.id == "..last_selected_obj.id)
   process_click(last_selected_obj, 2)
 end
--- _g.repair_click=function(self)
---  self.parent.repairstep=0
---  if (self.parent.life<self.parent.ref.hitpoint) self.parent.repairing = not self.parent.repairing
--- end
 
 function process_click(self, mode)
-  --printh("in process_click... mode="..mode)
   self.procstep=0
   -- toggle/switch mode (building/repairing) depending on state & click
   self.procpaused=not self.procpaused
-  --printh("self.procpaused = "..tostr(self.procpaused))
   self.process=mode
 end
 
@@ -320,53 +310,23 @@ function m_map_obj_tree(objref, x,y, last_fact, owner)
   newobj.build_objs={}
   -- go through all ref's and see if any valid for this building
   for o in all(obj_data) do
-    --printh("o.parent="..(o.parent_id!=nil and o.parent_id or "nil"))
     if (o.parent_id!=nil and o.parent_id==newobj.id) then
-    --printh("found child: "..o.name)
     -- set type==4 (build icon!)
     local build_obj = m_obj_from_ref(o, 109,0, 4, newobj, nil, nil, function(self)
-      -- build icon clicked
-      --printh("build item clicked...")
-      --printh("name=.."..self.name)
+      -- building icon clicked
       if show_menu then
         -- select building
         selected_obj=self
       else
         --auto build
         process_click(self, 1)
-
-        -- self.cor=cocreate(function(self)        
-        --   -- build object
-        --   self.buildstep=0
-        --   self.spent=0
-        --   while self.spent<self.cost do
-        --     self.buildstep+=1
-        --     if (self.buildstep>3 and transact(-1))self.buildstep=0 self.spent+=1 --p_credits-=shr(1,16) sfx(63)
-        --     self.life=(self.spent/self.cost)*100
-        --     yield()
-        --   end
-        --   -- const complete!
-        --   sfx(56)
-        --   -- auto-deploy units
-        --   if self.ref.type==1 then
-        --     -- find nearest point to factory
-        --     local ux,uy=ping(self,(self.parent.x+8)/8, (self.parent.y+16)/8, is_free_tile)  
-        --     m_map_obj_tree(self.ref,ux*8,uy*8, self)
-        --     -- reset build
-        --     self.life=0
-        --   end
-        -- end)
       end
     end)
-    --build_obj.spent=0
 
     add(newobj.build_objs,build_obj)
     newobj.build_obj=newobj.build_objs[1]
     end
   end
-  -- repair icon (obj)
-  --newobj.repair_obj=m_obj_from_ref(obj_data[80], 109,-20, 5, newobj, nil,_g.draw_repair, _g.repair_click) 
-
 
   -- player-controlled or ai?
   -- note: this whole thing may not be needed 
@@ -375,7 +335,6 @@ function m_map_obj_tree(objref, x,y, last_fact, owner)
 
   -- store the factory that made it (mostly for harvesters)
   newobj.last_fact = last_fact
-  --if (newobj.ref.id==27) stop(tostr(newobj.last_fact.name))
 
   -- 0=auto, 1=player, 2=computer/ai
   if newobj.owner==1 then
@@ -542,9 +501,6 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
        circfill(self.bullet_x,self.bullet_y,0, rnd(2)<1 and 8 or 9)
       else
        -- missile
-       -- line(self.bullet_x, self.bullet_y,
-       --  self.bullet_x+self.bullet_dx, self.bullet_y+self.bullet_dy, 7)
-       --smoke
        add_particle(self.bullet_x, self.bullet_y, 
         0, 0,0,.15,-.01, 20, {7, 7, 10, 9, 8, 2, 13, 6, 7}, rnd(2)<1 and 0xa5a5.8 or 0)
       end
@@ -555,7 +511,6 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
      end     
      -- reset hit flag
      self.hit=0
-     --self.hit-=0.5
  
      if (debug_collision) draw_hitbox(self)
    end,
@@ -636,38 +591,16 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
 
      -- update build/repair process?
      if self.process>0 and not self.procpaused then
-      --printh("processing..."..self.process)
-      -- printh(">>> self.life = "..tostr(self.life))
-      -- printh(">>> self.ref = "..tostr(self.parent.ref))
-      -- printh(">>> self.ref.cost = "..tostr(self.parent.ref.cost))
-      -- printh(">>> self.ref.hitpoint = "..tostr(self.parent.ref.hitpoint))
-     --and (
       if (self.process==1 and self.spent<=self.cost)-- const complete!
        or (self.process==2 and self.life<=self.ref.hitpoint)
-      then
-    --) 
-     
+      then     
         -- continue
         self.procstep+=1
         self.life=(self.process==1 and (self.spent/self.cost)*100 or self.life+.1)
         -- time to update credits?
         if (self.procstep>(self.process==1 and 3 or 100) and transact(-1))self.procstep=0 self.spent+=1
-        -- check for completion
-        -- if (self.process==1 and self.spent>=self.cost) self.process=0 sfx(56) -- const complete!
-        -- if (self.process==2 and self.life>=self.ref.hitpoint) self.process=0
       end
      end
-
-     -- update repairs?
-    --  if self.repairing then
-    --   self.repairstep+=1
-    --   if self.life<self.ref.hitpoint then      
-    --    self.life+=.1
-    --    if (self.repairstep>100 and transact(-1)) self.repairstep=0 
-    --   else
-    --    self.repairing = false
-    --   end
-    --  end
    end,
 
    setpos=function(self,x,y)
@@ -915,12 +848,22 @@ function update_level()
   camx=mid(camx,384)  --896
   camy=mid(camy,384)  --128
   
-   update_coroutines()  
-   
-   update_particles()
-   
-   ticks+=1
+  -- update all unit coroutines 
+  -- (pathfinding, moving, attacking, etc.)
+  for _,unit in pairs(units) do
+    if unit then
+      if unit.cor and costatus(unit.cor) != 'dead' then
+        assert(coresume(unit.cor, unit))
+      else
+        unit.cor = nil
+      end
+    end
   end
+   
+  update_particles()
+    
+  ticks+=1
+ end
  
  collisions()
 
@@ -993,7 +936,6 @@ function do_guard(unit, start_state)
 
        -- unloading
        while self.capacity>0 do
-        --printh("unloading...  capacity="..self.capacity)
         self.state=8
         self.r=.25
         self.x=self.last_fact.x+16
@@ -1016,7 +958,6 @@ function do_guard(unit, start_state)
     -- are we full?
     elseif self.capacity >= 1500 
      and self.state!=7 then
-      --printh("capacity!!!!")
       -- return to refinery when full
       self.state=7      
       self.last_fact.incoming=true
@@ -1091,7 +1032,6 @@ function do_attack(unit, target)
     local a=atan2(unit.x-target.x, unit.y-target.y)   
     while (unit.r != a) do
       turntowardtarget(unit, a)
-     -- self.hit=0
     end
    end
    -- 3) commence firing
@@ -1116,9 +1056,6 @@ end
 -- source = unit doing ping
 function ping(unit,x,y,func,max_dist)
   -- ...to the target pos
-  -- printh("funct = "..tostr(func))
-  -- printh("unit id = "..(source and source.id or ""))
-  -- printh("max_dist = "..tostr(max_dist))
   for dist=1,max_dist or 64 do
     for xx=x-dist,x+dist do  -- todo: increment this out by one, on every unsuccessful pass
       for yy=y-dist,y+dist do
@@ -1129,11 +1066,6 @@ function ping(unit,x,y,func,max_dist)
     yield()
   end  
 end
-
--- function wrap_fget(mx,my,flg)
---  if(my>31)mx+=64 my-=32
---  return fget(mget(mx,my), flg or 0)
--- end
 
 function wrap_mget(mx,my)
  if(my>31)mx+=64 my-=32
@@ -1151,18 +1083,15 @@ function is_free_tile(unit,x,y)
 end
 
 function is_danger_tile(unit,x,y)
---  printh("unit: "..unit.id.." - is_danger_tile("..x..","..y..")")
  local target=units[object_tiles[x..","..y]]
  if (target!=null and target.owner!=unit.owner and fow[x][y]==16) do_attack(unit, target) return true
 end
 
 function move_unit_pos(unit,x,y,dist_to_keep)
   ::restart_move_unit::
-  --printh("move_unit_pos("..x..","..y..","..(dist_to_keep or "nil")..")")
   unit.path="init"   
   -- check target valid
   if not is_free_tile(nil,x,y) then   
-   --printh("not free tile!")
     -- target tile occupied
     -- move as close as possible
     x,y=ping(unit,x,y,is_free_tile)
@@ -1195,7 +1124,6 @@ function move_unit_pos(unit,x,y,dist_to_keep)
   unit.state=2 --moving
 
   -- loop all path nodes...
-  --printh("unit.path="..type(unit.path))
   if unit.path!=nil then
 
     for i=#unit.path-1,1,-1 do
@@ -1206,7 +1134,6 @@ function move_unit_pos(unit,x,y,dist_to_keep)
         local dx=unit.x-(node.x*8)
         local dy=unit.y-(node.y*8)
         local a=atan2(dx,dy)
-        --printh("  >> target angle="..a)
         while (unit.r != a) do
           turntowardtarget(unit, a)
         end
@@ -1247,29 +1174,6 @@ function move_unit_pos(unit,x,y,dist_to_keep)
 end
 
 
-function update_coroutines()
- -- update all unit coroutines 
- -- (pathfinding, moving, attacking, etc.)
- for _,unit in pairs(units) do 
-  update_cor(unit)
- end
---  -- update all building coroutines
---  -- (building, repairing, etc.)
---  for _,building in pairs(buildings) do 
---   update_cor(building)
---   update_cor(building.build_obj)
---  end
-end
-
-function update_cor(obj)
- if obj then
-  if obj.cor and costatus(obj.cor) != 'dead' then
-    assert(coresume(obj.cor, obj))
-  else
-    obj.cor = nil
-  end
- end
-end
 
 -- ai strategy code (attack, build, repair, etc.)
 function update_ai()
