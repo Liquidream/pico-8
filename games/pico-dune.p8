@@ -135,7 +135,8 @@ _g.draw_repair=function(self)
  pal()
 end
 _g.repair_click=function(self)
-  process_click(self, 2)
+ printh("selected_obj.id = "..selected_obj.id)
+  process_click(selected_obj, 2)
 end
 -- _g.repair_click=function(self)
 --  self.parent.repairstep=0
@@ -143,7 +144,7 @@ end
 -- end
 
 function process_click(self, mode)
-  printh("in process_click...")
+  printh("in process_click... mode="..mode)
   self.procstep=0
   -- toggle/switch mode (building/repairing) depending on state & click
   self.procpaused=not self.procpaused
@@ -223,6 +224,10 @@ function _init()
  cartdata("pn_picodune") 
 
  explode_data()
+
+
+repair_obj=m_obj_from_ref(obj_data[80], 109,-20, 5, {}, nil,_g.draw_repair, _g.repair_click) 
+
 
  -- starting mode 
  -- (1=normal, 2=build menu, 3=???)
@@ -358,7 +363,7 @@ function m_map_obj_tree(objref, x,y, last_fact, owner)
     end
   end
   -- repair icon (obj)
-  newobj.repair_obj=m_obj_from_ref(obj_data[80], 109,-20, 5, newobj, nil,_g.draw_repair, _g.repair_click) 
+  --newobj.repair_obj=m_obj_from_ref(obj_data[80], 109,-20, 5, newobj, nil,_g.draw_repair, _g.repair_click) 
 
 
   -- player-controlled or ai?
@@ -628,10 +633,11 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
 
      -- update build/repair process?
      if self.process>0 and not self.procpaused then
-      printh(">>> self.life = "..tostr(self.life))
-      printh(">>> self.ref = "..tostr(self.parent.ref))
-      printh(">>> self.ref.cost = "..tostr(self.parent.ref.cost))
-      printh(">>> self.ref.hitpoint = "..tostr(self.parent.ref.hitpoint))
+      printh("processing..."..self.process)
+      -- printh(">>> self.life = "..tostr(self.life))
+      -- printh(">>> self.ref = "..tostr(self.parent.ref))
+      -- printh(">>> self.ref.cost = "..tostr(self.parent.ref.cost))
+      -- printh(">>> self.ref.hitpoint = "..tostr(self.parent.ref.hitpoint))
      --and (
       if (self.process==1 and self.spent<=self.cost)-- const complete!
        or (self.process==2 and self.life<=self.parent.ref.hitpoint)
@@ -1413,10 +1419,14 @@ function draw_ui()
    selected_obj.build_obj:draw()--109,44)  
   end
   if selected_obj.life<selected_obj.ref.hitpoint 
-  and selected_obj.repair_obj and selected_obj.owner==1 then
-   selected_obj.repair_obj:setpos(117,28) 
-   selected_obj.repair_obj:update()
-   selected_obj.repair_obj:draw()
+   and selected_obj.owner==1 then
+     --spr(47,117,28)
+    repair_obj:setpos(117,28) 
+    repair_obj:draw()
+
+  -- and selected_obj.repair_obj and selected_obj.owner==1 then
+  --  selected_obj.repair_obj:setpos(117,28) 
+  --  selected_obj.repair_obj:update()
   end
  end
  
@@ -1628,7 +1638,13 @@ function collisions()
  -- selected obj ui collision
  if selected_obj then
    ui_collision_mode=true
-   if (selected_obj.repair_obj) check_hover_select(selected_obj.repair_obj)
+  --  printh("selected_obj.id = "..selected_obj.id)
+  --  printh("last_selected_obj.id = "..last_selected_obj.id)
+   if (last_selected_obj.life and last_selected_obj.life<last_selected_obj.ref.hitpoint) check_hover_select(repair_obj)
+   --if (selected_obj.life and selected_obj.life<selected_obj.ref.hitpoint) check_hover_select(repair_obj)
+    
+   --if (selected_obj.repair_obj) check_hover_select(selected_obj.repair_obj)
+   
    if (selected_obj.ico_obj and not show_menu and not clickedsomething) check_hover_select(selected_obj.ico_obj)   
    foreach(selected_obj.build_objs, check_hover_select)   
    foreach(ui_controls, check_hover_select)
