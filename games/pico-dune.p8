@@ -135,11 +135,20 @@ _g.draw_repair=function(self)
  pal()
 end
 _g.repair_click=function(self)
- --printh("repair_click!!!")
- self.parent.repairstep=0
- if (self.parent.life<self.parent.ref.hitpoint) self.parent.repairing = not self.parent.repairing
+  process_click(self, 2)
 end
+-- _g.repair_click=function(self)
+--  self.parent.repairstep=0
+--  if (self.parent.life<self.parent.ref.hitpoint) self.parent.repairing = not self.parent.repairing
+-- end
 
+function process_click(self, mode)
+  printh("in process_click...")
+  self.procstep=0
+  -- toggle/switch mode (building/repairing) depending on state & click
+  self.procpaused=not self.procpaused
+  self.process=mode
+end
 
 
 -- object data
@@ -317,29 +326,32 @@ function m_map_obj_tree(objref, x,y, last_fact, owner)
         selected_obj=self
       else
         --auto build
-        self.cor=cocreate(function(self)        
-          -- build object
-          self.buildstep=0
-          self.spent=0
-          while self.spent<self.cost do
-            self.buildstep+=1
-            if (self.buildstep>3 and transact(-1))self.buildstep=0 self.spent+=1 --p_credits-=shr(1,16) sfx(63)
-            self.life=(self.spent/self.cost)*100
-            yield()
-          end
-          -- const complete!
-          sfx(56)
-          -- auto-deploy units
-          if self.ref.type==1 then
-            -- find nearest point to factory
-            local ux,uy=ping(self,(self.parent.x+8)/8, (self.parent.y+16)/8, is_free_tile)  
-            m_map_obj_tree(self.ref,ux*8,uy*8, self)
-            -- reset build
-            self.life=0
-          end
-        end)
+        process_click(self, 1)
+
+        -- self.cor=cocreate(function(self)        
+        --   -- build object
+        --   self.buildstep=0
+        --   self.spent=0
+        --   while self.spent<self.cost do
+        --     self.buildstep+=1
+        --     if (self.buildstep>3 and transact(-1))self.buildstep=0 self.spent+=1 --p_credits-=shr(1,16) sfx(63)
+        --     self.life=(self.spent/self.cost)*100
+        --     yield()
+        --   end
+        --   -- const complete!
+        --   sfx(56)
+        --   -- auto-deploy units
+        --   if self.ref.type==1 then
+        --     -- find nearest point to factory
+        --     local ux,uy=ping(self,(self.parent.x+8)/8, (self.parent.y+16)/8, is_free_tile)  
+        --     m_map_obj_tree(self.ref,ux*8,uy*8, self)
+        --     -- reset build
+        --     self.life=0
+        --   end
+        -- end)
       end
     end)
+    build_obj.spent=0
 
     add(newobj.build_objs,build_obj)
     newobj.build_obj=newobj.build_objs[1]
@@ -404,7 +416,6 @@ function m_map_obj_tree(objref, x,y, last_fact, owner)
      newobj.fire=function(self)
        -- now firing
        self.state=4      
-       --printh("fire...")
        -- fire bullet/missile
        self.bullet_x=self.x+4
        self.bullet_y=self.y+4
@@ -451,6 +462,8 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
   spr_h=ref_obj.h or 1, --
   life=0,
   frame=0,
+  process=0,
+  procpaused=true,
   fire_cooldown=0,
   hit=0,
   flash_count=1,
@@ -498,8 +511,8 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
          -- draw health/progress
          local this=self.type==4 and self or self.parent
          local hp=this.ref.hitpoint
-         local col = this.buildstep and 12 or (this.life<hp*.33 and 8 or this.life<hp*.66 and 10 or 11)         
-         local val = this.buildstep and (15*this.life/100) or (15*this.life/hp)         
+         local col = self.process==1 and 12 or (this.life<hp*.33 and 8 or this.life<hp*.66 and 10 or 11)
+         local val = self.process==1 and (15*this.life/100) or (15*this.life/hp)         
          if (this.life>0) rectfill(self.x,self.y+17,self.x+val,self.y+18,col)
        end
        -- non-rotational sprite
@@ -528,23 +541,10 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
         0, 0,0,.15,-.01, 20, {7, 7, 10, 9, 8, 2, 13, 6, 7}, rnd(2)<1 and 0xa5a5.8 or 0)
       end
      end
-
      -- smoking?
      if self.type<=2 and self.life<self.ref.hitpoint*.33 then
       if (rnd(10)<1) add_particle(self.x+3.5,self.y+3.5, 1, .1,-.02,.1, -.01, 40,{10,9,6,5}, rnd(2)<1 and 0xa5a5.8 or 0)
-     end
-     
-     -- -- hit? temporary code!
-     -- palt(11,true)
-     -- if self.hit>0 then
-     --  printh("draw HIT!!!! - id="..self.ref.id)
-     --  spr(19, self.x+rnd(self.w)-4, self.y+rnd(self.h)-4)
-     -- end
-     -- -- exploding?
-     -- if self.state==5 then      
-     --  spr(19, self.x+rnd(self.w)-4, self.y+rnd(self.h)-4)
-     -- end
-
+     end     
      -- reset hit flag
      self.hit=0
      --self.hit-=0.5
@@ -570,7 +570,6 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
          del(buildings,self)
         else
          -- unit
-         --printh("unit death!")
          local gx,gy = flr(self.x/8), flr(self.y/8)
          if (gy>31) gx+=64 gy-=32
          if (wrap_mget(gx,gy)<9) mset(gx,gy,20) --scortch sand
@@ -618,30 +617,48 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
         self.target.x+self.target.w/2,
         self.target.y+self.target.h/2) < 4 
        then
-        --printh("hit target!")
         self.target.life-=self.arms
         self.target.hit=self.fire_type --0=none, 1=bullet, 2=missile
-        --self.target.hit=1 --0=none, 1=bullet, 2=missile
         self.target.hitby=self
-       --else
-       -- printh("miss!!")
        end
        -- kill bullet/missile & do damage
        self.bullet_x=nil
       end
      end
 
-     -- update repairs?
-     if self.repairing then
-      printh(t().." repairing")
-      self.repairstep+=1
-      if self.life<self.ref.hitpoint then      
-       self.life+=.1
-       if (self.repairstep>100 and transact(-1)) self.repairstep=0 
-      else
-       self.repairing = false
+     -- update build/repair process?
+     if self.process>0 and not self.procpaused then
+      printh(">>> self.life = "..tostr(self.life))
+      printh(">>> self.ref = "..tostr(self.parent.ref))
+      printh(">>> self.ref.cost = "..tostr(self.parent.ref.cost))
+      printh(">>> self.ref.hitpoint = "..tostr(self.parent.ref.hitpoint))
+     --and (
+      if (self.process==1 and self.spent<=self.cost)-- const complete!
+       or (self.process==2 and self.life<=self.parent.ref.hitpoint)
+      then
+    --) 
+     
+        -- continue
+        self.procstep+=1
+        self.life=(self.process==1 and (self.spent/self.cost)*100 or self.life+.1)
+        -- time to update credits?
+        if (self.procstep>(self.process==1 and 3 or 100) and transact(-1))self.procstep=0 self.spent+=1
+        -- check for completion
+        -- if (self.process==1 and self.spent>=self.cost) self.process=0 sfx(56) -- const complete!
+        -- if (self.process==2 and self.life>=self.ref.hitpoint) self.process=0
       end
      end
+
+     -- update repairs?
+    --  if self.repairing then
+    --   self.repairstep+=1
+    --   if self.life<self.ref.hitpoint then      
+    --    self.life+=.1
+    --    if (self.repairstep>100 and transact(-1)) self.repairstep=0 
+    --   else
+    --    self.repairing = false
+    --   end
+    --  end
    end,
 
    setpos=function(self,x,y)
@@ -775,24 +792,19 @@ end
 
 -- https://www.lexaloffle.com/bbs/?tid=30902
 function test_tile(x,y) 
- --printh("in test_tile "..x..","..y)
  -- bail (outside testtile bounds)
  if (x<0 or x>#fow or y<0 or y>#fow) return
 	
   -- figure out bitmask
   local mask = 0
 
-	if fow[x][y]!=0 then
-  
+	if fow[x][y]!=0 then  
     -- north has tile?
 		if (fow[x][y-1]>0) mask+=1
-	
     -- east has tile?
 		if (fow[x-1][y]>0) mask+=2
-	
     -- south has tile?
 		if (fow[x+1][y]>0) mask+=4
-	
     -- west has tile?
 		if (fow[x][y+1]>0) mask+=8
 		
@@ -914,20 +926,15 @@ function is_spice_tile(x,y)
 end
 
 function do_guard(unit, start_state) 
- --printh("do_guard()!! - start_state="..tostr(start_state))
-
  -- 0=idle/guarding, 1=pathfinding, 2=moving, 3=attacking, 4=firing, 5=exploding, 
  --(6=harvesting, 7=returning, 9=ready-to-unload, 8=offloading)
  unit.state = start_state or 0
- --unit.cor = nil -- todo: this!!
  unit.cor = cocreate(function(self)
   while true do
    -- be on look-out
    if (rnd(500)<1 and self.arms>0) ping(self,flr(self.x/8),flr(self.y/8),is_danger_tile,self.range)
    -- check for attack
    if self.hit>0 and self.state==0 then 
-    --printh("do_guard() > HIT!!")        
-    --self.hit=0
     -- reinstate loop
     set_loop(5, true)
     -- switch music (if passed the loop point)?    
@@ -1197,7 +1204,7 @@ function move_unit_pos(unit,x,y,dist_to_keep)
       end
       
       -- check new position/tile is still free
-      if(not is_free_tile(nil,node.x,node.y)) printh("restart!!!") goto restart_move_unit
+      if(not is_free_tile(nil,node.x,node.y)) goto restart_move_unit
       
       -- move to new position      
       local scaled_speed = unit.speed or .5
@@ -1237,12 +1244,12 @@ function update_coroutines()
  for _,unit in pairs(units) do 
   update_cor(unit)
  end
- -- update all building coroutines
- -- (building, repairing, etc.)
- for _,building in pairs(buildings) do 
-  update_cor(building)
-  update_cor(building.build_obj)
- end
+--  -- update all building coroutines
+--  -- (building, repairing, etc.)
+--  for _,building in pairs(buildings) do 
+--   update_cor(building)
+--   update_cor(building.build_obj)
+--  end
 end
 
 function update_cor(obj)
@@ -1402,11 +1409,13 @@ function draw_ui()
   selected_obj.ico_obj:draw()--109,20)  
   if selected_obj.build_obj and selected_obj.owner==1 then
    selected_obj.build_obj:setpos(109,44) 
+   selected_obj.build_obj:update()
    selected_obj.build_obj:draw()--109,44)  
   end
   if selected_obj.life<selected_obj.ref.hitpoint 
   and selected_obj.repair_obj and selected_obj.owner==1 then
    selected_obj.repair_obj:setpos(117,28) 
+   selected_obj.repair_obj:update()
    selected_obj.repair_obj:draw()
   end
  end
@@ -1647,12 +1656,8 @@ function collisions()
  elseif left_button_clicked then
  
   if clickedsomething then
-   --show_menu=nil
-    -- object "button"?
- 
-    --####error here when click back to const yard, sometimes!!  
     if (not show_menu and selected_obj.func_onclick and selected_obj.parent!=nil) selected_obj:func_onclick() selected_obj=last_selected_obj return
-    if (show_menu and selected_subobj.text and selected_subobj.func_onclick) selected_subobj:func_onclick() --selected_subobj=last_selected_subobj
+    if (show_menu and selected_subobj.text and selected_subobj.func_onclick) selected_subobj:func_onclick()
   
     -- clicked own unit, first time?
     if (selected_obj.owner==1 and selected_obj.type==1 and selected_obj!=last_selected_obj) sfx(62)
@@ -1675,7 +1680,7 @@ function collisions()
 
     end
     
-    -- placement? (temp code!)
+    -- placement?
     if selected_obj 
      and selected_obj.build_obj 
      and selected_obj.build_obj.life>=100
@@ -1687,6 +1692,9 @@ function collisions()
       m_map_obj_tree(objref,xpos*8,ypos*8,nil,1)            
       -- reset build
       selected_obj.build_obj.life=0
+      selected_obj.build_obj.process=0
+      selected_obj.build_obj.spent=0
+      selected_obj.build_obj.procpaused=true
       sfx(61)
     end
 
@@ -1707,7 +1715,6 @@ function check_hover_select(obj)
     -- is object hidden by fow?
     local xpos=flr((cursor.x+camx)/8)
     local ypos=flr((cursor.y+camy)/8)
-    --printh("fow[xpos][ypos])="..tostr(fow[xpos][ypos]))
     if (obj.type<=2 and fow[xpos][ypos]!=16) return
 
     -- clicking a harvester unloading?
@@ -1721,7 +1728,6 @@ function check_hover_select(obj)
       -- update last factory (in case changed)
       unit.last_fact=obj
       move_unit_pos(unit, (obj.x+16)/8, ypos)
-      --printh("after move_unit_pos on click return!")
       do_guard(unit, 9)
      end)
      return -- register "no click"
