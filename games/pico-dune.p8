@@ -1229,7 +1229,10 @@ function draw_level()
 
  -- buildings
  for _,building in pairs(buildings) do 
-  if (not show_menu) building:update()
+  if not show_menu then 
+    building:update()
+    if (building.build_obj) building.build_obj:update()
+  end
   building:draw()
   -- draw selected reticule
   if (building == selected_obj) then 
@@ -1335,7 +1338,7 @@ function draw_ui()
   selected_obj.ico_obj:draw()--109,20)  
   if selected_obj.build_obj and selected_obj.owner==1 then
    selected_obj.build_obj:setpos(109,44) 
-   selected_obj.build_obj:update()
+   --selected_obj.build_obj:update()
    selected_obj.build_obj:draw()--109,44)  
   end
   if selected_obj.life<selected_obj.ref.hitpoint 
