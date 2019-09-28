@@ -519,7 +519,7 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
      self.flash_count=max(self.flash_count-.4,1)
 
      -- check for death
-     if (self.life<=0 and self.death_time==nil) self.state=5 self.cor=nil self.death_time=(self.type==2 and 1 or .5) sfx(self.deathsfx, 3)
+     if (self.type<=2 and self.life<=0 and self.death_time==nil) self.state=5 self.cor=nil self.death_time=(self.type==2 and 1 or .5) sfx(self.deathsfx, 3)
      if self.death_time then
       self.death_time-=.025
       if self.death_time<=0 then
@@ -541,6 +541,7 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
         if(selected_obj==self)selected_obj=nil
       else
         -- dying
+        printh(">>>>>>>>>>>>>>>>>>>>>>>>>>>".._t)
         if (rnd(self.type==2 and 2 or 8)<1) make_explosion(self.x+rnd(self.w),self.y+rnd(self.h))
       end
      end
@@ -591,9 +592,21 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
 
      -- update build/repair process?
      if self.process>0 and not self.procpaused then
-      if (self.process==1 and self.spent<=self.cost)-- const complete!
-       or (self.process==2 and self.life<=self.ref.hitpoint)
-      then     
+      if self.process==1 and self.spent>self.cost and not self.done then
+        -- const complete!
+        self.done = true
+        sfx(56)
+        -- auto-deploy units
+        if self.ref.type==1 then
+          -- find nearest point to factory
+          local ux,uy=ping(self,(self.parent.x+8)/8, (self.parent.y+16)/8, is_free_tile)  
+          m_map_obj_tree(self.ref,ux*8,uy*8, self)
+          -- reset build
+          self.life=0
+        end
+      elseif self.process==2 and self.life>self.ref.hitpoint then
+        -- repair complete - do nothing
+      elseif not self.done then
         -- continue
         self.procstep+=1
         self.life=(self.process==1 and (self.spent/self.cost)*100 or self.life+.1)
