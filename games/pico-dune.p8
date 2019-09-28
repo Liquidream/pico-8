@@ -135,8 +135,9 @@ _g.draw_repair=function(self)
  pal()
 end
 _g.repair_click=function(self)
- printh("selected_obj.id = "..selected_obj.id)
-  process_click(selected_obj, 2)
+--  printh("selected_obj.id == "..selected_obj.id)
+--  printh("last_selected_obj.id == "..last_selected_obj.id)
+  process_click(last_selected_obj, 2)
 end
 -- _g.repair_click=function(self)
 --  self.parent.repairstep=0
@@ -144,10 +145,11 @@ end
 -- end
 
 function process_click(self, mode)
-  printh("in process_click... mode="..mode)
+  --printh("in process_click... mode="..mode)
   self.procstep=0
   -- toggle/switch mode (building/repairing) depending on state & click
   self.procpaused=not self.procpaused
+  --printh("self.procpaused = "..tostr(self.procpaused))
   self.process=mode
 end
 
@@ -356,7 +358,7 @@ function m_map_obj_tree(objref, x,y, last_fact, owner)
         -- end)
       end
     end)
-    build_obj.spent=0
+    --build_obj.spent=0
 
     add(newobj.build_objs,build_obj)
     newobj.build_obj=newobj.build_objs[1]
@@ -469,6 +471,7 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
   frame=0,
   process=0,
   procpaused=true,
+  spent=0,
   fire_cooldown=0,
   hit=0,
   flash_count=1,
@@ -633,14 +636,14 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
 
      -- update build/repair process?
      if self.process>0 and not self.procpaused then
-      printh("processing..."..self.process)
+      --printh("processing..."..self.process)
       -- printh(">>> self.life = "..tostr(self.life))
       -- printh(">>> self.ref = "..tostr(self.parent.ref))
       -- printh(">>> self.ref.cost = "..tostr(self.parent.ref.cost))
       -- printh(">>> self.ref.hitpoint = "..tostr(self.parent.ref.hitpoint))
      --and (
       if (self.process==1 and self.spent<=self.cost)-- const complete!
-       or (self.process==2 and self.life<=self.parent.ref.hitpoint)
+       or (self.process==2 and self.life<=self.ref.hitpoint)
       then
     --) 
      
