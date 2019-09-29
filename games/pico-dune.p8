@@ -128,7 +128,7 @@ _g.draw_repair=function(self)
  pal()
  palt(0,false)
  palt(11,true)
- if (alternate()) pal(7,8)
+ if (alternate()) pal(7,selected_obj.process==2 and 11 or 8)
  spr(self.obj_spr, self.x, self.y)
  pal()
 end
