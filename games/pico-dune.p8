@@ -149,8 +149,8 @@ obj_data=[[id|name|obj_spr|ico_spr|map_spr|type|w|h|trans_col|parent_id|req_id|r
 ]]..
 -- buildings
 [[1|cONSTRUCTION yARD|64|128||2|2|2|nil|nil|nil|1||100|nil||400|||||||aLL STRUCTURES ARE BUILT BY THE CONSTRUCTION YARD.||||factory_click
-2|lARGE cONCRETE sLAB|63|162||2|2|2|nil|1|1|4||20|nil||0|||||||uSE CONCRETE TO MAKE A STURDY FOUNDATION FOR YOUR STRUCTURES.||||
-3|sMALL cONCRETE sLAB|63|160||2|1|1|nil|1|1|1||5|nil||0|||||||uSE CONCRETE TO MAKE A STURDY FOUNDATION FOR YOUR STRUCTURES.||||
+2|lARGE cONCRETE sLAB|16|162||2|2|2|nil|1|1|4||20|nil||0|||||||uSE CONCRETE TO MAKE A STURDY FOUNDATION FOR YOUR STRUCTURES.||||
+3|sMALL cONCRETE sLAB|16|160||2|1|1|nil|1|1|1||5|nil||0|||||||uSE CONCRETE TO MAKE A STURDY FOUNDATION FOR YOUR STRUCTURES.||||
 4|dEFENSIVE wALL|79|164||2|1|1|nil|1|7|4||50|nil||50|||||||tHE wALL IS USED FOR PASSIVE DEFENSE.||||
 5|wINDTRAP|66|130||2|2|2|nil|1|1|1||300|100||200||||||10|tHE WINDTRAP SUPPLIES POWER TO YOUR BASE. wITHOUT POWER YOUR STRUCTURES WILL DECAY.|init_windtrap|||
 6|sPICE rEFINERY|68|132||2|3|2|nil|1|2|1||400|30||450||||||10|tHE rEFINERY CONVERTS SPICE INTO CREDITS.|init_refinery|draw_refinery||
@@ -281,7 +281,7 @@ function discover_objs()
         objref=obj_data[1]
 
        elseif i==2
-        and spr_val!=63 then --don't create "concrete" as objs
+        and spr_val!=16 then --don't create "concrete" as objs
         -- find object for id
         for o in all(
          obj_data) do
@@ -358,7 +358,7 @@ function m_map_obj_tree(objref, x,y, last_fact, owner)
     local slabs=(objref.id==2 or objref.id==3)    
     for xx=0,objref.w-1 do
       for yy=0,objref.h-1 do
-       wrap_mset(xpos+xx, ypos+yy, slabs and 63 or 95)
+       wrap_mset(xpos+xx, ypos+yy, slabs and 16 or 95)
       end
     end
     if (not slabs) add(buildings,newobj)
@@ -1250,7 +1250,7 @@ function draw_level()
   -- draw selected reticule
   if (unit == selected_obj) then   
    palt(11,true)
-   spr(16, selected_obj.x, selected_obj.y)
+   spr(17, selected_obj.x, selected_obj.y)
   end
  end
 
@@ -1380,12 +1380,12 @@ function draw_ui()
     for yy=-1,h do
      if xx==-1 or xx==w or yy==-1 or yy==h then     
       -- check edges
-      if (wrap_mget(mxpos+xx, mypos+yy)>=63) placement_pos_ok=true
+      if (wrap_mget(mxpos+xx, mypos+yy)==16 or wrap_mget(mxpos+xx, mypos+yy)>=63) placement_pos_ok=true
      else
       -- check inner
       local val=wrap_mget(mxpos+xx, mypos+yy)
       if (val>=9 and val<=15) placement_damage=true
-      if (object_tiles[mxpos+xx..","..mypos+yy] or val==0 or val<8 or val>15) placement_inner_invalid=true
+      if (object_tiles[mxpos+xx..","..mypos+yy] or val==0 or val<8 or val>16) placement_inner_invalid=true
      end
     end
   end
@@ -1940,8 +1940,8 @@ function maybe_add(nx, ny, ntable)
   and object_tiles[nx..","..ny]==nil
   and nx>=0
   and ny>=0
-  and nx<=63
-  and ny<=63
+  and nx<=22 --63
+  and ny<=22 --63
  )
   then 
    add(ntable, {x=nx, y=ny}) 
@@ -2153,14 +2153,14 @@ bb17771bb1bbb1bbfffff9f9fff999999f9fffffff99f999f9ffff9f99998f99ff999fffd55d5555
 bb177771bb171bbbffff999999999f999999ffff999f99f9fffffffffff89999f9f9fff955d551d555d515555d155d555555d55d155555555d155d55d1555101
 bb17711bbbb1bbbbfff99f9f99fff9f9f9f99fff9f99f99fffffffff99999f99ff9fffff1555555515555515555555515d155d55f51ffd5f55555551d5555111
 bbb11bbbbbbbbbbbffff99f9ff9f99999f99fffff99f99f9ffffffff99fff9f9ffff9ffff55d5515555d55555155d55f55555551ffffffff5155d55fd5515555
-b7bbbb7bffffffffffffffffbb888b8bfff9ffffffffffffffffffff55d555d555d555d555d555d555d2444444444444444444d555dd244444444444444442d5
-77bbbb77fffffffffff77fffb8899898ff66669ff888888ff6ffffff155551551555515515555155155244444444444444444455155024444444444444444055
-bbbbbbbbffffffffff79ff7f8999998bf66dd66ff8a8888fffffff6f5d55d555555555555555d5555d24444444444444444444455d5104444444444444442155
-bbbbbbbbfffffffff79f779f889aa988f6d55d6ff888888fffffffff555155555555555551555d5d55244444444444444444444d555112444444444444420d5d
-bbbbbbbbfffffffffff799ffb89aa998f6d55d6ff888888fffffffffd55555555544444444455555d52444444444444444444445d55510022244444222201555
-bbbbbbbbffffffffff799fff899aa98bf66dd66ff888888ffff6ffff55d55544444444444444455555244444444444444444442555d515100022222000015555
-77bbbb77ffffffffff79ffff88999988ff6666fff888888fffffffff155554444444444444444515155244444444444444444415155555151100000111155515
-b7bbbb7bfffffffff7ffffffb88898bbf9ffffffffffffffffffffff555524444444444444444455555244444444444444444255555d555555111115555d5555
+ddddddddb7bbbb7bffffffffbb888b8bfff9ffffffffffffffffffff55d555d555d555d555d555d555d2444444444444444444d555dd244444444444444442d5
+d555555577bbbb77fff77fffb8899898ff66669ff888888ff6ffffff155551551555515515555155155244444444444444444455155024444444444444444055
+d5555555bbbbbbbbff79ff7f8999998bf66dd66ff8a8888fffffff6f5d55d555555555555555d5555d24444444444444444444455d5104444444444444442155
+d5555555bbbbbbbbf79f779f889aa988f6d55d6ff888888fffffffff555155555555555551555d5d55244444444444444444444d555112444444444444420d5d
+d5555555bbbbbbbbfff799ffb89aa998f6d55d6ff888888fffffffffd55555555544444444455555d52444444444444444444445d55510022244444222201555
+d5555555bbbbbbbbff799fff899aa98bf66dd66ff888888ffff6ffff55d55544444444444444455555244444444444444444442555d515100022222000015555
+d555555577bbbb77ff79ffff88999988ff6666fff888888fffffffff155554444444444444444515155244444444444444444415155555151100000111155515
+d5555555b7bbbb7bf7ffffffb88898bbf9ffffffffffffffffffffff555524444444444444444455555244444444444444444255555d555555111115555d5555
 000000000bbbbbb000000000bbbbb1b1000000001b1bbbbb00000000bbbbbbbb0000000001bbbb1010000000bbbbbbb0000000010bbbbbbb00000000bbbbbbbb
 001bb1000bbbbbb0bbb1b000bbb1bb000000bbbb00bb1bbb1b1b1b1bbbbbbbbb000000000bbbbbb0b0000000bbbbb1000000000b00bbbbbbb000000bbbbbbbbb
 01bbbb100bbbbbb0bbbb1b00bb1b0000000b1bbb0001b1bbbbbbbbbbbbbbbbbb00b0b00001bbbb101b000000bbbb1b00000000b1001bbbbbb1b1b1bbbbbbbbbb
@@ -2169,14 +2169,14 @@ b7bbbb7bfffffffff7ffffffb88898bbf9ffffffffffffffffffffff555524444444444444444455
 01bbbb10000b0b00bbb1b0001b00000000b1bbbb000000b1bbbbbbbbbb1b1b1b0bbbbbb00bbbbbb0bb1b0000bbbbb1000001b1bb00b1bbbbbbbbbbbb00777770
 001bb10000000000bbbb0000b0000000000b1bbb0000000b1b1b1b1bb000000b0bbbbbb001bbbb10bbb1bb00bbbbbb0000bb1bbb001bbbbbbbbbbbbb07700077
 0000000000000000bbb0bbbb10000000000000000000000100000000000000000bbbbbb00bbbbbb0bbbbb1b1bbbbbbb01b1bbbbb0bbbbbbbbbbbbbbb0000b000
-ffffffffbbeeeebbb0cddc0bbbbbbbbbbecccebbbbbbbbbbbbbbbbbbbbbbbbbbffffffffffffffffbbbbbbbbbbb76bbbbbb76bbbb6bbb6bbb6bbb6bbdddddddd
-ffffffffb0cccc0bbed77debb6cdc6bb0ccccc0bb6ccc6bbb0ece0bbb0eee0bbffffffffffffffffbbbbbbbbbbb76bbbbbb76bbbb8bbb8bbb8bbb8bbd5555555
-ffffffffb0cccc0bbc6776cbb7d7d7bb0cecec0bbcdddcbbb0d6d0bbb0d6d0bbfd5ff5ffffffffffbbbbbbbbbbbddbbbb7b55b7bb2bbb2bbb2bbb2bbd5555555
-ffffffffbeccccebbc6776cbb7d6d7bbec6c6cebbc6c6cbbbbc7cbbbbbc7cbbbf5dfffffffffffffbbbbbbbbbbd66dbbb651156bb0bbb0bb0b0b0b0bd5555555
-ffffffffbeccccebbed66debb7c6c7bbee6e6eebbc7c7cbbbbcccbbbb0c7c0bbffff555fffffffff77bbb77bbbd66dbbbdd66ddbbbb6bbbbbbb6bbbbd5555555
-ffffffffb0ecce0bbec66cebb7c0c7bbec0c0cebbc0c0cbbbb606bbbb0ccc0bbffff5d5fffffffffb7777711bbbddbbbb1b11b1bbbb8bbbbbbb8bbbbd5555555
-ffffffffb0deed0bb0e66e0bb6eee6bb00ccc00bb6eee6bbbbb0bbbbbb6b6bbbffff555fffffffff7711177bbbbbbbbbbbbbbbbbbbb2bbbbbbb2bbbbd5555555
-ffffffffbbeccebbbbb00bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbffffffffffffffffb11bbb11bbbbbbbbbbbbbbbbbbb0bbbbbb0b0bbbd5555555
+ffffffffbbeeeebbb0cddc0bbbbbbbbbbecccebbbbbbbbbbbbbbbbbbbbbbbbbbffffffffffffffffbbbbbbbbbbb76bbbbbb76bbbb6bbb6bbb6bbb6bbffffffff
+ffffffffb0cccc0bbed77debb6cdc6bb0ccccc0bb6ccc6bbb0ece0bbb0eee0bbffffffffffffffffbbbbbbbbbbb76bbbbbb76bbbb8bbb8bbb8bbb8bbffffffff
+ffffffffb0cccc0bbc6776cbb7d7d7bb0cecec0bbcdddcbbb0d6d0bbb0d6d0bbfd5ff5ffffffffffbbbbbbbbbbbddbbbb7b55b7bb2bbb2bbb2bbb2bbffffffff
+ffffffffbeccccebbc6776cbb7d6d7bbec6c6cebbc6c6cbbbbc7cbbbbbc7cbbbf5dfffffffffffffbbbbbbbbbbd66dbbb651156bb0bbb0bb0b0b0b0bffffffff
+ffffffffbeccccebbed66debb7c6c7bbee6e6eebbc7c7cbbbbcccbbbb0c7c0bbffff555fffffffff77bbb77bbbd66dbbbdd66ddbbbb6bbbbbbb6bbbbffffffff
+ffffffffb0ecce0bbec66cebb7c0c7bbec0c0cebbc0c0cbbbb606bbbb0ccc0bbffff5d5fffffffffb7777711bbbddbbbb1b11b1bbbb8bbbbbbb8bbbbffffffff
+ffffffffb0deed0bb0e66e0bb6eee6bb00ccc00bb6eee6bbbbb0bbbbbb6b6bbbffff555fffffffff7711177bbbbbbbbbbbbbbbbbbbb2bbbbbbb2bbbbffffffff
+ffffffffbbeccebbbbb00bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbffffffffffffffffb11bbb11bbbbbbbbbbbbbbbbbbb0bbbbbb0b0bbbffffffff
 d66dddddddd6fffdddd776ddddddddddddddddddddd666ddddddddddddd6666dddddddddddddddddddddddddddddddddddddddddd19999999999999977777777
 76665555551ffff1d576db65d5577655d5555555d5766665d5555555d566777655555555d555555555555555d766777755555555d49495594999924976666665
 76665c05555f4441d76dbbb5d576db65d5556555d5766665d5bbbbb5d767666d65555555d554777777777455d7ddfff755555555d19425599922999976666665
