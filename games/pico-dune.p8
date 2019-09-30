@@ -139,7 +139,7 @@ end
 function process_click(self, mode)
   self.procstep=0
   -- toggle/switch mode (building/repairing) depending on state & click
-  self.procpaused=not self.procpaused
+  if (self.life>0) self.procpaused=not self.procpaused
   self.process=mode
 end
 
@@ -429,7 +429,7 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
   life=0,
   frame=0,
   process=0,
-  procpaused=true,
+  --procpaused=true,
   spent=0,
   fire_cooldown=0,
   hit=0,
@@ -1633,7 +1633,7 @@ function collisions()
       selected_obj.build_obj.life=0
       selected_obj.build_obj.process=0
       selected_obj.build_obj.spent=0
-      selected_obj.build_obj.procpaused=true
+      selected_obj.build_obj.done=false
       sfx(61)
     end
 
