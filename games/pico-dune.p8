@@ -611,7 +611,8 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
         self.procstep+=1
         self.life=(self.process==1 and (self.spent/self.cost)*100 or self.life+.1)
         -- time to update credits?
-        if (self.procstep>(self.process==1 and 3 or 100) and transact(-1))self.procstep=0 self.spent+=1
+        printh("1")
+        if (self.procstep>(self.process==1 and 3 or 100) and transact(-1))printh("2") self.procstep=0 self.spent+=1
       end
      end
    end,
@@ -639,6 +640,7 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
 end
 
 function transact(amount)
+ printh(">>> transact("..amount..")")
  if (getscoretext(p_credits)+amount<0) return false
  p_credits+=sgn(amount)*shr(abs(amount),16)
  sfx(63)
@@ -957,7 +959,9 @@ function do_guard(unit, start_state)
         -- if selected, deselect
         if (selected_obj==self) selected_obj=nil
         -- only make money if human player
-        if (self.capacity%4==0 and self.owner==1) transact(2) sfx(63)
+        printh("3")
+        printh("self.capacity:"..self.capacity)
+        if (flr(self.capacity)%4==0 and self.owner==1) transact(2) printh("4") sfx(63)
         yield()
        end
        self.capacity=0
