@@ -47,7 +47,7 @@ object_tiles={}
 buildings={}
 ui_controls={}
 spice_tiles={}
-
+power_bal=0
 
 _g={}
 _g.factory_click=function(self)
@@ -148,11 +148,11 @@ end
 obj_data=[[id|name|obj_spr|ico_spr|map_spr|type|w|h|trans_col|parent_id|req_id|req_level|req_faction|cost|power|arms|hitpoint|speed|range|fire_type|norotate|altframe|framecount|description|func_init|func_draw|func_update|func_onclick
 ]]..
 -- buildings
-[[1|cONSTRUCTION yARD|64|128||2|2|2|nil|nil|nil|1||100|nil||400|||||||aLL STRUCTURES ARE BUILT BY THE CONSTRUCTION YARD.||||factory_click
-2|lARGE cONCRETE sLAB|16|162||2|2|2|nil|1|1|4||20|nil||0|||||||uSE CONCRETE TO MAKE A STURDY FOUNDATION FOR YOUR STRUCTURES.||||
-3|sMALL cONCRETE sLAB|16|160||2|1|1|nil|1|1|1||5|nil||0|||||||uSE CONCRETE TO MAKE A STURDY FOUNDATION FOR YOUR STRUCTURES.||||
-4|dEFENSIVE wALL|79|164||2|1|1|nil|1|7|4||50|nil||50|||||||tHE wALL IS USED FOR PASSIVE DEFENSE.||||
-5|wINDTRAP|66|130||2|2|2|nil|1|1|1||300|100||200||||||10|tHE WINDTRAP SUPPLIES POWER TO YOUR BASE. wITHOUT POWER YOUR STRUCTURES WILL DECAY.|init_windtrap|||
+[[1|cONSTRUCTION yARD|64|128||2|2|2|nil|nil|nil|1||100|0||400|||||||aLL STRUCTURES ARE BUILT BY THE CONSTRUCTION YARD.||||factory_click
+2|lARGE cONCRETE sLAB|63|162||2|2|2|nil|1|1|4||20|0||0|||||||uSE CONCRETE TO MAKE A STURDY FOUNDATION FOR YOUR STRUCTURES.||||
+3|sMALL cONCRETE sLAB|63|160||2|1|1|nil|1|1|1||5|0||0|||||||uSE CONCRETE TO MAKE A STURDY FOUNDATION FOR YOUR STRUCTURES.||||
+4|dEFENSIVE wALL|79|164||2|1|1|nil|1|7|4||50|0||50|||||||tHE wALL IS USED FOR PASSIVE DEFENSE.||||
+5|wINDTRAP|66|130||2|2|2|nil|1|1|1||300|-100||200||||||10|tHE WINDTRAP SUPPLIES POWER TO YOUR BASE. wITHOUT POWER YOUR STRUCTURES WILL DECAY.|init_windtrap|||
 6|sPICE rEFINERY|68|132||2|3|2|nil|1|2|1||400|30||450||||||10|tHE rEFINERY CONVERTS SPICE INTO CREDITS.|init_refinery|draw_refinery||
 7|rADAR oUTPOST|73|136||2|2|2|nil|1|2|2||400|30||500|||||||tHE oUTPOST PROVIDES RADAR AND AIDS CONTROL OF DISTANT VEHICLES.||||
 8|sPICE sTORAGE sILO|71|134||2|2|2|nil|1|6|2||150|5||150|||||||tHE sPICE SILO IS USED TO STORE REFINED SPICE.||||
@@ -192,6 +192,7 @@ obj_data=[[id|name|obj_spr|ico_spr|map_spr|type|w|h|trans_col|parent_id|req_id|r
 [[38|sARDAUKAR||||1|1|1|11|nil|nil|4||0||5|110|0.1|1|||||tHE sARDULAR ARE THE eMPEROR'S ELITE TROOPS. WITH SUPERIOR FIREPOWER AND ARMOUR.||||
 39|sANDWORM||||9|1|1|11|nil|nil|3||0||300|1000|0.35|0|30||||tHE sAND wORMS ARE INDIGEONOUS TO dUNE. aTTRACTED BY VIBRATIONS, ALMOST IMPOSSIBLE TO DESTROY, WILL CONSUME ANYTHING THAT MOVES.||||
 80|rEPAIR|47|47||5|1|1|11|nil|nil|||||||||||||||draw_repair||repair_click]]
+
 
 
 
@@ -637,6 +638,7 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
  return obj
 end
 
+
 function transact(amount)
  if (getscoretext(p_credits)+amount<0) return false
  p_credits+=sgn(amount)*shr(abs(amount),16)
@@ -792,6 +794,7 @@ function update_radar_data()
  end
   
  -- -- structures
+ power_bal=0 -- reset power for this check
  for _,building in pairs(buildings) do 
    local posx=flr(building.x/8)
    local posy=flr(building.y/8)
@@ -799,19 +802,24 @@ function update_radar_data()
    if building.owner==1 or (hq and fow[posx][posy]==16) then
     radar_data[flr(building.x/2/8)..","..flr(building.y/2/8)] = building.col1
    end
- end
- -- units
- if hq then
+   -- track power
+   if (building.owner==1) power_bal-=building.ref.power
+  end
+  -- units
+  if hq then
    for _,unit in pairs(units) do
-     local posx=flr(unit.x/8)
-     local posy=flr(unit.y/8)
-     -- if our unit, or ai not under fog of war
-     if unit.owner==1 or fow[posx][posy]==16 then
-      radar_data[flr(unit.x/2/8)..","..flr(unit.y/2/8)] = unit.col1
-     end
+    local posx=flr(unit.x/8)
+    local posy=flr(unit.y/8)
+    -- if our unit, or ai not under fog of war
+    if unit.owner==1 or fow[posx][posy]==16 then
+     radar_data[flr(unit.x/2/8)..","..flr(unit.y/2/8)] = unit.col1
+    end
    end
- end
-
+  end
+  
+  -- check power output
+  printh("power_bal = "..power_bal)
+  --hq=(power_bal>0)
 end
 
 
@@ -1281,7 +1289,7 @@ function draw_radar()
   rectfill(x-1,y-1,x+size+1,y+size+1,p_col2)
   
   -- has radar-outpost and enough power?
-  if (has_radar) hq=true
+  hq=(has_radar and power_bal>0)
   
   rectfill(x,y,x+size,y+size,0)
 
