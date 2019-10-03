@@ -15,13 +15,16 @@ p_faction=3 -- 0=None, 1=Atreides, 2=Ordos, 3=Harkonnen
 p_col1=8
 p_col2=2
 
-p_credits=0
-p_credits+=shr(400,16)
+credits={0,0}
+credits[1]+=shr(400,16)
+--p_credits=0
+--p_credits+=shr(400,16)--
 
 ai_faction=1
 ai_col1=12
 ai_col2=1
-ai_credits=1000  -- varies?
+credits[2]+=shr(1000,16)
+--ai_credits=1000  -- varies?
 
 
 -- constants
@@ -600,7 +603,7 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
         self.procstep+=1
         self.life=(self.process==1 and (self.spent/self.cost)*100 or self.life+.1)
         -- time to update credits?
-        if (self.procstep>(self.process==1 and 3 or 100) and transact(-1)) self.procstep=0 self.spent+=1
+        if (self.procstep>(self.process==1 and 3 or 100) and transact(-1,self.parent)) self.procstep=0 self.spent+=1
       end
      end
    end,
@@ -628,10 +631,13 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
 end
 
 
-function transact(amount)
- if (getscoretext(p_credits)+amount<0) return false
- p_credits+=sgn(amount)*shr(abs(amount),16)
- sfx(63)
+function transact(diff, obj) 
+ printh("obj.owner = "..tostr(obj.owner))
+ if (getscoretext(credits[obj.owner])+diff<0) return false
+ credits[obj.owner]+=sgn(diff)*shr(abs(diff),16)
+ if (obj.owner==1) sfx(63)
+ -- printh("pl credits = "..getscoretext(credits[1]))
+ -- printh("ai credits = "..getscoretext(credits[2]))
  return true
 end
 
@@ -952,7 +958,7 @@ function do_guard(unit, start_state)
         -- if selected, deselect
         if (selected_obj==self) selected_obj=nil
         -- only make money if human player
-        if (flr(self.capacity)%4==0 and self.owner==1) transact(2) sfx(63)
+        if (flr(self.capacity)%4==0) transact(2,self)
         yield()
        end
        self.capacity=0
@@ -1333,7 +1339,7 @@ function draw_ui()
  end
  
  -- score
- strnum=getscoretext(p_credits) 
+ strnum=getscoretext(credits[1])
  printo(sub("000000", #strnum+1)..strnum, 103,2, 7)
  
  -- placement?
