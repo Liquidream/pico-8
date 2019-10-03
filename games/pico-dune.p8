@@ -5,6 +5,8 @@ __lua__
 -- by paul nicholas
 -- (with support from my patrons)
 
+## got a mem issue - perhaps to do with pathfinding??
+
 -- global flags
 debug_mode=true
 debug_collision=false
