@@ -599,7 +599,7 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
           local ux,uy=ping(self,(self.parent.x+8)/8, (self.parent.y+16)/8, is_free_tile)  
           m_map_obj_tree(self.ref,ux*8,uy*8, self)
           -- reset build
-          self.life=0
+          reset_build(self)
         end
       elseif self.process==2 and self.life>self.ref.hitpoint then
         -- repair complete
@@ -1617,10 +1617,7 @@ function collisions()
       local objref = selected_obj.build_obj.ref
       m_map_obj_tree(objref,xpos*8,ypos*8,nil,1)            
       -- reset build
-      selected_obj.build_obj.life=0
-      selected_obj.build_obj.process=0
-      selected_obj.build_obj.spent=0
-      selected_obj.build_obj.done=false
+      reset_build(selected_obj.build_obj)
       sfx(61)
     end
 
@@ -1631,6 +1628,14 @@ function collisions()
  end --if buttonclicked
 
 end
+
+function reset_build(obj)
+  obj.life=0
+  obj.process=0
+  obj.spent=0
+  obj.done=false
+end
+
 
 function check_hover_select(obj)
   obj.hover = collide(cursor, obj)
