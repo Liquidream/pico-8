@@ -133,8 +133,8 @@ end
 function process_click(self, mode)
   self.procstep=0
   -- toggle/switch mode (building/repairing) depending on state & click
-  if (self.life>0 and self.last_process==self.process) self.procpaused=not self.procpaused
-  self.last_process=self.process
+  self.last_process=self.process-- or mode
+  if (self.life>0 and self.last_process>0) self.procpaused=not self.procpaused
   self.process=mode
 end
 
