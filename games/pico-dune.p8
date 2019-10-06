@@ -476,7 +476,7 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
          local hp=this.ref.hitpoint
          local col = self.process==1 and 12 or (this.life<hp*.33 and 8 or this.life<hp*.66 and 10 or 11)
          local val = self.process==1 and (15*this.life/100) or (15*this.life/hp)         
-         if (this.life>0) rectfill(self.x,self.y+17,self.x+val,self.y+18,col)
+         if (this.life>0 and not show_menu) rectfill(self.x,self.y+17,self.x+val,self.y+18,col)
        end
        -- non-rotational sprite
        if self.type>2 then 
