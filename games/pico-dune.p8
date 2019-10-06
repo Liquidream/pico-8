@@ -131,9 +131,11 @@ _g.repair_click=function(self)
 end
 
 function process_click(self, mode)
+printh("process_click() mode=="..mode)
   self.procstep=0
   -- toggle/switch mode (building/repairing) depending on state & click
-  if (self.life>0) self.procpaused=not self.procpaused
+  if (self.life>0 and self.last_process==self.process) self.procpaused=not self.procpaused
+  self.last_process=self.process
   self.process=mode
 end
 
@@ -586,6 +588,8 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
 
      -- update build/repair process?
      if self.process>0 and not self.procpaused then
+      printh(t()..">self.process="..self.process)
+      printh("done="..tostr(self.done))
       if self.process==1 and self.spent>self.cost and not self.done then
         -- const complete!
         self.done = true
@@ -599,13 +603,14 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
           self.life=0
         end
       elseif self.process==2 and self.life>self.ref.hitpoint then
-        -- repair complete - do nothing
+        -- repair complete
+        self.process=0
       elseif not self.done then
         -- continue
         self.procstep+=1
         self.life=(self.process==1 and (self.spent/self.cost)*100 or self.life+.1)
         -- time to update credits?
-        if (self.procstep>(self.process==1 and 3 or 100) and transact(-1,self.parent)) self.procstep=0 self.spent+=1
+        if (self.procstep>(self.process==1 and 3 or 100) and transact(-1,self.process==1 and self.parent or self)) self.procstep=0 self.spent+=1
       end
      end
    end,
@@ -634,7 +639,7 @@ end
 
 
 function transact(diff, obj) 
- printh("obj.owner = "..tostr(obj.owner))
+ --printh("obj.owner = "..tostr(obj.owner))
  if (getscoretext(credits[obj.owner])+diff<0) return false
  credits[obj.owner]+=sgn(diff)*shr(abs(diff),16)
  if (obj.owner==1) sfx(63)
@@ -1329,14 +1334,10 @@ function draw_ui()
    selected_obj.build_obj:draw()--109,44)  
   end
   if selected_obj.life<selected_obj.ref.hitpoint 
-   and selected_obj.owner==1 then
-     --spr(47,117,28)
+   and selected_obj.owner==1
+   and selected_obj.type==2 then
     repair_obj:setpos(117,28) 
     repair_obj:draw()
-
-  -- and selected_obj.repair_obj and selected_obj.owner==1 then
-  --  selected_obj.repair_obj:setpos(117,28) 
-  --  selected_obj.repair_obj:update()
   end
  end
  
