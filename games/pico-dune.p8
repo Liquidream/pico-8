@@ -131,7 +131,6 @@ _g.repair_click=function(self)
 end
 
 function process_click(self, mode)
-printh("process_click() mode=="..mode)
   self.procstep=0
   -- toggle/switch mode (building/repairing) depending on state & click
   if (self.life>0 and self.last_process==self.process) self.procpaused=not self.procpaused
@@ -587,10 +586,10 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
      end
 
      -- update build/repair process?
-     if self.process>0 and not self.procpaused then
-      printh(t()..">self.process="..self.process)
-      printh("done="..tostr(self.done))
-      if self.process==1 and self.spent>self.cost and not self.done then
+     if self.process>0 
+      and not self.procpaused 
+      and not self.done then
+      if self.process==1 and self.spent>self.cost then
         -- const complete!
         self.done = true
         sfx(56)
@@ -605,7 +604,7 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
       elseif self.process==2 and self.life>self.ref.hitpoint then
         -- repair complete
         self.process=0
-      elseif not self.done then
+      else
         -- continue
         self.procstep+=1
         self.life=(self.process==1 and (self.spent/self.cost)*100 or self.life+.1)
