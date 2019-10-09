@@ -1217,10 +1217,11 @@ function update_ai()
   if (t()%2==0) then
     local ai_unit=units[flr(rnd(#units))+1]
     if ai_unit.owner==2 and ai_unit.arms>0 then
-     local p_unit=units[flr(rnd(#units))+1]
-     if p_unit.owner==1 then
+     -- select a random target (unit or building)
+     local p_target=(rnd(2)<1)and units[flr(rnd(#units))+1] or buildings[flr(rnd(#buildings))+1]
+     if p_target and p_target.owner==1 then
       printh(">>> attack!")
-      do_attack(ai_unit, p_unit)
+      do_attack(ai_unit, p_target)
      end
     end
   end
