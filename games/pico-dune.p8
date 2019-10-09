@@ -1285,7 +1285,7 @@ function draw_level()
  draw_particles()
 
  -- draw fog-of-war
- --draw_fow()
+ draw_fow()
 
 end
 
