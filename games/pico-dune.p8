@@ -38,6 +38,7 @@ credits[1]+=shr(400,16)
 ai_faction=1
 ai_col1=12
 ai_col2=1
+ai_level=1 -- difficulty level
 credits[2]+=shr(1000,16)
 --ai_credits=1000  -- varies?
 
@@ -306,7 +307,7 @@ function discover_objs()
  end
 end
 
-function m_map_obj_tree(objref, x,y, owner)
+function m_map_obj_tree(objref, x,y, owner, factory)
   --printh("name=.."..objref.name)
   local newobj=m_obj_from_ref(objref, x,y, objref.type, nil, _g[objref.func_init], _g[objref.func_draw], _g[objref.func_update], nil)
   -- set type==3 (icon!)
@@ -380,7 +381,7 @@ function m_map_obj_tree(objref, x,y, owner)
      -- auto create a harvester
      -- todo: have freighter deploy it
      local ux,uy=ping(newobj,(newobj.x+32)/8, (newobj.y+8)/8, is_free_tile)
-     local harvester=m_map_obj_tree(obj_data[27],ux*8,uy*8)
+     local harvester=m_map_obj_tree(obj_data[27],ux*8,uy*8,nil,newobj)
     end
   end
   -- unit props
@@ -409,7 +410,7 @@ function m_map_obj_tree(objref, x,y, owner)
     else
      -- non-fighting units   
      -- harvesters (auto parent to last created refinary)
-     if (newobj.id==27) newobj.capacity=0 newobj.last_fact=last_refinary
+     if (newobj.id==27) newobj.capacity=0 newobj.last_fact=factory --last_refinary
     end
 
 
@@ -1049,7 +1050,7 @@ end
 
 
 function do_attack(unit, target)
- --printh("do_attack()...")
+ --printh("do_attack()..."..t())
  -- 0=idle/guarding, 1=pathfinding, 2=moving, 3=attacking, 5=exploding
  unit.state = 3
  unit.target=target
@@ -1211,14 +1212,18 @@ end
 
 -- ai strategy code (attack, build, repair, etc.)
 function update_ai()
- 
- -- TEST - find the first ai unit and attack player
-  -- if (t()==1) then
-  --   local unit=units[#units]
-  --   local target=units[3]
-  --   do_attack(unit, target)
-  -- end
-
+ -- (7621 Tokens b4 doing this)
+ -- find the first ai unit and attack player
+  if (t()%2==0) then
+    local ai_unit=units[flr(rnd(#units))+1]
+    if ai_unit.owner==2 and ai_unit.arms>0 then
+     local p_unit=units[flr(rnd(#units))+1]
+     if p_unit.owner==1 then
+      printh(">>> attack!")
+      do_attack(ai_unit, p_unit)
+     end
+    end
+  end
 end
 
 -- draw related
@@ -1279,7 +1284,7 @@ function draw_level()
  draw_particles()
 
  -- draw fog-of-war
- draw_fow()
+ --draw_fow()
 
 end
 
