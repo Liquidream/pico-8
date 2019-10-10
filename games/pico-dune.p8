@@ -1,7 +1,7 @@
 pico-8 cartridge // http://www.pico-8.com
 version 18
 __lua__
--- pico-dune
+-- undune ii
 -- by paul nicholas
 -- (with support from my patrons)
 
@@ -377,7 +377,7 @@ function m_map_obj_tree(objref, x,y, owner, factory)
     if(newobj.id==7 and newobj.owner==1)has_radar=true
     -- refinery?
     if newobj.id==6 and newobj.parent==nil then
-     if (newobj.owner==1) last_refinary=newobj
+     --if (newobj.owner==1) last_refinary=newobj
      -- auto create a harvester
      -- todo: have freighter deploy it
      local ux,uy=ping(newobj,(newobj.x+32)/8, (newobj.y+8)/8, is_free_tile)
@@ -410,7 +410,7 @@ function m_map_obj_tree(objref, x,y, owner, factory)
     else
      -- non-fighting units   
      -- harvesters (auto parent to last created refinary)
-     if (newobj.id==27) newobj.capacity=0 newobj.last_fact=factory --last_refinary
+     if (newobj.id==27) newobj.capacity=0 newobj.last_fact=factory printh("factory == "..tostr(factory))--last_refinary
     end
 
 
@@ -614,7 +614,7 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
         if self.ref.type==1 then
           -- find nearest point to factory
           local ux,uy=ping(self,(self.parent.x+8)/8, (self.parent.y+16)/8, is_free_tile)  
-          m_map_obj_tree(self.ref,ux*8,uy*8)
+          m_map_obj_tree(self.ref,ux*8,uy*8,nil,self.parent)
           -- reset build
           reset_build(self)
         end
