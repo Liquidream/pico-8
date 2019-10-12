@@ -837,8 +837,6 @@ function update_radar_data()
  for _,building in pairs(buildings) do 
    local posx=flr(building.x/8)
    local posy=flr(building.y/8)
-   printh("posx="..posx)
-   printh("posy="..posy)
    -- if our building, or ai not under fog of war
    if building.owner==1 or (hq and fow[posx][posy]==16) then
     radar_data[flr(building.x/2/8)..","..flr(building.y/2/8)] = building.col1
@@ -1095,6 +1093,9 @@ function do_attack(unit, target)
    if (targdist<=unit.range*5) then
     unit.fire_cooldown-=1
     if (unit.fire_cooldown<=0 and not unit.bullet_x) unit.fire(unit) unit.fire_cooldown=unit.arms*2
+   else
+    --printh("target outside of range for obj id="..unit.id)
+    do_guard(unit)
    end
    yield()
   end -- 4) repeat 1-3 until target destroyed
@@ -1377,7 +1378,9 @@ function draw_ui()
   end
   if selected_obj.life<selected_obj.ref.hitpoint 
    and selected_obj.owner==1
-   and selected_obj.type==2 then
+   and (selected_obj.type==2
+     or selected_obj.id==15
+     or selected_obj.id==16) then
     repair_obj:setpos(117,28) 
     repair_obj:draw()
   end
