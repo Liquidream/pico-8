@@ -168,8 +168,8 @@ obj_data=[[id|name|obj_spr|ico_spr|map_spr|type|w|h|trans_col|parent_id|req_id|r
 12|hEAVY vEHICLE fACTORY|98|142||2|3|2|nil|1|6|3||600|20|0|200|||||||tHE hEAVY fACTORY PRODUCES HEAVY ATTACK VEHICLES.||||factory_click
 13|hI-tECH fACTORY|101|166||2|3|2|nil|1|12|5||500|35|0|400|||||||tHE hI-tECH fACTORY PRODUCES FLYING VEHICLES.||||factory_click
 14|rEPAIR fACILITY||||2|3|2|nil|1|12|5||700|20|0|200|||||||tHE rEPAIR fACILITY IS USED TO REPAIR YOUR VEHICLES.||||
-15|cANNON tURRET|59|170||2|1|1|nil|1|7|5||125|10|0|200|||||||tHE cANNON tURRET IS USED FOR SHORT RANGE ACTIVE DEFENSE.||||
-16|rOCKET tURRET|60|172||2|1|1|nil|1|7|6||250|20|0|200|||||||tHE rOCKET/cANNON TURRET IS USED FOR BOTH SHORT AND MEDIUM RANGE ACTIVE DEFENSE.||||
+15|cANNON tURRET|59|170||1|1|1|11|1|7|5||125|10|38|200|0|4|1||||tHE cANNON tURRET IS USED FOR SHORT RANGE ACTIVE DEFENSE.||||
+16|rOCKET tURRET|60|172||1|1|1|11|1|7|6||25|20|112|200|0|9|2||||tHE rOCKET/cANNON TURRET IS USED FOR BOTH SHORT AND MEDIUM RANGE ACTIVE DEFENSE.||||
 17|sTARPORT||||2|3|3|nil|1|6|6||500|50|0|500|||||||tHE sTARPORT IS USED TO ORDER AND RECEIVED SHIPMENTS FROM c.h.o.a.m.||||factory_click
 18|hOUSE OF ix||||2|2|2|nil|1|12|5||500|40|0|400|||||||tHE ix rESEARCH fACILITY ADVANCES YOUR hOUSE'S TECHNOLOGY.||||
 19|pALACE||||2|3|3|nil|1|17|8||999|80|0|1000|||||||tHIS IS YOUR pALACE.||||factory_click
@@ -198,8 +198,6 @@ obj_data=[[id|name|obj_spr|ico_spr|map_spr|type|w|h|trans_col|parent_id|req_id|r
 [[38|sARDAUKAR||||1|1|1|11|nil|nil|4||0||5|110|0.1|1|||||tHE sARDULAR ARE THE eMPEROR'S ELITE TROOPS. WITH SUPERIOR FIREPOWER AND ARMOUR.||||
 39|sANDWORM||||9|1|1|11|nil|nil|3||0||300|1000|0.35|0|30||||tHE sAND wORMS ARE INDIGEONOUS TO dUNE. aTTRACTED BY VIBRATIONS, ALMOST IMPOSSIBLE TO DESTROY, WILL CONSUME ANYTHING THAT MOVES.||||
 80|rEPAIR|47|47||5|1|1|11|nil|nil|||||||||||||||draw_repair||repair_click]]
-
-
 
 --[[
   ## messages ##
@@ -357,12 +355,13 @@ function m_map_obj_tree(objref, x,y, owner, factory)
     newobj.ico_obj.func_onclick=nil
   end
 
+  local xpos=flr(x/8)
+  local ypos=flr(y/8)
+  
   -- building props?        
   if objref.type==2 then
     newobj.deathsfx=53
     -- prepare the map?
-    local xpos=flr(x/8)
-    local ypos=flr(y/8)
     local slabs=(objref.id==2 or objref.id==3)    
     for xx=0,objref.w-1 do
       for yy=0,objref.h-1 do
@@ -374,11 +373,16 @@ function m_map_obj_tree(objref, x,y, owner, factory)
     -- refinery?
     if newobj.id==6 and newobj.parent==nil then
       last_facts[newobj.owner]=newobj
-     --if (newobj.owner==1) last_refinary=newobj
      -- auto create a harvester
      -- todo: have freighter deploy it
      local ux,uy=ping(newobj,(newobj.x+32)/8, (newobj.y+8)/8, is_free_tile)
      local harvester=m_map_obj_tree(obj_data[27],ux*8,uy*8,nil,newobj)
+    -- rocket turret?
+    -- elseif newobj.id==16 and newobj.parent==nil then
+    --   newobj.obj_spr=nil
+    --   wrap_mset(xpos, ypos, 95)
+    --   -- auto create turret
+    --   m_map_obj_tree(obj_data[16],x,y,nil,newobj)
     end
   end
   -- unit props
@@ -403,6 +407,10 @@ function m_map_obj_tree(objref, x,y, owner, factory)
        self.bullet_dy = (dy/d)*2
        sfx(self.arms<100 and 60 or 58, 3)
        reveal_fow(self)
+     end
+     -- rocket/cannon turret?
+     if newobj.id==15 or newobj.id==16 then
+      wrap_mset(xpos, ypos, 95)
      end
     else
      -- non-fighting units   
@@ -500,7 +508,7 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
          self.type==5 and 1 or 2)
        else
         -- building
-        spr(self.obj_spr, self.x, self.y, self.w/8, self.h/8)
+        if(self.obj_spr)spr(self.obj_spr, self.x, self.y, self.w/8, self.h/8)
        end
      end
 
@@ -616,7 +624,8 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
         self.done = true
         sfx(56)
         -- auto-deploy units
-        if self.ref.type==1 then
+        if self.ref.type==1
+         and self.ref.id!=16 then
           -- find nearest point to factory
           local ux,uy=ping(self,(self.parent.x+8)/8, (self.parent.y+16)/8, is_free_tile)  
           m_map_obj_tree(self.ref,ux*8,uy*8,nil,self.parent)
@@ -935,15 +944,6 @@ function do_guard(unit, start_state)
   while true do
    -- be on look-out
    if (rnd(500)<1 and self.arms>0) ping(self,flr(self.x/8),flr(self.y/8),is_danger_tile,self.range)
-   -- -- check for attack
-   -- if self.hit>0 then 
-   --  -- reinstate loop
-   --  set_loop(5, true)
-   --  -- switch music (if passed the loop point)?    
-   --  if (music_state==0 or stat(24)>5) music_state=1 music(0)
-   --  -- can we retaliate?
-   --  if (self.arms>0) do_attack(self, self.hitby)
-   -- end
 
    -- if a harvester....
    if self.id==27 then
@@ -1072,7 +1072,8 @@ function do_attack(unit, target)
    --self.hit=0
    -- todo:
    --  1) move to within firing range of target
-   if dist(unit.x,unit.y,target.x,target.y) > unit.range*5 then
+   if dist(unit.x,unit.y,target.x,target.y) > unit.range*5
+    and unit.speed>0 then
     -- move to within firing range of target
     move_unit_pos(unit,flr(target.x/8),flr(target.y/8),unit.range*5)
    end
@@ -1381,7 +1382,8 @@ function draw_ui()
  -- placement?
  if selected_obj 
   and selected_obj.build_obj 
-  and selected_obj.build_obj.ref.type==2
+  and (selected_obj.build_obj.ref.type==2
+   or selected_obj.build_obj.ref.id==16)
   and selected_obj.build_obj.life>=100 then
   -- draw placement
   -- (todo: improve this code!)
@@ -2201,14 +2203,14 @@ d5555555b7bbbb7bf7ffffffb88898bbf9ffffffffffffffffffffff555524444444444444444455
 01bbbb10000b0b00bbb1b0001b00000000b1bbbb000000b1bbbbbbbbbb1b1b1b0bbbbbb00bbbbbb0bb1b0000bbbbb1000001b1bb00b1bbbbbbbbbbbb00777770
 001bb10000000000bbbb0000b0000000000b1bbb0000000b1b1b1b1bb000000b0bbbbbb001bbbb10bbb1bb00bbbbbb0000bb1bbb001bbbbbbbbbbbbb07700077
 0000000000000000bbb0bbbb10000000000000000000000100000000000000000bbbbbb00bbbbbb0bbbbb1b1bbbbbbb01b1bbbbb0bbbbbbbbbbbbbbb0000b000
-ffffffffbbeeeebbb0cddc0bbbbbbbbbbecccebbbbbbbbbbbbbbbbbbbbbbbbbbffffffffffffffffbbbbbbbbbbb76bbbbbb76bbbb6bbb6bbb6bbb6bbffffffff
-ffffffffb0cccc0bbed77debb6cdc6bb0ccccc0bb6ccc6bbb0ece0bbb0eee0bbffffffffffffffffbbbbbbbbbbb76bbbbbb76bbbb8bbb8bbb8bbb8bbffffffff
-ffffffffb0cccc0bbc6776cbb7d7d7bb0cecec0bbcdddcbbb0d6d0bbb0d6d0bbfd5ff5ffffffffffbbbbbbbbbbbddbbbb7b55b7bb2bbb2bbb2bbb2bbffffffff
-ffffffffbeccccebbc6776cbb7d6d7bbec6c6cebbc6c6cbbbbc7cbbbbbc7cbbbf5dfffffffffffffbbbbbbbbbbd66dbbb651156bb0bbb0bb0b0b0b0bffffffff
-ffffffffbeccccebbed66debb7c6c7bbee6e6eebbc7c7cbbbbcccbbbb0c7c0bbffff555fffffffff77bbb77bbbd66dbbbdd66ddbbbb6bbbbbbb6bbbbffffffff
-ffffffffb0ecce0bbec66cebb7c0c7bbec0c0cebbc0c0cbbbb606bbbb0ccc0bbffff5d5fffffffffb7777711bbbddbbbb1b11b1bbbb8bbbbbbb8bbbbffffffff
-ffffffffb0deed0bb0e66e0bb6eee6bb00ccc00bb6eee6bbbbb0bbbbbb6b6bbbffff555fffffffff7711177bbbbbbbbbbbbbbbbbbbb2bbbbbbb2bbbbffffffff
-ffffffffbbeccebbbbb00bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbffffffffffffffffb11bbb11bbbbbbbbbbbbbbbbbbb0bbbbbb0b0bbbffffffff
+ffffffffbbeeeebbb0cddc0bbbbbbbbbbecccebbbbbbbbbbbbbbbbbbbbbbbbbbffffffffffffffffbbbbbbbbbbbbbbbbbbbbbbbbb6bbb6bbb6bbb6bbffffffff
+ffffffffb0cccc0bbed77debb6cdc6bb0ccccc0bb6ccc6bbb0ece0bbb0eee0bbffffffffffffffffbbbbbbbbbbbbbbbbbbbbbbbbb8bbb8bbb8bbb8bbffffffff
+ffffffffb0cccc0bbc6776cbb7d7d7bb0cecec0bbcdddcbbb0d6d0bbb0d6d0bbfd5ff5ffffffffffbbbbbbbbbbbddbbbb1b11b1bb2bbb2bbb2bbb2bbffffffff
+ffffffffbeccccebbc6776cbb7d6d7bbec6c6cebbc6c6cbbbbc7cbbbbbc7cbbbf5dfffffffffffffbbbbbbbbbbd66dbbbdd66ddbb0bbb0bb0b0b0b0bffffffff
+ffffffffbeccccebbed66debb7c6c7bbee6e6eebbc7c7cbbbbcccbbbb0c7c0bbffff555fffffffff77bbb77bbbd66dbbb651156bbbb6bbbbbbb6bbbbffffffff
+ffffffffb0ecce0bbec66cebb7c0c7bbec0c0cebbc0c0cbbbb606bbbb0ccc0bbffff5d5fffffffffb7777711bbbddbbbb7b55b7bbbb8bbbbbbb8bbbbffffffff
+ffffffffb0deed0bb0e66e0bb6eee6bb00ccc00bb6eee6bbbbb0bbbbbb6b6bbbffff555fffffffff7711177bbbb67bbbbbb67bbbbbb2bbbbbbb2bbbbffffffff
+ffffffffbbeccebbbbb00bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbffffffffffffffffb11bbb11bbb67bbbbbb67bbbbbb0bbbbbb0b0bbbffffffff
 d66dddddddd6fffdddd776ddddddddddddddddddddd666ddddddddddddd6666dddddddddddddddddddddddddddddddddddddddddd19999999999999977777777
 76665555551ffff1d576db65d5577655d5555555d5766665d5555555d566777655555555d555555555555555d766777755555555d49495594999924976666665
 76665c05555f4441d76dbbb5d576db65d5556555d5766665d5bbbbb5d767666d65555555d554777777777455d7ddfff755555555d19425599922999976666665
