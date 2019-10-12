@@ -418,7 +418,7 @@ function m_map_obj_tree(objref, x,y, owner, factory)
     else
      -- non-fighting units   
      -- harvesters (auto parent to last created refinary)
-     if (newobj.id==27) newobj.capacity=0 newobj.last_fact=last_facts[newobj.owner] printh("factory == "..tostr(factory))--last_refinary
+     if (newobj.id==27) newobj.capacity=0 newobj.last_fact=last_facts[newobj.owner]
     end
 
 
@@ -860,7 +860,6 @@ function update_radar_data()
  
   -- has radar-outpost and enough power (for HQ radar)?
   hq=(has_radar and power_bal>0)  
-  printh("hq="..tostr(hq))
 end
 
 
@@ -1322,7 +1321,6 @@ function draw_radar()
 
   -- anim?
   -- https://youtu.be/T337FK6L0h0?t=2891
-  printh("hq!=last_hq   = "..tostr(hq!=last_hq))
   if hq!=last_hq then
    radar_frame=hq and 1 or 59
    radar_dir=hq and 1 or -1
@@ -1330,7 +1328,6 @@ function draw_radar()
    update_radar_data()
  end  
  last_hq=hq
- printh("last_hq="..tostr(last_hq))
 
  if radar_frame>0 and radar_frame<60 then
    radar_frame+=radar_dir
@@ -1604,13 +1601,7 @@ function collisions()
  -- selected obj ui collision
  if selected_obj then
    ui_collision_mode=true
-  --  printh("selected_obj.id = "..selected_obj.id)
-  --  printh("last_selected_obj.id = "..last_selected_obj.id)
    if (last_selected_obj.life and last_selected_obj.life<last_selected_obj.ref.hitpoint) check_hover_select(repair_obj)
-   --if (selected_obj.life and selected_obj.life<selected_obj.ref.hitpoint) check_hover_select(repair_obj)
-    
-   --if (selected_obj.repair_obj) check_hover_select(selected_obj.repair_obj)
-   
    if (selected_obj.ico_obj and not show_menu and not clickedsomething) check_hover_select(selected_obj.ico_obj)   
    foreach(selected_obj.build_objs, check_hover_select)   
    foreach(ui_controls, check_hover_select)
@@ -1728,7 +1719,6 @@ function check_hover_select(obj)
    clickedsomething=true
   end
 
-  --printh("leaving check_hover_select(obj) - selected_obj="..tostr(selected_obj))
 end
 
 
@@ -1984,7 +1974,6 @@ end
 -- maybe adds the node to neighbors table
 -- (if flag zero is unset at this position)
 function maybe_add(nx, ny, ntable)
- --printh(t()..") maybe_add: "..nx..","..ny)
  if (
   not fget(wrap_mget(nx,ny),0)
   and object_tiles[nx..","..ny]==nil
@@ -2134,12 +2123,10 @@ function find_path
    end -- for each neighbor
    
    count+=1
-   --printh("count="..count)
    if count%4==0 then
     yield()
     --printh(stat(0)/2048)
-    if (count>3000 or stat(0)/2048>.8) printh(">> assume unreachable!") return nil 
-    --if (count>3000) printh(">> assume unreachable!") return nil 
+    if (count>3000 or stat(0)/2048>.8) return nil --printh(">> assume unreachable!")
    end
    --count%=100
    --yield()
