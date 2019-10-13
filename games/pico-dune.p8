@@ -8,7 +8,7 @@ __lua__
 --## got a mem issue - perhaps to do with pathfinding??
 
 -- global flags
-debug_mode=false
+debug_mode=true
 debug_collision=false
 --extcmd "rec"
 
@@ -570,6 +570,9 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
          del(units,self)
         end      
         if(selected_obj==self)selected_obj=nil
+        -- reset music back (will set again if more attackers)
+        set_loop(5, false) 
+        music_state=2
       else
         -- dying
         if (rnd(self.type==2 and 2 or 8)<1) make_explosion(self.x+rnd(self.w),self.y+rnd(self.h))
@@ -909,10 +912,6 @@ function update_level()
   camx=mid(camx,384)  --896
   camy=mid(camy,384)  --128
 
-  -- reset music back (will set again if more attackers)
-  set_loop(5, false) 
-  music_state=2
-  
   -- update all unit coroutines 
   -- (pathfinding, moving, attacking, etc.)
   for _,unit in pairs(units) do
