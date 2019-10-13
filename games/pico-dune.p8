@@ -37,7 +37,7 @@ last_facts={}
 ai_faction=1
 ai_col1=12
 ai_col2=1
-ai_level=1 -- difficulty level (1=hardest?)
+ai_level=5 -- difficulty level (1=hardest?)
 credits[2]+=shr(1000,16)
 built={}
 
@@ -570,9 +570,6 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
          del(units,self)
         end      
         if(selected_obj==self)selected_obj=nil
-        -- reset music back (will set again if more attackers)
-        set_loop(5, false) 
-        music_state=2
       else
         -- dying
         if (rnd(self.type==2 and 2 or 8)<1) make_explosion(self.x+rnd(self.w),self.y+rnd(self.h))
@@ -832,8 +829,7 @@ function update_radar_data()
      if(fow[i/2][l/2]==16) radar_data[((i/2)/2)..","..((l/2)/2)] = col!=11 and col or 15
      end
    end
- end
-  
+ end   
  -- -- structures
  power_bal=0 -- reset power for this check
  has_radar=false
@@ -863,7 +859,11 @@ function update_radar_data()
   end
  
   -- has radar-outpost and enough power (for HQ radar)?
-  hq=(has_radar and power_bal>0)  
+  hq=(has_radar and power_bal>0) 
+
+  -- reset music back (will set again if more attackers)
+  set_loop(5, false) 
+  music_state=2
 end
 
 
