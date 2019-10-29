@@ -612,7 +612,7 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
         self.target.y+self.target.h/2) < 4 
        then
         self.target.life-=self.arms
-        self.target.hit=self.fire_type --0=none, 1=bullet, 2=missile
+        self.target.hit=self.fire_type --0=none, 1=bullet, 2=missile        
         self.target.hitby=self
        end
        -- kill bullet/missile & do damage
@@ -846,7 +846,6 @@ function update_radar_data()
     power_bal-=building.ref.power
     if (building.id==7)has_radar=true
     if (sub(building.name,1,5)=="sPICE")total_storage+=1000
-    --if (building.id==6 or building.id==8)total_storage+=1000
    end
   end
   -- units
@@ -860,8 +859,6 @@ function update_radar_data()
     end
    end
   end
-
-  printh("total_storage = "..total_storage)
  
   -- has radar-outpost and enough power (for HQ radar)?
   hq=(has_radar and power_bal>0) 
@@ -2217,13 +2214,13 @@ d5555555b7bbbb7bf7ffffffb88898bbf9ffffffffffffffffffffff555524444444444444444455
 01bbbb10000b0b00bbb1b0001b00000000b1bbbb000000b1bbbbbbbbbb1b1b1b0bbbbbb00bbbbbb0bb1b0000bbbbb1000001b1bb00b1bbbbbbbbbbbb00777770
 001bb10000000000bbbb0000b0000000000b1bbb0000000b1b1b1b1bb000000b0bbbbbb001bbbb10bbb1bb00bbbbbb0000bb1bbb001bbbbbbbbbbbbb07700077
 0000000000000000bbb0bbbb10000000000000000000000100000000000000000bbbbbb00bbbbbb0bbbbb1b1bbbbbbb01b1bbbbb0bbbbbbbbbbbbbbb0000b000
-ffffffffbbeeeebbb0cddc0bbbbbbbbbbecccebbbbbbbbbbbbbbbbbbbbbbbbbbffffffffffffffffbbbbbbbbbbbbbbbbbbbbbbbbb6bbb6bbb6bbb6bbffffffff
-ffffffffb0cccc0bbed77debb6cdc6bb0ccccc0bb6ccc6bbb0ece0bbb0eee0bbffffffffffffffffbbbbbbbbbbbbbbbbbbbbbbbbb8bbb8bbb8bbb8bbffffffff
-ffffffffb0cccc0bbc6776cbb7d7d7bb0cecec0bbcdddcbbb0d6d0bbb0d6d0bbfd5ff5ffffffffffbbbbbbbbbbbddbbbb1b11b1bb2bbb2bbb2bbb2bbffffffff
+ffffffffbbeeeebbb0cddc0bbbbbbbbbbecccebbbbbbbbbbbbbbbbbbbbbbbbbbffffffffffffffffbbbbbbbbbbbbbbbbbbbbbbbbb7bbb7bbb7bbb7bbffffffff
+ffffffffb0cccc0bbed77debb6cdc6bb0ccccc0bb6ccc6bbb0ece0bbb0eee0bbffffffffffffffffbbbbbbbbbbbbbbbbbbbbbbbbbcbbbcbbbcbbbcbbffffffff
+ffffffffb0cccc0bbc6776cbb7d7d7bb0cecec0bbcdddcbbb0d6d0bbb0d6d0bbfd5ff5ffffffffffbbbbbbbbbbbddbbbb1b11b1bbebbbebbbebbbebbffffffff
 ffffffffbeccccebbc6776cbb7d6d7bbec6c6cebbc6c6cbbbbc7cbbbbbc7cbbbf5dfffffffffffffbbbbbbbbbbd66dbbbdd66ddbb0bbb0bb0b0b0b0bffffffff
-ffffffffbeccccebbed66debb7c6c7bbee6e6eebbc7c7cbbbbcccbbbb0c7c0bbffff555fffffffff77bbb77bbbd66dbbb651156bbbb6bbbbbbb6bbbbffffffff
-ffffffffb0ecce0bbec66cebb7c0c7bbec0c0cebbc0c0cbbbb606bbbb0ccc0bbffff5d5fffffffffb7777711bbbddbbbb7b55b7bbbb8bbbbbbb8bbbbffffffff
-ffffffffb0deed0bb0e66e0bb6eee6bb00ccc00bb6eee6bbbbb0bbbbbb6b6bbbffff555fffffffff7711177bbbb67bbbbbb67bbbbbb2bbbbbbb2bbbbffffffff
+ffffffffbeccccebbed66debb7c6c7bbee6e6eebbc7c7cbbbbcccbbbb0c7c0bbffff555fffffffff77bbb77bbbd66dbbb651156bbbb7bbbbbbb7bbbbffffffff
+ffffffffb0ecce0bbec66cebb7c0c7bbec0c0cebbc0c0cbbbb606bbbb0ccc0bbffff5d5fffffffffb7777711bbbddbbbb7b55b7bbbbcbbbbbbbcbbbbffffffff
+ffffffffb0deed0bb0e66e0bb6eee6bb00ccc00bb6eee6bbbbb0bbbbbb6b6bbbffff555fffffffff7711177bbbb67bbbbbb67bbbbbbebbbbbbbebbbbffffffff
 ffffffffbbeccebbbbb00bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbffffffffffffffffb11bbb11bbb67bbbbbb67bbbbbb0bbbbbb0b0bbbffffffff
 d66dddddddd6fffdddd776ddddddddddddddddddddd666ddddddddddddd6666dddddddddddddddddddddddddddddddddddddddddd19999999999999955555555
 76665555551ffff1d576db65d5577655d5555555d5766665d5555555d566777655555555d555555555555555d766777755555555d494955949999249577777d5
