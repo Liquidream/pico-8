@@ -12,7 +12,9 @@ debug_mode=true
 debug_collision=false
 --extcmd "rec"
 
+
 -- data flags (eventually pulled from cartdata)
+cartdata("pn_undune2") 
 
 -- 0=None, 1=Atreides, 2=Ordos, 3=Harkonnen
 -- (Atreides)
@@ -26,9 +28,13 @@ debug_collision=false
 -- p_col2=3
 
 -- (Harkonnen)
-p_faction=3
-p_col1=8
-p_col2=2
+-- p_faction=3
+-- p_col1=8
+-- p_col2=2
+
+p_faction=dget(1)
+p_col1=dget(2)
+p_col2=dget(3)
 
 credits={0,0}
 credits[1]+=shr(3990,16)
@@ -41,10 +47,7 @@ ai_level=5 -- difficulty level (1=hardest?)
 credits[2]+=shr(1000,16)
 built={}
 
--- constants
---### do this in main cart, pre-game!
---faction_cols={12,1,  11,3,  8,2}
---faction_cols[plr_faction*2], faction_cols[plr_faction*2-1]
+
 
 -- fields
 camx,camy=0,0
@@ -218,8 +221,6 @@ function _init()
  printh("-- init -------------") 
  -- enable mouse
  poke(0x5f2d, 1)
-
- cartdata("pn_picodune") 
 
  explode_data()
 

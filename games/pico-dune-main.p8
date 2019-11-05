@@ -9,7 +9,13 @@ __lua__
 -- main cart (title menu, level select)
 -- =======================================
 
+-- constants
+--### do this in main cart, pre-game!
+--faction_cols={12,1,  11,3,  8,2}
+--faction_cols[plr_faction*2], faction_cols[plr_faction*2-1]
+
 function _init()
+ cartdata("pn_undune2")
 end
 
 function _draw()
@@ -27,6 +33,20 @@ end
 
 function load_level(num)
  printh("in load_level("..num..")...")
+
+ -- set player to atreides
+ -- dset(1, 1)
+ -- dset(2, 12)
+ -- dset(3, 1)
+ -- set player to ordos
+ -- dset(1, 2)
+ -- dset(2, 11)
+ -- dset(3, 3)
+ -- set player to harkonnen
+ dset(1, 3)
+ dset(2, 8)
+ dset(3, 2)
+
  load("pico-dune")
 end
 
