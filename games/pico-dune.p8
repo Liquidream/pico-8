@@ -32,18 +32,19 @@ cartdata("pn_undune2")
 -- p_col1=8
 -- p_col2=2
 
-p_faction=dget(1)
-p_col1=dget(2)
-p_col2=dget(3)
+p_faction=dget(1) --3
+p_col1=dget(2)    --8
+p_col2=dget(3)    --2
 
 credits={0,0}
-credits[1]+=shr(3990,16)
+credits[1]+=shr(dget(4),16)
+--credits[1]+=shr(3990,16)
 last_facts={}
 
-ai_faction=1
-ai_col1=12
-ai_col2=1
-ai_level=5 -- difficulty level (1=hardest?)
+ai_faction=dget(10) -- 1
+ai_col1=dget(11)    -- 12
+ai_col2=dget(12)    -- 1
+ai_level=dget(13)   -- 5 -- difficulty level (1=hardest?)
 credits[2]+=shr(1000,16)
 built={}
 
@@ -222,10 +223,13 @@ function _init()
  -- enable mouse
  poke(0x5f2d, 1)
 
+ menuitem(1,"exit to title",function()
+  load("pico-dune-main")
+ end)
+
  explode_data()
 
-
-repair_obj=m_obj_from_ref(obj_data[80], 109,-20, 5, {}, nil,_g.draw_repair, _g.repair_click) 
+ repair_obj=m_obj_from_ref(obj_data[80], 109,-20, 5, {}, nil,_g.draw_repair, _g.repair_click) 
 
 
  -- starting mode 
