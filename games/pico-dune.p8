@@ -888,9 +888,9 @@ function update_level()
   mouse_x = stat(32)
   mouse_y = stat(33)
   mouse_btn = stat(34)
-  left_button_clicked = (mouse_btn>0 and last_mouse_btn != mouse_btn) or btnp(4)
+  left_button_clicked = (mouse_btn==1 and last_mouse_btn != mouse_btn) or btnp(4)
   left_button_down = (mouse_btn>0) or btn(4)
-  right_button_clicked = btnp(5)
+  right_button_clicked = (mouse_btn==2 and last_mouse_btn != mouse_btn) or btnp(5)
   
   -- keyboard input
   for k=0,1 do
@@ -1680,7 +1680,11 @@ function collisions()
     if (not show_menu) selected_obj=nil
     --if (not show_menu and placement_pos_ok) selected_obj=nil
   end 
-  
+ 
+ elseif right_button_clicked then
+  -- cancel selection
+  if (not show_menu) selected_obj=nil
+
  end --if buttonclicked
 
 end
