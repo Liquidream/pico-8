@@ -10,19 +10,24 @@ __lua__
 -- =======================================
 
 -- constants
-
+faction_cols = {
+ { 12, 1}, -- Atreides
+ { 11, 3}, -- Ordos
+ { 8,  2}, -- Harkonnen
+ { 14, 2}, -- Emperor?
+}
 -- mission data (harkonnen)
 mission_data={
 -- #,	Credits,	Obj. Credits,	Obj. Enemy,	Enemy Type
- { 1,	999,	 1000,	false, nil },	-- No enemy, just reach 1000 credits
- { 2,	1200,	2700,	false,	1 },	  -- 2700 credits of spice, OR eliminate Atreides presence
- { 3,	1500,	true,	2	}, -- Eliminate enemy
- { 4,	1500,	true,	2	}, -- Eliminate enemy
- { 5,	1500,	true,	1 }, --	Eliminate enemy
- { 6,	1700,	true,	2 }, --	Eliminate enemy
- { 7,	2000,	true,	1 }, --	Eliminate enemy
- { 8,	2000,	true,	2 }, --	(Should be 1 or 2)
-{ 9,	2500,	true,	4 }, --	Eliminate enemy
+ { 1,	999,	 1000,	nil },	-- No enemy, just reach 1000 credits
+ { 2,	1200,	2700,	1 },	  -- 2700 credits of spice, OR eliminate Atreides presence
+ { 3,	1500,	0,    2	}, -- Eliminate enemy
+ { 4,	1500,	0,    2	}, -- Eliminate enemy
+ { 5,	1500,	0,    1 }, --	Eliminate enemy
+ { 6,	1700,	0,    2 }, --	Eliminate enemy
+ { 7,	2000,	0,    1 }, --	Eliminate enemy
+ { 8,	2000,	0,    2 }, --	(Should be 1 or 2)
+ { 9,	2500,	0,    4 }, --	Eliminate enemy
 }
 
 
@@ -49,30 +54,19 @@ end
 function load_level(num)
  printh("in load_level("..num..")...")
 
---### do this in main cart, pre-game!
---faction_cols={12,1,  11,3,  8,2}
---faction_cols[plr_faction*2], faction_cols[plr_faction*2-1]
-
- -- set player to atreides
- -- dset(1, 1)
- -- dset(2, 12)
- -- dset(3, 1)
- 
- -- set player to ordos
- -- dset(1, 2)
- -- dset(2, 11)
- -- dset(3, 3)
-
  -- set player to harkonnen
- dset(1, 3) -- p_faction
- dset(2, 8) -- p_col1
- dset(3, 2) -- p_col2
- dset(4, 3990) -- p_credits
+ p_fact = 3
+ dset(1, p_fact3) -- p_faction
+ dset(2, faction_cols[p_fact][1]) -- p_col1
+ dset(3, faction_cols[p_fact][2]) -- p_col2
+ dset(6, 999) -- starting credits
+ dset(7, 1000) -- target credits
 
  -- set ai to atreides
- dset(10, 1) -- ai_faction
- dset(11,12) -- ai_col1
- dset(12, 1) -- ai_col2
+ ai_fact = 1
+ dset(10, ai_fact) -- ai_faction
+ dset(11, faction_cols[ai_fact][1]) -- ai_col1
+ dset(12, faction_cols[ai_fact][2]) -- ai_col2
  dset(13, 5) -- ai_level
  
 

@@ -36,18 +36,18 @@ p_faction=dget(1) --3
 p_col1=dget(2)    --8
 p_col2=dget(3)    --2
 
-credits={0,0}
-credits[1]+=shr(dget(4),16)
---credits[1]+=shr(3990,16)
+credits={
+ shr(dget(6),16), -- player starting credits
+ shr(500,16),     -- ai starting credits
+ shr(dget(7),16), -- target credits
+}
 last_facts={}
 
 ai_faction=dget(10) -- 1
 ai_col1=dget(11)    -- 12
 ai_col2=dget(12)    -- 1
 ai_level=dget(13)   -- 5 -- difficulty level (1=hardest?)
-credits[2]+=shr(1000,16)
 built={}
-
 
 
 -- fields
