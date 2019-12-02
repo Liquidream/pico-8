@@ -59,15 +59,24 @@ function load_level(num)
  dset(1, p_fact3) -- p_faction
  dset(2, faction_cols[p_fact][1]) -- p_col1
  dset(3, faction_cols[p_fact][2]) -- p_col2
+
  dset(6, 999) -- starting credits
  dset(7, 1000) -- target credits
+ dset(10, 0) -- harvested
+ dset(11, 0) -- units destroyed
+ dset(12, 0) -- buildings destroyed
+ dset(13, 0) -- playing time
 
  -- set ai to atreides
  ai_fact = 1
- dset(10, ai_fact) -- ai_faction
- dset(11, faction_cols[ai_fact][1]) -- ai_col1
- dset(12, faction_cols[ai_fact][2]) -- ai_col2
- dset(13, 5) -- ai_level
+ dset(20, ai_fact) -- ai_faction
+ dset(21, faction_cols[ai_fact][1]) -- ai_col1
+ dset(22, faction_cols[ai_fact][2]) -- ai_col2
+ 
+ dset(23, 5) -- ai level
+ dset(24, 0) -- ai harvested
+ dset(25, 0) -- ai units destroyed
+ dset(26, 0) -- ai buildings destroyed
  
 
  load("pico-dune")

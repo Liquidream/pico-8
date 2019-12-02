@@ -10,44 +10,27 @@ __lua__
 -- global flags
 debug_mode=true
 debug_collision=false
---extcmd "rec"
 
 
 -- data flags (eventually pulled from cartdata)
 cartdata("pn_undune2") 
 
--- 0=None, 1=Atreides, 2=Ordos, 3=Harkonnen
--- (Atreides)
--- p_faction=1 
--- p_col1=12
--- p_col2=1
-
--- (Ordos)
--- p_faction=2
--- p_col1=11
--- p_col2=3
-
--- (Harkonnen)
--- p_faction=3
--- p_col1=8
--- p_col2=2
-
-p_faction=dget(1) --3
-p_col1=dget(2)    --8
-p_col2=dget(3)    --2
+p_faction=dget(1)
+p_col1=dget(2)
+p_col2=dget(3)
 
 credits={
  shr(dget(6),16), -- player starting credits
- shr(500,16),     -- ai starting credits
+ shr(500,16),     -- ai starting credits (always 500?)
  shr(dget(7),16), -- target credits
 }
 last_facts={}
-
-ai_faction=dget(10) -- 1
-ai_col1=dget(11)    -- 12
-ai_col2=dget(12)    -- 1
-ai_level=dget(13)   -- 5 -- difficulty level (1=hardest?)
 built={}
+
+ai_faction=dget(10)
+ai_col1=dget(11)
+ai_col2=dget(12)
+ai_level=dget(13) -- difficulty level (1=hardest?)
 
 
 -- fields
@@ -725,16 +708,14 @@ function _update60()  --game_update
 
  --if (t()==0.4) extcmd "rec"
 
- --printh("cam = "..camx..","..camy)
-
  update_level()
 
  update_ai()  -- ai overall decision making (not individual units)
  
  -- update positions of pathfinding "blocker" objects
-if (t()%1==0) update_obj_tiles()
---if (t()%1==0 and t()%2!=0) update_obj_tiles()
-if (t()%1==0 and t()%2==0) update_radar_data()
+ if (t()%1==0) update_obj_tiles()
+ --if (t()%1==0 and t()%2!=0) update_obj_tiles()
+ if (t()%1==0 and t()%2==0) update_radar_data()
  _t+=1
 end
 
@@ -937,6 +918,16 @@ function update_level()
  end
  
  collisions()
+
+ -- check end state
+ if (credits[3]>0 and credits[1]>credits[3])
+  or ()
+--[[
+ check if AI player has no buildings
+ check if player has at least one building
+ check if player credits ≤ quota
+]]
+
 
  last_mouse_btn = mouse_btn
  last_selected_obj = selected_obj
