@@ -16,6 +16,12 @@ faction_cols = {
  { 8,  2}, -- Harkonnen
  { 14, 2}, -- Emperor?
 }
+
+-- cart modes
+title_mode=1
+levelselect_mode=2
+levelend_mode=3
+
 -- mission data (harkonnen)
 mission_data={
 -- #,	Credits,	Obj. Credits,	Obj. Enemy,	Enemy Type
@@ -30,25 +36,83 @@ mission_data={
  { 9,	2500,	0,    4 }, --	Eliminate enemy
 }
 
+-- vars
+mode = title_mode
+
+
+-- title vars
+
+-- level-end vars
+endstate = 0
 
 
 function _init()
  cartdata("pn_undune2")
 
-
+ load_data()
 end
 
 function _draw()
  cls()
  print("-main cart-")
- print("\n< press ❎ to start game >")
+
+ if mode == title_mode then
+  print("\n(title screen)")
+  print("\n< press ❎ to start game >")
+ 
+ elseif mode == levelselect_mode then
+  print("\n(level select screen)")
+  print("\n< press ❎ to choose level >")
+ 
+ elseif mode == levelend_mode then
+  print("\n(level end screen)")
+  print("\n< press ❎ to continue >")
+ 
+ end 
+
 end
 
 function _update60()
- -- test loading of game cart
- if btnp(5) then
-  load_level(1)
+
+ 
+ if mode == title_mode then
+  -- switch to level select
+  if btnp(5) then
+   mode = levelselect_mode
+  end 
+ 
+ elseif mode == levelselect_mode then
+  -- load and initialise game cart
+  if btnp(5) then
+   load_level(p_level)  --1
+  end
+
+ elseif mode == levelend_mode then
+  -- switch to level select
+  if btnp(5) then
+   p_level += 1
+   --printh("p_level = "..p_level)
+   dset(0, p_level)
+   mode = levelselect_mode
+  end
+
+  
  end
+ 
+
+ 
+
+
+end
+
+function load_data()
+ -- load saved data to determine current "state"
+ p_level = max(1, dget(0))
+ printh("p_level = "..tostr(p_level))
+ endstate = dget(14)  -- (0=none, 1=credit target, 2=enemy defeated, 3=player lost)
+ printh("endstate = "..tostr(endstate))
+ if (endstate>0) mode=levelend_mode
+
 end
 
 function load_level(num)

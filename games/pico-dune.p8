@@ -919,9 +919,16 @@ function update_level()
  
  collisions()
 
- -- check end state
- if (credits[3]>0 and credits[1]>credits[3])
-  or ()
+ -- check end states
+ -- player credits >= quota
+ if (credits[3]>0 and credits[1]>credits[3]) endstate=1
+ -- ai has no buildings
+ --if (credits[3]>0 and credits[1]>credits[3]) endstate=2
+ -- player has no buildings
+ --if (credits[3]>0 and credits[1]>credits[3]) endstate=3
+
+ -- game over?
+ if (endstate) dset(14, endstate) printo("mission "..(endstate<3 and "complete" or "failed"),36,60,8) flip() load("pico-dune-main")
 --[[
  check if AI player has no buildings
  check if player has at least one building
