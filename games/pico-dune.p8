@@ -26,6 +26,9 @@ credits={
 }
 last_facts={}
 built={}
+start_time=t()
+build_dest={1,2}
+unit_dest={3,4}
 
 ai_faction=dget(10)
 ai_col1=dget(11)
@@ -549,6 +552,7 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
            end
          end
          del(buildings,self)
+         build_dest[self.hitby]+=1
         else
          -- unit
          local gx,gy = flr(self.x/8), flr(self.y/8)
@@ -556,6 +560,7 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
          if (wrap_mget(gx,gy)<9)wrap_mset(gx,gy,20) --scortch sand
          if (self.speed==0)wrap_mset(gx,gy,15)
          del(units,self)
+         unit_dest[self.hitby]+=1
         end      
         if(selected_obj==self)selected_obj=nil
       else
@@ -928,7 +933,19 @@ function update_level()
  --if (credits[3]>0 and credits[1]>credits[3]) endstate=3
 
  -- game over?
- if (endstate) dset(14, endstate) printo("mission "..(endstate<3 and "complete" or "failed"),36,60,8) flip() load("pico-dune-main")
+ if endstate then 
+  dset(14, endstate)
+  dset(13, t()-start_time)
+  dset(10,getscoretext(credits[1]))
+  dset(24,getscoretext(credits[2]))
+  dset(11,unit_dest[1])
+  dset(25,unit_dest[2])
+  dset(12,build_dest[1])
+  dset(26,build_dest[2])
+  printo("mission "..(endstate<3 and "complete" or "failed"),36,60,8)
+  flip()
+  load("pico-dune-main")
+ end
 --[[
  check if AI player has no buildings
  check if player has at least one building
