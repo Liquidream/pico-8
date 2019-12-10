@@ -27,13 +27,13 @@ credits={
 last_facts={}
 built={}
 start_time=t()
-build_dest={1,2}
-unit_dest={3,4}
+build_dest={0,0}
+unit_dest={0,0}
 
-ai_faction=dget(10)
-ai_col1=dget(11)
-ai_col2=dget(12)
-ai_level=dget(13) -- difficulty level (1=hardest?)
+ai_faction=dget(20)
+ai_col1=dget(21)
+ai_col2=dget(22)
+ai_level=dget(23) -- difficulty level (1=hardest?)
 
 
 -- fields
@@ -552,15 +552,16 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
            end
          end
          del(buildings,self)
-         build_dest[self.hitby]+=1
+         printh("self.hitby="..tostr(self.hitby))         
+         build_dest[self.hitby.owner]+=1
         else
          -- unit
          local gx,gy = flr(self.x/8), flr(self.y/8)
          if (gy>31) gx+=64 gy-=32
          if (wrap_mget(gx,gy)<9)wrap_mset(gx,gy,20) --scortch sand
          if (self.speed==0)wrap_mset(gx,gy,15)
-         del(units,self)
-         unit_dest[self.hitby]+=1
+         del(units,self)         
+         unit_dest[self.hitby.owner]+=1
         end      
         if(selected_obj==self)selected_obj=nil
       else

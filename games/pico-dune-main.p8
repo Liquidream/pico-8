@@ -143,7 +143,7 @@ function load_data()
   -- get level end data
   p_score = dget(4)
   p_rank = calc_rank()
-  p_time = dget(13) -- playing time 
+  p_time = flr(dget(13)) -- playing time 
   p_harvested = dget(10) -- spice harvested by player
   p_units = dget(11) -- units destroyed by player
   p_buildings = dget(12) -- buildings destroyed by player
