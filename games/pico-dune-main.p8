@@ -178,7 +178,7 @@ function load_level(num)
  dset(3, faction_cols[p_fact][2]) -- p_col2
 
  dset(6, 999) -- starting credits
- dset(7, 1000) -- target credits
+ dset(7, 9000) -- target credits
  dset(10, 0) -- harvested
  dset(11, 0) -- units destroyed
  dset(12, 0) -- buildings destroyed

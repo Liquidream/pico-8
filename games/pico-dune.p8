@@ -826,7 +826,8 @@ function update_radar_data()
  power_bal=0 -- reset power for this check
  total_storage=0
  has_radar=false
- for _,building in pairs(buildings) do 
+ building_count={0,0}
+ for _,building in pairs(buildings) do  
    local posx=flr(building.x/8)
    local posy=flr(building.y/8)
    -- if our building, or ai not under fog of war
@@ -839,6 +840,8 @@ function update_radar_data()
     if (building.id==7)has_radar=true
     if (sub(building.name,1,5)=="sPICE")total_storage+=1000
    end
+   -- track counts
+   building_count[building.owner]+=1
   end
   -- units
   if hq then
@@ -858,6 +861,31 @@ function update_radar_data()
   -- reset music back (will set again if more attackers)
   set_loop(5, false) 
   music_state=2
+
+ -- ----------------------
+ -- check end states
+ --
+ -- player credits >= quota
+ if (credits[3]>0 and credits[1]>credits[3]) endstate=1
+ -- ai has no buildings
+ if (building_count[2]==0) endstate=2
+ -- player has no buildings
+ if (building_count[1]==0) endstate=3
+
+ -- game over?
+ if endstate then 
+  dset(14, endstate)
+  dset(13, t()-start_time)
+  dset(10,getscoretext(credits[1]))
+  dset(24,getscoretext(credits[2]))
+  dset(11,unit_dest[1])
+  dset(25,unit_dest[2])
+  dset(12,build_dest[1])
+  dset(26,build_dest[2])
+  printo("mission "..(endstate<3 and "complete" or "failed"),36,60,8)
+  flip()
+  load("pico-dune-main")
+ end
 end
 
 
@@ -925,33 +953,7 @@ function update_level()
  
  collisions()
 
- -- check end states
- -- player credits >= quota
- if (credits[3]>0 and credits[1]>credits[3]) endstate=1
- -- ai has no buildings
- --if (credits[3]>0 and credits[1]>credits[3]) endstate=2
- -- player has no buildings
- --if (credits[3]>0 and credits[1]>credits[3]) endstate=3
 
- -- game over?
- if endstate then 
-  dset(14, endstate)
-  dset(13, t()-start_time)
-  dset(10,getscoretext(credits[1]))
-  dset(24,getscoretext(credits[2]))
-  dset(11,unit_dest[1])
-  dset(25,unit_dest[2])
-  dset(12,build_dest[1])
-  dset(26,build_dest[2])
-  printo("mission "..(endstate<3 and "complete" or "failed"),36,60,8)
-  flip()
-  load("pico-dune-main")
- end
---[[
- check if AI player has no buildings
- check if player has at least one building
- check if player credits ≤ quota
-]]
 
 
  last_mouse_btn = mouse_btn
