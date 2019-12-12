@@ -173,12 +173,14 @@ function load_level(num)
 
  -- set player to harkonnen
  p_fact = 3
+ --dset(0, 0)
+ dset(0, num)
  dset(1, p_fact3) -- p_faction
  dset(2, faction_cols[p_fact][1]) -- p_col1
  dset(3, faction_cols[p_fact][2]) -- p_col2
 
  dset(6, 999) -- starting credits
- dset(7, 9000) -- target credits
+ dset(7, 1000) -- target credits
  dset(10, 0) -- harvested
  dset(11, 0) -- units destroyed
  dset(12, 0) -- buildings destroyed
@@ -196,7 +198,11 @@ function load_level(num)
  dset(26, 0) -- ai buildings destroyed
  
 
- load("pico-dune")
+ -- load level map data 
+ reload(0x4300, 0x2000, 0x1000, "pico-dune-map2.p8")  -- read map data to user mem
+ cstore(0x2000, 0x4300, 0x1000, "pico-dune.p8")    -- write user mem to game map data
+
+ load("pico-dune.p8")
 end
 
 __gfx__

@@ -15,6 +15,7 @@ debug_collision=false
 -- data flags (eventually pulled from cartdata)
 cartdata("pn_undune2") 
 
+p_level=dget(0)
 p_faction=dget(1)
 p_col1=dget(2)
 p_col2=dget(3)
@@ -868,7 +869,7 @@ function update_radar_data()
  -- player credits >= quota
  if (credits[3]>0 and credits[1]>credits[3]) endstate=1
  -- ai has no buildings
- if (building_count[2]==0) endstate=2
+ if (building_count[2]==0 and p_level>0) endstate=2
  -- player has no buildings
  if (building_count[1]==0) endstate=3
 
