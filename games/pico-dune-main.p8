@@ -9,6 +9,9 @@ __lua__
 -- main cart (title menu, level select)
 -- =======================================
 
+game_cart = "pico-dune.p8"
+--game_cart = "pico-dune_fmt.p8"
+
 -- music
 -- 00 = title
 -- 06 = intro/advisor/level lose?
@@ -108,7 +111,8 @@ function _update60()
  elseif mode == levelselect_mode then
   -- load and initialise game cart
   if btnp(5) then
-   load_level(p_level)  --1
+   --load_level(p_level)
+   load_level(2)
   end
 
  elseif mode == levelend_mode then
@@ -202,9 +206,9 @@ function load_level(num)
  local mapfile = "pico-dune-map"..num..".p8"
  printh("loading data from: "..mapfile)
  reload(0x4300, 0x2000, 0x1000, mapfile)  -- read map data to user mem
- cstore(0x2000, 0x4300, 0x1000, "pico-dune_fmt.p8")    -- write user mem to game map data
+ cstore(0x2000, 0x4300, 0x1000, game_cart)    -- write user mem to game map data
 
- load("pico-dune_fmt.p8")
+ load(game_cart)
 end
 
 __gfx__
