@@ -38,7 +38,7 @@ ai_level=dget"23" -- difficulty level (1=hardest?)
 
 
 -- fields
-camx,camy=0,0
+--camx,camy=0,0
 cursx,cursy=0,0
 keyx,keyy=0,0
 selected_obj=nil
@@ -250,10 +250,8 @@ function _init()
 
  discover_objs()
 
---camx=8
---camy=88
- camx=44
- camy=20
+ -- camx=44
+ -- camy=20
 
  music"7"
 end
@@ -275,6 +273,9 @@ function discover_objs()
         -- found player start position
         pstartx=mx*8
         pstarty=my*8
+        -- center camera
+        camx=pstartx-56
+        camy=pstarty-56
         -- create player const yard
         objref=obj_data[1]
 
