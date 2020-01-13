@@ -111,8 +111,10 @@ function _update60()
  elseif mode == levelselect_mode then
   -- load and initialise game cart
   if btnp(5) then
+   
    --load_level(p_level)
-   load_level(2)
+   load_level(1)
+
   end
 
  elseif mode == levelend_mode then
@@ -138,9 +140,10 @@ end
 
 function load_data()
  -- load saved data to determine current "state"
+
  p_level = max(1, dget(0))
- --p_level = 1
  printh("p_level: = "..tostr(p_level))
+
  endstate = dget(14)  -- (0=none, 1=credit target, 2=enemy defeated, 3=player lost)
  printh("endstate = "..tostr(endstate))
  if endstate>0 then
