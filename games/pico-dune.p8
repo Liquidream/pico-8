@@ -1686,7 +1686,6 @@ function collisions()
     end
 
     if (not show_menu) selected_obj=nil
-    --if (not show_menu and placement_pos_ok) selected_obj=nil
   end 
  
  elseif right_button_clicked then
