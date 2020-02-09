@@ -52,16 +52,17 @@ _g.factory_click=function(self)
   menu_pos=1
   selected_subobj=self.parent.build_objs[1]
   -- create buttons
-  m_button(6,89,"⬆️",function(self)   
+  m_button(6,89,"⬆️",function(self)
    sel_build_item_idx=mid(1,sel_build_item_idx-1,#selected_obj.valid_build_objs)
    selected_subobj = selected_obj.valid_build_objs[sel_build_item_idx]
    if (sel_build_item_idx<menu_pos) menu_pos-=1
   end, 10)
   m_button(17,89,"⬇️",function(self)
-   sel_build_item_idx=mid(1,sel_build_item_idx+1,#selected_obj.valid_build_objs)
+   local len=#selected_obj.valid_build_objs
+   sel_build_item_idx=mid(1,sel_build_item_idx+1,len)
    selected_subobj = selected_obj.valid_build_objs[sel_build_item_idx]
-   menu_pos=mid(menu_pos+1,#show_menu.parent.valid_build_objs-2)
-   if (sel_build_item_idx>menu_pos+2) menu_pos=min(menu_pos+1,#show_menu.parent.valid_build_objs-2)
+   menu_pos=mid(menu_pos+1,len-2)
+   if (sel_build_item_idx>menu_pos+2) menu_pos=min(menu_pos+1,len-2)
   end, 10)
   m_button(32,88,"build",function(self)
    show_menu=nil
