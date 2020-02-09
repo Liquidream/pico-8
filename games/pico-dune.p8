@@ -300,9 +300,10 @@ function m_map_obj_tree(objref, x,y, owner, factory)
     if newobj.id==6 and newobj.parent==nil then
       last_facts[newobj.owner]=newobj
      -- auto create a harvester
-     -- todo: have freighter deploy it
+     -- TODO: have freighter deploy it
      local ux,uy=ping(newobj,(newobj.x+32)/8, (newobj.y+8)/8, is_free_tile)
-     local harvester=m_map_obj_tree(obj_data[27],ux*8,uy*8,nil,newobj)
+     --local harvester=
+     m_map_obj_tree(obj_data[27],ux*8,uy*8,nil,newobj)
     end
   end
   -- unit props
@@ -398,8 +399,6 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
      -- colour anim?
      if self.col_cycle then
       pal(self.col_cycle_src, self.col_cycle[self.col_cycle_pos])
-      --  pal(self.col_cycle[self.col_cycle_pos][1],
-      --      self.col_cycle[self.col_cycle_pos][2])
      end
      -- rotating obj?
      if self.r then
@@ -1237,9 +1236,9 @@ function draw_level()
  -- draw units
  for _,unit in pairs(units) do
   if (not show_menu) unit:update()
-  pal()
-  palt(0,false)
-  palt(11,true)
+  -- pal()
+  -- palt(0,false)
+  -- palt(11,true)
   unit:draw()
   -- draw selected reticule
   if (unit == selected_obj) then   
