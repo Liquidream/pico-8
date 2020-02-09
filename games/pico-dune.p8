@@ -69,6 +69,7 @@ _g.factory_click=function(self)
   m_button(17,89,"⬇️",function(self)
    sel_build_item_idx=mid(1,sel_build_item_idx+1,#selected_obj.valid_build_objs)
    selected_subobj = selected_obj.valid_build_objs[sel_build_item_idx]
+   menu_pos=mid(menu_pos+1,#show_menu.parent.valid_build_objs-2)
    if (sel_build_item_idx>menu_pos+2) menu_pos=min(menu_pos+1,#show_menu.parent.valid_build_objs-2)
   end, 10)
   m_button(32,88,"build",function(self)
@@ -100,12 +101,12 @@ _g.init_windtrap=function(self)
   self.col_cycle_pos=1
 end
 _g.init_refinery=function(self)
- self.col_cycle = {11,10, 8, 8, 8, 8}
+ self.col_cycle = {11,10,8}
  self.col_cycle_pos=1
 end
 _g.draw_refinery=function(self)
-  pal()
-  palt(0,false)
+  -- pal()
+  -- palt(0,false)
   pal(11,self.col2)
   pal(10,self.col2)
   pal(8,self.col2)
@@ -118,9 +119,9 @@ _g.draw_refinery=function(self)
   spr(self.obj_spr, self.x, self.y, self.w/8, self.h/8)
 end
 _g.draw_repair=function(self) 
- pal()
- palt(0,false)
- palt(11,true)
+--  pal()
+--  palt(0,false)
+--  palt(11,true)
  if (alternate()) pal(7,selected_obj.process==2 and 11 or 8)
  spr(self.obj_spr, self.x, self.y)
  pal()
@@ -1307,9 +1308,11 @@ function draw_level()
  end
  
  -- draw units
- palt(11,true)
  for _,unit in pairs(units) do
   if (not show_menu) unit:update()
+  pal()
+  palt(0,false)
+  palt(11,true)
   unit:draw()
   -- draw selected reticule
   if (unit == selected_obj) then   
