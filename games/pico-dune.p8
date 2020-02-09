@@ -161,11 +161,11 @@ function _init()
 
  -- create cursor ui "object" (for collisions)
  cursor = {
-  x=0,
-  y=0,
+  -- x=0,
+  -- y=0,
   w=8,
   h=8,
-  spr=0,
+  --spr=0,
   get_hitbox=function(self)
    return {
     x=self.x+(not ui_collision_mode and camx or 0)+2,
@@ -181,9 +181,6 @@ function _init()
  }
 
  discover_objs()
-
- -- camx=44
- -- camy=20
 
  music"7"
 end
@@ -203,16 +200,13 @@ function discover_objs()
        -- handle player start pos (const yard) as a special case
        if i==1 and spr_val==1 then
         -- found player start position
-        pstartx=mx*8
-        pstarty=my*8
+        pstartx,pstarty=mx*8,my*8        
         -- center camera
-        camx=pstartx-56
-        camy=pstarty-56
+        camx,camy=pstartx-56,pstarty-56
         -- create player const yard
         objref=obj_data[1]
-
        elseif i==2
-        and spr_val!=16 then --don't create "concrete" as objs
+        and spr_val>48 then --don't create "concrete" as objs
         -- find object for id
         for o in all(
          obj_data) do
@@ -224,11 +218,7 @@ function discover_objs()
          local ox,oy=mx,my
          if (ox>63) oy+=31 ox-=64
          m_map_obj_tree(objref, ox*8,oy*8)
-         --m_map_obj_tree(objref, mx*8,my*8)
-         if objref.type==1 
-          and objref.speed>0 then
-           mset(mx,my,0)
-         end
+         if (objref.type==1 and objref.speed>0) mset(mx,my,0)
        end
      end
    end
@@ -245,24 +235,25 @@ function m_map_obj_tree(objref, x,y, owner, factory)
   newobj.build_objs={}
   -- go through all ref's and see if any valid for this building
   for o in all(obj_data) do
+    local req_fact=o.req_faction
     if (o.parent_id!=nil and (o.parent_id==newobj.id or o.parent2_id==newobj.id))
-     and (o.req_faction==nil
-      or (o.req_faction>0 and o.req_faction==p_faction)
-      or (o.req_faction<0 and -p_faction!=o.req_faction))
-    then    
-      -- set type==4 (build icon!)
-      local build_obj = m_obj_from_ref(o, 109,0, 4, newobj, nil, nil, function(self)
-        -- building icon clicked
-        if show_menu then
-          -- select building
-          selected_obj=self
-        else
-          --auto build
-          process_click(self, 1)
-        end
-      end)
-
-      add(newobj.build_objs,build_obj)
+     and (req_fact==nil
+      or (req_fact>0 and o.req_faction==p_faction)
+      or (req_fact<0 and -p_faction!=req_fact))
+    then
+      add(newobj.build_objs,
+        -- set type==4 (build icon!)
+        m_obj_from_ref(o, 109,0, 4, newobj, nil, nil, function(self)
+          -- building icon clicked
+          if show_menu then
+            -- select building
+            selected_obj=self
+          else
+            --auto build
+            process_click(self, 1)
+          end
+        end)
+      )
       newobj.build_obj=newobj.build_objs[1]
     end
   end
