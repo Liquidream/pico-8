@@ -5,12 +5,8 @@ __lua__
 -- by paul nicholas
 -- (with support from my patrons)
 
---## got a mem issue - perhaps to do with pathfinding??
-
 -- global flags
-debug_mode=true
-debug_collision=false
-
+debug_mode,debug_collision=true,false
 
 -- data flags (eventually pulled from cartdata)
 cartdata("pn_undune2") 
@@ -25,29 +21,11 @@ credits={
 
 ai_faction,ai_col1,ai_col2,ai_level=dget"20",dget"21",dget"22",dget"23" -- difficulty level (1=hardest?)
 
-last_facts={}
-built={}
-start_time=t()
-build_dest={0,0}
-unit_dest={0,0}
-
 -- fields
--- cursx,cursy=0,0
-keyx,keyy=0,0
--- selected_obj=nil
-_t=0
-hq=false
+_g,buildings,units,object_tiles,last_facts,built,radar_data,ui_controls,spice_tiles={},{},{},{},{},{},{},{},{}
+start_time,_t,build_dest,unit_dest,keyx,keyy,hq,radar_frame=t(),0,{0,0},{0,0},0,0,false,0
 last_hq=hq
-radar_frame=0
-radar_data={}
-units={}
-object_tiles={}
-buildings={}
-ui_controls={}
-spice_tiles={}
 
-
-_g={}
 _g.factory_click=function(self)
   menu_pos=1
   selected_subobj=self.parent.build_objs[1]
@@ -78,27 +56,13 @@ _g.factory_click=function(self)
   show_menu=self
 end
 _g.init_windtrap=function(self)
-  self.col_cycle = {
-    {11,12},
-    {11,12},
-    {11,12},
-    {11,12},
-    {11,13},
-    {11,1},
-    {11,1},
-    {11,1},
-    {11,1},
-    {11,13},
-  }
-  self.col_cycle_pos=1
+  self.col_cycle_src=11
+  self.col_cycle = {12,12,12,12,13,1,1,1,1,13}
 end
 _g.init_refinery=function(self)
  self.col_cycle = {11,10,8}
- self.col_cycle_pos=1
 end
 _g.draw_refinery=function(self)
-  -- pal()
-  -- palt(0,false)
   pal(11,self.col2)
   pal(10,self.col2)
   pal(8,self.col2)
@@ -111,9 +75,6 @@ _g.draw_refinery=function(self)
   spr(self.obj_spr, self.x, self.y, self.w/8, self.h/8)
 end
 _g.draw_repair=function(self) 
---  pal()
---  palt(0,false)
---  palt(11,true)
  if (alternate()) pal(7,selected_obj.process==2 and 11 or 8)
  spr(self.obj_spr, self.x, self.y)
  pal()
@@ -432,6 +393,7 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
   fire_cooldown=0,
   hit=0,
   flash_count=1,
+  col_cycle_pos=1,
   get_hitbox=function(self)
     return {
      x=self.x,
@@ -459,8 +421,9 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
      if (self.faction and self.id!=18) pal(12,self.col1) pal(14,self.col2)
      -- colour anim?
      if self.col_cycle then
-       pal(self.col_cycle[self.col_cycle_pos][1],
-           self.col_cycle[self.col_cycle_pos][2])
+      pal(self.col_cycle_src, self.col_cycle[self.col_cycle_pos])
+      --  pal(self.col_cycle[self.col_cycle_pos][1],
+      --      self.col_cycle[self.col_cycle_pos][2])
      end
      -- rotating obj?
      if self.r then
