@@ -1389,15 +1389,12 @@ function draw_ui()
  draw_radar()
 
  if show_menu then
-  w=121
-  h=73
   fillp(0xA5A5.8)
   rectfill(0,0,127,127,0)
   fillp()
 
-  rectfill(64-w/2, 59-h/2, 64+w/2, 59+h/2, p_col2)
-  rect(64-w/2+1, 59-h/2+1, 64+w/2-1, 59+h/2-1, p_col1) 
-
+  rectfill(3, 22, 124, 95, p_col2)
+  rect(4, 23, 123, 94, p_col1) 
 
   -- build menu?
   if selected_obj.build_objs then
@@ -1448,15 +1445,6 @@ function draw_ui()
  palt(11,true)
  cursor:draw() 
 end
-
--- function draw_dialog(w,h,bgcol,bordercol)
---  fillp(0xA5A5.8)
---  rectfill(0,0,127,127,0)
---  fillp()
-
---  rectfill(64-w/2, 64-h/2, 64+w/2, 64+h/2, bgcol)
---  rect(64-w/2+1, 64-h/2+1, 64+w/2-1, 64+h/2-1, bordercol) 
--- end
 
 function m_button(x,y,text,func_onclick,_w)
 local obj={
