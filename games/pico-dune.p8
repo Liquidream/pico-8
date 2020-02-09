@@ -22,7 +22,7 @@ credits={
 ai_faction,ai_col1,ai_col2,ai_level=dget"20",dget"21",dget"22",dget"23" -- difficulty level (1=hardest?)
 
 -- fields
-_g,buildings,units,object_tiles,last_facts,built,radar_data,spice_tiles={},{},{},{},{},{},{},{}
+_g,buildings,units,object_tiles,last_facts,built,radar_data,spice_tiles,particles={},{},{},{},{},{},{},{},{}
 start_time,_t,build_dest,unit_dest,keyx,keyy,hq,radar_frame=t(),0,{0,0},{0,0},0,0,false,0
 last_hq=hq
 
@@ -206,7 +206,7 @@ function discover_objs()
         -- create player const yard
         objref=obj_data[1]
        elseif i==2
-        and spr_val>48 then --don't create "concrete" as objs
+        and spr_val>=48 then --don't create "concrete" as objs
         -- find object for id
         for o in all(
          obj_data) do
@@ -442,15 +442,14 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
       end
      end
      -- smoking?
-     if self.type<=2 and self.life<self.ref.hitpoint*.33 then
-      if (rnd"10"<1) add_particle(self.x+3.5,self.y+3.5, 1, .1,-.02,.1, -.01, 40,{10,9,6,5}, rnd(2)<1 and 0xa5a5.8 or 0)
-     end     
+     if (self.type<=2 and self.life<self.ref.hitpoint*.33 and rnd"10"<1) add_particle(self.x+3.5,self.y+3.5, 1, .1,-.02,.1, -.01, 40,{10,9,6,5}, rnd(2)<1 and 0xa5a5.8 or 0)
      -- reset hit flag
      self.hit=0
  
      if (debug_collision) draw_hitbox(self)
    end,
    update=function(self)
+     local ref=self.ref
      -- update targeting flash
      self.flash_count=max(self.flash_count-.4,1)
      -- check for attack
@@ -470,24 +469,23 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
       if self.death_time<=0 then
         if self.type==2 then
          -- building?
-         for xx=0,self.ref.w-1 do
-           for yy=0,self.ref.h-1 do
+         for xx=0,ref.w-1 do
+           for yy=0,ref.h-1 do
              wrap_mset(self.x/8+xx, self.y/8+yy, 15)
            end
          end
          del(buildings,self)
-         --printh("self.hitby="..tostr(self.hitby))         
          build_dest[self.hitby.owner]+=1
         else
          -- unit
          local gx,gy = flr(self.x/8), flr(self.y/8)
          if (gy>31) gx+=64 gy-=32
-         if (wrap_mget(gx,gy)<9)wrap_mset(gx,gy,20) --scortch sand
-         if (self.speed==0)wrap_mset(gx,gy,15)
+         if (wrap_mget(gx,gy)<9) wrap_mset(gx,gy,20) --scortch sand
+         if (self.speed==0) wrap_mset(gx,gy,15)
          del(units,self)         
          unit_dest[self.hitby.owner]+=1
         end      
-        if(selected_obj==self)selected_obj=nil
+        if(selected_obj==self) selected_obj=nil
       else
         -- dying
         if (rnd(self.type==2 and 2 or 8)<1) make_explosion(self.x+rnd(self.w),self.y+rnd(self.h))
@@ -524,14 +522,15 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
        --explosion
        make_explosion(self.bullet_x, self.bullet_y, self.fire_type)
        -- did it hit (or did unit move)?
+       local target=self.target
        if dist(
         self.bullet_x,self.bullet_y,
-        self.target.x+self.target.w/2,
-        self.target.y+self.target.h/2) < 4 
+        target.x+target.w/2,
+        target.y+target.h/2) < 4 
        then
-        self.target.life-=self.arms
-        self.target.hit=self.fire_type --0=none, 1=bullet, 2=missile        
-        self.target.hitby=self
+        target.life-=self.arms
+        target.hit=self.fire_type --0=none, 1=bullet, 2=missile        
+        target.hitby=self
        end
        -- kill bullet/missile & do damage
        self.bullet_x=nil
@@ -547,16 +546,16 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
         self.done = true
         sfx"56"
         -- auto-deploy units
-        if self.ref.type==1
-         and self.ref.id!=15
-         and self.ref.id!=16 then
+        if ref.type==1
+         and ref.id!=15
+         and ref.id!=16 then
           -- find nearest point to factory
           local ux,uy=ping(self,(self.parent.x+8)/8, (self.parent.y+16)/8, is_free_tile)  
-          m_map_obj_tree(self.ref,ux*8,uy*8,nil,self.parent)
+          m_map_obj_tree(ref,ux*8,uy*8,nil,self.parent)
           -- reset build
           reset_build(self)
         end
-      elseif self.process==2 and self.life>self.ref.hitpoint then
+      elseif self.process==2 and self.life>ref.hitpoint then
         -- repair complete
         self.process=0
       else
@@ -680,15 +679,11 @@ end
 function draw_fow()
  local mapx=flr(camx/8)
  local mapy=flr(camy/8)
+ palt(11,true)
  for xx=mapx-1,mapx+16 do
   for yy=mapy-1,mapy+16 do
     if fow[xx][yy]!=0 and fow[xx][yy]!=16 then
-
-     palt(11,true)
-
      spr(fow[xx][yy]+31,xx*8,yy*8)
-
-
     elseif fow[xx][yy]<16 then
      rectfill(xx*8, yy*8, xx*8+7, yy*8+7, 0)
     end
@@ -768,10 +763,8 @@ function update_radar_data()
   -- units
   if hq then
    for _,unit in pairs(units) do
-    local posx=flr(unit.x/8)
-    local posy=flr(unit.y/8)
     -- if our unit, or ai not under fog of war
-    if unit.owner==1 or fow[posx][posy]==16 then
+    if unit.owner==1 or fow[flr(unit.x/8)][flr(unit.y/8)]==16 then
      radar_data[flr(unit.x/2/8)..","..flr(unit.y/2/8)] = unit.col1
     end
    end
@@ -822,17 +815,15 @@ end
 
 function update_level()
   -- mouse control
-  mouse_x = stat"32"
-  mouse_y = stat"33"
-  mouse_btn = stat"34"
+  mouse_x,mouse_y,mouse_btn=stat"32",stat"33",stat"34"
   left_button_clicked = (mouse_btn==1 and last_mouse_btn != mouse_btn) or btnp"4"
   left_button_down = (mouse_btn>0) or btn"4"
   right_button_clicked = (mouse_btn==2 and last_mouse_btn != mouse_btn) or btnp"5"
   
   -- keyboard input
   for k=0,1 do
-   if(btn(k))keyx+=k*2-1
-   if(btn(k+2))keyy+=k*2-1
+   if (btn(k)) keyx+=k*2-1
+   if (btn(k+2)) keyy+=k*2-1
   end
 
  -- update cursor pos
@@ -853,8 +844,8 @@ function update_level()
   if (cursy>123) camy+=2
 
   -- lock cam to map
-  camx=mid(camx,384)  --896
-  camy=mid(camy,384)  --128
+  camx = mid(camx,384)
+  camy = mid(camy,384)
 
   -- update all unit coroutines 
   -- (pathfinding, moving, attacking, etc.)
@@ -874,12 +865,7 @@ function update_level()
  
  collisions()
 
-
-
-
- last_mouse_btn = mouse_btn
- last_selected_obj = selected_obj
- last_selected_subobj = selected_subobj
+ last_mouse_btn,last_selected_obj,last_selected_subobj = mouse_btn,selected_obj,selected_subobj  
 end
 
 function is_spice_tile(x,y)
@@ -2083,7 +2069,6 @@ function find_path
 -- particle related
 -- (loosly inspired by @casualeffects' fast particle system)
 --
-particles={}
 
 function add_particle(x, y, r, dx, dy, dr, ddy, life, cols, pattern)
   local p={
