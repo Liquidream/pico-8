@@ -29,24 +29,24 @@ last_hq=hq
 _g.factory_click=function(self)
   menu_pos,selected_subobj,ui_controls=1,self.parent.build_objs[1],{}
   -- create buttons
-  m_button(6,89,"⬆️",function(self)
+  m_button(6,84,"⬆️",function(self)
    sel_build_item_idx=mid(1,sel_build_item_idx-1,#selected_obj.valid_build_objs)
    selected_subobj = selected_obj.valid_build_objs[sel_build_item_idx]
    if (sel_build_item_idx<menu_pos) menu_pos-=1
   end, 10)
-  m_button(17,89,"⬇️",function(self)
+  m_button(17,84,"⬇️",function(self)
    local len=#selected_obj.valid_build_objs
    sel_build_item_idx=mid(1,sel_build_item_idx+1,len)
    selected_subobj = selected_obj.valid_build_objs[sel_build_item_idx]
    menu_pos=mid(menu_pos+1,len-2)
    if (sel_build_item_idx>menu_pos+2) menu_pos=min(menu_pos+1,len-2)
   end, 10)
-  m_button(32,88,"build",function(self)
+  m_button(32,83,"build",function(self)
    show_menu=nil
    selected_obj.build_obj=last_selected_subobj
    last_selected_subobj:func_onclick()
   end)
-  m_button(96,88,"close",function(self)
+  m_button(96,83,"close",function(self)
    show_menu=nil
   end)
   -- show build menu
@@ -156,14 +156,8 @@ function _init()
 
  repair_obj=m_obj_from_ref(obj_data[80], 109,-20, 5, {}, nil,_g.draw_repair, _g.repair_click) 
 
-
- -- starting mode 
- -- (1=normal, 2=build menu, 3=???)
- curr_mode = 1
-
  -- init the game/title
  level_init()
- ticks=0
 
  -- create cursor ui "object" (for collisions)
  cursor = {
@@ -886,7 +880,6 @@ function update_level()
    
   update_particles()
     
-  ticks+=1
  end
  
  collisions()
@@ -1396,13 +1389,20 @@ function draw_ui()
  draw_radar()
 
  if show_menu then
-  -- test
-  draw_dialog(121,73,p_col2, p_col1)
+  w=121
+  h=73
+  fillp(0xA5A5.8)
+  rectfill(0,0,127,127,0)
+  fillp()
+
+  rectfill(64-w/2, 59-h/2, 64+w/2, 59+h/2, p_col2)
+  rect(64-w/2+1, 59-h/2+1, 64+w/2-1, 59+h/2-1, p_col1) 
+
 
   -- build menu?
   if selected_obj.build_objs then
     selected_obj.valid_build_objs={}
-    rectfill(6,30,27,97,0)
+    rectfill(6,25,27,92,0)
     local icount=1
     for i=1,#selected_obj.build_objs do
      local curr_item=selected_obj.build_objs[i]
@@ -1410,7 +1410,7 @@ function draw_ui()
       or built[curr_item.req_id] then
       selected_obj.valid_build_objs[icount]=curr_item
       if icount>=menu_pos and icount<=menu_pos+2 then
-        curr_item:setpos(9,32+((icount-menu_pos)*19))
+        curr_item:setpos(9,28+((icount-menu_pos)*19))
         curr_item:draw()
       else
         -- hide!
@@ -1423,12 +1423,12 @@ function draw_ui()
             curr_item.x+17, curr_item.y+17, 
             7)
 
-        print(selected_subobj.name,30,31,7)
-        print("cOST:"..selected_subobj.cost,85,38,9)
+        print(selected_subobj.name,30,26,7)
+        print("cOST:"..selected_subobj.cost,85,33,9)
         yoff=0
         local desc_lines=create_text_lines(selected_subobj.description, 23)
         for l in all(desc_lines) do
-          print(l,30,44+yoff,6)
+          print(l,30,39+yoff,6)
           yoff+=6
         end
       end
@@ -1449,14 +1449,14 @@ function draw_ui()
  cursor:draw() 
 end
 
-function draw_dialog(w,h,bgcol,bordercol)
- fillp(0xA5A5.8)
- rectfill(0,0,127,127,0)
- fillp()
+-- function draw_dialog(w,h,bgcol,bordercol)
+--  fillp(0xA5A5.8)
+--  rectfill(0,0,127,127,0)
+--  fillp()
 
- rectfill(64-w/2, 64-h/2, 64+w/2, 64+h/2, bgcol)
- rect(64-w/2+1, 64-h/2+1, 64+w/2-1, 64+h/2-1, bordercol) 
-end
+--  rectfill(64-w/2, 64-h/2, 64+w/2, 64+h/2, bgcol)
+--  rect(64-w/2+1, 64-h/2+1, 64+w/2-1, 64+h/2-1, bordercol) 
+-- end
 
 function m_button(x,y,text,func_onclick,_w)
 local obj={
