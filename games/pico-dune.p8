@@ -15,46 +15,37 @@ debug_collision=false
 -- data flags (eventually pulled from cartdata)
 cartdata("pn_undune2") 
 
-p_level=dget"0"
-p_faction=dget"1"
-p_col1=dget"2"
-p_col2=dget"3"
+p_level,p_faction,p_col1,p_col2=dget"0",dget"1",dget"2",dget"3"
 
 credits={
  shr(dget(6),16), -- player starting credits
  shr(500,16),     -- ai starting credits (always 500?)
  shr(dget(7),16), -- target credits
 }
+
+ai_faction,ai_col1,ai_col2,ai_level=dget"20",dget"21",dget"22",dget"23" -- difficulty level (1=hardest?)
+
 last_facts={}
 built={}
 start_time=t()
 build_dest={0,0}
 unit_dest={0,0}
 
-ai_faction=dget"20"
-ai_col1=dget"21"
-ai_col2=dget"22"
-ai_level=dget"23" -- difficulty level (1=hardest?)
-
-
 -- fields
---camx,camy=0,0
-cursx,cursy=0,0
+-- cursx,cursy=0,0
 keyx,keyy=0,0
-selected_obj=nil
+-- selected_obj=nil
 _t=0
 hq=false
 last_hq=hq
 radar_frame=0
 radar_data={}
-music_state=0 -- 0=normal, 1=battle, 2=leaving_battle
-count=0
 units={}
 object_tiles={}
 buildings={}
 ui_controls={}
 spice_tiles={}
-power_bal=0
+
 
 _g={}
 _g.factory_click=function(self)
@@ -528,6 +519,7 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
        -- reinstate loop
        set_loop(5, true)
        -- switch music (if passed the loop point)?    
+       -- 0=normal, 1=battle, 2=leaving_battle
        if (music_state==0 or stat(24)>5) music_state=1 music"0"
        -- can we retaliate (unit/turret)?
        if (self.arms>0 and self.state!=4) do_attack(self, self.hitby)
@@ -1114,10 +1106,6 @@ function do_attack(unit, target)
    end
    yield()
   end -- 4) repeat 1-3 until target destroyed
-
-  -- -- reset music back (will set again if more attackers)
-  -- set_loop(5, false) 
-  -- music_state=2
 
   -- reset to guard
   do_guard(self)
