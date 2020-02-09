@@ -22,13 +22,12 @@ credits={
 ai_faction,ai_col1,ai_col2,ai_level=dget"20",dget"21",dget"22",dget"23" -- difficulty level (1=hardest?)
 
 -- fields
-_g,buildings,units,object_tiles,last_facts,built,radar_data,ui_controls,spice_tiles={},{},{},{},{},{},{},{},{}
+_g,buildings,units,object_tiles,last_facts,built,radar_data,spice_tiles={},{},{},{},{},{},{},{}
 start_time,_t,build_dest,unit_dest,keyx,keyy,hq,radar_frame=t(),0,{0,0},{0,0},0,0,false,0
 last_hq=hq
 
 _g.factory_click=function(self)
-  menu_pos=1
-  selected_subobj=self.parent.build_objs[1]
+  menu_pos,selected_subobj,ui_controls=1,self.parent.build_objs[1],{}
   -- create buttons
   m_button(6,89,"⬆️",function(self)
    sel_build_item_idx=mid(1,sel_build_item_idx-1,#selected_obj.valid_build_objs)
@@ -44,8 +43,6 @@ _g.factory_click=function(self)
   end, 10)
   m_button(32,88,"build",function(self)
    show_menu=nil
-   --destroy ui controls
-   ui_controls={}
    selected_obj.build_obj=last_selected_subobj
    last_selected_subobj:func_onclick()
   end)
@@ -153,7 +150,7 @@ You have successfully completed your mission.
 --------------------------------
 
 function _init()
- printh("-- init -------------") 
+ --printh("-- init -------------") 
  -- enable mouse
  poke(0x5f2d, 1)
 
@@ -501,7 +498,7 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
            end
          end
          del(buildings,self)
-         printh("self.hitby="..tostr(self.hitby))         
+         --printh("self.hitby="..tostr(self.hitby))         
          build_dest[self.hitby.owner]+=1
         else
          -- unit
@@ -1575,7 +1572,7 @@ function collisions()
    if (last_selected_obj.life and last_selected_obj.life<last_selected_obj.ref.hitpoint) check_hover_select(repair_obj)
    if (selected_obj.ico_obj and not show_menu and not clickedsomething) check_hover_select(selected_obj.ico_obj)   
    foreach(selected_obj.build_objs, check_hover_select)   
-   foreach(ui_controls, check_hover_select)
+   if (show_menu) foreach(ui_controls, check_hover_select)
    ui_collision_mode=false
  end
  -- check map collisions
@@ -1667,7 +1664,7 @@ function check_hover_select(obj)
    else
     -- is object hidden by fow?
     local xpos=flr((cursor.x+camx)/8)
-    local ypos=flr((cursor.y+camy)/8)
+    local ypos=flr((cursor.y+camy)/8)   
     if (obj.type<=2 and fow[xpos][ypos]!=16) return
 
     -- clicking a harvester unloading?
