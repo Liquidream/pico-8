@@ -873,7 +873,7 @@ function is_spice_tile(x,y)
   return val>=2 and val<=8
 end
 
-function do_guard(unit, start_state) 
+function do_guard(unit, start_state)
  -- 0=idle/guarding, 1=pathfinding, 2=moving, 3=attacking, 4=firing, 5=exploding, 
  --(6=harvesting, 7=returning, 9=ready-to-unload, 8=offloading)
  unit.state = start_state or 0
@@ -901,7 +901,7 @@ function do_guard(unit, start_state)
             return true
             end
           end,
-        10) 
+        10)
       end
       -- found spice?
       if sx and sy then
