@@ -791,7 +791,7 @@ function update_radar_data()
  if endstate then 
   dset(14, endstate)
   dset(13, t()-start_time)
-  dset(10,getscoretext(credits[1]))
+  dset(10,strnum) --getscoretext(credits[1]))
   dset(24,getscoretext(credits[2]))
   dset(11,unit_dest[1])
   dset(25,unit_dest[2])
@@ -882,6 +882,8 @@ function do_guard(unit, start_state)
    -- be on look-out
    if (rnd(500)<1 and self.arms>0) ping(self,flr(self.x/8),flr(self.y/8),is_danger_tile,self.range)
 
+   local last_fact = self.last_fact
+
    -- if a harvester....
    if self.id==27 then
     if self.state==0 or self.state==7 or self.state==9 then
@@ -913,19 +915,19 @@ function do_guard(unit, start_state)
      -- is carrying spice & close to refinary
      elseif self.state==9 then --dist(self.x,self.y,self.last_fact.x,self.last_fact.y)<22 then  
 
-      -- check fact is not already busy
-      if not self.last_fact.occupied then
-       self.last_fact.incoming=false
+      -- check factory is not already busy
+      if not last_fact.occupied then
+       last_fact.incoming=false
        -- make sure can't overlap
        -- todo: block the tiles as well
-       self.last_fact.occupied=true       
+       last_fact.occupied=true       
 
        -- unloading
        while self.capacity>0 do
         self.state=8
         self.r=.25
-        self.x=self.last_fact.x+16
-        self.y=self.last_fact.y+4
+        self.x=last_fact.x+16
+        self.y=last_fact.y+4
         self.capacity-=1
         -- if selected, deselect
         if (selected_obj==self) selected_obj=nil
@@ -934,7 +936,7 @@ function do_guard(unit, start_state)
         yield()
        end
        self.capacity=0
-       self.last_fact.occupied=false
+       last_fact.occupied=false
        -- go back to guard (search for spice) mode
        self.state=0
       end --while unloading
@@ -946,26 +948,25 @@ function do_guard(unit, start_state)
      and self.state!=7 then
       -- return to refinery when full
       self.state=7      
-      self.last_fact.incoming=true
-      move_unit_pos(self, (self.last_fact.x+16)/8, self.last_fact.y/8)
+      last_fact.incoming=true
+      move_unit_pos(self, (last_fact.x+16)/8, last_fact.y/8)
       self.state=9
 
      -- harvesting spice
     elseif self.state==6 then
-
      self.newspot=false
-
      -- spice clouds
      local r=unit.r+.75+rnd".2"-.1 
      local cx,cy = sin(r)*5.5,-cos(r)*5.5
      if (rnd"5"<1) add_particle(unit.x+cx+3.5,unit.y+cy+3.5, 1, .15,0,.1, -.01, 25,{2,4,9,15}, 0xa5a5.8)
      
      -- update spice tile state
-     spice_tiles[unit:getTilePosIndex()] = (spice_tiles[unit:getTilePosIndex()] or 10000)-1
+     local unit_pos = unit:getTilePosIndex()
+     spice_tiles[unit_pos] = (spice_tiles[unit_pos] or 10000)-1
      --harvester should take about 110 secs to fill!
      self.capacity = (self.capacity or 0)+.5
      -- done current spot?
-     if spice_tiles[unit:getTilePosIndex()] <= 0 then      
+     if spice_tiles[unit_pos] <= 0 then      
       -- (clear spice tile + depleat surrounding tiles)
       local xpos=flr(self.x/8)
       local ypos=flr(self.y/8)
@@ -981,15 +982,12 @@ function do_guard(unit, start_state)
       self.state=0
      end
      -- move around the spice?
-     if self.capacity%300==0 then  --300
-      self.newspot=true
-      self.state=0
-     end
-     
+     if (self.capacity%300==0) self.newspot=true self.state=0
+
     end --if state==
    end  -- if harvester
    
-   -- if other unit type (carrier, worm, etc.)
+   -- TODO: if other unit type (carrier, worm, etc.)
 
    yield()
   
@@ -1023,7 +1021,7 @@ function do_attack(unit, target)
    -- 3) commence firing
    if (targdist<=unit.range*5) then
     unit.fire_cooldown-=1
-    if (unit.fire_cooldown<=0 and not unit.bullet_x) unit.fire(unit) unit.fire_cooldown=unit.arms*2
+    if (unit.fire_cooldown<=0 and not unit.bullet_x) unit.fire(unit) unit.fire_cooldown=unit.arms*4
    elseif unit.speed==0 then
     -- turrets default to guard if out of range
     do_guard(unit)
@@ -1070,7 +1068,7 @@ end
 
 function is_danger_tile(unit,x,y)
  local target=units[object_tiles[x..","..y]]
- if (target!=null and target.owner!=unit.owner and fow[x][y]==16) do_attack(unit, target) return true
+ if (target!=null and target.owner!=unit.owner and fow[x][y]==16) do_attack(unit,target) return true
 end
 
 function move_unit_pos(unit,x,y,dist_to_keep)
