@@ -1114,9 +1114,9 @@ function move_unit_pos(unit,x,y,dist_to_keep)
 
       if not unit.norotate then
         -- rotate to angle
-        local dx=unit.x-(node.x*8)
-        local dy=unit.y-(node.y*8)
-        local a=atan2(dx,dy)
+        local a=atan2(
+         unit.x-(node.x*8),  --dx
+         unit.y-(node.y*8) ) --dy
         while (unit.r != a) do
           turntowardtarget(unit, a)
         end
@@ -1128,14 +1128,11 @@ function move_unit_pos(unit,x,y,dist_to_keep)
       -- move to new position      
       local scaled_speed = unit.speed or .5
       local distance = sqrt((node.x*8 - unit.x) ^ 2 + (node.y*8 - unit.y) ^ 2)
-      local step_x = scaled_speed * (node.x*8 - unit.x) / distance
-      local step_y = scaled_speed * (node.y*8 - unit.y) / distance 
       for i = 0, distance/scaled_speed-1 do
         -- declare intentions (do it here so always present)
         object_tiles[node.x..","..node.y]=unit
-
-        unit.x+=step_x
-        unit.y+=step_y
+        unit.x += scaled_speed * (node.x*8 - unit.x) / distance --step_x
+        unit.y += scaled_speed * (node.y*8 - unit.y) / distance --step_y
         yield()
       end
       unit.x,unit.y = node.x*8, node.y*8
@@ -1179,19 +1176,17 @@ end
 --------------------------------
 function draw_level()
  -- draw the map, objects - everything except ui
-	cls"15"
- --draw_sand?()
+	cls"15" --draw_sand
  
  camera(camx,camy)
  
- palt()
- --p1:draw()
- pal()
+ -- palt()
+ -- pal()
+ -- palt(11,true)
 
- -- temp fudge
- palt(0,false) 
- palt(11,true)
- 
+ -- don't trans black
+  palt(0,false) 
+  
  map(0,0, 0,0, 64,32)
  map(64,0, 0,256, 64,32)
 
@@ -1244,7 +1239,7 @@ end
 function draw_radar()
   local size=31
   local x,y=93,93
-  rectfill(x-1,y-1,x+size+1,y+size+1,p_col2)
+  rect(x-1,y-1,x+size+1,y+size+1,p_col2)
   rectfill(x,y,x+size,y+size,0)
 
   -- anim?
