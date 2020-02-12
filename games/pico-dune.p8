@@ -1256,12 +1256,12 @@ function draw_radar()
    radar_frame+=radar_dir
    -- draw radar anim
    clip(
-     max(108-radar_frame,93),
-     max(108-(radar_frame>20 and radar_frame-20 or 0),93),
+     max(108-radar_frame,94),
+     max(108-(radar_frame>20 and radar_frame-20 or 0),94),
      min(radar_frame*2,31),
      min((radar_frame>20 and radar_frame-20 or 1)*2,31))
    for i=1,300 do
-     pset(94+rnd"31",94+rnd"31",5+rnd"3")
+     pset(93+rnd"31",93+rnd"31",5+rnd"3")
    end
    clip()
    return
