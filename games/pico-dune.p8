@@ -352,6 +352,8 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
  local _h=(ref_obj.h or 1)*8 --
  local obj={
   ref=ref_obj,
+  id=ref_obj.id,
+  hitpoint=ref_obj.hitpoint,
   x=x,
   y=y,
   z=1, -- defaults
@@ -413,7 +415,7 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
          rectfill(self.x-1,self.y-1,self.x+16,self.y+19,0)
          -- draw health/progress
          local this=self.type==4 and self or self.parent
-         local hp=this.ref.hitpoint
+         local hp=this.hitpoint
          local col = self.process==1 and 12 or (this.life<hp*.33 and 8 or this.life<hp*.66 and 10 or 11)
          local val = self.process==1 and (15*(this.life/100)) or (15*(this.life/hp))
          if (this.life>0 and not show_menu) rectfill(self.x,self.y+17,self.x+val,self.y+18,col)
@@ -442,14 +444,13 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
       end
      end
      -- smoking?
-     if (self.type<=2 and self.life<self.ref.hitpoint*.33 and rnd"10"<1) add_particle(self.x+3.5,self.y+3.5, 1, .1,-.02,.1, -.01, 40,{10,9,6,5}, rnd(2)<1 and 0xa5a5.8 or 0)
+     if (self.type<=2 and self.life<self.hitpoint*.33 and rnd"10"<1) add_particle(self.x+3.5,self.y+3.5, 1, .1,-.02,.1, -.01, 40,{10,9,6,5}, rnd(2)<1 and 0xa5a5.8 or 0)
      -- reset hit flag
      self.hit=0
  
      if (debug_collision) draw_hitbox(self)
    end,
    update=function(self)
-     local ref=self.ref
      -- update targeting flash
      self.flash_count=max(self.flash_count-.4,1)
      -- check for attack
@@ -469,8 +470,8 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
       if self.death_time<=0 then
         if self.type==2 then
          -- building?
-         for xx=0,ref.w-1 do
-           for yy=0,ref.h-1 do
+         for xx=0,self.spr_w-1 do
+           for yy=0,self.spr_h-1 do
              wrap_mset(self.x/8+xx, self.y/8+yy, 15)
            end
          end
@@ -546,16 +547,16 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
         self.done = true
         sfx"56"
         -- auto-deploy units
-        if ref.type==1
-         and ref.id!=15
-         and ref.id!=16 then
+        if self.ref.type==1
+         and self.id!=15
+         and self.id!=16 then
           -- find nearest point to factory
           local ux,uy=ping(self,(self.parent.x+8)/8, (self.parent.y+16)/8, is_free_tile)  
-          m_map_obj_tree(ref,ux*8,uy*8,nil,self.parent)
+          m_map_obj_tree(self.ref,ux*8,uy*8,nil,self.parent)
           -- reset build
           reset_build(self)
         end
-      elseif self.process==2 and self.life>ref.hitpoint then
+      elseif self.process==2 and self.life>self.hitpoint then
         -- repair complete
         self.process=0
       else
@@ -1267,7 +1268,7 @@ function draw_radar()
    return
  end
    
-  -- TODO draw radar data here!
+  -- draw radar data
   for xx=0,31 do
    for yy=0,31 do
     if (radar_data[xx..","..yy]) pset(93+xx,93+yy,radar_data[xx..","..yy])
@@ -1292,13 +1293,12 @@ function draw_ui()
  -- object menu icon/buttons?
  if selected_obj and selected_obj.ico_obj then
   selected_obj.ico_obj:setpos(109,20)
-  selected_obj.ico_obj:draw()--109,20)  
+  selected_obj.ico_obj:draw() 
   if selected_obj.build_obj and selected_obj.owner==1 then
-   selected_obj.build_obj:setpos(109,44) 
-   --selected_obj.build_obj:update()
-   selected_obj.build_obj:draw()--109,44)  
+   selected_obj.build_obj:setpos(109,44)
+   selected_obj.build_obj:draw() 
   end
-  if selected_obj.life<selected_obj.ref.hitpoint 
+  if selected_obj.life<selected_obj.hitpoint 
    and selected_obj.owner==1
    and selected_obj.id!=4
    and (selected_obj.type==2
@@ -1316,9 +1316,9 @@ function draw_ui()
  -- placement?
  if selected_obj 
   and selected_obj.build_obj 
-  and (selected_obj.build_obj.ref.type==2
-   or selected_obj.build_obj.ref.id==15
-   or selected_obj.build_obj.ref.id==16)
+  and (selected_obj.build_obj.type==4
+   or selected_obj.build_obj.id==15
+   or selected_obj.build_obj.id==16)
   and selected_obj.build_obj.life>=100 then
   -- draw placement
   -- (todo: improve this code!)
@@ -1331,8 +1331,8 @@ function draw_ui()
   placement_pos_ok=false
   placement_inner_invalid=false
   placement_damage=false
-  local w=selected_obj.build_obj.ref.w
-  local h=selected_obj.build_obj.ref.h
+  local w=selected_obj.build_obj.spr_w
+  local h=selected_obj.build_obj.spr_h
 
   for xx=-1,w do
     for yy=-1,h do
@@ -1520,7 +1520,7 @@ function collisions()
  -- selected obj ui collision
  if selected_obj then
    ui_collision_mode=true
-   if (last_selected_obj.life and last_selected_obj.life<last_selected_obj.ref.hitpoint) check_hover_select(repair_obj)
+   if (last_selected_obj.life and last_selected_obj.life<last_selected_obj.hitpoint) check_hover_select(repair_obj)
    if (selected_obj.ico_obj and not show_menu and not clickedsomething) check_hover_select(selected_obj.ico_obj)   
    foreach(selected_obj.build_objs, check_hover_select)   
    if (show_menu) foreach(ui_controls, check_hover_select)
@@ -2243,7 +2243,7 @@ __map__
 1212000000000000001616160000003300001200000008030300000000000000000000000000000000001212121212120000000000000000000003030300000016000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000016
 12121200000000161616163e420a000012120000000203030303000000000000000000000000000000000000000012000000000000000000000303030303030000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 1212121212120032165d85850a0a001200020502030303030303000000000000000000000000000000000000000000000000030303030303030303030303030000000012121212000000000000000000120012000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
-1212121010100c100a85420a6c0a000205030303030303030600000000000000000000000000000000000000000000000000000003000000000303030303030000001212121212121200000000000000121212000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+1212121010100c600a85420a6c0a000205030303030303030600000000000000000000000000000000000000000000000000000003000000000303030303030000001212121212121200000000000000121212000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 1212121010100a0a0a850a0a0a0a000203030307030303060000000000120000000000000000030303030303030303030000000000000000000003030303030000121212121212000000000000001212121212000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 0000001010100a0a0d4d440e0a00000006030303030306000000121212000000000000000003030303171819030303030303000000000000000003030303030012120000000000000000000000121212121200000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 001212090d090d0e00850a0a0e0000121200650a0a0a0a0b00001200000000000000000000030303171b1b1b190303030303000000000000000000030303030012000000000000000000000000121212120000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
