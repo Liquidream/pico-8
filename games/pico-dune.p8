@@ -6,7 +6,8 @@ __lua__
 -- (with support from my patrons)
 
 -- global flags
-debug_mode,debug_collision=true,false
+debug_mode=true
+--debug_collision=false
 
 -- data flags (eventually pulled from cartdata)
 cartdata("pn_undune2") 
@@ -448,7 +449,7 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
      -- reset hit flag
      self.hit=0
  
-     if (debug_collision) draw_hitbox(self)
+     --if (debug_collision) draw_hitbox(self)
    end,
    update=function(self)
      -- update targeting flash
@@ -1392,8 +1393,7 @@ function draw_ui()
         print(selected_subobj.name,30,26,7)
         print("cOST:"..selected_subobj.cost,85,33,9)
         yoff=0
-        local desc_lines=create_text_lines(selected_subobj.description, 23)
-        for l in all(desc_lines) do
+        for l in all(create_text_lines(selected_subobj.description, 23)) do
           print(l,30,39+yoff,6)
           yoff+=6
         end
@@ -1416,7 +1416,7 @@ function draw_ui()
 end
 
 function m_button(x,y,text,func_onclick,_w)
-local obj={
+ add(ui_controls,{
   x=x,
   y=y,
   w=_w or #text*4+2,
@@ -1435,11 +1435,10 @@ local obj={
     if(#text>1)rectfill(self.x+1,self.y+1,self.x+self.w-1,self.y+self.h-1, self.hover and 12 or 6)
     print(self.text,self.x+2,self.y+2,(#text>1) and 0 or (self.hover and 12 or 7))
 
-    if (debug_collision) draw_hitbox(self)
+    --if (debug_collision) draw_hitbox(self)
   end,
   func_onclick = func_onclick
- }
- add(ui_controls,obj)
+ })
 end
 
 -- auto-break message into lines
