@@ -73,7 +73,7 @@ _g.draw_refinery=function(self)
   spr(self.obj_spr, self.x, self.y, self.w/8, self.h/8)
 end
 _g.draw_repair=function(self) 
- if (alternate()) pal(7,selected_obj.process==2 and 11 or 8)
+ if (flr(t())%2==0) pal(7,selected_obj.process==2 and 11 or 8)
  spr(self.obj_spr, self.x, self.y)
  pal()
 end
@@ -1514,7 +1514,6 @@ end
 
 -- check all collisions
 function collisions()
- 
  clickedsomething=false
  -- selected obj ui collision
  if selected_obj then
@@ -1534,7 +1533,7 @@ function collisions()
   foreach(buildings, check_hover_select)
  end
   
-    -- check for radar click
+ -- check for radar click
  if left_button_down
     and not show_menu 
     and cursx>89 and cursx<122
@@ -1590,9 +1589,9 @@ function collisions()
     if (not show_menu) selected_obj=nil
   end 
  
- elseif right_button_clicked then
+ elseif right_button_clicked and not show_menu then
   -- cancel selection
-  if (not show_menu) selected_obj=nil
+  selected_obj=nil
 
  end --if buttonclicked
 
@@ -1613,13 +1612,11 @@ function check_hover_select(obj)
     selected_subobj = obj
    else
     -- is object hidden by fow?
-    local xpos=flr((cursor.x+camx)/8)
-    local ypos=flr((cursor.y+camy)/8)   
-    if (obj.type<=2 and fow[xpos][ypos]!=16) return
-
+    if (obj.type<=2 and fow[flr((cursor.x+camx)/8)][flr((cursor.y+camy)/8)]!=16) return
     -- clicking a harvester unloading?
     if (obj.id==27 and obj.state==8) return
     -- was our harvester selected before clicking a refinery?
+    -- (todo: poss bug allowing sending of own harvester into enemy refinary?)
     if obj.id==6 and selected_obj and selected_obj.id==27 and selected_obj.owner==1 then
      -- send harvester to refinery
      selected_obj.state=7
@@ -1645,31 +1642,30 @@ end
 
 -- object shared methods
 --------------------------------
-function _set_anim(self,anim)
- if(anim==self.curanim)return--early out.
- local a=self.anims[anim]
- self.animtick=a.ticks--ticks count down.
- self.curanim=anim
- self.curframe=1
- -- this was missing - check to see diff!!!!!
- self.spr=a.frames[self.curframe]
-end
+-- function _set_anim(self,anim)
+--  if(anim==self.curanim)return--early out.
+--  local a=self.anims[anim]
+--  self.animtick=a.ticks--ticks count down.
+--  self.curanim=anim
+--  self.curframe=1
+--  self.spr=a.frames[self.curframe]
+-- end
 
-function _update_anim(self)
---anim tick
- self.animtick-=1
- if self.animtick<=0 then
-  self.curframe+=1
-  local a=self.anims[self.curanim]
-  self.animtick=a.ticks--reset timer
-  if self.curframe>#a.frames then
-   self.curframe=1--loop
-  end
-  -- store the spr frame
-  self.obj_spr=a.frames[self.curframe]
+-- function _update_anim(self)
+-- --anim tick
+--  self.animtick-=1
+--  if self.animtick<=0 then
+--   self.curframe+=1
+--   local a=self.anims[self.curanim]
+--   self.animtick=a.ticks--reset timer
+--   if self.curframe>#a.frames then
+--    self.curframe=1--loop
+--   end
+--   -- store the spr frame
+--   self.obj_spr=a.frames[self.curframe]
   
- end
-end
+--  end
+-- end
 
 --other helper functions
 --------------------------------
@@ -1677,12 +1673,12 @@ end
 -- set/unset the loop flag
 -- for specified pattern
 function set_loop(pattern, enabled)
-  local addr = 0x3100
-  local channel = 1 -- 0..3 (+1 to get 2nd channel's byte)
+  --local addr = 0x3100
+  --local channel = 1 -- 0..3 (+1 to get 2nd channel's byte)
 	pattern*=4 -- find right byte (each pattern has 4 channels)
-	local val=peek(addr + pattern + channel)
-  if ((band(val, 128) > 0) != enabled) val=bxor(val,128)
-  poke(addr+pattern+channel, val)  
+	local val=peek(0x3100 + pattern + 1)
+ if ((band(val, 128) > 0) != enabled) val=bxor(val,128)
+ poke(0x3100+pattern+1, val)  
 end
 
 --print string with outline.
@@ -1701,26 +1697,20 @@ function collide(o1, o2)
  local hb1=o1:get_hitbox()
  local hb2=o2:get_hitbox()
  
- if hb1.x < hb2.x + hb2.w and
+ return hb1.x < hb2.x + hb2.w and
   hb1.x + hb1.w > hb2.x and
   hb1.y < hb2.y + hb2.h and
-  hb1.y + hb1.h >hb2.y 
- then
-  return true
- else
-  return false
- end
+  hb1.y + hb1.h >hb2.y
 end
 
-function draw_hitbox(obj)
- local hb=obj:get_hitbox()
- rect(hb.x,hb.y,hb.x+hb.w,hb.y+hb.h,obj.hover and 11 or 8)
-end
+-- function draw_hitbox(obj)
+--  local hb=obj:get_hitbox()
+--  rect(hb.x,hb.y,hb.x+hb.w,hb.y+hb.h,obj.hover and 11 or 8)
+-- end
 
-function alternate()
- return flr(t())%2==0
-end
-
+-- function alternate()
+--  return flr(t())%2==0
+-- end
 
 -- explode object data
 function explode_data()
