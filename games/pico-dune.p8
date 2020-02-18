@@ -1130,11 +1130,17 @@ function move_unit_pos(unit,x,y,dist_to_keep)
       -- move to new position      
       local scaled_speed = unit.speed or .5
       local distance = sqrt((node.x*8 - unit.x) ^ 2 + (node.y*8 - unit.y) ^ 2)
+      
+      -- don't remove these!
+      -- (must capture _outside_ the for..loop below)
+      local step_x = scaled_speed * (node.x*8 - unit.x) / distance
+      local step_y = scaled_speed * (node.y*8 - unit.y) / distance 
+
       for i = 0, distance/scaled_speed-1 do
         -- declare intentions (do it here so always present)
         object_tiles[node.x..","..node.y]=unit
-        unit.x += scaled_speed * (node.x*8 - unit.x) / distance --step_x
-        unit.y += scaled_speed * (node.y*8 - unit.y) / distance --step_y
+        unit.x+=step_x
+        unit.y+=step_y
         yield()
       end
       unit.x,unit.y = node.x*8, node.y*8
@@ -1715,7 +1721,8 @@ end
 -- explode object data
 function explode_data()
  str_arrays=split(obj_data,"|","\n")
- new_data={}
+ -- replace with exploded data
+ obj_data={}
  -- loop all objects
  for i=2,#str_arrays-1 do
   new_obj={}
@@ -1726,10 +1733,8 @@ function explode_data()
    if (j!=2 and j<25) val=tonum(val)
    new_obj[str_arrays[1][j]]=val
   end
-  new_data[tonum(str_arrays[i][1])]=new_obj
+  obj_data[tonum(str_arrays[i][1])]=new_obj
  end
- -- replace with exploded data
- obj_data=new_data
 end
 
 -- Large scores (by @Felice)
@@ -1741,7 +1746,7 @@ function getscoretext(val)
      s = (v % 0x0.000a / 0x.0001)..s
      v /= 10
  until v==0
- if (val<0)  s = "-"..s
+ if (val<0) s = "-"..s
  return s 
 end
 
@@ -1818,31 +1823,32 @@ end
 -- pathfinding-related
 --
 
-pi = 3.14159
-turnspeed = .5 * (pi/180)
+
 
 function turntowardtarget(unit, targetangle)
-   diff = targetangle-unit.r   
-   -- never turn more than 180
-   if diff > 0.5 then
-    diff -= 1
-   elseif diff < -0.5 then
-    diff += 1
-   end
-   if diff > turnspeed then
-    unit.r += turnspeed
-   elseif diff < -turnspeed then
-    unit.r -= turnspeed
-   else
-    -- we're already very close
-    unit.r = targetangle
-   end
+  local pi = 3.14159
+  local turnspeed = .5 * (pi/180)
+  local diff = targetangle-unit.r   
+  -- never turn more than 180
+  if diff > 0.5 then
+  diff -= 1
+  elseif diff < -0.5 then
+  diff += 1
+  end
+  if diff > turnspeed then
+  unit.r += turnspeed
+  elseif diff < -turnspeed then
+  unit.r -= turnspeed
+  else
+  -- we're already very close
+  unit.r = targetangle
+  end
 
-   -- make sure that our rotation value always stays within a "one-cycle" range
-   if (unit.r > pi) unit.r-=2*pi
-   if (unit.r < -pi) unit.r+=2*pi   
+  -- make sure that our rotation value always stays within a "one-cycle" range
+  if (unit.r > pi) unit.r-=2*pi
+  if (unit.r < -pi) unit.r+=2*pi   
 
-   yield()   
+  yield()
 end
 
 
