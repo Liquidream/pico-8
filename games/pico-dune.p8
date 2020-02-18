@@ -1823,11 +1823,9 @@ end
 -- pathfinding-related
 --
 
-
-
 function turntowardtarget(unit, targetangle)
   local pi = 3.14159
-  local turnspeed = .5 * (pi/180)
+  local turnspeed = 0.0087 --.5 * (3.14159/180)
   local diff = targetangle-unit.r   
   -- never turn more than 180
   if diff > 0.5 then
@@ -1850,10 +1848,6 @@ function turntowardtarget(unit, targetangle)
 
   yield()
 end
-
-
-
-
 
 -- makes the cost of entering a
 -- node 4 if flag 1 is set on
@@ -1883,7 +1877,8 @@ function map_neighbors(node, graph)
   for yy = -1, 1 do
    if (xx!=0 or yy!=0) maybe_add(node.x+xx, node.y+yy, neighbors)
   end
- end return neighbors
+ end
+ return neighbors
 end
 
 -- maybe adds the node to neighbors table
@@ -2037,14 +2032,12 @@ function find_path
     end -- if
    end -- for each neighbor
    
+   -- (pn) "unreachable destination" check
    count+=1
    if count%4==0 then
     yield()
-    --printh(stat(0)/2048)
     if (count>3000 or stat(0)/2048>.8) return nil --printh(">> assume unreachable!")
    end
-   --count%=100
-   --yield()
 
   end -- while frontier not empty
  
@@ -2082,8 +2075,7 @@ function update_particles()
   end
 end
 
-function draw_particles()
-  
+function draw_particles()  
   for k,p in pairs(particles) do
     -- patterns
     -- filled = 0x0/0xff
