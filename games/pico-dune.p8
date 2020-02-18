@@ -184,6 +184,10 @@ function _init()
  discover_objs()
 
  music"7"
+
+ -- shake tells how much to
+ -- shake the screen
+ shake=0
 end
 
 -- analyse current map & spawn objs  
@@ -465,7 +469,7 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
        if (self.arms>0 and self.state!=4) do_attack(self, self.hitby)
      end
      -- check for death
-     if (self.type<=2 and self.life<=0 and self.death_time==nil) self.state=5 self.cor=nil self.death_time=(self.type==2 and 1 or .5) sfx(self.deathsfx, 3)
+     if (self.type<=2 and self.life<=0 and self.death_time==nil) self.state=5 self.cor=nil self.death_time=(self.type==2 and 1 or .5) sfx(self.deathsfx, 3) shake+=0.25
      if self.death_time then
       self.death_time-=.025
       if self.death_time<=0 then
@@ -1186,8 +1190,14 @@ function draw_level()
  -- draw the map, objects - everything except ui
 	cls"15" --draw_sand
  
- camera(camx,camy)
+ -- cam position (+ any "shaking")
+ camera(camx+(16-rnd(32))*shake, camy+(16-rnd(32))*shake)
  
+ -- finally, fade out the shake
+ -- reset to 0 when very low
+ shake = shake*0.95
+ if (shake<0.05) shake=0
+
  -- palt()
  -- pal()
  -- palt(11,true)
