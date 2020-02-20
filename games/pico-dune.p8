@@ -190,6 +190,31 @@ function _init()
  shake=0
 end
 
+worm_segs={}
+function init_sandworm()
+ q={{64,127}}
+ j=0t=0p=0
+ ::_::
+ cols={15,9,4}
+ if t%4<1then
+ cls(15)
+ for i=1,#q do
+  fillp(0xa5a5.8)
+  circfill(
+   q[i][1]%128,
+   q[i][2]%128,4,
+   cols[i%#cols+1])
+ end
+ if(rnd(9)<.5) p=rnd(.04)-.02
+ add(q,{q[#q][1]+sin(j),q[#q][2]-cos(j)})
+ j+=p
+ end
+ if(#q>33) del(q,q[1])
+ t+=1
+ flip()
+ goto _
+end
+
 -- analyse current map & spawn objs  
 function discover_objs()
   -- make 2 passes
