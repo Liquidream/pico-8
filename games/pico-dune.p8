@@ -1192,7 +1192,7 @@ function update_ai()
     end
   end
   -- sandworm
-  if _t%4<1 then
+  if _t%5<1 then
    if(rnd(9)<.5) worm_turn=rnd(.04)-.02
    add(worm_segs,{worm_segs[#worm_segs][1]+sin(worm_dir),worm_segs[#worm_segs][2]-cos(worm_dir)})
    worm_dir+=worm_turn
@@ -1220,7 +1220,7 @@ function draw_level()
 
  
  -- draw sandworm
- fillp(0xa5a5.8)
+ if (rnd()<.5) fillp(0xa5a5.8)
  for i=1,#worm_segs do
   circfill(
    worm_segs[i][1],
