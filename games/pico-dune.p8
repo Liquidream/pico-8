@@ -463,6 +463,7 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
      self.hit=0
  
      --if (debug_collision) draw_hitbox(self)
+     pset(self.x,self.y,11)
    end,
    update=function(self)
      -- update targeting flash
@@ -875,7 +876,7 @@ function update_level()
       -- check sandworm collsion        
       if #worm_segs>0 -- worm present
        and fget(wrap_mget(flr(unit.x/8),flr(unit.y/8)),2)  --unit on sand
-       and dist(worm_segs[#worm_segs][1],worm_segs[#worm_segs][2],unit.x,unit.y) < 1
+       and dist(worm_segs[#worm_segs][1]-4,worm_segs[#worm_segs][2]-4,unit.x,unit.y) < 1
        then
         printh("yum yum!!!")
         del(units,unit)
@@ -1205,7 +1206,7 @@ function update_ai()
   -- sandworm
   -- --------------------
   -- movement/turning
-  if _t%5<1 then
+  if _t%6<1 then
    if(rnd(9)<.5) worm_turn=rnd(.04)-.02
    add(worm_segs,{worm_segs[#worm_segs][1]+sin(worm_dir),worm_segs[#worm_segs][2]-cos(worm_dir)})
    worm_dir+=worm_turn
@@ -1240,6 +1241,7 @@ function draw_level()
    worm_segs[i][2],4,
    worm_cols[i%#worm_cols+1])
  end
+ pset(worm_segs[#worm_segs][1]-4,worm_segs[#worm_segs][2]-4,11)
  fillp()
 
  -- don't trans black
