@@ -1221,7 +1221,7 @@ function update_ai()
   if (worm_frame>2) worm_frame=0
 end
 
--- draw related
+-- draw related 
 --------------------------------
 function draw_level()
  -- draw the map, objects - everything except ui
