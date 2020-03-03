@@ -1234,7 +1234,7 @@ function update_ai()
    end
    worm_life=rnd(5000) -- worm probability
   end
-
+ 
   if worm_segs then
    -- movement/turning
    if _t%6<1 and worm_frame==0 and worm_life>0 or #worm_segs==1 then
