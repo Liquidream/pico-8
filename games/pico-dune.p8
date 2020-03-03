@@ -189,16 +189,16 @@ function _init()
  -- shake the screen
  shake=0
 
- init_sandworm()
+ --init_sandworm()
 end
 
-function init_sandworm()
- worm_segs={{56,147}} 
- worm_dir=0
- worm_turn=0
- worm_cols={15,9,4}
- worm_frame=0
-end
+-- function init_sandworm()
+--  worm_segs={{56,147}} 
+--  worm_dir=0
+--  worm_turn=0
+--  worm_cols={15,9,4}
+--  worm_frame=0
+-- end
 
 -- analyse current map & spawn objs  
 function discover_objs()
@@ -877,11 +877,10 @@ function update_level()
       end
 
       -- check sandworm collsion        
-      if #worm_segs>0 -- worm present
+      if worm_segs -- worm present
        and fget(wrap_mget(flr(unit.x/8),flr(unit.y/8)),2)  --unit on sand
-       and dist(worm_segs[#worm_segs][1],worm_segs[#worm_segs][2],unit.x,unit.y) < 1
+       and dist(head_worm_seg[1],head_worm_seg[2],unit.x,unit.y) < 1
        then
-        --printh("yum yum!!!")
         del(units,unit)
         worm_frame=.01
       end
@@ -1194,7 +1193,8 @@ function move_unit_pos(unit,x,y,dist_to_keep)
   unit.state=0 --idle
 end
 
-
+-- whether worm is at surface (+ve) or not
+worm_life=100
 
 -- ai strategy code (attack, build, repair, etc.)
 function update_ai()
@@ -1214,17 +1214,43 @@ function update_ai()
   -- --------------------
   -- sandworm
   -- --------------------
-  -- movement/turning
-  if _t%6<1 and worm_frame==0 then
-   if(rnd(9)<.5) worm_turn=rnd(.04)-.02
-   -- ref to head
-   head_worm_seg=worm_segs[#worm_segs]
-   add(worm_segs,{head_worm_seg[1]+sin(worm_dir),head_worm_seg[2]-cos(worm_dir)})
-   worm_dir+=worm_turn
+  worm_life-=1
+  printh("worm_life="..worm_life)
+  
+  -- appear/disappear
+  if (worm_life<0) then
+   if worm_segs then
+    -- hide worm
+    printh("hide worm")
+    worm_segs=nil
+   else
+    -- show worm
+    printh("show worm")
+    worm_segs={{56,147}} 
+    worm_dir=0
+    worm_turn=0
+    worm_cols={15,9,4}
+    worm_frame=0
+   end
+   worm_life=rnd(5000) -- worm probability
   end
-  if(#worm_segs>30) del(worm_segs,worm_segs[1])
-  if (worm_frame>0) worm_frame+=.01 add_spice_cloud(head_worm_seg[1],head_worm_seg[2],rnd"1")
-  if (worm_frame>2) worm_frame=0
+
+  if worm_segs then
+   -- movement/turning
+   if _t%6<1 and worm_frame==0 and worm_life>0 or #worm_segs==1 then
+    if(rnd(9)<.5) worm_turn=rnd(.04)-.02
+    -- ref to head
+    head_worm_seg=worm_segs[#worm_segs]
+    --printh(">>>"..type(head_worm_seg))
+    add(worm_segs,{head_worm_seg[1]+sin(worm_dir),head_worm_seg[2]-cos(worm_dir)})
+    worm_dir+=worm_turn
+   end
+   if (#worm_segs>30) del(worm_segs,worm_segs[1])
+   if (worm_frame>0) worm_frame+=.01 add_spice_cloud(head_worm_seg[1],head_worm_seg[2],rnd"1")
+   if (worm_frame>2) worm_frame=0
+  end
+
+
 end
 
 -- draw related 
@@ -1247,18 +1273,21 @@ function draw_level()
 
  
  -- draw sandworm
- srand()
- for i=1,#worm_segs do
-  if (rnd()<.5) fillp(0xa5a5.8)
-  circfill(
-   worm_segs[i][1]+4,
-   worm_segs[i][2]+4,4,
-   worm_cols[i%#worm_cols+1])
-  fillp()
+ if worm_segs then
+  srand()
+  for i=1,#worm_segs do
+   if (rnd()<.5) fillp(0xa5a5.8)
+   circfill(
+    worm_segs[i][1]+4,
+    worm_segs[i][2]+4,4,
+    worm_cols[i%#worm_cols+1])
+   fillp()
+  end
+  srand(time())
+  -- eating?
+  if (worm_frame>0) spr(94+worm_frame, head_worm_seg[1], head_worm_seg[2])
  end
- srand(time())
- -- eating?
- if (worm_frame>0) spr(94+worm_frame, head_worm_seg[1], head_worm_seg[2])
+
 
  -- don't trans black
   palt(0,false) 
