@@ -1219,12 +1219,8 @@ function update_ai()
    else
     -- show worm
     --printh("show worm")
-    worm_segs={{50,110}} 
-    --worm_segs={{rnd(500),rnd(500)}} 
-    worm_dir=rnd(1)
-    worm_turn=0
-    worm_cols={15,9,4}
-    worm_frame=0
+    worm_segs,worm_dir,worm_turn,worm_cols,worm_frame={{rnd(500),rnd(500)}},rnd(1),0,{15,9,4},0
+    --worm_segs,worm_dir,worm_turn,worm_cols,worm_frame={{50,110}},rnd(1),0,{15,9,4},0    
    end
    worm_life=rnd(5000) -- worm probability
   end
@@ -1235,8 +1231,7 @@ function update_ai()
     if(rnd(9)<.5) worm_turn=rnd(.04)-.02
     -- ref to head
     --head_worm_seg=worm_segs[#worm_segs]
-    head_worm_x=worm_segs[#worm_segs][1]
-    head_worm_y=worm_segs[#worm_segs][2]
+    head_worm_x,head_worm_y=worm_segs[#worm_segs][1],worm_segs[#worm_segs][2]    
     --printh(">>>"..type(head_worm_seg))
     add(worm_segs,{head_worm_x+sin(worm_dir),head_worm_y-cos(worm_dir)})
     worm_dir+=worm_turn
@@ -1332,7 +1327,7 @@ function draw_level()
  draw_particles()
 
  -- draw fog-of-war
- --draw_fow()
+ draw_fow()
 
 end
 
