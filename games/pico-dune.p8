@@ -870,7 +870,7 @@ function update_level()
       end
 
       -- check sandworm collsion        
-      if worm_segs and #worm_segs>28 -- worm present
+      if worm_segs -- worm present
        and fget(wrap_mget(flr(unit.x/8),flr(unit.y/8)),2)  --unit on sand
        and dist(head_worm_x,head_worm_y,unit.x,unit.y) < 1
        then
@@ -1231,7 +1231,7 @@ function update_ai()
  
   if worm_segs then
    -- movement/turning
-   if _t%6<1 and worm_frame==0 and worm_life>0 or #worm_segs==1 then
+   if (_t%6<1 and worm_life>0 or #worm_segs<30) and worm_frame==0 then
     if(rnd(9)<.5) worm_turn=rnd(.04)-.02
     -- ref to head
     --head_worm_seg=worm_segs[#worm_segs]
@@ -1269,7 +1269,7 @@ function draw_level()
 
  
  -- draw sandworm
- if worm_segs and #worm_segs>28 then
+ if worm_segs then
   srand()
   for i=1,#worm_segs do
    if (rnd()<.5) fillp(0xa5a5.8)
