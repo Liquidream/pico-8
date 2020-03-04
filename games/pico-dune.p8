@@ -188,17 +188,8 @@ function _init()
  -- shake tells how much to
  -- shake the screen
  shake=0
-
- --init_sandworm()
 end
 
--- function init_sandworm()
---  worm_segs={{56,147}} 
---  worm_dir=0
---  worm_turn=0
---  worm_cols={15,9,4}
---  worm_frame=0
--- end
 
 -- analyse current map & spawn objs  
 function discover_objs()
@@ -738,10 +729,10 @@ end
 
 
 function update_radar_data()
- radar_data={}
+ radar_data={} 
  -- landscape/fow
- if hq then
-   for i=0,124,4 do
+ if hq then  
+  for i=0,124,4 do
      for l=0,124,4 do
      -- look at tile spr and if not fow, get col?
      local mx=i/2
@@ -754,8 +745,8 @@ function update_radar_data()
      local col=sget(sx+4,sy)
      if(fow[i/2][l/2]==16) radar_data[((i/2)/2)..","..((l/2)/2)] = col!=11 and col or 15
      end
-   end
- end   
+  end
+ end
  -- -- structures
  power_bal=0 -- reset power for this check
  total_storage=0
@@ -777,16 +768,18 @@ function update_radar_data()
    -- track counts
    building_count[building.owner]+=1
   end
-  -- units
+
   if hq then
+   -- units
    for _,unit in pairs(units) do
     -- if our unit, or ai not under fog of war
     if unit.owner==1 or fow[flr(unit.x/8)][flr(unit.y/8)]==16 then
      radar_data[flr(unit.x/2/8)..","..flr(unit.y/2/8)] = unit.col1
     end
    end
+
    -- sandworm
-   if (worm_segs and fow[flr(head_worm_seg[1]/8)][flr(head_worm_seg[2]/8)]==16) radar_data[flr(head_worm_seg[1]/2/8)..","..flr(head_worm_seg[2]/2/8)] = 7
+   if (worm_segs and fow[mid(0,flr(head_worm_x/8),31)][mid(0,flr(head_worm_y/8),31)]==16) radar_data[flr(head_worm_x/2/8)..","..flr(head_worm_y/2/8)] = 7
   end
  
   -- has radar-outpost and enough power (for HQ radar)?
@@ -877,9 +870,9 @@ function update_level()
       end
 
       -- check sandworm collsion        
-      if worm_segs -- worm present
+      if worm_segs and #worm_segs>28 -- worm present
        and fget(wrap_mget(flr(unit.x/8),flr(unit.y/8)),2)  --unit on sand
-       and dist(head_worm_seg[1],head_worm_seg[2],unit.x,unit.y) < 1
+       and dist(head_worm_x,head_worm_y,unit.x,unit.y) < 1
        then
         del(units,unit)
         worm_frame=.01
@@ -1215,19 +1208,20 @@ function update_ai()
   -- sandworm
   -- --------------------
   worm_life-=1
-  printh("worm_life="..worm_life)
+  --printh("worm_life="..worm_life)
   
   -- appear/disappear
   if (worm_life<0) then
    if worm_segs then
     -- hide worm
-    printh("hide worm")
+    --printh("hide worm")
     worm_segs=nil
    else
     -- show worm
-    printh("show worm")
-    worm_segs={{56,147}} 
-    worm_dir=0
+    --printh("show worm")
+    worm_segs={{50,110}} 
+    --worm_segs={{rnd(500),rnd(500)}} 
+    worm_dir=rnd(1)
     worm_turn=0
     worm_cols={15,9,4}
     worm_frame=0
@@ -1240,13 +1234,15 @@ function update_ai()
    if _t%6<1 and worm_frame==0 and worm_life>0 or #worm_segs==1 then
     if(rnd(9)<.5) worm_turn=rnd(.04)-.02
     -- ref to head
-    head_worm_seg=worm_segs[#worm_segs]
+    --head_worm_seg=worm_segs[#worm_segs]
+    head_worm_x=worm_segs[#worm_segs][1]
+    head_worm_y=worm_segs[#worm_segs][2]
     --printh(">>>"..type(head_worm_seg))
-    add(worm_segs,{head_worm_seg[1]+sin(worm_dir),head_worm_seg[2]-cos(worm_dir)})
+    add(worm_segs,{head_worm_x+sin(worm_dir),head_worm_y-cos(worm_dir)})
     worm_dir+=worm_turn
    end
    if (#worm_segs>30) del(worm_segs,worm_segs[1])
-   if (worm_frame>0) worm_frame+=.01 add_spice_cloud(head_worm_seg[1],head_worm_seg[2],rnd"1")
+   if (worm_frame>0) worm_frame+=.01 add_spice_cloud(head_worm_x,head_worm_y,rnd"1")
    if (worm_frame>2) worm_frame=0
   end
 
@@ -1273,19 +1269,19 @@ function draw_level()
 
  
  -- draw sandworm
- if worm_segs then
+ if worm_segs and #worm_segs>28 then
   srand()
   for i=1,#worm_segs do
    if (rnd()<.5) fillp(0xa5a5.8)
    circfill(
     worm_segs[i][1]+4,
     worm_segs[i][2]+4,4,
-    worm_cols[i%#worm_cols+1])
+    i<#worm_segs-1 and worm_cols[i%#worm_cols+1] or 15)
    fillp()
   end
   srand(time())
   -- eating?
-  if (worm_frame>0) spr(94+worm_frame, head_worm_seg[1], head_worm_seg[2])
+  if (worm_frame>0) spr(94+worm_frame, head_worm_x, head_worm_y)
  end
 
 
@@ -1336,7 +1332,7 @@ function draw_level()
  draw_particles()
 
  -- draw fog-of-war
- draw_fow()
+ --draw_fow()
 
 end
 
@@ -2200,13 +2196,13 @@ bb177771bb171bbbbbbb999999999b999999bbbb999b99b9bbbbbbbbbbb89999b9b9bbb955d551d5
 bb17711bbbb1bbbbbbb99b9b99bbb9b9b9b99bbb9b99b99bbbbbbbbb99999b99bb9bbbbb1555555515555515555555515d155d55b51bbd5b55555551d5555111
 bbb11bbbbbbbbbbbbbbb99b9bb9b99999b99bbbbb99b99b9bbbbbbbb99bbb9b9bbbb9bbbb55d5515555d55555155d55b55555551bbbbbbbb5155d55bd5515555
 ddddddddb7bbbb7bbbbbbbbbbbbbbbbbbbb9bbbbbbbbbbbbbbbbbbbb55d555d555d555d555d555d555d2444444444444444444d555dd244444444444444442d5
-d555555577bbbb77bbb77bbbbbbbbbbbbb66669bbbbbbbbbb6bbbbbb155551551555515515555155155244444444444444444455155024444444444444444055
-d5555555bbbbbbbbbb79bb7b0000b000b66dd66bbd5bb5bbbbbbbb6b5d55d555555555555555d5555d24444444444444444444455d5104444444444444442155
-d5555555bbbbbbbbb79b779b07700077b6d55d6bb5dbbbbbbbbbbbbb555155555555555551555d5d55244444444444444444444d555112444444444444420d5d
-d5555555bbbbbbbbbbb799bb00777770b6d55d6bbbbb555bbbbbbbbbd55555555544444444455555d52444444444444444444445d55510022244444222201555
-d5555555bbbbbbbbbb799bbb07700077b66dd66bbbbb5d5bbbb6bbbb55d55544444444444444455555244444444444444444442555d515100022222000015555
-d555555577bbbb77bb79bbbb0000b000bb6666bbbbbb555bbbbbbbbb155554444444444444444515155244444444444444444415155555151100000111155515
-d5555555b7bbbb7bb7bbbbbbbbbbbbbbb9bbbbbbbbbbbbbbbbbbbbbb555524444444444444444455555244444444444444444255555d555555111115555d5555
+d555555577bbbb77bb77bbbbbbbbbbbbbb66669bbbbbbbbbb6bbbbbb155551551555515515555155155244444444444444444455155024444444444444444055
+d5555555bbbbbbbbb79bb7bb0000b000b66dd66bbd5bb5bbbbbbbb6b5d55d555555555555555d5555d24444444444444444444455d5104444444444444442155
+d5555555bbbbbbbb79b779bb07700077b6d55d6bb5dbbbbbbbbbbbbb555155555555555551555d5d55244444444444444444444d555112444444444444420d5d
+d5555555bbbbbbbbbb799bbb00777770b6d55d6bbbbb555bbbbbbbbbd55555555544444444455555d52444444444444444444445d55510022244444222201555
+d5555555bbbbbbbbb799bbbb07700077b66dd66bbbbb5d5bbbb6bbbb55d55544444444444444455555244444444444444444442555d515100022222000015555
+d555555577bbbb77b79bbbbb0000b000bb6666bbbbbb555bbbbbbbbb155554444444444444444515155244444444444444444415155555151100000111155515
+d5555555b7bbbb7b7bbbbbbbbbbbbbbbb9bbbbbbbbbbbbbbbbbbbbbb555524444444444444444455555244444444444444444255555d555555111115555d5555
 000000000bbbbbb000000000bbbbb1b1000000001b1bbbbb00000000bbbbbbbb0000000001bbbb1010000000bbbbbbb0000000010bbbbbbb0000000000000000
 001bb1000bbbbbb0bbb1b000bbb1bb000000bbbb00bb1bbb1b1b1b1bbbbbbbbb000000000bbbbbb0b0000000bbbbb1000000000b00bbbbbbb000000b00000000
 01bbbb100bbbbbb0bbbb1b00bb1b0000000b1bbb0001b1bbbbbbbbbbbbbbbbbb00b0b00001bbbb101b000000bbbb1b00000000b1001bbbbbb1b1b1bb00000000
