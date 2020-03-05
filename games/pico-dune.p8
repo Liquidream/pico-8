@@ -1219,8 +1219,8 @@ function update_ai()
    else
     -- show worm
     --printh("show worm")
-    worm_segs,worm_dir,worm_turn,worm_cols,worm_frame={{rnd(500),rnd(500)}},rnd(1),0,{15,9,4},0
-    --worm_segs,worm_dir,worm_turn,worm_cols,worm_frame={{50,110}},rnd(1),0,{15,9,4},0    
+    --worm_segs,worm_dir,worm_turn,worm_cols,worm_frame={{rnd(500),rnd(500)}},rnd(1),0,{15,9,4},0
+    worm_segs,worm_dir,worm_turn,worm_cols,worm_frame={{50,110}},rnd(1),0,{15,9,4},0    
    end
    worm_life=rnd(5000) -- worm probability
   end
@@ -1230,9 +1230,7 @@ function update_ai()
    if (_t%6<1 and worm_life>0 or #worm_segs<30) and worm_frame==0 then
     if(rnd(9)<.5) worm_turn=rnd(.04)-.02
     -- ref to head
-    --head_worm_seg=worm_segs[#worm_segs]
-    head_worm_x,head_worm_y=worm_segs[#worm_segs][1],worm_segs[#worm_segs][2]    
-    --printh(">>>"..type(head_worm_seg))
+    head_worm_x,head_worm_y=worm_segs[#worm_segs][1],worm_segs[#worm_segs][2]
     add(worm_segs,{head_worm_x+sin(worm_dir),head_worm_y-cos(worm_dir)})
     worm_dir+=worm_turn
    end
@@ -1265,16 +1263,14 @@ function draw_level()
  
  -- draw sandworm
  if worm_segs then
-  srand()
   for i=1,#worm_segs do
-   if (rnd()<.5) fillp(0xa5a5.8)
+   if (i%2==0) fillp(0xa5a5.8)
    circfill(
     worm_segs[i][1]+4,
     worm_segs[i][2]+4,4,
     i<#worm_segs-1 and worm_cols[i%#worm_cols+1] or 15)
    fillp()
   end
-  srand(time())
   -- eating?
   if (worm_frame>0) spr(94+worm_frame, head_worm_x, head_worm_y)
  end
