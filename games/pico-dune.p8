@@ -1187,7 +1187,7 @@ function move_unit_pos(unit,x,y,dist_to_keep)
 end
 
 -- whether worm is at surface (+ve) or not
-worm_life=100
+worm_life=0
 
 -- ai strategy code (attack, build, repair, etc.)
 function update_ai()
@@ -1228,11 +1228,13 @@ function update_ai()
   if worm_segs then
    -- movement/turning
    if (_t%6<1 and worm_life>0 or #worm_segs<30) and worm_frame==0 then
-    if(rnd(9)<.5) worm_turn=rnd(.04)-.02
-    -- ref to head
-    head_worm_x,head_worm_y=worm_segs[#worm_segs][1],worm_segs[#worm_segs][2]
-    add(worm_segs,{head_worm_x+sin(worm_dir),head_worm_y-cos(worm_dir)})
-    worm_dir+=worm_turn
+    while #worm_segs<31 do
+     if(rnd(9)<.5) worm_turn=rnd(.04)-.02
+     -- ref to head
+     head_worm_x,head_worm_y=worm_segs[#worm_segs][1],worm_segs[#worm_segs][2]
+     add(worm_segs,{head_worm_x+sin(worm_dir),head_worm_y-cos(worm_dir)})
+     worm_dir+=worm_turn
+    end
    end
    if (#worm_segs>30) del(worm_segs,worm_segs[1])
    if (worm_frame>0) worm_frame+=.01 add_spice_cloud(head_worm_x,head_worm_y,rnd"1")
@@ -1264,11 +1266,11 @@ function draw_level()
  -- draw sandworm
  if worm_segs then
   for i=1,#worm_segs do
-   if (i%2==0) fillp(0xa5a5.8)
+   if (i%2==1) fillp(0xa5a5.8)
    circfill(
     worm_segs[i][1]+4,
     worm_segs[i][2]+4,4,
-    i<#worm_segs-1 and worm_cols[i%#worm_cols+1] or 15)
+    worm_cols[i%#worm_cols+1])
    fillp()
   end
   -- eating?
