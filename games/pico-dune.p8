@@ -1227,7 +1227,7 @@ function update_ai()
  
   if worm_segs then
    -- movement/turning
-   if (_t%6<1 and worm_life>0 or #worm_segs<30) and worm_frame==0 then
+   if (_t%6<1 or #worm_segs<30) and worm_frame==0 then
     while #worm_segs<31 do
      if(rnd(9)<.5) worm_turn=rnd(.04)-.02
      -- ref to head
