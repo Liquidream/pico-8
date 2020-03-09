@@ -32,16 +32,16 @@ levelend_mode=3
 
 -- mission data (harkonnen)
 mission_data={
--- #,	Credits,	Obj. Credits,	Obj. Enemy,	Enemy Type
- { 1,	999,	 1000,	nil },	-- No enemy, just reach 1000 credits
- { 2,	1200,	2700,	1 },	  -- 2700 credits of spice, OR eliminate Atreides presence
- { 3,	1500,	0,    2	}, -- Eliminate enemy
- { 4,	1500,	0,    2	}, -- Eliminate enemy
- { 5,	1500,	0,    1 }, --	Eliminate enemy
- { 6,	1700,	0,    2 }, --	Eliminate enemy
- { 7,	2000,	0,    1 }, --	Eliminate enemy
- { 8,	2000,	0,    2 }, --	(Should be 1 or 2)
- { 9,	2500,	0,    4 }, --	Eliminate enemy
+-- # |	Credits |	Target Cred |	Enemy |	AI Level
+ { 1,	999,	 1000,	nil, nil },	-- No enemy, just reach 1000 credits
+ { 2,	1200,	2700,	1,   1 },	  -- 2700 credits of spice, OR eliminate Atreides presence
+ { 3,	1500,	0,    2,   2	}, -- Eliminate enemy
+ { 4,	1500,	0,    2,   3	}, -- Eliminate enemy
+ { 5,	1500,	0,    1,   4 }, --	Eliminate enemy
+ { 6,	1700,	0,    2,   5 }, --	Eliminate enemy
+ { 7,	2000,	0,    1,   6 }, --	Eliminate enemy
+ { 8,	2000,	0,    2,   7 }, --	(Should be 1 or 2)
+ { 9,	2500,	0,    4,   8 }, --	Eliminate enemy
 }
 
 -- vars
@@ -179,6 +179,8 @@ end
 function load_level(num)
  printh("in load_level("..num..")...")
 
+ local mdata = mission_data[num]
+
  -- set player to harkonnen
  p_fact = 3
  dset(0, num)
@@ -186,23 +188,34 @@ function load_level(num)
  dset(2, faction_cols[p_fact][1]) -- p_col1
  dset(3, faction_cols[p_fact][2]) -- p_col2
 
- dset(6, 999) -- starting credits
- dset(7, 1000) -- target credits
+ dset(6, mdata[2]) -- starting credits
+ dset(7, mdata[3]) -- target credits
  dset(10, 0) -- harvested
  dset(11, 0) -- units destroyed
  dset(12, 0) -- buildings destroyed
  dset(13, 0) -- playing time
 
- -- set ai to atreides
- ai_fact = 1
+ ai_fact = mdata[4]
  dset(20, ai_fact) -- ai_faction
- dset(21, faction_cols[ai_fact][1]) -- ai_col1
- dset(22, faction_cols[ai_fact][2]) -- ai_col2
+ dset(21, ai_fact and faction_cols[ai_fact][1] or nil) -- ai_col1
+ dset(22, ai_fact and faction_cols[ai_fact][2] or nil) -- ai_col2
  
- dset(23, 5) -- ai level
+ dset(23, mdata[5]) -- ai level
  dset(24, 0) -- ai harvested
  dset(25, 0) -- ai units destroyed
  dset(26, 0) -- ai buildings destroyed
+
+
+ -- set ai to atreides
+ -- ai_fact = 1
+ -- dset(20, ai_fact) -- ai_faction
+ -- dset(21, faction_cols[ai_fact][1]) -- ai_col1
+ -- dset(22, faction_cols[ai_fact][2]) -- ai_col2
+ 
+ -- dset(23, 5) -- ai level
+ -- dset(24, 0) -- ai harvested
+ -- dset(25, 0) -- ai units destroyed
+ -- dset(26, 0) -- ai buildings destroyed
  
 
  -- load level map data
