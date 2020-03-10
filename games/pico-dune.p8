@@ -301,7 +301,7 @@ function m_map_obj_tree(objref, x,y, owner, factory)
       end
     end
     if (not slabs) add(buildings,newobj)
-    -- other building stuff    
+    -- other building stuff
     -- refinery?
     if newobj.id==6 and newobj.parent==nil then
       last_facts[newobj.owner]=newobj
@@ -315,7 +315,7 @@ function m_map_obj_tree(objref, x,y, owner, factory)
   -- unit props
   if objref.type==1 then
    
-   #-- TESTING repair
+   -- TESTING repair
    newobj.life=10
 
    newobj.deathsfx=54
@@ -900,7 +900,8 @@ end
 
 function do_guard(unit, start_state)
  -- 0=idle/guarding, 1=pathfinding, 2=moving, 3=attacking, 4=firing, 5=exploding, 
- --(6=harvesting, 7=returning, 9=ready-to-unload, 8=offloading)
+ --(6=harvesting, 7=returning, 9=ready-to-unload/repair, 8=offloading/repairing)
+ if (start_state) printh(">>> start_state="..start_state)
  unit.state = start_state or 0
  unit.cor = cocreate(function(self)
   while true do
@@ -909,7 +910,7 @@ function do_guard(unit, start_state)
 
    local last_fact = self.last_fact
 
-   -- if a harvester....
+   -- if a harvester only
    if self.id==27 then
     if self.state==0 or self.state==7 or self.state==9 then
      if self.capacity<=1500 
@@ -937,36 +938,38 @@ function do_guard(unit, start_state)
         -- switch to harvesting
         if (is_spice_tile(flr(unit.x/8),flr(unit.y/8))) unit.state=6
       end
-     -- is carrying spice & close to refinary
-     elseif self.state==9 then --dist(self.x,self.y,self.last_fact.x,self.last_fact.y)<22 then  
+     
+      -- is carrying spice & close to refinary
+     -- or been sent to repair facility
+     -- elseif self.state==9 then --dist(self.x,self.y,self.last_fact.x,self.last_fact.y)<22 then  
 
-      -- check factory is not already busy
-      if not last_fact.occupied then
-       last_fact.incoming=false
-       -- make sure can't overlap
-       -- todo: block the tiles as well
-       last_fact.occupied=true       
+     --  -- check factory is not already busy
+     --  if not last_fact.occupied then
+     --   last_fact.incoming=false
+     --   -- make sure can't overlap
+     --   -- todo: block the tiles as well
+     --   last_fact.occupied=true       
 
-       -- unloading
-       while self.capacity>0 do
-        self.state=8
-        self.r=.25
-        self.x=last_fact.x+16
-        self.y=last_fact.y+4
-        self.capacity-=1
-        -- if selected, deselect
-        if (selected_obj==self) selected_obj=nil
-        -- only make money if human player (and capacity!)
-        if (flr(self.capacity)%4==0 and tonum(strnum)<total_storage) transact(2,self)
-        yield()
-       end
-       self.capacity=0
-       last_fact.occupied=false
-       -- go back to guard (search for spice) mode
-       self.state=0
-      end --while unloading
+     --   -- unloading
+     --   while self.capacity>0 do
+     --    self.state=8
+     --    self.r=.25
+     --    self.x=last_fact.x+16
+     --    self.y=last_fact.y+4
+     --    self.capacity-=1
+     --    -- if selected, deselect
+     --    if (selected_obj==self) selected_obj=nil
+     --    -- only make money if human player (and capacity!)
+     --    if (flr(self.capacity)%4==0 and tonum(strnum)<total_storage) transact(2,self)
+     --    yield()
+     --   end
+     --   self.capacity=0
+     --   last_fact.occupied=false
+     --   -- go back to guard (search for spice) mode
+     --   self.state=0
+     --  end --while unloading
 
-     end -- check factory busy
+      end -- check factory busy
 
     -- are we full?
     elseif self.capacity >= 1500 
@@ -1012,6 +1015,57 @@ function do_guard(unit, start_state)
 
     end --if state==
    end  -- if harvester
+
+   -- if any "repairable" unit
+   if self.id>21 then
+    -- is carrying spice & close to refinary
+    -- or been sent to repair facility
+    if self.state==9 then --dist(self.x,self.y,self.last_fact.x,self.last_fact.y)<22 then  
+     
+     -- check factory is not already busy
+     if not last_fact.occupied then
+      last_fact.incoming=false
+      -- make sure can't overlap
+      -- todo: block the tiles as well
+      last_fact.occupied=true       
+
+      -- is this a harvester?
+      if self.capacity then 
+       -- unloading?
+       while self.capacity>0 do
+        self.state=8
+        self.r=.25
+        self.x=last_fact.x+16
+        self.y=last_fact.y+4
+        self.capacity-=1
+        -- if selected, deselect
+        if (selected_obj==self) selected_obj=nil
+        -- only make money if human player (and capacity!)
+        if (flr(self.capacity)%4==0 and tonum(strnum)<total_storage) transact(2,self)
+        yield()       
+       end --while unloading
+       self.capacity=0
+      
+      else
+       -- must be a repairable unit
+       self.process=2
+       while self.life<self.hitpoint do
+        self.life+=.5
+        yield()
+       end
+       self.process=0
+      end -- capacity check
+
+      last_fact.occupied=false
+      -- go back to guard (search for spice) mode
+      self.state=0
+     
+     end -- if unloading/repairing
+
+    end -- check factory busy
+    
+   end -- check repairable
+
    
    -- TODO: if other unit type (carrier, worm, etc.)
 
@@ -1203,7 +1257,7 @@ function update_ai()
      -- select a random target (unit or building)
      local p_target=(rnd(2)<1)and units[flr(rnd(#units))+1] or buildings[flr(rnd(#buildings))+1]
      if p_target and p_target.owner==1 then
-      printh(">>> attack!")
+      --printh(">>> attack!")
       do_attack(ai_unit, p_target)
      end
     end
@@ -1721,14 +1775,23 @@ function check_hover_select(obj)
      and selected_obj.owner==1 then
      -- send harvester to refinery/repair facility
      selected_obj.state=7
+     printh(">>>1")
      -- update last factory (in case changed)
-     if obj.id==6 then 
+     --if obj.id==6 then 
       selected_obj.last_fact=obj
       obj.incoming=true
-     end
-     selected_obj.cor = cocreate(function(unit)      
-      move_unit_pos(unit, (obj.x+16)/8, ypos)
+     --end
+   
+     #problem here, doesnt actually do this .cor for other units on repair fac
+   
+     printh(">>>0")
+     selected_obj.cor = cocreate(function(unit)
+      printh(">>>1a")
+      --move_unit_pos(unit, (obj.x+16)/8, (obj.y+16)/8)
+      printh(">>>2")
       do_guard(unit, 9)
+      printh(">>>3")
+      --unit.state=9
      end)
      return -- register "no click"
 
@@ -2325,8 +2388,8 @@ __map__
 1515000000000000000000000000000000000000000000000000000000000000000000000000000000000000000012121212120000000000000000000000151516161600000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000161616
 1500000000000000000000000000000016000000000000000000000000000000000000000000000000121200000000121200000000000000000000000000001516030303030303030303030303030303030303030300000000000000000000000000000000000000000000000000000000000000000000000000000000000016
 1212000000000000001616160000003300001200000008030300000000000000000000000000000000001212121212120000000000000000000003030300000016000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000016
-12121200000000161616163e420a000012120000000203030303000000000000000000000000000000000000000012000000000000000000000303030303030000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
-1212121212120032165d85850a0a001200020502030303030303000000000000000000000000000000000000000000000000030303030303030303030303030000000012121212000000000000000000120012000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+12121232000000161616163e420a000012120000000203030303000000000000000000000000000000000000000012000000000000000000000303030303030000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+1212120000000000165d85850a0a001200020502030303030303000000000000000000000000000000000000000000000000030303030303030303030303030000000012121212000000000000000000120012000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 1212128010100c830a85420a6c0a000205030303030303030600000000000000000000000000000000000000000000000000000003000000000303030303030000001212121212121200000000000000121212000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 1212121010100a0a0a850a0a0a0a000203030307030303060000000000120000000000000000030303030303030303030000000000000000000003030303030000121212121212000000000000001212121212000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 0000001010100a0a0d4d440e0a00000006030303030306000000121212000000000000000003030303171819030303030303000000000000000003030303030012120000000000000000000000121212121200000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
