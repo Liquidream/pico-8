@@ -570,6 +570,7 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
       elseif self.process==2 and self.life>self.hitpoint then
         -- repair complete
         self.process=0
+        printh("move to safe place!")
       else
         -- continue
         self.procstep+=1
@@ -1049,11 +1050,12 @@ function do_guard(unit, start_state)
       else
        -- must be a repairable unit
        self.process=2
-       while self.life<self.hitpoint do
-        self.life+=.5
-        yield()
-       end
-       self.process=0
+       self.procstep=0       
+       --while self.life<self.hitpoint do
+        --self.life+=.5
+        --yield()
+       --end
+       --self.process=0
       end -- capacity check
 
       last_fact.occupied=false
@@ -1713,9 +1715,11 @@ function collisions()
      and selected_obj.type==1
      and selected_obj.owner==1 
      and selected_obj.speed>0 
-     and (selected_obj.id!=27 or selected_obj.state!=7) then
+     and selected_obj.state!=7 then
+     --and (selected_obj.id!=27 or selected_obj.state!=7) then
 
      selected_obj.cor = cocreate(function(unit)
+       printh("std move...")
        move_unit_pos(unit, flr((camx+cursx)/8), flr((camy+cursy)/8))
        do_guard(unit)
       end)
@@ -1782,12 +1786,12 @@ function check_hover_select(obj)
       obj.incoming=true
      --end
    
-     #problem here, doesnt actually do this .cor for other units on repair fac
+     --problem here, doesnt actually do this .cor for other units on repair fac
    
      printh(">>>0")
      selected_obj.cor = cocreate(function(unit)
       printh(">>>1a")
-      --move_unit_pos(unit, (obj.x+16)/8, (obj.y+16)/8)
+      move_unit_pos(unit, (obj.x+16)/8, (obj.y+16)/8)
       printh(">>>2")
       do_guard(unit, 9)
       printh(">>>3")
