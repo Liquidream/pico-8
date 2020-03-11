@@ -571,12 +571,15 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
       elseif self.process==2 and self.life>self.hitpoint then
         -- repair complete
         self.process=0
-        printh("move to safe place!")
-        -- find nearest point to factory
-        local ux,uy=nearest_space_to_object(self, self.last_fact)
-        printh(">>"..ux..","..uy)
-        self.x=ux
-        self.y=uy
+        --move to safe place?
+        if self.type==1 then
+         -- go back to guard
+         self.state=0
+         -- find nearest point to factory
+         local ux,uy=nearest_space_to_object(self, self.last_fact)
+         --printh(">>"..ux..","..uy)
+         self.x,self.y=ux,uy
+        end
       else
         -- continue
         self.procstep+=1
@@ -1004,8 +1007,7 @@ function do_guard(unit, start_state)
       last_fact.incoming=false
       -- make sure can't overlap
       -- todo: block the tiles as well
-      last_fact.occupied=true       
-
+      
       -- center inside factory (refinary)
       self.state=8
       self.r=.25
@@ -1014,9 +1016,10 @@ function do_guard(unit, start_state)
       
       -- if selected, deselect
       if (selected_obj==self) selected_obj=nil
-
+      
       -- is this a harvester?
       if self.capacity then 
+       last_fact.occupied=true       
        -- unloading?
        while self.capacity>0 do
         self.capacity-=1        
@@ -1024,17 +1027,15 @@ function do_guard(unit, start_state)
         if (flr(self.capacity)%4==0 and tonum(strnum)<total_storage) transact(2,self)
         yield()       
        end --while unloading
-       self.capacity=0
-      
+       self.capacity=0 
+       last_fact.occupied=false
+       -- go back to guard (search for spice) mode
+       self.state=0
       else
        -- must be a repairable unit
        self.process=2
        self.procstep=0
       end -- capacity check
-
-      last_fact.occupied=false
-      -- go back to guard (search for spice) mode
-      self.state=0
      
      end -- if unloading/repairing
 
@@ -1747,7 +1748,7 @@ function check_hover_select(obj)
     -- is object hidden by fow?
     if (obj.type<=2 and fow[flr((cursor.x+camx)/8)][flr((cursor.y+camy)/8)]!=16) return
     -- clicking a harvester unloading or unit repairing?
-    if (obj.state==8) return
+    if (obj.state==8) printh("ignore!!") return
     --if (obj.id==27 and obj.state==8) return
     -- was our harvester selected before clicking a refinery?
     -- (todo: poss bug allowing sending of own harvester into enemy refinary?)
@@ -1757,7 +1758,7 @@ function check_hover_select(obj)
      and selected_obj.owner==1 then
      -- send harvester to refinery/repair facility
      selected_obj.state=7
-     printh(">>>1")
+     --printh(">>>1")
      -- update last factory (in case changed)
      --if obj.id==6 then 
       selected_obj.last_fact=obj
@@ -1766,13 +1767,13 @@ function check_hover_select(obj)
    
      --problem here, doesnt actually do this .cor for other units on repair fac
    
-     printh(">>>0")
+     --printh(">>>0")
      selected_obj.cor = cocreate(function(unit)
-      printh(">>>1a")
+      --printh(">>>1a")
       move_unit_pos(unit, (obj.x+16)/8, (obj.y+16)/8)
-      printh(">>>2")
+      --printh(">>>2")
       do_guard(unit, 9)
-      printh(">>>3")
+      --printh(">>>3")
       --unit.state=9
      end)
      return -- register "no click"
