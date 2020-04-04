@@ -911,12 +911,12 @@ end
 function do_guard(unit, start_state)
  -- 0=idle/guarding, 1=pathfinding, 2=moving, 3=attacking, 4=firing, 5=exploding, 
  --(6=harvesting, 7=returning, 9=ready-to-unload/repair, 8=offloading/repairing)
- if (start_state) printh(">>> start_state="..start_state)
+ --if (start_state) printh(">>> start_state="..start_state)
  unit.state = start_state or 0
  unit.cor = cocreate(function(self)
   while true do
    -- be on look-out
-   if (rnd(500)<1 and self.arms>0) ping(self,flr(self.x/8),flr(self.y/8),is_danger_tile,self.range)
+   if (rnd(500)<1 and self.arms>0 and self.state!=8) ping(self,flr(self.x/8),flr(self.y/8),is_danger_tile,self.range)
 
    local last_fact = self.last_fact
 
@@ -1351,7 +1351,7 @@ function draw_level()
  -- draw units
  for _,unit in pairs(units) do
   if (not show_menu) unit:update()
-  unit:draw()
+  if (unit.id>21 and unit.state!=8) unit:draw()
   --if (unit.process!=2) unit:draw()
   -- draw selected reticule
   if (unit == selected_obj) then   
@@ -1698,7 +1698,7 @@ function collisions()
      --and (selected_obj.id!=27 or selected_obj.state!=7) then
 
      selected_obj.cor = cocreate(function(unit)
-       printh("std move...")
+       --printh("std move...")
        move_unit_pos(unit, flr((camx+cursx)/8), flr((camy+cursy)/8))
        do_guard(unit)
       end)
@@ -1748,7 +1748,7 @@ function check_hover_select(obj)
     -- is object hidden by fow?
     if (obj.type<=2 and fow[flr((cursor.x+camx)/8)][flr((cursor.y+camy)/8)]!=16) return
     -- clicking a harvester unloading or unit repairing?
-    if (obj.state==8) printh("ignore!!") return
+    if (obj.state==8) return
     --if (obj.id==27 and obj.state==8) return
     -- was our harvester selected before clicking a refinery?
     -- (todo: poss bug allowing sending of own harvester into enemy refinary?)
@@ -1758,7 +1758,6 @@ function check_hover_select(obj)
      and selected_obj.owner==1 then
      -- send harvester to refinery/repair facility
      selected_obj.state=7
-     --printh(">>>1")
      -- update last factory (in case changed)
      --if obj.id==6 then 
       selected_obj.last_fact=obj
@@ -1767,14 +1766,9 @@ function check_hover_select(obj)
    
      --problem here, doesnt actually do this .cor for other units on repair fac
    
-     --printh(">>>0")
      selected_obj.cor = cocreate(function(unit)
-      --printh(">>>1a")
       move_unit_pos(unit, (obj.x+16)/8, (obj.y+16)/8)
-      --printh(">>>2")
       do_guard(unit, 9)
-      --printh(">>>3")
-      --unit.state=9
      end)
      return -- register "no click"
 
