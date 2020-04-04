@@ -1351,7 +1351,7 @@ function draw_level()
  -- draw units
  for _,unit in pairs(units) do
   if (not show_menu) unit:update()
-  if (unit.id>21 and unit.state!=8) unit:draw()
+  if (unit.id==27 or unit.state!=8) unit:draw()
   --if (unit.process!=2) unit:draw()
   -- draw selected reticule
   if (unit == selected_obj) then   
