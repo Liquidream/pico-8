@@ -572,7 +572,7 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
         -- repair complete
         self.process=0
         --move to safe place?
-        if self.type==1 then
+        if self.type==1 and self.speed>0 then
          -- go back to guard
          self.state=0
          -- find nearest point to factory
@@ -1351,8 +1351,7 @@ function draw_level()
  -- draw units
  for _,unit in pairs(units) do
   if (not show_menu) unit:update()
-  if (unit.id==27 or unit.state!=8) unit:draw()
-  --if (unit.process!=2) unit:draw()
+  if (unit.process!=2 or unit.speed==0) unit:draw()
   -- draw selected reticule
   if (unit == selected_obj) then   
    palt(11,true)
