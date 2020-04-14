@@ -459,7 +459,7 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
       end
      end
      -- smoking?
-     if (self.type<=2 and self.life<self.hitpoint*.33 and rnd"10"<1) add_particle(self.x+3.5,self.y+3.5, 1, .1,-.02,.1, -.01, 40,{10,9,6,5}, rnd(2)<1 and 0xa5a5.8 or 0)
+     if (self.type<=2 and self.life<self.hitpoint*.33 and rnd"10"<1) add_particle(self.x+3.5,self.y+3.5, 1, .1,-.02,.05, -.002, 80,{10,9,6,5}, rnd(2)<1 and 0xa5a5.8 or 0)
      -- reset hit flag
      self.hit=0
  
@@ -576,12 +576,12 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
       elseif self.process==2 and self.life>self.hitpoint then
         -- repair complete
         self.process=0
-        -- spark flash while repairing
-        _g.init_repairfact(self.last_fact)        
-        --move to safe place?
+        -- move unit to safe place?
         if self.type==1 and self.speed>0 then
+         -- stop flashing while repairing
+         _g.init_repairfact(self.last_fact)        
          -- go back to guard
-         self.state=0
+         self.state=0        
          -- find nearest point to factory
          local ux,uy=nearest_space_to_object(self, self.last_fact)
          --printh(">>"..ux..","..uy)
