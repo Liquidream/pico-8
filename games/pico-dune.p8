@@ -321,7 +321,7 @@ function m_map_obj_tree(objref, x,y, owner, factory)
   if objref.type==1 then
    
    -- TESTING repair
-   newobj.life=299
+   --newobj.life=299
 
    newobj.deathsfx=54
     if (newobj.norotate!=1) newobj.r=flr(rnd"8")*.125
@@ -546,7 +546,7 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
         target.y+target.h/2) < 4 
        then
         target.life-=self.arms
-        target.hit=self.fire_type --0=none, 1=bullet, 2=missile        
+        target.hit=self.fire_type --0=none, 1=bullet, 2=missile
         target.hitby=self
        end
        -- kill bullet/missile & do damage
@@ -683,7 +683,7 @@ function _draw()
  draw_ui()
   
   --printh("cpu: "..flr(stat(1)*100).."% mem: "..(flr(stat(0)/2048*100)).."% fps: "..stat(7))--,2,109,8,0)
-  if (debug_mode) printo("cpu: "..flr(stat(1)*100).."%\nmem: "..(flr(stat(0)/2048*100)).."%\nfps: "..stat(7),2,109,8,0)
+  --if (debug_mode) printo("cpu: "..flr(stat(1)*100).."%\nmem: "..(flr(stat(0)/2048*100)).."%\nfps: "..stat(7),2,109,8,0)
 
 end
 

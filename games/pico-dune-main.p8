@@ -9,8 +9,8 @@ __lua__
 -- main cart (title menu, level select)
 -- =======================================
 
-game_cart = "pico-dune.p8"
---game_cart = "pico-dune_fmt.p8"
+--game_cart = "pico-dune.p8"
+game_cart = "pico-dune_fmt.p8"
 
 -- music
 -- 00 = title
