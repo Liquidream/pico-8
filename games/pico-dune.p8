@@ -699,6 +699,7 @@ function level_init()
   fow[i]={}
   for l=-2,66 do
    fow[i][l]=0
+   --fow[i][l]=16 -- no fog
   end
  end
 
@@ -1381,9 +1382,14 @@ end
 
 function draw_radar()
   local size=31
-  --local x,y=93,93
-  rect(92,92,125,125,p_col2)
-  rectfill(93,93,124,124,0)
+  
+  --v2
+  rectfill(89,89,126,126,p_col2)
+  rect(90,90,125,125,p_col1)
+  --v1
+  --rect(92,92,125,125,p_col2)
+  
+  rectfill(92,92,123,123,0)
 
   -- anim?
   -- https://youtu.be/T337FK6L0h0?t=2891
@@ -1399,12 +1405,12 @@ function draw_radar()
    radar_frame+=radar_dir
    -- draw radar anim
    clip(
-     max(108-radar_frame,94),
-     max(108-(radar_frame>20 and radar_frame-20 or 0),94),
-     min(radar_frame*2,31),
-     min((radar_frame>20 and radar_frame-20 or 1)*2,31))
+     max(108-radar_frame,91),
+     max(108-(radar_frame>20 and radar_frame-20 or 0),91),
+     min(radar_frame*2,33),
+     min((radar_frame>20 and radar_frame-20 or 1)*2,33))
    for i=1,300 do
-     pset(93+rnd"31",93+rnd"31",5+rnd"3")
+     pset(92+rnd"32",92+rnd"32",5+rnd"3")
    end
    clip()
    return
@@ -1413,13 +1419,13 @@ function draw_radar()
   -- draw radar data
   for xx=0,31 do
    for yy=0,31 do
-    if (radar_data[xx..","..yy]) pset(93+xx,93+yy,radar_data[xx..","..yy])
+    if (radar_data[xx..","..yy]) pset(92+xx,92+yy,radar_data[xx..","..yy])
    end
   end
   
   -- draw "view" bounds
-  local cx=93+camx/16
-  local cy=93+camy/16
+  local cx=92+camx/16
+  local cy=92+camy/16
   rect(cx,cy, cx+7,cy+7, 7)
 
 end
