@@ -26,6 +26,7 @@ ai_faction,ai_col1,ai_col2,ai_level=dget"20",dget"21",dget"22",dget"23" -- diffi
 _g,buildings,units,object_tiles,last_facts,built,radar_data,spice_tiles,particles={},{},{},{},{},{},{},{},{}
 start_time,_t,build_dest,unit_dest,keyx,keyy,hq,radar_frame=t(),0,{0,0},{0,0},0,0,false,0
 last_hq=hq
+message,msgcount="",0
 
 _g.factory_click=function(self)
   menu_pos,selected_subobj,ui_controls=1,self.parent.build_objs[1],{}
@@ -1384,8 +1385,9 @@ function draw_radar()
   local size=31
   
   --v2
-  rectfill(89,89,126,126,p_col2)
+  --rectfill(89,89,126,126,9)  
   rect(90,90,125,125,p_col1)
+  rect(91,91,124,124,p_col2)
   --v1
   --rect(92,92,125,125,p_col2)
   
@@ -1430,6 +1432,10 @@ function draw_radar()
 
 end
 
+function set_message(msg)
+  message = msg
+  msgcount = 500
+end
 
 function draw_ui()
  -- ui (score, mouse, etc.)
@@ -1456,10 +1462,21 @@ function draw_ui()
     repair_obj:draw()
   end
  end
+
  
+ rectfill(0,0,127,8,9)
+ --line(0,9,127,9,p_col2)
+ 
+ -- message
+ --message = selected_obj and selected_obj.name or ""
+ --?message, 2,2,0
+ -- update/draw
+ if (msgcount>0) msgcount-=1 print(message, 2,2,0)
+
  -- score
  strnum=getscoretext(credits[1])
- printo(sub("000000", #strnum+1)..strnum, 103,2, 7)
+ ?sub("000000", #strnum+1)..strnum, 103,2, p_col2
+ --printo(sub("000000", #strnum+1)..strnum, 103,2, p_col1,p_col2)
  
  -- placement?
  if selected_obj 
@@ -1510,8 +1527,10 @@ function draw_ui()
   rectfill(0,0,127,127,0)
   fillp()
 
+  
   rectfill(3, 22, 124, 95, p_col2)
   rect(4, 23, 123, 94, p_col1) 
+  
 
   -- build menu?
   if selected_obj.build_objs then
@@ -1691,6 +1710,9 @@ function collisions()
 
  -- clicked something?
  elseif left_button_clicked then
+
+  -- update message
+  if (selected_obj) set_message(selected_obj.name)
  
   if clickedsomething then
     if (not show_menu and selected_obj.func_onclick and selected_obj.parent!=nil) selected_obj:func_onclick() selected_obj=last_selected_obj return
@@ -1702,6 +1724,7 @@ function collisions()
     -- clicked enemy object, last clicked ours... attack?
     if (selected_obj.owner==2 and last_selected_obj and last_selected_obj.type==1 and last_selected_obj.owner==1) selected_obj.flash_count=10 do_attack(last_selected_obj, selected_obj) selected_obj=nil
 
+    
   -- deselect?
   else 
     -- do we have a unit selected?
