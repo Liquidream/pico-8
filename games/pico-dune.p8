@@ -317,7 +317,7 @@ function m_map_obj_tree(objref, x,y, owner, factory)
     if newobj.id==6 and newobj.parent==nil then
       last_facts[newobj.owner]=newobj
      -- auto create a harvester
-     -- TODO: have freighter deploy it
+     -- TODO : have freighter deploy it
      local ux,uy=ping(newobj,(newobj.x+32)/8, (newobj.y+8)/8, is_free_tile)
      --local harvester=
      m_map_obj_tree(obj_data[27],ux*8,uy*8,nil,newobj)
@@ -455,7 +455,7 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
 
      -- bullets/missiles
      if self.bullet_x then
-      if (self.fire_type==1) then
+      if self.fire_type==1 then
        -- shell
        circfill(self.bullet_x,self.bullet_y,0, rnd"2"<1 and 8 or 9)
       else
@@ -518,7 +518,7 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
      -- animated colour cycle (if applicable)
      if self.framecount!=nil then
       self.frame+=1
-      if (self.frame > self.framecount) then
+      if self.frame > self.framecount then
        self.frame=0
        -- alternate moving frame?
        if self.altframe 
@@ -697,8 +697,6 @@ end
 -- init related
 --------------------------------
 function level_init()
- -- todo: parse map data into objects
-
  -- init fog of war?
  fow={}
  for i=-2,66 do
@@ -708,7 +706,6 @@ function level_init()
    --fow[i][l]=16 -- no fog
   end
  end
-
 end
 
 -- fog of war
@@ -788,10 +785,10 @@ function update_radar_data()
     radar_data[flr(building.x/2/8)..","..flr(building.y/2/8)] = building.col1
    end
    -- track power/radar
-   if (building.owner==1) then
-    power_bal-=building.ref.power
-    if (building.id==7)has_radar=true
-    if (sub(building.name,1,5)=="sPICE")total_storage+=1000
+   if building.owner==1 then
+    power_bal -= building.ref.power
+    if (building.id==7) has_radar=true
+    if (sub(building.name,1,5)=="sPICE") total_storage+=1000
    end
    -- track counts
    building_count[building.owner]+=1
@@ -930,7 +927,9 @@ function do_guard(unit, start_state)
  unit.cor = cocreate(function(self)
   while true do
    -- be on look-out
-   if (rnd(500)<1 and self.arms>0 and self.state!=8) ping(self,flr(self.x/8),flr(self.y/8),is_danger_tile,self.range)
+   if rnd(500)<1 and self.arms>0 and self.state!=8 then 
+    ping(self,flr(self.x/8),flr(self.y/8),is_danger_tile,self.range)
+   end
 
    local last_fact = self.last_fact
 
@@ -1019,8 +1018,9 @@ function do_guard(unit, start_state)
      -- check factory is not already busy
      if not last_fact.occupied then
       last_fact.incoming=false
+      
       -- make sure can't overlap
-      -- todo: block the tiles as well
+      -- TODO: block the tiles as well
       
       -- center inside factory (refinary)
       self.state=8
@@ -1125,7 +1125,7 @@ end
 function ping(unit,x,y,func,max_dist)
   -- ...to the target pos
   for dist=1,max_dist or 64 do
-    for xx=x-dist,x+dist do  -- todo: increment this out by one, on every unsuccessful pass
+    for xx=x-dist,x+dist do
       for yy=y-dist,y+dist do
         if ((xx==x-dist or xx==x+dist or yy==y-dist or yy==y+dist) and (func(unit,xx,yy))) return xx,yy
       end
@@ -1183,7 +1183,7 @@ function move_unit_pos(unit,x,y,dist_to_keep)
                   function (node) return shl(node.y, 8) + node.x end,
                   nil)  
 
-  -- todo: check path valid???
+  -- TODO: check path valid???
   -- now auto-move to path
   unit.prev_state = unit.state
   unit.state = 2
@@ -1256,10 +1256,7 @@ function update_ai()
     if ai_unit.owner==2 and ai_unit.arms>0 and ai_unit.state==0 then
      -- select a random target (unit or building)
      local p_target=(rnd(2)<1)and units[flr(rnd(#units))+1] or buildings[flr(rnd(#buildings))+1]
-     if p_target and p_target.owner==1 then
-      --printh(">>> attack!")
-      do_attack(ai_unit, p_target)
-     end
+     if (p_target and p_target.owner==1) do_attack(ai_unit, p_target) --printh(">>> attack!")
     end
   end
   -- --------------------
@@ -1272,13 +1269,10 @@ function update_ai()
   if (worm_life<0) then
    if worm_segs then
     -- hide worm
-    --printh("hide worm")
     worm_segs=nil
    else
     -- show worm
-    --printh("show worm")
-    worm_segs,worm_dir,worm_turn,worm_cols,worm_frame={{rnd(500),rnd(500)}},rnd(1),0,{15,9,4},0
-    --worm_segs,worm_dir,worm_turn,worm_cols,worm_frame={{50,110}},rnd(1),0,{15,9,4},0    
+    worm_segs,worm_dir,worm_turn,worm_cols,worm_frame={{rnd(500),rnd(500)}},rnd(1),0,{15,9,4},0    
    end
    worm_life=rnd(5000) -- worm probability
   end
@@ -1358,11 +1352,7 @@ function draw_level()
   end
   building:draw()
   -- draw selected reticule
-  if (building == selected_obj) then 
-   rect(selected_obj.x, selected_obj.y, 
-        selected_obj.x+selected_obj.w-1, selected_obj.y+selected_obj.h-1, 
-        7)
-  end
+  if (building == selected_obj) rect(selected_obj.x, selected_obj.y, selected_obj.x+selected_obj.w-1, selected_obj.y+selected_obj.h-1, 7)  
  end
  
  -- draw units
@@ -1370,10 +1360,7 @@ function draw_level()
   if (not show_menu) unit:update()
   if (unit.process!=2 or unit.speed==0) unit:draw()
   -- draw selected reticule
-  if (unit == selected_obj) then   
-   palt(11,true)
-   spr(17, selected_obj.x, selected_obj.y)
-  end
+  if (unit == selected_obj) palt(11,true) spr(17, selected_obj.x, selected_obj.y)
  end
 
  -- particles
@@ -1387,24 +1374,24 @@ end
 
 
 function draw_radar()
-  local size=31
+ local size=31
   
-  --v2
-  --rectfill(89,89,126,126,9)  
-  rect(90,90,125,125,p_col1)
-  rect(91,91,124,124,p_col2)
-  --v1
-  --rect(92,92,125,125,p_col2)
+ --v2
+ --rectfill(89,89,126,126,9)  
+ rect(90,90,125,125,p_col1)
+ rect(91,91,124,124,p_col2)
+ --v1
+ --rect(92,92,125,125,p_col2)
   
-  rectfill(92,92,123,123,0)
+ rectfill(92,92,123,123,0)
 
-  -- anim?
-  -- https://youtu.be/T337FK6L0h0?t=2891
-  if hq!=last_hq then
-   radar_frame=hq and 1 or 59
-   radar_dir=hq and 1 or -1
-   sfx(55)
-   update_radar_data()
+ -- anim?
+ -- https://youtu.be/T337FK6L0h0?t=2891
+ if hq!=last_hq then
+  radar_frame=hq and 1 or 59
+  radar_dir=hq and 1 or -1
+  sfx(55)
+  update_radar_data()
  end  
  last_hq=hq
 
@@ -1491,7 +1478,7 @@ function draw_ui()
    or selected_obj.build_obj.id==16)
   and selected_obj.build_obj.life>=100 then
   -- draw placement
-  -- (todo: improve this code!)
+  -- TODO: improve this code!
   local mxpos=flr((cursor.x+camx)/8)
   local mypos=flr((cursor.y+camy)/8)
   local sxpos=mxpos*8-camx
@@ -1744,7 +1731,7 @@ function check_hover_select(obj)
     if (obj.state==8) return
     --if (obj.id==27 and obj.state==8) return
     -- was our harvester selected before clicking a refinery?
-    -- (todo: poss bug allowing sending of own harvester into enemy refinary?)
+    -- TODO: poss bug allowing sending of own harvester into enemy refinary?
     if selected_obj
      and (obj.id==6 and selected_obj.id==27 
        or obj.id==14 and selected_obj.id>21)
@@ -2196,16 +2183,16 @@ bb171bbbb1bbb1bbbbbb999999bb99999999bbbbbbbbbbbb9b99b99b9b9989b99bb9bb9b5d55d551
 bb1771bb17b1b71bbbb99b9b99999b99b9b99bbbb9bbbb9b999b999999b88899bb999bbb55515d5555515d5d55d51555155d55d5d5555d5555d51555d5105555
 bb17771bb1bbb1bbbbbbb9b9bbb999999b9bbbbbbb99b999b9bbbb9b99998b99bb999bbbd55d5555d55555555555d55d55d5155555d155d55555d55dd5555111
 bb177771bb171bbbbbbb999999999b999999bbbb999b99b9bbbbbbbbbbb89999b9b9bbb955d551d555d515555d155d555555d55d155555555d155d55d1555101
-bb17711bbbb1bbbbbbb99b9b99bbb9b9b9b99bbb9b99b99bbbbbbbbb99999b99bb9bbbbb1555555515555515555555515d155d55b51bbd5b55555551d5555111
+bb17711bbbb1bbbbbbb99b9b99bbb9b9b9b99bbb9b99b99bbbbbbbbb99999b99bb9bbbbb1555555555555515555555515d155d55b51bbd5b55555551d5555111
 bbb11bbbbbbbbbbbbbbb99b9bb9b99999b99bbbbb99b99b9bbbbbbbb99bbb9b9bbbb9bbbb55d5515555d55555155d55b55555551bbbbbbbb5155d55bd5515555
-ddddddddb7bbbb7bbb77bbb7bbbbbbbbbbb9bbbbbbbbbbbbbbbbbbbb55d555d555d555d555d555d555d44444444444444444445555d024244444444444442215
-d555555577bbbb77b79bb77bbbbbbbbbbb66669bbbbbbbbbb6bbbbbb155551551555515515555155155444444444444444444445155022242444444444242015
-d5555555bbbbbbbb79b779bb0000b000b66dd66bbd5bb5bbbbbbbb6b5d55d555555555555555d5555d44444444444444444444455d5102222244224224222015
-d5555555bbbbbbbbbb799bbb07700077b6d55d6bb5dbbbbbbbbbbbbb555155555555555d44455d5d55444444444444444444444d55511002222222222222015d
-d5555555bbbbbbbbb799bbbb00777770b6d55d6bbbbb555bbbbbbbbbd5555d44555d444444445555d52244444444444444444445d55510000022222220201155
-d5555555bbbbbbbbb79bbbbb07700077b66dd66bbbbb5d5bbbb6bbbb55d5d444444444444444455555122444444444444444442555d511100000000000011155
-d555555577bbbb777bbbbbbb0000b000bb6666bbbbbb555bbbbbbbbb155544444444444444444415155124444444444444444405155555111000000011115515
-d5555555b7bbbb7bbbbbbbbbbbbbbbbbb9bbbbbbbbbbbbbbbbbbbbbb555544444444444444444455555144444444444444444215555d555111111111115d5555
+ddddddddb7bbbb7bbbbbbbbbbbbbbbbbbbb9bbbbbbbbbbbbbbbbbbbb55d555d55d44444555d555d5d44444444444444444444444542444444444444444444424
+d555555577bbbb77bb77bbb7bbbbbbbbbb66669bbbbbbbbbb6bbbbbb1555515d4444444444555155544444444444444444444444544224222242224442422442
+d5555555bbbbbbbbb79bb77b0000b000b66dd66bbd5bb5bbbbbbbb6b5d55d444444444444445d555444444444444444444444444524442444424442224444221
+d5555555bbbbbbbb79b779bb07700077b6d55d6bb5dbbbbbbbbbbbbb55544444444444444444445d444444444444444444444442522222212222222242222110
+d5555555bbbbbbbbbb799bbb00777770b6d55d6bbbbb555bbbbbbbbb555444444444444444444445444444444444444444444422502112121121122121121200
+d5555555bbbbbbbbb799bbbb07700077b66dd66bbbbb5d5bbbb6bbbb55d444444444444444444445444444444444444444444242550221200012210012100005
+d555555577bbbb77b79bbbbb0000b000bb6666bbbbbb555bbbbbbbbb154444444444444444444444444444444444444444444240555000055000000500055555
+d5555555b7bbbb7b7bbbbbbbbbbbbbbbb9bbbbbbbbbbbbbbbbbbbbbb55444444444444444444444444444444444444444444442155555555555555555555d555
 000000000bbbbbb000000000bbbbb1b1000000001b1bbbbb00000000bbbbbbbb0000000001bbbb1010000000bbbbbbb0000000010bbbbbbb0000000000000000
 001bb1000bbbbbb0bbb1b000bbb1bb000000bbbb00bb1bbb1b1b1b1bbbbbbbbb000000000bbbbbb0b0000000bbbbb1000000000b00bbbbbbb000000b00000000
 01bbbb100bbbbbb0bbbb1b00bb1b0000000b1bbb0001b1bbbbbbbbbbbbbbbbbb00b0b00001bbbb101b000000bbbb1b00000000b1001bbbbbb1b1b1bb00000000
@@ -2296,7 +2283,7 @@ cc7666755566555ccccc0f7557ccccccccccc4ffff7fccccccccc4ffff75550cccc288888887cccc
 cd66d6755666655ccccc0f7fff7ccccccc54454444444f7ccc45444444444ccccc5225222222287ccc45555cc4ffffcccc50005444544ccc45005444455005cc
 c5dd66655555555ccccc0ff000550cccc555fffffffff55cc54fffffffffff5cc55588888888855cc54fffffffffff5cc5000005ffff505c5016054ff501605c
 916666d001110009cccc00df00cccccc950600000000065995040000000004599506000000000659950400000000045995000005999400095061052995061059
-f90500000444000999999900ff999999995555555555559999555555555555999955555555555599995555555555559999500052222250599500522222500599
+f90500000444000999999900ff999999995555255555559999555555555555999955555555555599995555555555559999500052222250599500522222500599
 999999999999999f44999df9dff9f999f99999999999999f9999999999999999f99999999999999f9999999999999999f99999999999999f99999999999999ff
 9f9ff9999f9999994444df449df999f9999999f999999999f99f99f99999f99f999999f999999999f99f99f99999f99f999999999f99999999999999f9999999
 99999999999999f999945559455599999ff9999999fff999999999999ff999999ff9999999fff999999999999ff99999999fff9999999ff999fff9999999ff99
