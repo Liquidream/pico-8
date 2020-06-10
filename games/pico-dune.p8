@@ -87,6 +87,11 @@ _g.init_repairfact=function(self)
 end
 
 function process_click(self, mode)
+  printh("in process_click...")
+  printh("  self = "..tostr(self.name))
+  printh("  mode = "..tostr(mode))
+  printh("  self.process = "..tostr(self.process))
+  printh("  self.life = "..tostr(self.life))
   self.procstep=0
   -- toggle/switch mode (building/repairing) depending on state & click
   self.last_process=self.process
@@ -317,7 +322,7 @@ function m_map_obj_tree(objref, x,y, owner, factory)
     if newobj.id==6 and newobj.parent==nil then
       last_facts[newobj.owner]=newobj
      -- auto create a harvester
-     -- TODO : have freighter deploy it
+     -- todo : have freighter deploy it
      local ux,uy=ping(newobj,(newobj.x+32)/8, (newobj.y+8)/8, is_free_tile)
      --local harvester=
      m_map_obj_tree(obj_data[27],ux*8,uy*8,nil,newobj)
@@ -702,8 +707,8 @@ function level_init()
  for i=-2,66 do
   fow[i]={}
   for l=-2,66 do
-   fow[i][l]=0
-   --fow[i][l]=16 -- no fog
+   --fow[i][l]=0
+   fow[i][l]=16 -- no fog
   end
  end
 end
@@ -1020,7 +1025,7 @@ function do_guard(unit, start_state)
       last_fact.incoming=false
       
       -- make sure can't overlap
-      -- TODO: block the tiles as well
+      -- todo: block the tiles as well
       
       -- center inside factory (refinary)
       self.state=8
@@ -1061,7 +1066,7 @@ function do_guard(unit, start_state)
    end -- check repairable
 
    
-   -- TODO: if other unit type (carrier, worm, etc.)
+   -- todo: if other unit type (carrier, worm, etc.)
 
    yield()
   
@@ -1183,7 +1188,7 @@ function move_unit_pos(unit,x,y,dist_to_keep)
                   function (node) return shl(node.y, 8) + node.x end,
                   nil)  
 
-  -- TODO: check path valid???
+  -- todo: check path valid???
   -- now auto-move to path
   unit.prev_state = unit.state
   unit.state = 2
@@ -1249,50 +1254,84 @@ worm_life=0
 
 -- ai strategy code (attack, build, repair, etc.)
 function update_ai()
- -- (7621 Tokens b4 doing this)
- -- find the first ai unit and attack player
-  if (t()>ai_level and t()%ai_level*2==0) then
-    local ai_unit=units[flr(rnd(#units))+1]
-    if ai_unit.owner==2 and ai_unit.arms>0 and ai_unit.state==0 then
-     -- select a random target (unit or building)
-     local p_target=(rnd(2)<1)and units[flr(rnd(#units))+1] or buildings[flr(rnd(#buildings))+1]
-     if (p_target and p_target.owner==1) do_attack(ai_unit, p_target) --printh(">>> attack!")
-    end
+ -- depending on ai level...
+ if (t()>ai_level and t()%ai_level*2==0) then  
+  -- --------------------
+  -- unit attacks
+  -- --------------------
+  -- find the first ai unit and attack player  
+  local ai_unit=units[flr(rnd(#units))+1]
+  if ai_unit.owner==2 and ai_unit.arms>0 and ai_unit.state==0 then
+   -- select a random target (unit or building)
+   local p_target=(rnd(2)<1)and units[flr(rnd(#units))+1] or buildings[flr(rnd(#buildings))+1]
+   if (p_target and p_target.owner==1) do_attack(ai_unit, p_target) --printh(">>> attack!")
   end
   -- --------------------
-  -- sandworm
+  -- todo: build units
   -- --------------------
-  worm_life-=1
-  --printh("worm_life="..worm_life)
-  
-  -- appear/disappear
-  if (worm_life<0) then
-   if worm_segs then
-    -- hide worm
-    worm_segs=nil
-   else
-    -- show worm
-    worm_segs,worm_dir,worm_turn,worm_cols,worm_frame={{rnd(500),rnd(500)}},rnd(1),0,{15,9,4},0    
-   end
-   worm_life=rnd(5000) -- worm probability
-  end
- 
-  if worm_segs then
-   -- movement/turning
-   if (_t%6<1 or #worm_segs<30) and worm_frame==0 then
-    while #worm_segs<31 do
-     if(rnd(9)<.5) worm_turn=rnd(.04)-.02
-     -- ref to head
-     head_worm_x,head_worm_y=worm_segs[#worm_segs][1],worm_segs[#worm_segs][2]
-     add(worm_segs,{head_worm_x+sin(worm_dir),head_worm_y-cos(worm_dir)})
-     worm_dir+=worm_turn
-    end
-   end
-   if (#worm_segs>30) del(worm_segs,worm_segs[1])
-   if (worm_frame>0) worm_frame+=.01 add_spice_cloud(head_worm_x,head_worm_y,rnd"1")
-   if (worm_frame>2) worm_frame=0
+  local ai_fact=buildings[flr(rnd(#buildings))+1]
+  -- printh("ai_fact="..type(ai_fact))
+  -- printh("ai_fact.name="..tostr(ai_fact.name))
+  -- printh("ai_fact.owner="..tostr(ai_fact.owner))
+  -- printh("ai_fact.build_objs="..tostr(ai_fact.build_objs))
+  -- if #ai_fact.build_objs>0 then
+  --  printh("ai_fact.build_objs[1].type="..tostr(ai_fact.build_objs[1].type))
+  -- end
+  if ai_fact.owner==2 and #ai_fact.build_objs>0 and ai_fact.build_objs[1].ref.type==1 then
+   printh("ai_fact name="..tostr(ai_fact.name))
+   printh("ai_fact process="..tostr(ai_fact.process))
+   printh("ai_fact spent="..tostr(ai_fact.spent))
   end
 
+  if ai_fact.owner==2 and #ai_fact.build_objs>0 and ai_fact.build_objs[1].ref.type==1 and ai_fact.process==0 then
+   -- select a random unit to build
+   local u=ai_fact.build_objs[flr(rnd(#ai_fact.build_objs))+1]
+   printh("  > BUILD  unit "..tostr(u.name))
+   u:func_onclick()
+   --process_click(u, 1)
+  end
+  -- ----------------------
+  -- todo: repair buildings
+  -- ----------------------
+
+  -- -------------------------
+  -- todo: fire palace weapons
+  -- -------------------------
+
+ end
+
+ -- --------------------
+ -- sandworm
+ -- --------------------
+ worm_life-=1
+ --printh("worm_life="..worm_life) 
+ -- appear/disappear
+ if (worm_life<0) then
+  if worm_segs then
+   -- hide worm
+   worm_segs=nil
+  else
+   -- show worm
+   worm_segs,worm_dir,worm_turn,worm_cols,worm_frame={{rnd(500),rnd(500)}},rnd(1),0,{15,9,4},0    
+  end
+  worm_life=rnd(5000) -- worm probability
+ end
+
+ if worm_segs then
+  -- movement/turning
+  if (_t%6<1 or #worm_segs<30) and worm_frame==0 then
+   while #worm_segs<31 do
+    if(rnd(9)<.5) worm_turn=rnd(.04)-.02
+    -- ref to head
+    head_worm_x,head_worm_y=worm_segs[#worm_segs][1],worm_segs[#worm_segs][2]
+    add(worm_segs,{head_worm_x+sin(worm_dir),head_worm_y-cos(worm_dir)})
+    worm_dir+=worm_turn
+   end
+  end
+  if (#worm_segs>30) del(worm_segs,worm_segs[1])
+  if (worm_frame>0) worm_frame+=.01 add_spice_cloud(head_worm_x,head_worm_y,rnd"1")
+  if (worm_frame>2) worm_frame=0
+ end
 
 end
 
@@ -1478,7 +1517,7 @@ function draw_ui()
    or selected_obj.build_obj.id==16)
   and selected_obj.build_obj.life>=100 then
   -- draw placement
-  -- TODO: improve this code!
+  -- todo: improve this code!
   local mxpos=flr((cursor.x+camx)/8)
   local mypos=flr((cursor.y+camy)/8)
   local sxpos=mxpos*8-camx
@@ -1731,7 +1770,7 @@ function check_hover_select(obj)
     if (obj.state==8) return
     --if (obj.id==27 and obj.state==8) return
     -- was our harvester selected before clicking a refinery?
-    -- TODO: poss bug allowing sending of own harvester into enemy refinary?
+    -- todo: poss bug allowing sending of own harvester into enemy refinary?
     if selected_obj
      and (obj.id==6 and selected_obj.id==27 
        or obj.id==14 and selected_obj.id>21)
@@ -2337,9 +2376,9 @@ __map__
 001212121200000000000c0c0c0a0a0a00000000000000000000000012000000030000000000000000000000000606000600060000000003030303000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 121200003600360000090a1818190a0a0a6a0000000000000000000000000000030000000000000000000000000000000000000000030300000003000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 0000000000000000400a0a1e1b1b1818190a0000000000000000000000000000000000000000000000000000000000000000000000030303030300000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
-00003500350000090a0a0a0a1e1b1b1b1c0a6200000000000002050700000000000000000000000000000000000000000000000000030603030600000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+00003500350000090a0a0a0a1e1b1b1b1c0a6000000000000002050700000000000000000000000000000000000000000000000000030603030600000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 16000000000000000d0a0a0a0a1a1b1c1f0a0a0a0a0000000002060600000000000000000000000000000000000000000000000000000000000000000000001600000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
-1600000000000000000d0a6e0a1d1e1f0a0a0a0a0a0a0a000000000000000000000000000000000000000000000000000000000000000000000000000000001600000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000015
+1600000000000000000d0a0a0a1d1e1f0a0a0a0a0a0a0a000000000000000000000000000000000000000000000000000000000000000000000000000000001600000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000015
 1616160000000000000000090a650a0a0a0a0a0a0a0a0a0a0000000000000000000000000000000000000000000000000000000000000000000000000016161600000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001515
 __sfx__
 010c0004246152461524615246250c000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
