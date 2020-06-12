@@ -87,11 +87,11 @@ _g.init_repairfact=function(self)
 end
 
 function process_click(self, mode)
-  printh("in process_click...")
-  printh("  self = "..tostr(self.name))
-  printh("  mode = "..tostr(mode))
-  printh("  self.process = "..tostr(self.process))
-  printh("  self.life = "..tostr(self.life))
+  -- printh("in process_click...")
+  -- printh("  self = "..tostr(self.name))
+  -- printh("  mode = "..tostr(mode))
+  -- printh("  self.process = "..tostr(self.process))
+  -- printh("  self.life = "..tostr(self.life))
   self.procstep=0
   -- toggle/switch mode (building/repairing) depending on state & click
   self.last_process=self.process
@@ -234,6 +234,18 @@ function discover_objs()
      end
    end
  end
+
+ -- debug
+ -- printh("buildings:")
+ -- for i=1,#buildings do
+ --  local b = buildings[i]
+ --  printh(" "..i..") "..b.name.." (owner="..b.owner..")")
+ -- end
+ -- printh("units:")
+ -- for i=1,#units do
+ --  local u = units[i]
+ --  printh(" "..i..") "..u.name.." (owner="..u.owner..")")
+ -- end
 end
 
 function m_map_obj_tree(objref, x,y, owner, factory)
@@ -319,10 +331,6 @@ function m_map_obj_tree(objref, x,y, owner, factory)
   end
   -- unit props
   if objref.type==1 then
-   
-   -- TESTING repair
-   --newobj.life=299
-
    newobj.deathsfx=54
     if (newobj.norotate!=1) newobj.r=flr(rnd"8")*.125
     if newobj.arms>0 then
@@ -1011,8 +1019,8 @@ function do_guard(unit, start_state)
     -- or been sent to repair facility
     if self.state==9 then --dist(self.x,self.y,self.last_fact.x,self.last_fact.y)<22 then  
      
-     -- check factory is not already busy
-     if not last_fact.occupied then
+     -- check last factory is not destroyed or already busy
+     if last_fact.life>0 and not last_fact.occupied then
       last_fact.incoming=false
       
       -- make sure can't overlap
@@ -1258,21 +1266,26 @@ function update_ai()
    if (p_target and p_target.owner==1) do_attack(ai_unit, p_target) --printh(">>> attack!")
   end
   -- --------------------
-  -- todo: build units
+  -- repair/build units
   -- --------------------
-  local ai_fact=buildings[flr(rnd(#buildings))+1]
-  -- printh("ai_fact="..type(ai_fact))
-  -- printh("ai_fact.name="..tostr(ai_fact.name))
-  -- printh("ai_fact.owner="..tostr(ai_fact.owner))
-  -- printh("ai_fact.build_objs="..tostr(ai_fact.build_objs))  
-  
-  -- if factory is ai owned, builds units and is not already building...
-  if ai_fact.owner==2 and ai_fact.build_obj and ai_fact.build_obj.ref.type==1 and ai_fact.build_obj.process!=1 then
-   -- select a random unit to build
-   local u=ai_fact.build_objs[flr(rnd(#ai_fact.build_objs))+1]
-   --printh("  > BUILD  unit "..tostr(u.name))
-   ai_fact.build_obj=u
-   u:func_onclick()
+  local ai_building=buildings[flr(rnd(#buildings))+1]  
+  -- if ai owned...
+  if ai_building.owner==2 then
+    -- if building is factory, builds units and is not already building...
+    if ai_building.build_obj and ai_building.build_obj.ref.type==1 and ai_building.build_obj.process!=1 then
+     -- select a random unit to build
+     local u=ai_building.build_objs[flr(rnd(#ai_building.build_objs))+1]
+     --printh("  > BUILD  unit "..tostr(u.name))
+     ai_building.build_obj=u
+     u:func_onclick()
+    end
+
+    -- repair?
+    if ai_building.life<ai_building.hitpoint and ai_building.process!=2 then
+     -- auto-repair
+     --printh("auto repair!#######")
+     process_click(ai_building, 2)
+    end
   end
   -- ----------------------
   -- todo: repair buildings
