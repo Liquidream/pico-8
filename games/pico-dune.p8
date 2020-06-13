@@ -73,18 +73,25 @@ _g.draw_refinery=function(self)
   end
   spr(self.obj_spr, self.x, self.y, self.w/8, self.h/8)
 end
-_g.draw_repair=function(self) 
- if (flr(t())%2==0) pal(7,selected_obj.process==2 and 11 or 8)
- spr(self.obj_spr, self.x, self.y)
- pal()
-end
-_g.repair_click=function(self)
-  process_click(last_selected_obj, 2)
-end
 _g.init_repairfact=function(self)
  self.col_cycle_src=8
  self.col_cycle={0}
 end
+draw_action=function(self) 
+ palt(11,true)
+ pal(7,8)
+ if (self.id==80 and flr(t())%2==0) pal(7,selected_obj.process==2 and 11 or 8)
+
+ spr(self.obj_spr, self.x, self.y)
+ pal()
+end
+repair_click=function(self)
+  process_click(last_selected_obj, 2)
+end
+launch_click=function(self)
+  printh("fire palace weapon")
+end
+
 
 function process_click(self, mode)
   -- printh("in process_click...")
@@ -107,8 +114,8 @@ obj_data=[[id|name|obj_spr|ico_spr|map_spr|type|w|h|trans_col|parent_id|parent2_
 3|sMALL cONCRETE sLAB|16|160||2|1|1|nil|1||1|1||5|0|0|0|||||||uSE CONCRETE TO MAKE A~STURDY FOUNDATION FOR~YOUR STRUCTURES.||||
 4|dEFENSIVE wALL|133|164||2|1|1|nil|1||7|4||50|0|0|200|||||||tHE wALL IS USED FOR~PASSIVE DEFENSE.||||
 5|wINDTRAP|66|172||2|2|2|nil|1||1|1||300|-100|0|800||||||10|tHE WINDTRAP SUPPLIES~POWER TO YOUR BASE.~wITHOUT POWER YOUR~STRUCTURES WILL DECAY.|init_windtrap|||
-6|sPICE rEFINERY|68|174||2|3|2|nil|1||2|1||400|30|0|1800||||||10|tHE rEFINERY CONVERTS~SPICE INTO CREDITS.|init_refinery|draw_refinery||
-7|rADAR oUTPOST|106|136||2|2|2|nil|1||2|2||400|30|0|2000|||||||tHE oUTPOST PROVIDES~RADAR AND AIDS CONTROL~OF DISTANT VEHICLES.||||
+6|sPICE rEFINERY|68|174||2|3|2|nil|1||1|1||400|30|0|1800||||||10|tHE rEFINERY CONVERTS~SPICE INTO CREDITS.|init_refinery|draw_refinery||
+7|rADAR oUTPOST|106|136||2|2|2|nil|1||1|2||400|30|0|2000|||||||tHE oUTPOST PROVIDES~RADAR AND AIDS CONTROL~OF DISTANT VEHICLES.||||
 8|sPICE sTORAGE sILO|104|134||2|2|2|nil|1||6|2||150|5|0|600|||||||tHE sPICE SILO IS USED ~TO STORE REFINED SPICE.||||
 9|bARRACKS|108|168||2|2|2|nil|1||7|2||300|10|0|1200|||||||tHE bARRACKS IS USED TO~TRAIN YOUR lIGHT ~INFANTRY.||||factory_click
 10|wor tROOPER fACILITY|110|138||2|2|2|nil|1||7|2||400|10|0|1600|||||||wor IS USED TO TRAIN~YOUR hEAVY INFANTRY.||||factory_click
@@ -120,7 +127,7 @@ obj_data=[[id|name|obj_spr|ico_spr|map_spr|type|w|h|trans_col|parent_id|parent2_
 16|rOCKET tURRET|93|234||1|1|1|11|1||7|6||250|20|112|1200|0|9|2||||tHE rOCKET TURRET IS~USED FOR MEDIUM RANGE~ACTIVE DEFENSE.||||
 17|sTARPORT|58|228||2|3|3|nil|1||6|6||500|50|0|2000|||||||tHE sTARPORT IS USED TO~ORDER AND RECEIVED~SHIPMENTS FROM~c.h.o.a.m.|init_refinery|draw_refinery||factory_click
 18|hOUSE OF ix|131|224||2|2|2|nil|1||12|5||500|40|0|1600|||||||tHE ix rESEARCH~fACILITY ADVANCES YOUR~hOUSE'S TECHNOLOGY.||||
-19|pALACE|55|226||2|3|3|nil|1||17|8||999|80|0|4000|||||||tHIS IS YOUR pALACE.||||factory_click
+19|pALACE|55|226||2|3|3|nil|1||17|8||999|80|0|4000|||||||tHIS IS YOUR pALACE.||||
 20|lIGHT iNFANTRY (X3)|62|236||1|1|1|11|9||9|2|-3|60||4|200|0.05|2|1|1|63|10|iNFANTRY ARE LIGHTLY~ARMOURED FOOTSOLDIERS,~WITH LIMITED FIRING~RANGE AND SPEED.||||
 21|hEAVY tROOPERS (X3)|62|194||1|1|1|11|10||9|3|-1|100||8|440|0.1|3|1|1|63|10|tROOPERS ARE HEAVILY~ARMOURED FOOTSOLDIERS,~WITH IMPROVED FIRING~RANGE AND SPEED.||||
 22|tRIKE|54|204||1|1|1|11|11|17||2||150||8|400|0.6|3|1||||tHE tRIKE IS A LIGHTLY-~ARMOURED, 3-WHEELED~VEHICLE, WITH LIMITED~FIRING RANGE, BUT RAPID~SPEED.||||
@@ -133,7 +140,8 @@ obj_data=[[id|name|obj_spr|ico_spr|map_spr|type|w|h|trans_col|parent_id|parent2_
 33|dEVASTATOR|52|200||1|1|1|11|12||13|8|3|800||60|1600|0.1|7|1||||tHE dEVESTATOR IS A~NUCLEAR-POWERED TANK,~WHICH FIRES DUAL PLASMA~CHARGES. mOST POWERFUL~TANK ON dUNE, BUT~POTENTIALLY UNSTABLE~IN COMBAT.||||
 35|rAIDER|54|204||1|1|1|11|11|||2|2|150||8|320|0.75|3|1||||tHE oRDOS rAIDER IS~SIMILAR TO THE STANDARD~tRIKE, BUT WITH LESS~ARMOUR IN FAVOUR OF~SPEED.||||
 39|sANDWORM|94|||9|1|1|11|nil||nil|3||0||300|4000|0.35|0|30||||tHE sAND wORMS ARE~INDIGEONOUS TO dUNE.~aTTRACTED BY VIBRATIONS~ALMOST IMPOSSIBLE TO~DESTROY, WILL CONSUME~ANYTHING THAT MOVES.||||
-80|rEPAIR|19|||5|1|1|11|nil||nil|||||||||||||||draw_repair||repair_click]]
+80|rEPAIR|19|||5|1|1|11|nil||nil|||||||||||||||draw_action||action_click
+81|lAUNCH|1|||5|1|1|11|nil||nil|||||||||||||||draw_action||action_click]]
 
 
 
@@ -160,7 +168,8 @@ function _init()
 
  explode_data()
 
- repair_obj=m_obj_from_ref(obj_data[80], 109,-20, 5, {}, nil,_g.draw_repair, _g.repair_click) 
+ repair_obj=m_obj_from_ref(obj_data[80], 109,-20, 5, {}, nil,draw_action, repair_click) 
+ launch_obj=m_obj_from_ref(obj_data[81], 100,-20, 5, {}, nil,draw_action, launch_click) 
 
  -- init the game/title
  level_init()
@@ -253,7 +262,7 @@ function m_map_obj_tree(objref, x,y, owner, factory)
   local newobj=m_obj_from_ref(objref, x,y, objref.type, nil, _g[objref.func_init], _g[objref.func_draw], _g[objref.func_update], nil)
   -- set type==3 (icon!)
   newobj.ico_obj=m_obj_from_ref(objref, 109,0, 3, newobj, nil, nil, _g[objref.func_onclick])
-  newobj.life=placement_damage and objref.hitpoint/2 or objref.hitpoint -- unless built without concrete
+  newobj.life=10--placement_damage and objref.hitpoint/2 or objref.hitpoint -- unless built without concrete
   -- factory?
   newobj.build_objs={}
   -- go through all ref's and see if any valid for this building
@@ -310,6 +319,7 @@ function m_map_obj_tree(objref, x,y, owner, factory)
   -- building props?        
   if objref.type==2 then
     newobj.deathsfx=53
+    newobj.fire_cooldown=0
     -- prepare the map?
     local slabs=(objref.id==2 or objref.id==3)    
     for xx=0,objref.w-1 do
@@ -715,7 +725,7 @@ end
 function draw_fow()
  local mapx=flr(camx/8)
  local mapy=flr(camy/8)
- palt(11,true)
+ --palt(11,true)
  for xx=mapx-1,mapx+16 do
   for yy=mapy-1,mapy+16 do
     if fow[xx][yy]!=0 and fow[xx][yy]!=16 then
@@ -1348,7 +1358,7 @@ function draw_level()
 
  -- palt()
  -- pal()
- -- palt(11,true)
+  --palt(11,true)
 
  
  -- draw sandworm
@@ -1365,9 +1375,10 @@ function draw_level()
   if (worm_frame>0) spr(94+worm_frame, head_worm_x, head_worm_y)
  end
 
+ palt(11,true)
 
  -- don't trans black
-  palt(0,false) 
+ palt(0,false) 
   
  map(0,0, 0,0, 64,32)
  map(64,0, 0,256, 64,32)
@@ -1390,13 +1401,15 @@ function draw_level()
   -- draw selected reticule
   if (building == selected_obj) rect(selected_obj.x, selected_obj.y, selected_obj.x+selected_obj.w-1, selected_obj.y+selected_obj.h-1, 7)  
  end
+
+ 
  
  -- draw units
  for _,unit in pairs(units) do
   if (not show_menu) unit:update()
   if (unit.process!=2 or unit.speed==0) unit:draw()
   -- draw selected reticule
-  if (unit == selected_obj) palt(11,true) spr(17, selected_obj.x, selected_obj.y)
+  if (unit == selected_obj) spr(17, selected_obj.x, selected_obj.y)
  end
 
  -- particles
@@ -1470,7 +1483,7 @@ function draw_ui()
  camera(0,0)
  pal()
  -- selected objects?
- palt(0,false) 
+ palt(0,false)
  
  -- object menu icon/buttons?
  if selected_obj and selected_obj.ico_obj then
@@ -1480,6 +1493,7 @@ function draw_ui()
    selected_obj.build_obj:setpos(109,44)
    selected_obj.build_obj:draw() 
   end
+  -- repair?
   if selected_obj.life<selected_obj.hitpoint 
    and selected_obj.owner==1
    and selected_obj.id!=4
@@ -1488,6 +1502,12 @@ function draw_ui()
      or selected_obj.id==16) then
     repair_obj:setpos(117,28) 
     repair_obj:draw()
+  end
+  -- fire palace weapon?
+  if selected_obj.id==19 
+   and selected_obj.fire_cooldown<=0 then
+   launch_obj:setpos(109,29) 
+   launch_obj:draw()
   end
  end
 
@@ -1662,7 +1682,7 @@ function collisions()
  -- selected obj ui collision
  if selected_obj then
    ui_collision_mode=true
-   if (last_selected_obj.life and last_selected_obj.life<last_selected_obj.hitpoint) check_hover_select(repair_obj)
+   if (last_selected_obj.life and last_selected_obj.life<last_selected_obj.hitpoint) check_hover_select(repair_obj) check_hover_select(launch_obj)
    if (selected_obj.ico_obj and not show_menu and not clickedsomething) check_hover_select(selected_obj.ico_obj)   
    foreach(selected_obj.build_objs, check_hover_select)   
    if (show_menu) foreach(ui_controls, check_hover_select)
@@ -2213,13 +2233,13 @@ end
 
 
 __gfx__
-bbbbbbbbbbb1bbbbbbbbbbbb99b99999bbbbbbbbbbbbbbbb9b99b9b9bb9b9999bb9bbbbbb5d555d555d555d55d555d5bbbbbbbbb1d5155555d555d5bdddddddd
-bb11bbbbbb171bbbbbbb9bbb9b9999b9bbb9bbbbbbbbbbbbb99b99b999b99899bbbb9bbb1555515d15555155d51555515dbbbd5b5155d55dd5155551d5555555
-bb171bbbb1bbb1bbbbbb999999bb99999999bbbbbbbbbbbb9b99b99b9b9989b99bb9bb9b5d55d5515d55d555155d55d5d5155551555d5155155d55d5d5015515
-bb1771bb17b1b71bbbb99b9b99999b99b9b99bbbb9bbbb9b999b999999b88899bb999bbb55515d5555515d5d55d51555155d55d5d5555d5555d51555d5105555
-bb17771bb1bbb1bbbbbbb9b9bbb999999b9bbbbbbb99b999b9bbbb9b99998b99bb999bbbd55d5555d55555555555d55d55d5155555d155d55555d55dd5555111
-bb177771bb171bbbbbbb999999999b999999bbbb999b99b9bbbbbbbbbbb89999b9b9bbb955d551d555d515555d155d555555d55d155555555d155d55d1555101
-bb17711bbbb1bbbbbbb99b9b99bbb9b9b9b99bbb9b99b99bbbbbbbbb99999b99bb9bbbbb1555555555555515555555515d155d55b51bbd5b55555551d5555111
+bbbbbbbbbb171bbbbbbbbbbb99b99999bbbbbbbbbbbbbbbb9b99b9b9bb9b9999bb9bbbbbb5d555d555d555d55d555d5bbbbbbbbb1d5155555d555d5bdddddddd
+bb11bbbbb17771bbbbbb9bbb9b9999b9bbb9bbbbbbbbbbbbb99b99b999b99899bbbb9bbb1555515d15555155d51555515dbbbd5b5155d55dd5155551d5555555
+bb171bbb1711171bbbbb999999bb99999999bbbbbbbbbbbb9b99b99b9b9989b99bb9bb9b5d55d5515d55d555155d55d5d5155551555d5155155d55d5d5015515
+bb1771bb7717177bbbb99b9b99999b99b9b99bbbb9bbbb9b999b999999b88899bb999bbb55515d5555515d5d55d51555155d55d5d5555d5555d51555d5105555
+bb17771b1711171bbbbbb9b9bbb999999b9bbbbbbb99b999b9bbbb9b99998b99bb999bbbd55d5555d55555555555d55d55d5155555d155d55555d55dd5555111
+bb177771b17771bbbbbb999999999b999999bbbb999b99b9bbbbbbbbbbb89999b9b9bbb955d551d555d515555d155d555555d55d155555555d155d55d1555101
+bb17711bbb171bbbbbb99b9b99bbb9b9b9b99bbb9b99b99bbbbbbbbb99999b99bb9bbbbb1555555555555515555555515d155d55b51bbd5b55555551d5555111
 bbb11bbbbbbbbbbbbbbb99b9bb9b99999b99bbbbb99b99b9bbbbbbbb99bbb9b9bbbb9bbbb55d5515555d55555155d55b55555551bbbbbbbb5155d55bd5515555
 ddddddddb7bbbb7bbbbbbbbbbbbbbbbbbbb9bbbbbbbbbbbbbbbbbbbb55d555d55d44444555d555d5d44444444444444444444444542444444444444444444424
 d555555577bbbb77bb77bbb7bbbbbbbbbb66669bbbbbbbbbb6bbbbbb1555515d4444444444555155544444444444444444444444544224222242224442422442
@@ -2353,7 +2373,7 @@ __map__
 1212008010100c830a85420a6c0a000205030303030303030600000000000000000000000000000000000000000000000000000003000000000303030303030000001212121212121200000000000000121212000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 1212001010100a0a0a850a0a0a0a000203030307030303060000000000120000000000000000030303030303030303030000000000000000000003030303030000121212121212000000000000001212121212000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 0000001010100a0a0d4d0e0e0a00000006030303030306000000121212000000000000000003030303171819030303030303000000000000000003030303030012120000000000000000000000121212121200000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
-001212090d090d0e00850a0a0e0000121200650a0a0a0a0b00001200000000000000000000030303171b1b1b190303030303000000000000000000030303030012000000000000000000000000121212120000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+001212370d090d0e00850a0a0e0000121200650a0a0a0a0b00001200000000000000000000030303171b1b1b190303030303000000000000000000030303030012000000000000000000000000121212120000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 1212121212000016004d010a00001244090c0a0a0a0a0a0a0b12120000000000000000000003031a1b1b1e1e1e1e03030303030000000000000000000303030000000000000000000012120000121212120000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 12121212120016005d850a0a0c00120a0a0a1718190a0a0a0a12000000000000000000000303031d1b1f0303030303030303030300000003030303030303000000000000000000000012121212121212000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 001212001200161685680a10620c0c680a0a1d1e1b190a0a0a0c0a0b0000000000000000030303031a030303030303030300000000000000030303030303030000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
