@@ -76,7 +76,7 @@ function _draw()
   print("\n(level end screen)")
 
   print("\nscore:"..p_score)
-  print("time:"..p_time) -- TODO:Round to nearest minute
+  print("time:"..p_time) -- todo: round to nearest minute
   print("rank:"..p_rank)
   
   print("\nspice harvested by")

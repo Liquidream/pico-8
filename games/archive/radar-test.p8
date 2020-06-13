@@ -147,7 +147,7 @@ function draw_radar()
   
   rectfill(x,y,x+size,y+size,0)
    
-  -- TODO draw radar data here!
+  -- draw radar data here!
   for xx=0,size do
    for yy=0,size do
 
