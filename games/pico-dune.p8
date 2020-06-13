@@ -80,7 +80,7 @@ end
 draw_action=function(self) 
  palt(11,true)
  pal(7,8)
- if (self.id==80 and flr(t())%2==0) pal(7,selected_obj.process==2 and 11 or 8)
+ if (self.id==80 and selected_obj.process==2 and not selected_obj.procpaused) pal(7,11)
 
  spr(self.obj_spr, self.x, self.y)
  pal()
