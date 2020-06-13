@@ -1401,7 +1401,7 @@ function draw_level()
   if (building == selected_obj) rect(selected_obj.x, selected_obj.y, selected_obj.x+selected_obj.w-1, selected_obj.y+selected_obj.h-1, 7)  
  end
 
- 
+ pal()
  
  -- draw units
  for _,unit in pairs(units) do
