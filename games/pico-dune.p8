@@ -44,8 +44,7 @@ _g.factory_click=function(self)
    if (sel_build_item_idx>menu_pos+2) menu_pos=min(menu_pos+1,len-2)
   end, 10)
   m_button(32,83,"build",function(self)
-   show_menu=nil
-   selected_obj.build_obj=last_selected_subobj
+   show_menu, selected_obj.build_obj = nil, last_selected_subobj   
    last_selected_subobj:func_onclick()
   end)
   m_button(96,83,"close",function(self)
@@ -688,8 +687,8 @@ function _update60()  --game_update
  --if (t()==0.4) extcmd "rec"
 
  update_level()
-
- update_ai()  -- ai overall decision making (not individual units)
+ 
+ if (not show_menu) update_ai()  -- ai overall decision making (not individual units)
  
  -- update positions of pathfinding "blocker" objects
  if (t()%1==0) update_obj_tiles()
@@ -1325,7 +1324,7 @@ function update_ai()
   worm_life=rnd(5000) -- worm probability
  end
 
- if worm_segs and not show_menu then
+ if worm_segs then
   -- movement/turning
   if (_t%6<1 or #worm_segs<30) and worm_frame==0 then
    while #worm_segs<31 do
@@ -1512,20 +1511,13 @@ function draw_ui()
   end
  end
 
- 
- rectfill(0,0,127,8,9)
- --line(0,9,127,9,p_col2)
- 
- -- message
- --message = selected_obj and selected_obj.name or ""
- --?message, 2,2,0
- -- update/draw
+ -- top/header bar
+ rectfill(0,0,127,8,9) 
+ -- update/draw message
  if (msgcount>0) msgcount-=1 print(message, 2,2,0)
-
  -- score
  strnum=getscoretext(credits[1])
  ?sub("000000", #strnum+1)..strnum, 103,2, p_col2
- --printo(sub("000000", #strnum+1)..strnum, 103,2, p_col1,p_col2)
  
  -- placement?
  if selected_obj 
@@ -2278,7 +2270,7 @@ d2221222165f1011d66d01b0d66d11b5d55d6255d5dd2225d55aaa55d5542494949424255555114f
 66767555d55d5555d5511155d56dd015d5555555d5551115d5588855d5599c9212121119aa09954fd5daa5d888ddaadd52222425bbb67bbb0000000000000000
 6d6d65d555d555d5ddddd776ddd111ddddd777ddddddddddddddddddd597a099fffffff49949454fdddddd88888ddddd55555425bbbbbbbbbbbb447bbbbbbbbb
 66d1d555155dc055d55576db65555555d5766665d5555555d5588855d59aa094dddddddf242425ffdddaadd888d5aadd5fff2225bbbbbbbbbbb2557bbb5555bb
-d555555a5d5cc055d5576dbbb555c055d5766665d5557555d5558555df249492dd929ddf00004ff1dbddaa5d8d5aaddb5ffff225b1b11b1bbb2555dbb507665b
+d555555a5d5ee055d5576dbbb555c055d5766665d5557555d5558555df249492dd929ddf00004ff1dbddaa5d8d5aaddb5ffff225b1b11b1bbb2555dbb507665b
 15aaa99a5555505dd5566d11b55ee055d5d66625d5576655d5555555dff2424fd9d2d9df22fff211dbbd5aadd5aad5bb54444445bdd66ddbb775f55bb562720b
 55aaa55ad5555055d5566d01b0555055d5dd2225d55d6255d55aaa55d1fffff1d99299dfff141211d5bbddaadaad5bb55ffffff5b651156b76dfff2bb567275b
 d5a1199a55d51555d5566d0b01555055d5dd2221d55d2215d5555555d441414111111114144442154d5bb5dadad5bb5d5ffffff5b7b55b7b76d5f564b572765b
@@ -2296,7 +2288,7 @@ d555f655551d6d106d777777711110455542542575777777766767667d4d5dddd5dd0d0276ee06d6
 d5516615551d6d106d7011111ddd6445555555557d7c0777767767767d4dddddd51d0001767606d6d544ff7fff7ff445d7ddfff755577777d495594495977779
 d5505505551d6d106770d1d11ddd7055555555557dee0dddd666d66d75555555d5511111766d0d66d542222222222245d7777f77655444449999529925777777
 d5555555551d6d10ddd0d1d116777055555555557ddd0d777d66d6dd76555555d55555556d666662d52c02c020200225d4447ff7265c04c09429444444776666
-d55555555510d010ddd0d1dd111115dddddd5555777757707dddddd77d675555d55555556dd0d022d5cc0cc022200225d404777765ee0ee09999242424766666
+d55555555510d010ddd0d1dd111115dddddd5555777757707dddddd77d675555d55555556dd0d022d5ee0ee022200225d404777765ee0ee09999242424766666
 d555550f050aaa000001d1111111105555555555ddddddd07777777776d75555d55555556dd00022d551011011111115d444444426550550944242424296666d
 d55f0f555555555500111ddd111115dddddd5555d111d1d5ddddddddd7775555d55555555dd0d021d555011011111155d222444455550550944242424294ddd2
 d555555555555555011111111111105555555555d5555555d1d1d1d1dddd5555d555555555100011d555555555555555d555222255555555d111111111194421
