@@ -81,7 +81,6 @@ draw_action=function(self)
  palt(11,true)
  pal(7,8)
  if (self.id==80 and selected_obj.process==2 and not selected_obj.procpaused) pal(7,11)
-
  spr(self.obj_spr, self.x, self.y)
  pal()
 end
@@ -90,8 +89,8 @@ repair_click=function(self)
 end
 launch_click=function(self)
  -- todo: go into launch mode
- printh("fire palace weapon")
- set_message("pick target")
+ --printh("fire palace weapon")
+ --set_message("pick target")
  target_mode=true
 end
 
@@ -144,7 +143,7 @@ obj_data=[[id|name|obj_spr|ico_spr|map_spr|type|w|h|trans_col|parent_id|parent2_
 35|rAIDER|54|204||1|1|1|11|11|||2|2|150||8|320|0.75|3|1||||tHE oRDOS rAIDER IS~SIMILAR TO THE STANDARD~tRIKE, BUT WITH LESS~ARMOUR IN FAVOUR OF~SPEED.||||
 39|sANDWORM|94|||9|1|1|11|nil||nil|3||0||300|4000|0.35|0|30||||tHE sAND wORMS ARE~INDIGEONOUS TO dUNE.~aTTRACTED BY VIBRATIONS~ALMOST IMPOSSIBLE TO~DESTROY, WILL CONSUME~ANYTHING THAT MOVES.||||
 80|rEPAIR|19|||5|1|1|11|nil||nil|||||||||||||||draw_action||action_click
-81|lAUNCH|1|||5|1|1|11|nil||nil|||||||||||||||draw_action||action_click]]
+81|pICK TARGET|1|||5|1|1|11|nil||nil|||||||||||||||draw_action||action_click]]
 
 
 
@@ -161,7 +160,6 @@ You have successfully completed your mission.
 --------------------------------
 
 function _init()
- --printh("-- init -------------") 
  -- enable mouse
  poke(0x5f2d, 1)
 
@@ -179,11 +177,8 @@ function _init()
 
  -- create cursor ui "object" (for collisions)
  cursor = {
-  -- x=0,
-  -- y=0,
   w=8,
   h=8,
-  --spr=0,
   get_hitbox=function(self)
    return {
     x=self.x+(not ui_collision_mode and camx or 0)+2,
@@ -193,7 +188,7 @@ function _init()
    }
   end,
   draw=function(self)
-   spr((selected_obj and (selected_obj.type==1 and selected_obj.owner==1) or target_mode) and 1 or self.obj_spr, 
+   spr((selected_obj and (selected_obj.type==1 and selected_obj.owner==1) or target_mode) and 1 or 0, --self.obj_spr, 
     self.x, self.y, self.w/8, self.h/8)
   end
  }
@@ -218,7 +213,7 @@ function discover_objs()
      for mx=0,127 do
        local objref=nil
        local spr_val=mget(mx,my)
-       local flags=fget(spr_val)
+       --local flags=fget(spr_val)
        
        -- handle player start pos (const yard) as a special case
        if i==1 and spr_val==1 then
@@ -277,7 +272,7 @@ function m_map_obj_tree(objref, x,y, owner, factory)
       or (req_fact<0 and -p_faction!=req_fact))
     then
       add(newobj.build_objs,
-        -- set type==4 (build icon!)
+        -- note: setting type==4 (build icon!)
         m_obj_from_ref(o, 109,0, 4, newobj, nil, nil, function(self)
           -- building icon clicked
           if show_menu then
@@ -322,7 +317,7 @@ function m_map_obj_tree(objref, x,y, owner, factory)
   -- building props?        
   if objref.type==2 then
     newobj.deathsfx=53
-    newobj.fire_cooldown=0
+    newobj.fire_cooldown=0 -- palace weapon
     -- prepare the map?
     local slabs=(objref.id==2 or objref.id==3)    
     for xx=0,objref.w-1 do
@@ -366,9 +361,7 @@ function m_map_obj_tree(objref, x,y, owner, factory)
        reveal_fow(self)
      end
      -- rocket/cannon turret?
-     if newobj.id==15 or newobj.id==16 then
-      wrap_mset(xpos, ypos, 149)
-     end
+     if (newobj.id==15 or newobj.id==16) wrap_mset(xpos, ypos, 149)
     else
      -- non-fighting units   
      -- harvesters (auto parent to last created refinary)
@@ -530,7 +523,7 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
       end
      end
 
-     -- animated colour cycle (if applicable)
+     -- animated frame + colour cycle (if applicable)
      if self.framecount!=nil then
       self.frame+=1
       if self.frame > self.framecount then
@@ -583,14 +576,12 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
       if self.process==1 and self.spent>self.cost then
         -- const complete!
         self.done = true
-        if(self.owner==1) sfx"56"
+        if (self.owner==1) sfx"56"
         -- auto-deploy units
         if self.ref.type==1
-         and self.id!=15
-         and self.id!=16 then
+         and self.parent_id != 1 then
           -- find nearest point to factory
           local ux,uy=nearest_space_to_object(self, self.parent)
-          --local ux,uy=ping(self,(self.parent.x+8)/8, (self.parent.y+16)/8, is_free_tile)
           m_map_obj_tree(self.ref,ux,uy,nil,self.parent)
           -- reset build
           reset_build(self)
@@ -605,9 +596,7 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
          -- go back to guard
          self.state=0        
          -- find nearest point to factory
-         local ux,uy=nearest_space_to_object(self, self.last_fact)
-         --printh(">>"..ux..","..uy)
-         self.x,self.y=ux,uy
+         self.x,self.y=nearest_space_to_object(self, self.last_fact)
         end
       else
         -- continue
@@ -861,7 +850,7 @@ function update_obj_tiles()
  object_tiles={}
  -- (The pico-8 map is a 128x32 (or 128x64 using shared space))
  for k,unit in pairs(units) do  
-  object_tiles[flr(unit.x/8)..","..flr(unit.y/8)]=k --1
+  object_tiles[unit:getTilePosIndex()]=k
  end
 end
 
@@ -1179,8 +1168,7 @@ function move_unit_pos(unit,x,y,dist_to_keep)
   if not is_free_tile(nil,x,y) then   
     -- target tile occupied
     -- move as close as possible
-    x,y=ping(unit,x,y,is_free_tile)    
-    --printh("x,y="..x..","..y)
+    x,y=ping(unit,x,y,is_free_tile)
   end
 
   -- create co-routine to find path (over number of cycles)  
@@ -1345,6 +1333,7 @@ end
 -- draw related 
 --------------------------------
 function draw_level()
+ --pal()
  -- draw the map, objects - everything except ui
 	cls"15" --draw_sand
  
@@ -2364,7 +2353,7 @@ __map__
 1500000000000000000000000000000016000000000000000000000000000000000000000000000000121200000000121200000000000000000000000000001516030303030303030303030303030303030303030300000000000000000000000000000000000000000000000000000000000000000000000000000000000016
 1212000000000000001616160000003300001200000008030300000000000000000000000000000000001212121212120000000000000000000003030300000016000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000016
 12121236000000161616163e420a000012120000000203030303000000000000000000000000000000000000000012000000000000000000000303030303030000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
-1212000000000000165d85850a0a001200020544030303030303000000000000000000000000000000000000000000000000030303030303030303030303030000000012121212000000000000000000120012000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+1212000000000000165d85850a0a001200020508030303030303000000000000000000000000000000000000000000000000030303030303030303030303030000000012121212000000000000000000120012000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 1212008010100c830a85420a6c0a000205030303030303030600000000000000000000000000000000000000000000000000000003000000000303030303030000001212121212121200000000000000121212000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 1212001010100a0a0a850a0a0a0a000203030307030303060000000000120000000000000000030303030303030303030000000000000000000003030303030000121212121212000000000000001212121212000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 0000001010100a0a0d4d0e0e0a00000006030303030306000000121212000000000000000003030303171819030303030303000000000000000003030303030012120000000000000000000000121212121200000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
