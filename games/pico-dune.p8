@@ -799,7 +799,7 @@ function update_radar_data()
    end
    -- track power/radar
    if building.owner==1 then
-    power_bal -= building.ref.power
+    power_bal -= building.power
     if (building.id==7) has_radar=true
     if (sub(building.name,1,5)=="sPICE") total_storage+=1000
    end
@@ -874,7 +874,7 @@ function update_level()
   for k=0,1 do
    if (btn(k)) keyx+=k*2-1
    if (btn(k+2)) keyy+=k*2-1
-   if (btnp(4,1)) stop("paused")
+   if (btnp(4,1)) stop("paused") --TODO:remove on release 
   end
 
  -- update cursor pos
@@ -991,11 +991,9 @@ function do_guard(unit, start_state)
     elseif self.state==6 then
      self.newspot=false
      -- spice clouds
-     local r=unit.r+.75--+rnd".2"-.1 
-     --local cx,cy = sin(r)*5.5,-cos(r)*5.5
+     local r=unit.r+.75
      add_spice_cloud(unit.x, unit.y, unit.r+.75+rnd".2"-.1)
-     --if (rnd"5"<1) add_particle(unit.x+cx+3.5,unit.y+cy+3.5, 1, .15,0,.1, -.01, 25,{2,4,9,15}, 0xa5a5.8)
-     
+
      -- update spice tile state
      local unit_pos = unit:getTilePosIndex()
      spice_tiles[unit_pos] = (spice_tiles[unit_pos] or 10000)-1
