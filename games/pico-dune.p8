@@ -156,6 +156,7 @@ You have successfully completed your mission.
 
 ]]
 
+-->8
 --p8 functions
 --------------------------------
 
@@ -703,7 +704,7 @@ function _draw()
 
 end
 
-
+-->8
 -- init related
 --------------------------------
 function level_init()
@@ -741,8 +742,8 @@ function test_tile(x,y)
  -- bail (outside testtile bounds)
  if (x<0 or x>#fow or y<0 or y>#fow) return
 	
-  -- figure out bitmask
-  local mask = 0
+ -- figure out bitmask
+ local mask = 0
 
 	if fow[x][y]!=0 then  
     -- north has tile?
@@ -754,11 +755,12 @@ function test_tile(x,y)
     -- west has tile?
 		if (fow[x][y+1]>0) mask+=8
 		
-    fow[x][y]=1 + mask
+  fow[x][y]=1 + mask
 	end
 
 end
 
+-->8
 -- update related
 --------------------------------
 
@@ -1183,7 +1185,7 @@ function move_unit_pos(unit,x,y,dist_to_keep)
   unit.prev_state = unit.state
   unit.state = 1
    
-  -- findpath_cor --------------------------------------
+  -- findpath_cor
   unit.path = find_path(
                   { x = flr(unit.x/8), y = flr(unit.y/8) },
                   { x = unit.tx, y = unit.ty},
@@ -1198,7 +1200,7 @@ function move_unit_pos(unit,x,y,dist_to_keep)
   unit.prev_state = unit.state
   unit.state = 2
 
-  -- movepath_cor ------------------------------------
+  -- movepath_cor
   unit.state=2 --moving
 
   -- loop all path nodes...
@@ -1254,87 +1256,9 @@ function move_unit_pos(unit,x,y,dist_to_keep)
   unit.state=0 --idle
 end
 
--- whether worm is at surface (+ve) or not
-worm_life=0
 
--- ai strategy code (attack, build, repair, etc.)
-function update_ai()
- -- depending on ai level...
- if (t()>ai_level and t()%ai_level*2==0) then  
-  -- --------------------
-  -- unit attacks
-  -- --------------------
-  -- find the first ai unit and attack player  
-  local ai_unit=units[flr(rnd(#units))+1]
-  if ai_unit.owner==2 and ai_unit.arms>0 and ai_unit.state==0 then
-   -- select a random target (unit or building)
-   local p_target=(rnd(2)<1)and units[flr(rnd(#units))+1] or buildings[flr(rnd(#buildings))+1]
-   if (p_target and p_target.owner==1) do_attack(ai_unit, p_target) --printh(">>> attack!")
-  end
-  -- --------------------
-  -- repair/build units
-  -- --------------------
-  local ai_building=buildings[flr(rnd(#buildings))+1]  
-  -- if ai owned...
-  if ai_building.owner==2 then
-    -- if building is factory, builds units and is not already building...
-    if ai_building.build_obj and ai_building.build_obj.ref.type==1 and ai_building.build_obj.process!=1 then
-     -- select a random unit to build
-     local u=ai_building.build_objs[flr(rnd(#ai_building.build_objs))+1]
-     --printh("  > BUILD  unit "..tostr(u.name))
-     ai_building.build_obj=u
-     u:func_onclick()
-    end
 
-    -- repair?
-    if ai_building.life<ai_building.hitpoint and ai_building.process!=2 then
-     -- auto-repair
-     --printh("auto repair!#######")
-     process_click(ai_building, 2)
-    end
-  end
-
-  -- -------------------------
-  -- todo: fire palace weapons
-  -- -------------------------
-
- end
-
- -- --------------------
- -- sandworm
- -- --------------------
- worm_life-=1
- --printh("worm_life="..worm_life) 
- -- appear/disappear
- if (worm_life<0) then
-  if worm_segs then
-   -- hide worm
-   worm_segs=nil
-  else
-   -- show worm
-   worm_segs,worm_dir,worm_turn,worm_cols,worm_frame={{rnd(500),rnd(500)}},rnd(1),0,{15,9,4},0    
-  end
-  worm_life=rnd(5000) -- worm probability
- end
-
- if worm_segs then
-  -- movement/turning
-  if (_t%6<1 or #worm_segs<30) and worm_frame==0 then
-   while #worm_segs<31 do
-    if(rnd(9)<.5) worm_turn=rnd(.04)-.02
-    -- ref to head
-    head_worm_x,head_worm_y=worm_segs[#worm_segs][1],worm_segs[#worm_segs][2]
-    add(worm_segs,{head_worm_x+sin(worm_dir),head_worm_y-cos(worm_dir)})
-    worm_dir+=worm_turn
-   end
-  end
-  if (#worm_segs>30) del(worm_segs,worm_segs[1])
-  if (worm_frame>0) worm_frame+=.01 add_spice_cloud(head_worm_x,head_worm_y,rnd"1")
-  if (worm_frame>2) worm_frame=0
- end
-
-end
-
+-->8
 -- draw related 
 --------------------------------
 function draw_level()
@@ -1658,9 +1582,10 @@ end
 -- end
 
 
+
+-->8
 -- game flow / collisions
 --------------------------------
-
 
 
 -- check all collisions
@@ -1808,6 +1733,94 @@ function check_hover_select(obj)
 end
 
 
+
+
+-->8
+-- ai-related code
+
+-- whether worm is at surface (+ve) or not
+worm_life=0
+
+-- ai strategy code (attack, build, repair, etc.)
+function update_ai()
+ -- depending on ai level...
+ if (t()>ai_level and t()%ai_level*2==0) then  
+  -- --------------------
+  -- unit attacks
+  -- 
+  -- find the first ai unit and attack player  
+  local ai_unit=units[flr(rnd(#units))+1]
+  if ai_unit.owner==2 and ai_unit.arms>0 and ai_unit.state==0 then
+   -- select a random target (unit or building)
+   local p_target=(rnd(2)<1)and units[flr(rnd(#units))+1] or buildings[flr(rnd(#buildings))+1]
+   if (p_target and p_target.owner==1) do_attack(ai_unit, p_target) --printh(">>> attack!")
+  end
+  -- --------------------
+  -- repair/build units
+  -- 
+  local ai_building=buildings[flr(rnd(#buildings))+1]  
+  -- if ai owned...
+  if ai_building.owner==2 then
+    -- if building is factory, builds units and is not already building...
+    if ai_building.build_obj and ai_building.build_obj.ref.type==1 and ai_building.build_obj.process!=1 then
+     -- select a random unit to build
+     local u=ai_building.build_objs[flr(rnd(#ai_building.build_objs))+1]
+     --printh("  > BUILD  unit "..tostr(u.name))
+     ai_building.build_obj=u
+     u:func_onclick()
+    end
+
+    -- repair?
+    if ai_building.life<ai_building.hitpoint and ai_building.process!=2 then
+     -- auto-repair
+     --printh("auto repair!#######")
+     process_click(ai_building, 2)
+    end
+  end
+
+  -- -------------------------
+  -- todo: fire palace weapons
+  -- 
+
+ end
+
+ -- --------------------
+ -- sandworm
+ -- 
+ worm_life-=1
+ --printh("worm_life="..worm_life) 
+ -- appear/disappear
+ if (worm_life<0) then
+  if worm_segs then
+   -- hide worm
+   worm_segs=nil
+  else
+   -- show worm
+   worm_segs,worm_dir,worm_turn,worm_cols,worm_frame={{rnd(500),rnd(500)}},rnd(1),0,{15,9,4},0    
+  end
+  worm_life=rnd(5000) -- worm probability
+ end
+
+ if worm_segs then
+  -- movement/turning
+  if (_t%6<1 or #worm_segs<30) and worm_frame==0 then
+   while #worm_segs<31 do
+    if(rnd(9)<.5) worm_turn=rnd(.04)-.02
+    -- ref to head
+    head_worm_x,head_worm_y=worm_segs[#worm_segs][1],worm_segs[#worm_segs][2]
+    add(worm_segs,{head_worm_x+sin(worm_dir),head_worm_y-cos(worm_dir)})
+    worm_dir+=worm_turn
+   end
+  end
+  if (#worm_segs>30) del(worm_segs,worm_segs[1])
+  if (worm_frame>0) worm_frame+=.01 add_spice_cloud(head_worm_x,head_worm_y,rnd"1")
+  if (worm_frame>2) worm_frame=0
+ end
+
+end
+
+
+-->8
 --other helper functions
 --------------------------------
 
@@ -2218,6 +2231,8 @@ function draw_particles()
     fillp()
   end
 end
+
+
 
 
 
