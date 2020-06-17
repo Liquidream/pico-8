@@ -679,11 +679,16 @@ function _update60()  --game_update
  
  if (not show_menu) update_ai()  -- ai overall decision making (not individual units)
  
- -- update positions of pathfinding "blocker" objects
- if (t()%1==0) update_obj_tiles()
- --if (t()%1==0 and t()%2!=0) update_obj_tiles()
- if (t()%1==0 and t()%2==0) update_radar_data()
+ -- update positions of pathfinding "blocker" objects 
+ if t()%1==0 then
+  if t()%2==0 then
+   update_obj_tiles()
+  else 
+   update_radar_data()
+  end
+ end
  _t+=1
+
 end
 
 
