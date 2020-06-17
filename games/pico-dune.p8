@@ -1324,7 +1324,7 @@ function draw_level()
  -- draw units
  for _,unit in pairs(units) do
   if (not show_menu) unit:update()
-  if (unit.process!=2 or unit.speed==0) unit:draw()
+  if (unit.process!=2) unit:draw()
   -- draw selected reticule
   if (unit == selected_obj) spr(17, selected_obj.x, selected_obj.y)
  end
