@@ -1324,7 +1324,7 @@ function draw_level()
  -- draw units
  for _,unit in pairs(units) do
   if (not show_menu) unit:update()
-  if (unit.process!=2) unit:draw()
+  if (unit.process!=2 or unit.speed==0) unit:draw()
   -- draw selected reticule
   if (unit == selected_obj) spr(17, selected_obj.x, selected_obj.y)
  end
@@ -1339,16 +1339,9 @@ end
 
 
 
-function draw_radar()
- local size=31
-  
- --v2
- --rectfill(89,89,126,126,9)  
+function draw_radar()  
  rect(90,90,125,125,p_col1)
- rect(91,91,124,124,p_col2)
- --v1
- --rect(92,92,125,125,p_col2)
-  
+ rect(91,91,124,124,p_col2)  
  rectfill(92,92,123,123,0)
 
  -- anim?
@@ -1356,7 +1349,7 @@ function draw_radar()
  if hq!=last_hq then
   radar_frame=hq and 1 or 59
   radar_dir=hq and 1 or -1
-  sfx(55)
+  sfx"55"
   update_radar_data()
  end  
  last_hq=hq
@@ -1415,8 +1408,7 @@ function draw_ui()
    and selected_obj.owner==1
    and selected_obj.id!=4
    and (selected_obj.type==2
-     or selected_obj.id==15
-     or selected_obj.id==16) then
+     or selected_obj.speed==0) then
     repair_obj:setpos(117,28) 
     repair_obj:draw()
   end
