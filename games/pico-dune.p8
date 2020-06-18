@@ -848,7 +848,7 @@ function update_radar_data()
   dset(12,build_dest[1])
   dset(26,build_dest[2])  
   rectfill(30,54,104,70,0)
-  ?"mission "..(endstate<3 and "complete" or "failed"),36,60,8
+  ?"mission "..(endstate<3 and "complete" or "failed"),36,60,p_col1
   flip()
   load("pico-dune-main")
  end
@@ -1514,8 +1514,7 @@ function draw_ui()
   end -- has build obs
 
   -- ui elements (buttons)?
-  for _,controls in pairs(ui_controls) do 
-    --controls:update()
+  for _,controls in pairs(ui_controls) do
     controls:draw()
   end
  end
@@ -1544,7 +1543,6 @@ function m_button(x,y,text,func_onclick,_w)
     if(#text>1)rectfill(self.x,self.y,self.x+self.w,self.y+self.h, 7)
     if(#text>1)rectfill(self.x+1,self.y+1,self.x+self.w-1,self.y+self.h-1, self.hover and 12 or 6)
     ?self.text,self.x+2,self.y+2,(#text>1) and 0 or (self.hover and 12 or 7)
-
     --if (debug_collision) draw_hitbox(self)
   end,
   func_onclick = func_onclick
@@ -1617,14 +1615,11 @@ function collisions()
  
   if clickedsomething then
     if (not show_menu and selected_obj.func_onclick and selected_obj.parent!=nil) selected_obj:func_onclick() selected_obj=last_selected_obj return
-    if (show_menu and selected_subobj.text and selected_subobj.func_onclick) selected_subobj:func_onclick()
-  
+    if (show_menu and selected_subobj.text and selected_subobj.func_onclick) selected_subobj:func_onclick()  
     -- clicked own unit, first time?
-    if (selected_obj.owner==1 and selected_obj.type==1 and selected_obj!=last_selected_obj and selected_obj.speed>0) sfx(62)
-    
+    if (selected_obj.owner==1 and selected_obj.type==1 and selected_obj!=last_selected_obj and selected_obj.speed>0) sfx"62"    
     -- clicked enemy object, last clicked ours... attack?
     if (selected_obj.owner==2 and last_selected_obj and last_selected_obj.type==1 and last_selected_obj.owner==1) selected_obj.flash_count=10 do_attack(last_selected_obj, selected_obj) selected_obj=nil
-
     
   -- deselect?
   else 
@@ -1634,7 +1629,6 @@ function collisions()
      and selected_obj.owner==1 
      and selected_obj.speed>0 
      and selected_obj.state!=7 then
-     --and (selected_obj.id!=27 or selected_obj.state!=7) then
 
      selected_obj.cor = cocreate(function(unit)
        move_unit_pos(unit, flr((camx+cursx)/8), flr((camy+cursy)/8))
@@ -1649,10 +1643,10 @@ function collisions()
      and selected_obj.build_obj.life>=100
      and placement_pos_ok then
       -- place object
-      local xpos=flr((cursor.x+camx)/8)
-      local ypos=flr((cursor.y+camy)/8)
       local objref = selected_obj.build_obj.ref
-      m_map_obj_tree(objref,xpos*8,ypos*8,1)      
+      m_map_obj_tree(objref,
+       flr((cursor.x+camx)/8) *8,
+       flr((cursor.y+camy)/8) *8, 1)      
       -- reset build
       reset_build(selected_obj.build_obj)
       sfx"61"
@@ -1687,7 +1681,6 @@ function check_hover_select(obj)
     if (obj.type<=2 and fow[flr((cursor.x+camx)/8)][flr((cursor.y+camy)/8)]!=16) return
     -- clicking a harvester unloading or unit repairing?
     if (obj.state==8) return
-    --if (obj.id==27 and obj.state==8) return
 
     -- was our harvester selected before clicking a refinery/repair?
     -- todo: bug allowing sending of own harvester into enemy factory?
@@ -1697,13 +1690,11 @@ function check_hover_select(obj)
      and obj.owner==1 then
      -- send harvester to refinery/repair facility
      selected_obj.state=7
-     -- update last factory (in case changed)
-     --if obj.id==6 then 
-      selected_obj.last_fact=obj
-      obj.incoming=true
-     --end
-   
-     --problem here, doesnt actually do this .cor for other units on repair fac
+     -- update last factory (in case changed)     
+     selected_obj.last_fact=obj
+     obj.incoming=true
+        
+     --todo: problem here, doesnt actually do this .cor for other units on repair fact
    
      selected_obj.cor = cocreate(function(unit)
       move_unit_pos(unit, (obj.x+16)/8, (obj.y+16)/8)
