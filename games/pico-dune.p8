@@ -841,16 +841,18 @@ function update_radar_data()
  if endstate then 
   dset(14, endstate)
   dset(13, t()-start_time)
-  dset(10,strnum) --getscoretext(credits[1]))
+  dset(10,strnum)
   dset(24,getscoretext(credits[2]))
   dset(11,unit_dest[1])
   dset(25,unit_dest[2])
   dset(12,build_dest[1])
-  dset(26,build_dest[2])
-  printo("mission "..(endstate<3 and "complete" or "failed"),36,60,8)
+  dset(26,build_dest[2])  
+  rectfill(30,54,104,70,0)
+  ?"mission "..(endstate<3 and "complete" or "failed"),36,60,8
   flip()
   load("pico-dune-main")
  end
+ 
 end
 
 
@@ -1432,8 +1434,7 @@ function draw_ui()
  if selected_obj 
   and selected_obj.build_obj 
   and (selected_obj.build_obj.type==4
-   or selected_obj.build_obj.id==15
-   or selected_obj.build_obj.id==16)
+   or selected_obj.build_obj.speed==0)
   and selected_obj.build_obj.life>=100 then
   -- draw placement
   -- todo: improve this code!
@@ -1476,11 +1477,9 @@ function draw_ui()
   fillp(0xA5A5.8)
   rectfill(0,0,127,127,0)
   fillp()
-
   
   rectfill(3, 22, 124, 95, p_col2)
   rect(4, 23, 123, 94, p_col1) 
-  
 
   -- build menu?
   if selected_obj.build_objs then
@@ -1493,7 +1492,7 @@ function draw_ui()
       or built[curr_item.req_id] then
       selected_obj.valid_build_objs[icount]=curr_item
       if icount>=menu_pos and icount<=menu_pos+2 then
-        curr_item:setpos(9,28+((icount-menu_pos)*19))
+        curr_item:setpos(9,28+(icount-menu_pos)*19)
         curr_item:draw()
       else
         -- hide!
@@ -1505,9 +1504,9 @@ function draw_ui()
         rect(curr_item.x-2, curr_item.y-2, 
             curr_item.x+17, curr_item.y+17, 
             7)
-        print(selected_subobj.name,30,26,7)
-        print("cOST:"..selected_subobj.cost,85,33,9)
-        print(selected_subobj.description,30,39,6)
+        ?selected_subobj.name,30,26,7
+        ?"cOST:"..selected_subobj.cost,85,33,9
+        ?selected_subobj.description,30,39,6
       end
       icount+=1
      end -- unlocked
@@ -1544,7 +1543,7 @@ function m_button(x,y,text,func_onclick,_w)
   draw=function(self)
     if(#text>1)rectfill(self.x,self.y,self.x+self.w,self.y+self.h, 7)
     if(#text>1)rectfill(self.x+1,self.y+1,self.x+self.w-1,self.y+self.h-1, self.hover and 12 or 6)
-    print(self.text,self.x+2,self.y+2,(#text>1) and 0 or (self.hover and 12 or 7))
+    ?self.text,self.x+2,self.y+2,(#text>1) and 0 or (self.hover and 12 or 7)
 
     --if (debug_collision) draw_hitbox(self)
   end,
@@ -1638,7 +1637,6 @@ function collisions()
      --and (selected_obj.id!=27 or selected_obj.state!=7) then
 
      selected_obj.cor = cocreate(function(unit)
-       --printh("std move...")
        move_unit_pos(unit, flr((camx+cursx)/8), flr((camy+cursy)/8))
        do_guard(unit)
       end)
@@ -1744,7 +1742,7 @@ function update_ai()
   if ai_unit.owner==2 and ai_unit.arms>0 and ai_unit.state==0 then
    -- select a random target (unit or building)
    local p_target=(rnd(2)<1)and units[flr(rnd(#units))+1] or buildings[flr(rnd(#buildings))+1]
-   if (p_target and p_target.owner==1) do_attack(ai_unit, p_target) --printh(">>> attack!")
+   if (p_target and p_target.owner==1) do_attack(ai_unit, p_target)
   end
   -- --------------------
   -- repair/build units
@@ -1779,7 +1777,6 @@ function update_ai()
  -- sandworm
  -- 
  worm_life-=1
- --printh("worm_life="..worm_life) 
  -- appear/disappear
  if (worm_life<0) then
   if worm_segs then
@@ -1827,16 +1824,16 @@ function set_loop(pattern, enabled)
 end
 
 --print string with outline.
-function printo(str,startx,
- starty,col,
- col_bg)
- for xx = -1, 1 do
- for yy = -1, 1 do
- print(str, startx+xx, starty+yy, col_bg)
- end
- end
- print(str,startx,starty,col)
-end
+-- function printo(str,startx,
+--  starty,col,
+--  col_bg)
+--  for xx = -1, 1 do
+--  for yy = -1, 1 do
+--  print(str, startx+xx, starty+yy, col_bg)
+--  end
+--  end
+--  print(str,startx,starty,col)
+-- end
 
 function collide(o1, o2)
  local hb1=o1:get_hitbox()
