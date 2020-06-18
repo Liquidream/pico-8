@@ -713,8 +713,8 @@ function level_init()
  for i=-2,66 do
   fow[i]={}
   for l=-2,66 do
-   fow[i][l]=0
-   --fow[i][l]=16 -- no fog
+   --fow[i][l]=0
+   fow[i][l]=16 -- no fog
   end
  end
 end
@@ -910,7 +910,7 @@ function update_level()
         unit.cor = nil
       end
 
-      -- check sandworm collsion        
+      -- check sandworm collision        
       if worm_segs -- worm present
        and fget(wrap_mget(flr(unit.x/8),flr(unit.y/8)),2)  --unit on sand
        and dist(head_worm_x,head_worm_y,unit.x,unit.y) < 1
@@ -1092,7 +1092,7 @@ end
 function add_spice_cloud(x,y,r)
  -- spice clouds
  local cx,cy = sin(r)*5.5,-cos(r)*5.5
- if (rnd"5"<1) add_particle(x+cx+3.5,y+cy+3.5, 1, .15,0,.1, -.01, 25,{2,4,9,15}, 0xa5a5.8)
+ if (rnd"5"<1) add_particle(x+cx+3.5,y+cy+3.5, rnd"2", .15,0,.1, -.01, 25,{2,4,9,15}, 0xa5a5.8)
 end
 
 function do_attack(unit, target)
@@ -1699,6 +1699,7 @@ function check_hover_select(obj)
      selected_obj.cor = cocreate(function(unit)
       move_unit_pos(unit, (obj.x+16)/8, (obj.y+16)/8)
       do_guard(unit, 9)
+      printh("here!!!! >>>>>>>>>>>>>>>>>>>>>>>>>>")
      end)
      return -- register "no click"
 
@@ -1777,7 +1778,8 @@ function update_ai()
    -- show worm
    worm_segs,worm_dir,worm_turn,worm_cols,worm_frame={{rnd(500),rnd(500)}},rnd(1),0,{15,9,4},0    
   end
-  worm_life=rnd(5000) -- worm probability
+  worm_life_start=rnd(5000) -- worm probability
+  worm_life=worm_life_start
  end
 
  if worm_segs then
@@ -1789,11 +1791,12 @@ function update_ai()
     head_worm_x,head_worm_y=worm_segs[#worm_segs][1],worm_segs[#worm_segs][2]
     add(worm_segs,{head_worm_x+sin(worm_dir),head_worm_y-cos(worm_dir)})
     worm_dir+=worm_turn
-   end
+   end   
   end
   if (#worm_segs>30) del(worm_segs,worm_segs[1])
   if (worm_frame>0) worm_frame+=.01 add_spice_cloud(head_worm_x,head_worm_y,rnd"1")
   if (worm_frame>2) worm_frame=0
+  if (worm_life>worm_life_start-128 or worm_life<128) add_spice_cloud(head_worm_x,head_worm_y,rnd"1")
  end
 
 end
