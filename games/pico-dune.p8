@@ -487,7 +487,7 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
      -- check for attack
      if self.hit>0 then 
        -- reinstate loop
-       set_loop(5, true)
+       set_loop(true) --5
        -- switch music (if passed the loop point)?    
        -- 0=normal, 1=battle, 2=leaving_battle
        if (music_state==0 or stat(24)>5) music_state=1 music"0"
@@ -713,8 +713,8 @@ function level_init()
  for i=-2,66 do
   fow[i]={}
   for l=-2,66 do
-   --fow[i][l]=0
-   fow[i][l]=16 -- no fog
+   fow[i][l]=0
+   --fow[i][l]=16 -- no fog
   end
  end
 end
@@ -824,7 +824,7 @@ function update_radar_data()
   hq=(has_radar and power_bal>0) 
 
   -- reset music back (will set again if more attackers)
-  set_loop(5, false) 
+  set_loop(false)  --5
   music_state=2
 
  -- ----------------------
@@ -1699,7 +1699,6 @@ function check_hover_select(obj)
      selected_obj.cor = cocreate(function(unit)
       move_unit_pos(unit, (obj.x+16)/8, (obj.y+16)/8)
       do_guard(unit, 9)
-      printh("here!!!! >>>>>>>>>>>>>>>>>>>>>>>>>>")
      end)
      return -- register "no click"
 
@@ -1808,13 +1807,17 @@ end
 
 -- set/unset the loop flag
 -- for specified pattern
-function set_loop(pattern, enabled)
-  --local addr = 0x3100
-  --local channel = 1 -- 0..3 (+1 to get 2nd channel's byte)
-	pattern*=4 -- find right byte (each pattern has 4 channels)
-	local val=peek(0x3100 + pattern + 1)
+function set_loop(enabled) --,pattern (5)
+ --local addr = 0x3100
+ --local channel = 1 -- 0..3 (+1 to get 2nd channel's byte)
+ -- local pattern=5
+ --	pattern*=4 -- find right byte (each pattern has 4 channels)
+	--local val=peek(0x3100 + pattern + 1)
+ local val=peek(0x3115)
  if ((band(val, 128) > 0) != enabled) val=bxor(val,128)
- poke(0x3100+pattern+1, val)  
+ poke(0x3115, val)  
+ --poke(0x3100+pattern+1, val)  
+ --printh("a)"..(0x3115).." enabled="..tostr(enabled))
 end
 
 --print string with outline.
