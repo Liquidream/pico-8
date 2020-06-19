@@ -1896,12 +1896,12 @@ end
 -- https://www.lexaloffle.com/bbs/?tid=32520
  function split(str,d,dd)
  local a={}
- local s=''
- local tk=''
+ local s=""
+ local tk=""
  
  if (dd~=nil) str=split(str,dd)
  while #str>0 do
-  if type(str)=='table' then
+  if type(str)=="table" then
    s=str[1]
    add(a,split(s,d))
    del(str,s)
@@ -1910,7 +1910,7 @@ end
    str=sub(str,2)
    if s==d then 
     add(a,tk)
-    tk=''
+    tk=""
    else
     tk=tk..s
    end
@@ -1962,7 +1962,7 @@ end
 
 function turntowardtarget(unit, targetangle)
   local pi = 3.14159
-  local turnspeed = 0.0087 -- .5 * (3.14159/180)
+  --local turnspeed = 0.0087 -- .5 * (3.14159/180)
   local diff = targetangle-unit.r   
   -- never turn more than 180
   if diff > 0.5 then
@@ -1970,10 +1970,10 @@ function turntowardtarget(unit, targetangle)
   elseif diff < -0.5 then
   diff += 1
   end
-  if diff > turnspeed then
-  unit.r += turnspeed
-  elseif diff < -turnspeed then
-  unit.r -= turnspeed
+  if diff > 0.0087 then
+  unit.r += 0.0087
+  elseif diff < -0.0087 then
+  unit.r -= 0.0087
   else
   -- we're already very close
   unit.r = targetangle
@@ -2181,9 +2181,9 @@ function find_path
 function add_particle(x, y, r, dx, dy, dr, ddy, life, cols, pattern)
   local p={
     x=x,y=y,r=r,dx=dx,dy=dy,dr=dr,
-    life=0,ddy=ddy or 0.0625,
-    cols=cols or {7,6,5}, pattern=pattern or 0,
-    y_orig=y, life_orig=life or 8
+    life=0,ddy=ddy,
+    cols=cols, pattern=pattern,
+    y_orig=y, life_orig=life
   }
   add(particles, p)
 end
@@ -2210,9 +2210,9 @@ function draw_particles()
     -- check2 = 0XA0A0
     -- check3 = 0X8020
     --
-    local col=flr((#p.cols/p.life_orig)*p.life)+1
+    --local col=flr((#p.cols/p.life_orig)*p.life)+1
     if (p.pattern) fillp(p.pattern)
-    circfill(p.x,p.y,p.r,p.cols[col])
+    circfill(p.x,p.y,p.r,p.cols[ flr((#p.cols/p.life_orig)*p.life)+1 ]) --col
     fillp()
   end
 end
