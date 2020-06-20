@@ -89,8 +89,8 @@ repair_click=function(self)
 end
 launch_click=function(self)
  -- todo: go into launch mode
- --printh("fire palace weapon")
- --set_message("pick target")
+ printh("fire palace weapon")
+ set_message("pick target")
  target_mode=true
 end
 
@@ -139,8 +139,11 @@ obj_data=[[id|name|obj_spr|ico_spr|map_spr|type|w|h|trans_col|parent_id|parent2_
 26|rOCKET lAUNCHER|53|202||1|1|1|11|12|17|7|5||450||112|400|0.3|9|2||||tHE sIEGE tANK IS A~HEAVY ARMOURED TANK,~WHICH HAS DUAL CANNONS,~BUT IS SLOW.||||
 27|hARVESTER|49|192||1|1|1|11|12|17||2||300||0|600|0.1|0|||||tHE hARVESTER SEPARATES~SPICE FROM THE SAND &~RETURNS RAW SPICE TO THE~rEFINERY FOR PROCESSING.||||
 28|cARRYALL|61|238||1|1|1|11|13||13|5||800||0|400|2|0|||||tHE cARRYALL IS A LIGHTLY~ARMOURED AIRCRAFT WITH~NO WEAPONS. mAINLY USED~TO LIFT+TRANSPORT~hARVESTERS.||||
+32|fREMEN (X3)|62|||1|1|1|11||||8|1|0||8|880|0.1|3|1|1|63|10|tHE fREMEN ARE NATIVE~TO dUNE. eLITE FIGHTERS~IN ALLIANCE WITH THE~aTREIDES.||||
 33|dEVASTATOR|52|200||1|1|1|11|12||13|8|3|800||60|1600|0.1|7|1||||tHE dEVESTATOR IS A~NUCLEAR-POWERED TANK,~WHICH FIRES DUAL PLASMA~CHARGES. mOST POWERFUL~TANK ON dUNE, BUT~POTENTIALLY UNSTABLE~IN COMBAT.||||
+34|dEATH hAND|78|||1|1|1|11|||13|8|3|0||150|280|2.5|nil|20||||tHE dEATH hAND IS A~SPECIAL hARKONNEN~pALACE WEAPON. aN~INACCURATE, BUT VERY~DESTRUCTIVE BALLISTIC~MISSILE.||||
 35|rAIDER|54|204||1|1|1|11|11|||2|2|150||8|320|0.75|3|1||||tHE oRDOS rAIDER IS~SIMILAR TO THE STANDARD~tRIKE, BUT WITH LESS~ARMOUR IN FAVOUR OF~SPEED.||||
+37|sABOTEUR|-1|||1|1|1|11||||8|2|0||150|160|0.4|2|||||tHE sABOTEUR IS A~SPECIAL MILITARY UNIT,~TRAINED AT AN oRDOS~pALACE. cAN DESTROY~ALMOST ANY STRUCTURE OR~VEHICLE.||||
 39|sANDWORM|94|||9|1|1|11|nil||nil|3||0||300|4000|0.35|0|30||||tHE sAND wORMS ARE~INDIGEONOUS TO dUNE.~aTTRACTED BY VIBRATIONS~ALMOST IMPOSSIBLE TO~DESTROY, WILL CONSUME~ANYTHING THAT MOVES.||||
 80|rEPAIR|19|||5|1|1|11|nil||nil|||||||||||||||draw_action||action_click
 81|pICK TARGET|1|||5|1|1|11|nil||nil|||||||||||||||draw_action||action_click]]
@@ -1096,41 +1099,50 @@ function add_spice_cloud(x,y,r)
 end
 
 function do_attack(unit, target)
- --printh("do_attack()..."..t())
- -- 0=idle/guarding, 1=pathfinding, 2=moving, 3=attacking, 5=exploding
- unit.state = 3
- unit.target=target
- unit.cor = cocreate(function(self)
-  while target.life>0 do
-   local targdist=dist(unit.x,unit.y,target.x,target.y)
-   --  1) move to within firing range of target
-   if targdist > unit.range*5
-    and unit.speed>0 then
-    -- move to within firing range of target
-    move_unit_pos(unit,flr(target.x/8),flr(target.y/8),unit.range*5)
-   end
-   -- 2) turn to face target
-   if not unit.norotate then
-    local a=atan2(unit.x-target.x, unit.y-target.y)   
-    while (unit.r != a) do
-      turntowardtarget(unit, a)
-    end
-   end
-   -- 3) commence firing
-   if (targdist<=unit.range*5) then
-    unit.fire_cooldown-=1
-    if (unit.fire_cooldown<=0 and not unit.bullet_x) unit.fire(unit) unit.fire_cooldown=unit.arms*4
-   elseif unit.speed==0 then
-    -- turrets default to guard if out of range
-    do_guard(unit)
-   end
-   yield()
-  end -- 4) repeat 1-3 until target destroyed
+ -- normal attack?
+ if unit.id != 19 then
+   -- 0=idle/guarding, 1=pathfinding, 2=moving, 3=attacking, 5=exploding
+   unit.state = 3
+   unit.target=target
+   unit.cor = cocreate(function(self)
+    while target.life>0 do
+     local targdist=dist(unit.x,unit.y,target.x,target.y)
+     --  1) move to within firing range of target
+     if targdist > unit.range*5
+      and unit.speed>0 then
+      -- move to within firing range of target
+      move_unit_pos(unit,flr(target.x/8),flr(target.y/8),unit.range*5)
+     end
+     -- 2) turn to face target
+     if not unit.norotate then
+      local a=atan2(unit.x-target.x, unit.y-target.y)   
+      while (unit.r != a) do
+        turntowardtarget(unit, a)
+      end
+     end
+     -- 3) commence firing
+     if (targdist<=unit.range*5) then
+      unit.fire_cooldown-=1
+      if (unit.fire_cooldown<=0 and not unit.bullet_x) unit.fire(unit) unit.fire_cooldown=unit.arms*4
+     elseif unit.speed==0 then
+      -- turrets default to guard if out of range
+      do_guard(unit)
+     end
+     yield()
+    end -- 4) repeat 1-3 until target destroyed
 
-  -- reset to guard
-  do_guard(self)
- end)
-
+    -- reset to guard
+    do_guard(self)
+   end)
+  
+ else
+  -- palace attack!
+  printh(">>>>>>>> palace attack!")
+  -- 32|fREMEN (X3)(atreides)
+  -- 34|dEATH hAND (harkonen)
+  -- 37|sABOTEUR   (ordos)
+  target_mode=false
+ end
 end
 
 -- ping out from initial pos, calling func for each "ripple"
@@ -1614,13 +1626,14 @@ function collisions()
   if (selected_obj) set_message(selected_obj.name)
  
   if clickedsomething then
+    -- clicked quick build?
     if (not show_menu and selected_obj.func_onclick and selected_obj.parent!=nil) selected_obj:func_onclick() selected_obj=last_selected_obj return
+    -- click button?
     if (show_menu and selected_subobj.text and selected_subobj.func_onclick) selected_subobj:func_onclick()  
     -- clicked own unit, first time?
     if (selected_obj.owner==1 and selected_obj.type==1 and selected_obj!=last_selected_obj and selected_obj.speed>0) sfx"62"    
-    -- clicked enemy object, last clicked ours... attack?
-    if (selected_obj.owner==2 and last_selected_obj and last_selected_obj.type==1 and last_selected_obj.owner==1) selected_obj.flash_count=10 do_attack(last_selected_obj, selected_obj) selected_obj=nil
-    
+    -- clicked enemy object, last clicked ours (unit or palace)?... attack!
+    if (selected_obj.owner==2 and last_selected_obj and (last_selected_obj.type==1 or last_selected_obj.id==19) and last_selected_obj.owner==1) printh("<><> "..tostr(last_selected_obj.name)) selected_obj.flash_count=10 do_attack(last_selected_obj, selected_obj) selected_obj=nil
   -- deselect?
   else 
     -- do we have a unit selected?
@@ -1658,7 +1671,7 @@ function collisions()
  elseif right_button_clicked and not show_menu then
   -- cancel selection
   selected_obj=nil
-
+  target_mode=false
  end --if buttonclicked
 
 end
@@ -2254,14 +2267,14 @@ b0c7c0bbbeccccebbed66debb7c6c7bbee6e6eebbc7c7cbbbbcccbbb4a042499999452424297a094
 b0ccc0bbb0ecce0bbec66cebb7c0c7bbec0c0cebbc0c0cbbbb606bbb49029999c0994922229aa094d4444444452242424425542500077000bbbcbbbbbbbcbbbb
 bb6b6bbbb0deed0bb0e66e0bb6eee6bb00ccc00bb6eee6bbbbb0bbbb242499aee099942dd1499942d4044004455422422455542500577500bbbebbbbbbbebbbb
 bbbbbbbbbbeccebbbbb00bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbd2499a77a0a94942d1542425d44400004555224225ff222500655600bbb0bbbbbb0b0bbb
-d77dd77d67d6fffdddd776ddddddddddddddddddddd777ddddddddddd1499a77aaa99424d15242f5d22222222555555555f44225bbbbbbbb0000000000000000
-76667666561ffff1d576db65d5577655d5555555d5766665d5555555d1299aaaaaa94942d551414fdddddbbdddbbdd5d5fff4445bbbbbbbb0000000000000000
-76667666565f4441d76dbbb5d576db65d5557555d5766665d5bbbbb5d52499aaaa9494245552424fdd55bb5ddddbb5dd5f444445bbbddbbb0000000000000000
-d6621662165ffff1d66d11b5d76dbbb5d5576655d5d66625d5555555d5424999994942425551424fd55bbddadad5bb5d5fff4765bbd66dbb0000000000000000
-d2221222165f1011d66d01b0d66d11b5d55d6255d5dd2225d55aaa55d5542494949424255555114fd5bbd5aadaaddbb55444f66fbbd66dbb0000000000000000
-622112211ddf1001d66d0b01d66d01b0d55d2215d5dd2221d5555555d55142424242421599c9554fdbbddaa5ddaad5bb5404dffdbbbddbbb0000000000000000
-6115511151551005d56dd015d66d0b01d5551155d5512211d5558555d55f1424242421197a09954fdbd5aadd8d5aaddb544446d4bbb67bbb0000000000000000
-66767555d55d5555d5511155d56dd015d5555555d5551115d5588855d5599c9212121119aa09954fd5daa5d888ddaadd52222425bbb67bbb0000000000000000
+d77dd77d67d6fffdddd776ddddddddddddddddddddd777ddddddddddd1499a77aaa99424d15242f5d22222222555555555f44225bbbbbbbbbbb8bbbb00000000
+76667666561ffff1d576db65d5577655d5555555d5766665d5555555d1299aaaaaa94942d551414fdddddbbdddbbdd5d5fff4445bbbbbbbbbbb9bbbb00000000
+76667666565f4441d76dbbb5d576db65d5557555d5766665d5bbbbb5d52499aaaa9494245552424fdd55bb5ddddbb5dd5f444445bbbddbbbbbdadbbb00000000
+d6621662165ffff1d66d11b5d76dbbb5d5576655d5d66625d5555555d5424999994942425551424fd55bbddadad5bb5d5fff4765bbd66dbbbb666bbb00000000
+d2221222165f1011d66d01b0d66d11b5d55d6255d5dd2225d55aaa55d5542494949424255555114fd5bbd5aadaaddbb55444f66fbbd66dbbbbb6bbbb00000000
+622112211ddf1001d66d0b01d66d01b0d55d2215d5dd2221d5555555d55142424242421599c9554fdbbddaa5ddaad5bb5404dffdbbbddbbbbbb6bbbb00000000
+6115511151551005d56dd015d66d0b01d5551155d5512211d5558555d55f1424242421197a09954fdbd5aadd8d5aaddb544446d4bbb67bbbbbb6bbbb00000000
+66767555d55d5555d5511155d56dd015d5555555d5551115d5588855d5599c9212121119aa09954fd5daa5d888ddaadd52222425bbb67bbbbbb7bbbb00000000
 6d6d65d555d555d5ddddd776ddd111ddddd777ddddddddddddddddddd597a099fffffff49949454fdddddd88888ddddd55555425bbbbbbbbbbbb447bbbbbbbbb
 66d1d555155dc055d55576db65555555d5766665d5555555d5588855d59aa094dddddddf242425ffdddaadd888d5aadd5fff2225bbbbbbbbbbb2557bbb5555bb
 d555555a5d5ee055d5576dbbb555c055d5766665d5557555d5558555df249492dd929ddf00004ff1dbddaa5d8d5aaddb5ffff225b1b11b1bbb2555dbb507665b
@@ -2369,10 +2382,10 @@ __map__
 0000000012000016850a0a100a0a0a0a0a0a17191b1c0a0a0a0a0a0a0000001200000003030303031d1f0303030000000000000000000000000000000003030000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 00000012120000005d854d855d6a0a5d855d1d1e1e1f0a0a0a0a0a0a0b000012000000030303030303030303030300000000000012000000000000000000030000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 000000000032000000000000850a0a8500000d0d0d0d0d0d0d0d0d0d0d121212000003030303030303030303030303000000120012121212121200000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
-0000000000003600003500005d4d4d5d00000000000000001200001212120000000003030303030303030303030303030000120000000000000000000000000000000000000000000000000000000000000000000000000000121212121212120000000000000000000000000000000000000000000000000000000000000000
+0000000000003e00003500005d4d4d5d00000000000000001200001212120000000003030303030303030303030303030000120000000000000000000000000000000000000000000000000000000000000000000000000000121212121212120000000000000000000000000000000000000000000000000000000000000000
 0000120012120000000000121200121212120000000000001212121200000000000003030000000000000000000303030000001200120000000000000000000000000000000000000000000000000000000000000000000012121212121212120000000000000000000000000000000000000000000000000000000000000000
-001212001212003e000000121200121212121212000000000000000000000000000003000000000000000000000003030300000000120000000000000000000000000000000000000000000000000000000000000000001212121212121212120000000000000000000000000000000000000000000000000000000000000000
-0000120000000000000000000000000000000000000000000000000012000000000000000012121212121200000000030300000000001212000000000000000000000000000000000000000000000000000000000000001212121200121212000000000000000000000000000000000000000000000000000000000000000000
+0012120012120036000000121200121212121212000000000000000000000000000003000000000000000000000003030300000000120000000000000000000000000000000000000000000000000000000000000000001212121212121212120000000000000000000000000000000000000000000000000000000000000000
+0000120000006800000000000000000000000000000000000000000012000000000000000012121212121200000000030300000000001212000000000000000000000000000000000000000000000000000000000000001212121200121212000000000000000000000000000000000000000000000000000000000000000000
 1212000000000000000000000000000000000000000000000000000012121212000000000000001212121212120000000000000600000012121203000000060000000000000000000000000000000000000000001212121212120000000000000000000000000000000000000000000000000000000000000000000000000000
 1212000000000000000000000000000303030000000000000000000000000012120000000000000000121212120000000000000000000000000003000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 0000000012120000000000121200000303030000000000000000000000000000120000000000000000000000120000000000000000000000000003000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
