@@ -19,10 +19,10 @@ game_cart = "pico-dune_fmt.p8"
 
 -- constants
 faction_cols = {
- { 12, 1}, -- Atreides
- { 11, 3}, -- Ordos
- { 8,  2}, -- Harkonnen
- { 14, 2}, -- Emperor?
+ { 12, 1}, -- 1 = Atreides
+ { 11, 3}, -- 2 = Ordos
+ { 8,  2}, -- 3 = Harkonnen
+ { 14, 2}, -- 4 = Emperor?
 }
 
 -- cart modes
@@ -184,7 +184,7 @@ function load_level(num)
  -- set player to harkonnen
  p_fact = 3
  dset(0, num)
- dset(1, p_fact3) -- p_faction
+ dset(1, p_fact) -- p_faction
  dset(2, faction_cols[p_fact][1]) -- p_col1
  dset(3, faction_cols[p_fact][2]) -- p_col2
 

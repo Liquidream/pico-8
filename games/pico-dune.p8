@@ -89,7 +89,6 @@ repair_click=function(self)
 end
 launch_click=function(self)
  -- todo: go into launch mode
- printh("fire palace weapon")
  set_message("pick target")
  target_mode=true
 end
@@ -141,15 +140,12 @@ obj_data=[[id|name|obj_spr|ico_spr|map_spr|type|w|h|trans_col|parent_id|parent2_
 28|cARRYALL|61|238||1|1|1|11|13||13|5||800||0|400|2|0|||||tHE cARRYALL IS A LIGHTLY~ARMOURED AIRCRAFT WITH~NO WEAPONS. mAINLY USED~TO LIFT+TRANSPORT~hARVESTERS.||||
 32|fREMEN (X3)|62|||1|1|1|11||||8|1|0||8|880|0.1|3|1|1|63|10|tHE fREMEN ARE NATIVE~TO dUNE. eLITE FIGHTERS~IN ALLIANCE WITH THE~aTREIDES.||||
 33|dEVASTATOR|52|200||1|1|1|11|12||13|8|3|800||60|1600|0.1|7|1||||tHE dEVESTATOR IS A~NUCLEAR-POWERED TANK,~WHICH FIRES DUAL PLASMA~CHARGES. mOST POWERFUL~TANK ON dUNE, BUT~POTENTIALLY UNSTABLE~IN COMBAT.||||
-34|dEATH hAND|78|||1|1|1|11|||13|8|3|0||150|280|2.5|nil|20||||tHE dEATH hAND IS A~SPECIAL hARKONNEN~pALACE WEAPON. aN~INACCURATE, BUT VERY~DESTRUCTIVE BALLISTIC~MISSILE.||||
+34|dEATH hAND|78|||1|1|1|11|||13|8|3|0||150|280|0.5|0|20||||tHE dEATH hAND IS A~SPECIAL hARKONNEN~pALACE WEAPON. aN~INACCURATE, BUT VERY~DESTRUCTIVE BALLISTIC~MISSILE.||||
 35|rAIDER|54|204||1|1|1|11|11|||2|2|150||8|320|0.75|3|1||||tHE oRDOS rAIDER IS~SIMILAR TO THE STANDARD~tRIKE, BUT WITH LESS~ARMOUR IN FAVOUR OF~SPEED.||||
 37|sABOTEUR|-1|||1|1|1|11||||8|2|0||150|160|0.4|2|||||tHE sABOTEUR IS A~SPECIAL MILITARY UNIT,~TRAINED AT AN oRDOS~pALACE. cAN DESTROY~ALMOST ANY STRUCTURE OR~VEHICLE.||||
 39|sANDWORM|94|||9|1|1|11|nil||nil|3||0||300|4000|0.35|0|30||||tHE sAND wORMS ARE~INDIGEONOUS TO dUNE.~aTTRACTED BY VIBRATIONS~ALMOST IMPOSSIBLE TO~DESTROY, WILL CONSUME~ANYTHING THAT MOVES.||||
 80|rEPAIR|19|||5|1|1|11|nil||nil|||||||||||||||draw_action||action_click
 81|pICK TARGET|1|||5|1|1|11|nil||nil|||||||||||||||draw_action||action_click]]
-
-
-
 
 --[[
   ## messages ##
@@ -337,7 +333,6 @@ function m_map_obj_tree(objref, x,y, owner, factory)
      -- auto create a harvester
      -- todo : have freighter deploy it
      local ux,uy=ping(newobj,(newobj.x+32)/8, (newobj.y+8)/8, is_free_tile)
-     --local harvester=
      m_map_obj_tree(obj_data[27],ux*8,uy*8,nil,newobj)
     end
   end
@@ -389,7 +384,7 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
   hitpoint=ref_obj.hitpoint,
   x=x,
   y=y,
-  z=1, -- defaults
+  z=1, -- defaults  
   type=in_type, -- 1=unit, 2=structure, 3=obj_status_icon, 4=build_icon, 5=small_icon, 9=worm
   parent=parent,
   func_onclick=func_onclick,
@@ -438,8 +433,8 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
      -- rotating obj?
      if self.r then
       if not self.death_time or self.death_time>.025  then
-       if (self.speed>0) rspr(self.obj_spr%16*8,flr(self.obj_spr/16)*8, self.x, self.y+1, .25-self.r, 1, self.trans_col, 5)
-       rspr(self.obj_spr%16*8,flr(self.obj_spr/16)*8, self.x, self.y, .25-self.r, 1, self.trans_col, flr(self.flash_count)%2==0 and 7 or nil)
+       if (self.speed>0) rspr(self.obj_spr%16*8,flr(self.obj_spr/16)*8, self.x, self.y, .25-self.r, 1, self.trans_col, 5)
+       rspr(self.obj_spr%16*8,flr(self.obj_spr/16)*8, self.x, self.y-self.z, .25-self.r, 1, self.trans_col, flr(self.flash_count)%2==0 and 7 or nil)
       end
      -- norm sprite
      else      
@@ -498,7 +493,7 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
        if (self.arms>0 and self.state==0) do_attack(self, self.hitby)
      end
      -- check for death
-     if (self.type<=2 and self.life<=0 and self.death_time==nil) self.state=5 self.cor=nil self.death_time=(self.type==2 and 1 or .5) sfx(self.deathsfx, 3) shake+=(self.type==2 and 0.25 or 0)
+     if (self.type<=2 and self.life<=0 and self.death_time==nil) self.state=5 self.cor=nil self.death_time=(self.type==2 and 1 or .5) sfx(self.deathsfx, 3) shake+=((self.type==2 or self.id==34) and 0.25 or 0)
      if self.death_time then
       self.death_time-=.025
       if self.death_time<=0 then
@@ -518,7 +513,7 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
          if (wrap_mget(gx,gy)<9) wrap_mset(gx,gy,20) --scortch sand
          if (self.speed==0) wrap_mset(gx,gy,15)
          del(units,self)         
-         unit_dest[self.hitby.owner]+=1
+         if (self.hitby) unit_dest[self.hitby.owner]+=1
         end      
         if(selected_obj==self) selected_obj=nil
       else
@@ -917,6 +912,7 @@ function update_level()
       if worm_segs -- worm present
        and fget(wrap_mget(flr(unit.x/8),flr(unit.y/8)),2)  --unit on sand
        and dist(head_worm_x,head_worm_y,unit.x,unit.y) < 1
+       and unit.z==1
        then
         del(units,unit)
         worm_frame=.01
@@ -1112,6 +1108,17 @@ function do_attack(unit, target)
       and unit.speed>0 then
       -- move to within firing range of target
       move_unit_pos(unit,flr(target.x/8),flr(target.y/8),unit.range*5)
+
+      -- death hand?
+      if unit.id==34 then
+       unit.life=0
+       for i=1,10 do
+        make_explosion(unit.x+rnd(32)-16,unit.y+rnd(32)-16, 2)
+        target.life-=rnd(unit.arms)
+        target.hitby=unit
+       end
+       return
+      end
      end
      -- 2) turn to face target
      if not unit.norotate then
@@ -1137,10 +1144,27 @@ function do_attack(unit, target)
   
  else
   -- palace attack!
-  printh(">>>>>>>> palace attack!")
-  -- 32|fREMEN (X3)(atreides)
-  -- 34|dEATH hAND (harkonen)
-  -- 37|sABOTEUR   (ordos)
+  --printh(">>>>>>>> palace attack!")
+  -- 32|fREMEN (X3)(atreides = 1)
+  -- 37|sABOTEUR   (ordos = 2)
+  -- 34|dEATH hAND (harkonen = 3)  
+  -- (Emperor = 4?)
+  --printh("p_faction="..tostr(p_faction))
+  if p_faction == 1 then
+   -- atreides
+   --m_map_obj_tree(objref, x,y, owner, factory)
+  --elseif p_faction == 2 then
+   -- ordos
+  elseif p_faction == 3 then
+   -- harkonen
+   local deathhand = m_map_obj_tree(obj_data[34], unit.x,unit.y, unit.owner)   
+   --local deathhand = m_map_obj_tree(obj_data[34], target.x-8,target.y, unit.owner)
+   deathhand.z=8
+   --lastunit = deathhand
+   do_attack(deathhand, target)
+  else 
+   -- emperor?
+  end
   target_mode=false
  end
 end
@@ -1185,7 +1209,7 @@ function move_unit_pos(unit,x,y,dist_to_keep)
   ::restart_move_unit::
   unit.path="init"   
   -- check target valid
-  if not is_free_tile(nil,x,y) then   
+  if unit.z==1 and not is_free_tile(nil,x,y) then   
     -- target tile occupied
     -- move as close as possible
     x,y=ping(unit,x,y,is_free_tile)
@@ -1206,7 +1230,7 @@ function move_unit_pos(unit,x,y,dist_to_keep)
                   flag_cost,
                   map_neighbors,
                   function (node) return shl(node.y, 8) + node.x end,
-                  nil)  
+                  unit.z>1)  
 
   -- todo: check path valid???
   -- now auto-move to path
@@ -1233,7 +1257,8 @@ function move_unit_pos(unit,x,y,dist_to_keep)
       end
       
       -- check new position/tile is still free
-      if(not is_free_tile(nil,node.x,node.y)) goto restart_move_unit
+      -- (if not flying)
+      if(unit.z==1 and not is_free_tile(nil,node.x,node.y)) goto restart_move_unit
       
       -- move to new position      
       local scaled_speed = unit.speed or .5
@@ -1315,11 +1340,11 @@ function draw_level()
  map(64,0, 0,256, 64,32)
 
  -- debug pathfinding
- --if (debug_mode) draw_pathfinding()
+ -- if (debug_mode) draw_pathfinding()
 
---  if path != nil and path != "init" then
---   spr(144, path[1].x*8, path[1].y*8)
---  end
+ -- if path != nil and path != "init" then
+ --  spr(144, path[1].x*8, path[1].y*8)
+ -- end
 
 
  -- buildings
@@ -1633,7 +1658,7 @@ function collisions()
     -- clicked own unit, first time?
     if (selected_obj.owner==1 and selected_obj.type==1 and selected_obj!=last_selected_obj and selected_obj.speed>0) sfx"62"    
     -- clicked enemy object, last clicked ours (unit or palace)?... attack!
-    if (selected_obj.owner==2 and last_selected_obj and (last_selected_obj.type==1 or last_selected_obj.id==19) and last_selected_obj.owner==1) printh("<><> "..tostr(last_selected_obj.name)) selected_obj.flash_count=10 do_attack(last_selected_obj, selected_obj) selected_obj=nil
+    if (selected_obj.owner==2 and last_selected_obj and (last_selected_obj.type==1 or last_selected_obj.id==19) and last_selected_obj.owner==1) selected_obj.flash_count=10 do_attack(last_selected_obj, selected_obj) selected_obj=nil
   -- deselect?
   else 
     -- do we have a unit selected?
@@ -2006,14 +2031,15 @@ end
 -- unless the new node is a 
 -- diagonal, in which case
 -- make it cost a bit more
-function flag_cost(from, node, graph)
+function flag_cost(from, node, flying)
  -- get the standard cost of the tile (grass vs. mud/water) 
- local base_cost = fget(wrap_mget(node.x, node.y), 1) and 4 or 1
+ --local base_cost =  1
+ local base_cost = not flying and fget(wrap_mget(node.x, node.y), 1) and 4 or 1
  --local base_cost = fget(mget(node.x, node.y), 1) and 4 or 1
 
  -- make diagonals cost a little more than normal tiles
  -- (this helps negate "wiggling" in close quarters)
- if (from.x != node.x and from.y != node.y) return base_cost+1
+ if (from.x != node.x and from.y != node.y) return base_cost+.2
  return base_cost
 end
 
@@ -2021,11 +2047,11 @@ end
 -- returns any neighbor map
 -- position at which flag zero
 -- is unset
-function map_neighbors(node, graph)
+function map_neighbors(node,flying)
  local neighbors = {}
  for xx = -1, 1 do
   for yy = -1, 1 do
-   if (xx!=0 or yy!=0) maybe_add(node.x+xx, node.y+yy, neighbors)
+   if (xx!=0 or yy!=0) maybe_add(node.x+xx, node.y+yy, neighbors, flying)
   end
  end
  return neighbors
@@ -2033,8 +2059,8 @@ end
 
 -- maybe adds the node to neighbors table
 -- (if flag zero is unset at this position)
-function maybe_add(nx, ny, ntable)
- if (not fget(wrap_mget(nx,ny),0) and object_tiles[nx..","..ny]==nil and nx>=0 and ny>=0 and nx<=63 and ny<=63) add(ntable, {x=nx, y=ny})
+function maybe_add(nx, ny, ntable, flying)
+ if (flying or not fget(wrap_mget(nx,ny),0) and object_tiles[nx..","..ny]==nil and nx>=0 and ny>=0 and nx<=63 and ny<=63) add(ntable, {x=nx, y=ny})
 end
 
 -- estimates the cost from a to
@@ -2070,8 +2096,8 @@ function find_path
   estimate,
   edge_cost,
   neighbors, 
-  node_to_id, 
-  graph)
+  node_to_id,
+  flying)
   
   -- the final step in the
   -- current shortest path
@@ -2082,17 +2108,17 @@ function find_path
   best_table = {
    last = start,
    cost_from_start = 0,
-   cost_to_goal = estimate(start, goal, graph)
+   cost_to_goal = estimate(start, goal)
   }, {}
  
-  best_table[node_to_id(start, graph)] = shortest
- 
+  best_table[node_to_id(start)] = shortest
+  
   -- array of frontier paths each
   -- represented by their last
   -- step, used as a priority
   -- queue. elements past
   -- frontier_len are ignored
-  local frontier, frontier_len, goal_id, max_number = {shortest}, 1, node_to_id(goal, graph), 32767.99
+  local frontier, frontier_len, goal_id, max_number = {shortest}, 1, node_to_id(goal), 32767.99
  
   local count=0
 
@@ -2117,7 +2143,7 @@ function find_path
    -- shortest path
    local p = shortest.last
    
-   if node_to_id(p, graph) == goal_id then
+   if node_to_id(p) == goal_id then
     -- we're done.  generate the
     -- path to the goal by
     -- retracing steps. reuse
@@ -2125,7 +2151,7 @@ function find_path
     p = {goal}
  
     while shortest.prev do
-     shortest = best_table[node_to_id(shortest.prev, graph)]
+     shortest = best_table[node_to_id(shortest.prev)]
      add(p, shortest.last)
     end
  
@@ -2136,15 +2162,15 @@ function find_path
    -- consider each neighbor n of
    -- p which is still in the
    -- frontier queue
-   for n in all(neighbors(p, graph)) do
+   for n in all(neighbors(p,flying)) do
     -- find the current-best
     -- known way to n (or
     -- create it, if there isn't
     -- one)
-    local id = node_to_id(n, graph)
+    local id = node_to_id(n)
     local old_best, new_cost_from_start =
      best_table[id],
-     shortest.cost_from_start + edge_cost(p, n, graph)
+     shortest.cost_from_start + edge_cost(p, n, flying)
     
     if not old_best then
      -- create an expensive
@@ -2155,7 +2181,7 @@ function find_path
      old_best = {
       last = n,
       cost_from_start = max_number,
-      cost_to_goal = estimate(n, goal, graph)
+      cost_to_goal = estimate(n, goal)
      }
  
      -- insert into queue
@@ -2372,20 +2398,20 @@ __map__
 1212000000000000001616160000003300001200000008030300000000000000000000000000000000001212121212120000000000000000000003030300000016000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000016
 12121236000000161616163e420a000012120000000203030303000000000000000000000000000000000000000012000000000000000000000303030303030000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 1212000000000000165d85850a0a001200020508030303030303000000000000000000000000000000000000000000000000030303030303030303030303030000000012121212000000000000000000120012000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
-1212003710100c830a85420a6c0a000205030303030303030600000000000000000000000000000000000000000000000000000003000000000303030303030000001212121212121200000000000000121212000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+1212003710100c830a85420a6c0a000205030303030303030642000000000000000000000000000000000000000000000000000003000000000303030303030000001212121212121200000000000000121212000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 1212001010100a0a0a850a0a0a0a000203030307030303060000000000120000000000000000030303030303030303030000000000000000000003030303030000121212121212000000000000001212121212000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 000000101010420a0d4d0e0e0a00000006030303030306000000121212000000000000000003030303171819030303030303000000000000000003030303030012120000000000000000000000121212121200000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
-0012120d0d090d0e00850a0a0e0000121200650a0a0a0a0b00001200000000000000000000030303171b1b1b190303030303000000000000000000030303030012000000000000000000000000121212120000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+0012120d0d090d0e00850a0a0e0000121236650a0a0a0a0b00001200000000000000000000030303171b1b1b190303030303000000000000000000030303030012000000000000000000000000121212120000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 1212121212000016004d010a00001244090c0a0a0a0a0a0a0b12120000000000000000000003031a1b1b1e1e1e1e03030303030000000000000000000303030000000000000000000012120000121212120000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 12121212120016005d850a0a0c00120a0a0a1718190a0a0a0a12000000000000000000000303031d1b1f0303030303030303030300000003030303030303000000000000000000000012121212121212000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
-001212001200161685680a10620c0c680a0a1d1e1b190a0a0a0c0a0b0000000000000000030303031a030303030303030300000000000000030303030303030000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
-0000000012000016850a0a100a0a0a0a0a0a17191b1c0a0a0a0a0a0a0000001200000003030303031d1f0303030000000000000000000000000000000003030000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
-00000012120000005d854d855d6a0a5d855d1d1e1e1f0a0a0a0a0a0a0b000012000000030303030303030303030300000000000012000000000000000000030000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+001212001212161685680a10620c0c680a0a1d1e1b190a0a0a0c0a0b0000000000000000030303031a030303030303030300000000000000030303030303030000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+0000360012121216850a0a100a0a0a0a0a0a17191b1c0a0a0a0a0a0a0000001200000003030303031d1f0303030000000000000000000000000000000003030000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+00000012120000005d854d855d6a0a5d855d1d1e1e1f0a0a0a0a0a0a42000012000000030303030303030303030300000000000012000000000000000000030000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 000000000032000000000000850a0a8500000d0d0d0d0d0d0d0d0d0d0d121212000003030303030303030303030303000000120012121212121200000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
-0000000000003e00003500005d4d4d5d00000000000000001200001212120000000003030303030303030303030303030000120000000000000000000000000000000000000000000000000000000000000000000000000000121212121212120000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000005d4d4d5d00360000000000001200001212120000000003030303030303030303030303030000120000000000000000000000000000000000000000000000000000000000000000000000000000121212121212120000000000000000000000000000000000000000000000000000000000000000
 0000120012120000000000121200121212120000000000001212121200000000000003030000000000000000000303030000001200120000000000000000000000000000000000000000000000000000000000000000000012121212121212120000000000000000000000000000000000000000000000000000000000000000
 0012120012120036000000121200121212121212000000000000000000000000000003000000000000000000000003030300000000120000000000000000000000000000000000000000000000000000000000000000001212121212121212120000000000000000000000000000000000000000000000000000000000000000
-0000120000006800000000000000000000000000000000000000000012000000000000000012121212121200000000030300000000001212000000000000000000000000000000000000000000000000000000000000001212121200121212000000000000000000000000000000000000000000000000000000000000000000
+0000120000000000000000000000000000000000000000000000000012000000000000000012121212121200000000030300000000001212000000000000000000000000000000000000000000000000000000000000001212121200121212000000000000000000000000000000000000000000000000000000000000000000
 1212000000000000000000000000000000000000000000000000000012121212000000000000001212121212120000000000000600000012121203000000060000000000000000000000000000000000000000001212121212120000000000000000000000000000000000000000000000000000000000000000000000000000
 1212000000000000000000000000000303030000000000000000000000000012120000000000000000121212120000000000000000000000000003000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 0000000012120000000000121200000303030000000000000000000000000000120000000000000000000000120000000000000000000000000003000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
