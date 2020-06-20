@@ -1165,7 +1165,7 @@ function do_attack(unit, target)
   else 
    -- emperor?
   end
-  target_mode=false
+  --target_mode=false
  end
 end
 
@@ -1615,7 +1615,7 @@ end
 
 -- check all collisions
 function collisions()
- clickedsomething=false
+ clickedsomething=false 
  -- selected obj ui collision
  if selected_obj then
    ui_collision_mode=true
@@ -1647,10 +1647,12 @@ function collisions()
  -- clicked something?
  elseif left_button_clicked then
 
+  target_mode=false
+
   -- update message
   if (selected_obj) set_message(selected_obj.name)
  
-  if clickedsomething then
+  if clickedsomething then    
     -- clicked quick build?
     if (not show_menu and selected_obj.func_onclick and selected_obj.parent!=nil) selected_obj:func_onclick() selected_obj=last_selected_obj return
     -- click button?
@@ -1698,7 +1700,7 @@ function collisions()
   selected_obj=nil
   target_mode=false
  end --if buttonclicked
-
+ --target_mode=false
 end
 
 function reset_build(obj)
