@@ -1205,11 +1205,14 @@ function is_danger_tile(unit,x,y)
  if (target!=null and target.owner!=unit.owner and fow[x][y]==16) do_attack(unit,target) return true
 end
 
-function move_unit_pos(unit,x,y,dist_to_keep)
+function move_unit_pos(unit,x,y,dist_to_keep)  
+  local flying = unit.z>1
+  
   ::restart_move_unit::
+
   unit.path="init"   
   -- check target valid
-  if unit.z==1 and not is_free_tile(nil,x,y) then   
+  if not flying and not is_free_tile(nil,x,y) then   
     -- target tile occupied
     -- move as close as possible
     x,y=ping(unit,x,y,is_free_tile)
@@ -1226,7 +1229,7 @@ function move_unit_pos(unit,x,y,dist_to_keep)
   -- by @casualeffects
   -- http://graphicscodex.com
   unit.path = nil
-  local start, goal, node_to_id, flying = { x = flr(unit.x/8), y = flr(unit.y/8)}, {x = unit.tx, y = unit.ty}, function (node) return shl(node.y, 8) + node.x end, unit.z>1
+  local start, goal, node_to_id = { x = flr(unit.x/8), y = flr(unit.y/8)}, {x = unit.tx, y = unit.ty}, function (node) return shl(node.y, 8) + node.x end
   
   -- the final step in the
   -- current shortest path
@@ -1297,7 +1300,6 @@ function move_unit_pos(unit,x,y,dist_to_keep)
     -- create it, if there isn't
     -- one)
     local id = node_to_id(n)
-
     local curr_cost = not flying and fget(wrap_mget(n.x, n.y), 1) and 4 or 1
     if (p.x != n.x and p.y != n.y) curr_cost+=.2
 
@@ -1350,10 +1352,7 @@ function move_unit_pos(unit,x,y,dist_to_keep)
   -- todo: check path valid???
   -- now auto-move to path
   unit.prev_state = unit.state
-  unit.state = 2
-
-  -- movepath_cor
-  unit.state=2 --moving
+  unit.state = 2 --moving
 
   -- loop all path nodes...
   if unit.path!=nil then
@@ -1373,11 +1372,10 @@ function move_unit_pos(unit,x,y,dist_to_keep)
       
       -- check new position/tile is still free
       -- (if not flying)
-      if(unit.z==1 and not is_free_tile(nil,node.x,node.y)) goto restart_move_unit
+      if(not flying and not is_free_tile(nil,node.x,node.y)) goto restart_move_unit
       
       -- move to new position      
-      local scaled_speed = unit.speed or .5
-      local distance = sqrt((node.x*8 - unit.x) ^ 2 + (node.y*8 - unit.y) ^ 2)
+      local scaled_speed,distance = unit.speed or .5, sqrt((node.x*8-unit.x)^2+(node.y*8-unit.y)^2)
       
       -- don't remove these!
       -- (must capture _outside_ the for..loop below)
@@ -1397,6 +1395,7 @@ function move_unit_pos(unit,x,y,dist_to_keep)
       object_tiles[node.x..","..node.y]=unit
 
       -- reveal fog?
+      -- todo: stop flying units doing this?
       reveal_fow(unit)
 
       -- are we close enough?
