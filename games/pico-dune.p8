@@ -1165,7 +1165,7 @@ function do_attack(unit, target)
   else 
    -- emperor?
   end
-  --target_mode=false
+
  end
 end
 
@@ -1700,7 +1700,6 @@ function collisions()
   selected_obj=nil
   target_mode=false
  end --if buttonclicked
- --target_mode=false
 end
 
 function reset_build(obj)
@@ -2033,17 +2032,17 @@ end
 -- unless the new node is a 
 -- diagonal, in which case
 -- make it cost a bit more
-function flag_cost(from, node, flying)
- -- get the standard cost of the tile (grass vs. mud/water) 
- --local base_cost =  1
- local base_cost = not flying and fget(wrap_mget(node.x, node.y), 1) and 4 or 1
- --local base_cost = fget(mget(node.x, node.y), 1) and 4 or 1
+-- function flag_cost(from, node, flying)
+--  -- get the standard cost of the tile (grass vs. mud/water) 
+--  --local base_cost =  1
+--  local base_cost = not flying and fget(wrap_mget(node.x, node.y), 1) and 4 or 1
+--  --local base_cost = fget(mget(node.x, node.y), 1) and 4 or 1
 
- -- make diagonals cost a little more than normal tiles
- -- (this helps negate "wiggling" in close quarters)
- if (from.x != node.x and from.y != node.y) return base_cost+.2
- return base_cost
-end
+--  -- make diagonals cost a little more than normal tiles
+--  -- (this helps negate "wiggling" in close quarters)
+--  if (from.x != node.x and from.y != node.y) return base_cost+.2
+--  return base_cost
+-- end
 
 
 -- returns any neighbor map
@@ -2074,22 +2073,8 @@ function manhattan_distance(a, b)
 end
 
 
--- pathfinder
--- by @casualeffects
-
--- i minimized the number of
--- tokens as far as possible
--- without hurting readability
--- or performance. you can save
--- another four tokens and a
--- lot of characters by
--- minifying if you don't care
--- about reading the code.
-
--- returns the shortest path, in
--- reverse order, or nil if the
--- goal is unreachable.
---
+-- (pn-minified) pathfinder
+-- originally by @casualeffects
 -- from the graphics codex
 -- http://graphicscodex.com
 function find_path
@@ -2170,9 +2155,13 @@ function find_path
     -- create it, if there isn't
     -- one)
     local id = node_to_id(n)
+
+    local curr_cost = not flying and fget(wrap_mget(n.x, n.y), 1) and 4 or 1
+    if (p.x != n.x and p.y != n.y) curr_cost+=.2
+
     local old_best, new_cost_from_start =
      best_table[id],
-     shortest.cost_from_start + edge_cost(p, n, flying)
+     shortest.cost_from_start + curr_cost --edge_cost(p, n, flying)
     
     if not old_best then
      -- create an expensive
