@@ -12,7 +12,10 @@ debug_mode=true
 -- data flags (eventually pulled from cartdata)
 cartdata("pn_undune2") 
 
-p_level,p_faction,p_col1,p_col2=dget"0",dget"1",dget"2",dget"3"
+--p_level,p_faction,p_col1,p_col2=dget"0",dget"1",dget"2",dget"3"
+
+--atreides
+p_level,p_faction,p_col1,p_col2=dget"0",1,12,1
 
 credits={
  shr(dget(6),16), -- player starting credits
@@ -925,7 +928,20 @@ function update_level()
     end
   end
    
-  update_particles()
+  --update_particles()
+  --function update_particles()
+  for k,p in pairs(particles) do
+    -- acceleration
+   p.dy += p.ddy
+   -- advance state
+   p.x += p.dx
+   p.y += p.dy
+   p.r += p.dr
+   p.life += 1
+   -- check for dead
+   if(p.life>=p.life_orig)del(particles,p)
+  end
+--end
     
  end
  
@@ -1157,16 +1173,16 @@ function do_attack(unit, target)
   --printh("p_faction="..tostr(p_faction))
   if p_faction == 1 then
    -- atreides
+   local fremen = m_map_obj_tree(obj_data[32], unit.x,unit.y, unit.owner)
+   fremen.col1 = 9
+   fremen.col2 = 4
+   do_attack(fremen, target) 
    --m_map_obj_tree(objref, x,y, owner, factory)
   elseif p_faction == 2 then
    -- ordos
   elseif p_faction == 3 then
    -- harkonen
-   local deathhand = m_map_obj_tree(obj_data[34], unit.x,unit.y, unit.owner)   
-   --local deathhand = m_map_obj_tree(obj_data[34], target.x-8,target.y, unit.owner)
-   --deathhand.z=8
-   --lastunit = deathhand
-   do_attack(deathhand, target)
+   do_attack(m_map_obj_tree(obj_data[34], unit.x,unit.y, unit.owner), target)   
   else 
    -- emperor?
   end
@@ -1488,7 +1504,19 @@ function draw_level()
  end
 
  -- particles
- draw_particles()
+ --draw_particles()
+ for k,p in pairs(particles) do
+  -- patterns
+  -- filled = 0x0/0xff
+  -- check1 = 0XA5A5
+  -- check2 = 0XA0A0
+  -- check3 = 0X8020
+  --
+  --local col=flr((#p.cols/p.life_orig)*p.life)+1
+  if (p.pattern) fillp(p.pattern)
+  circfill(p.x,p.y,p.r,p.cols[ flr((#p.cols/p.life_orig)*p.life)+1 ]) --col
+  fillp()
+ end
 
  -- draw fog-of-war
  draw_fow()
@@ -2144,25 +2172,6 @@ function turntowardtarget(unit, targetangle)
   yield()
 end
 
--- makes the cost of entering a
--- node 4 if flag 1 is set on
--- that map square and zero
--- otherwise
--- unless the new node is a 
--- diagonal, in which case
--- make it cost a bit more
--- function flag_cost(from, node, flying)
---  -- get the standard cost of the tile (grass vs. mud/water) 
---  --local base_cost =  1
---  local base_cost = not flying and fget(wrap_mget(node.x, node.y), 1) and 4 or 1
---  --local base_cost = fget(mget(node.x, node.y), 1) and 4 or 1
-
---  -- make diagonals cost a little more than normal tiles
---  -- (this helps negate "wiggling" in close quarters)
---  if (from.x != node.x and from.y != node.y) return base_cost+.2
---  return base_cost
--- end
-
 
 -- returns any neighbor map
 -- position at which flag zero
@@ -2207,37 +2216,6 @@ function add_particle(x, y, r, dx, dy, dr, ddy, life, cols, pattern)
   }
   add(particles, p)
 end
-
-function update_particles()
-  for k,p in pairs(particles) do
-    -- acceleration
-   p.dy += p.ddy
-   -- advance state
-   p.x += p.dx
-   p.y += p.dy
-   p.r += p.dr
-   p.life += 1
-   -- check for dead
-   if(p.life>=p.life_orig)del(particles,p)
-  end
-end
-
-function draw_particles()  
-  for k,p in pairs(particles) do
-    -- patterns
-    -- filled = 0x0/0xff
-    -- check1 = 0XA5A5
-    -- check2 = 0XA0A0
-    -- check3 = 0X8020
-    --
-    --local col=flr((#p.cols/p.life_orig)*p.life)+1
-    if (p.pattern) fillp(p.pattern)
-    circfill(p.x,p.y,p.r,p.cols[ flr((#p.cols/p.life_orig)*p.life)+1 ]) --col
-    fillp()
-  end
-end
-
-
 
 
 
