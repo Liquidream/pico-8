@@ -1222,15 +1222,130 @@ function move_unit_pos(unit,x,y,dist_to_keep)
   unit.prev_state = unit.state
   unit.state = 1
    
-  -- findpath_cor
-  unit.path = find_path(
-                  { x = flr(unit.x/8), y = flr(unit.y/8) },
-                  { x = unit.tx, y = unit.ty},
-                  manhattan_distance,
-                  flag_cost,
-                  map_neighbors,
-                  function (node) return shl(node.y, 8) + node.x end,
-                  unit.z>1)  
+  -- (pn-minified/modified) "pathfinder"
+  -- by @casualeffects
+  -- http://graphicscodex.com
+  unit.path = nil
+  local start, goal, node_to_id, flying = { x = flr(unit.x/8), y = flr(unit.y/8)}, {x = unit.tx, y = unit.ty}, function (node) return shl(node.y, 8) + node.x end, unit.z>1
+  
+  -- the final step in the
+  -- current shortest path
+  local shortest, 
+  -- maps each node to the step
+  -- on the best known path to
+  -- that node
+  best_table = {
+   last = start,
+   cost_from_start = 0,
+   cost_to_goal = manhattan_distance(start, goal)
+  }, {}
+ 
+  best_table[node_to_id(start)] = shortest
+  
+  -- array of frontier paths each
+  -- represented by their last
+  -- step, used as a priority
+  -- queue. elements past
+  -- frontier_len are ignored
+  local frontier, frontier_len, goal_id, max_number, count = {shortest}, 1, node_to_id(goal), 32767.99, 0
+
+  -- while there are frontier paths
+  while frontier_len > 0 do
+ 
+   -- find and extract the shortest path
+   local cost, index_of_min = max_number
+   for i = 1, frontier_len do
+    local temp = frontier[i].cost_from_start + frontier[i].cost_to_goal
+    if (temp <= cost) index_of_min,cost = i,temp
+   end
+  
+   -- efficiently remove the path 
+   -- with min_index from the
+   -- frontier path set
+   shortest = frontier[index_of_min]
+   frontier[index_of_min], shortest.dead = frontier[frontier_len], true
+   frontier_len -= 1
+ 
+   -- last node on the currently
+   -- shortest path
+   local p = shortest.last
+   
+   if node_to_id(p) == goal_id then
+    -- we're done.  generate the
+    -- path to the goal by
+    -- retracing steps. reuse
+    -- 'p' as the path
+    p = {goal}
+ 
+    while shortest.prev do
+     shortest = best_table[node_to_id(shortest.prev)]
+     add(p, shortest.last)
+    end
+ 
+    -- we've found the shortest path
+    unit.path = p
+    goto end_pathfinding
+    --return p
+   end -- if
+ 
+   -- consider each neighbor n of
+   -- p which is still in the
+   -- frontier queue
+   for n in all(map_neighbors(p,flying)) do
+    -- find the current-best
+    -- known way to n (or
+    -- create it, if there isn't
+    -- one)
+    local id = node_to_id(n)
+
+    local curr_cost = not flying and fget(wrap_mget(n.x, n.y), 1) and 4 or 1
+    if (p.x != n.x and p.y != n.y) curr_cost+=.2
+
+    local old_best, new_cost_from_start =
+     best_table[id],
+     shortest.cost_from_start + curr_cost --edge_cost(p, n, flying)
+    
+    if not old_best then
+     -- create an expensive
+     -- dummy path step whose
+     -- cost_from_start will
+     -- immediately be
+     -- overwritten
+     old_best = {
+      last = n,
+      cost_from_start = max_number,
+      cost_to_goal = manhattan_distance(n, goal)
+     }
+ 
+     -- insert into queue
+     frontier_len += 1
+     frontier[frontier_len], best_table[id] = old_best, old_best
+    end -- if old_best was nil
+ 
+    -- have we discovered a new
+    -- best way to n?
+    if not old_best.dead and old_best.cost_from_start > new_cost_from_start then
+     -- update the step at this
+     -- node
+     old_best.cost_from_start, old_best.prev = new_cost_from_start, p
+    end -- if
+   end -- for each neighbor
+   
+   -- (pn) added "unreachable destination" check
+   count+=1
+   if count%4==0 then
+    yield()
+    if (count>3000 or stat(0)/2048>.8) goto end_pathfinding --return nil --printh(">> assume unreachable!")
+   end
+
+  end -- while frontier not empty
+
+  ::end_pathfinding::
+
+
+
+
+
 
   -- todo: check path valid???
   -- now auto-move to path
@@ -2073,135 +2188,6 @@ function manhattan_distance(a, b)
 end
 
 
--- (pn-minified) pathfinder
--- originally by @casualeffects
--- from the graphics codex
--- http://graphicscodex.com
-function find_path
- (start,
-  goal,
-  estimate,
-  edge_cost,
-  neighbors, 
-  node_to_id,
-  flying)
-  
-  -- the final step in the
-  -- current shortest path
-  local shortest, 
-  -- maps each node to the step
-  -- on the best known path to
-  -- that node
-  best_table = {
-   last = start,
-   cost_from_start = 0,
-   cost_to_goal = estimate(start, goal)
-  }, {}
- 
-  best_table[node_to_id(start)] = shortest
-  
-  -- array of frontier paths each
-  -- represented by their last
-  -- step, used as a priority
-  -- queue. elements past
-  -- frontier_len are ignored
-  local frontier, frontier_len, goal_id, max_number = {shortest}, 1, node_to_id(goal), 32767.99
- 
-  local count=0
-
-  -- while there are frontier paths
-  while frontier_len > 0 do
- 
-   -- find and extract the shortest path
-   local cost, index_of_min = max_number
-   for i = 1, frontier_len do
-    local temp = frontier[i].cost_from_start + frontier[i].cost_to_goal
-    if (temp <= cost) index_of_min,cost = i,temp
-   end
-  
-   -- efficiently remove the path 
-   -- with min_index from the
-   -- frontier path set
-   shortest = frontier[index_of_min]
-   frontier[index_of_min], shortest.dead = frontier[frontier_len], true
-   frontier_len -= 1
- 
-   -- last node on the currently
-   -- shortest path
-   local p = shortest.last
-   
-   if node_to_id(p) == goal_id then
-    -- we're done.  generate the
-    -- path to the goal by
-    -- retracing steps. reuse
-    -- 'p' as the path
-    p = {goal}
- 
-    while shortest.prev do
-     shortest = best_table[node_to_id(shortest.prev)]
-     add(p, shortest.last)
-    end
- 
-    -- we've found the shortest path
-    return p
-   end -- if
- 
-   -- consider each neighbor n of
-   -- p which is still in the
-   -- frontier queue
-   for n in all(neighbors(p,flying)) do
-    -- find the current-best
-    -- known way to n (or
-    -- create it, if there isn't
-    -- one)
-    local id = node_to_id(n)
-
-    local curr_cost = not flying and fget(wrap_mget(n.x, n.y), 1) and 4 or 1
-    if (p.x != n.x and p.y != n.y) curr_cost+=.2
-
-    local old_best, new_cost_from_start =
-     best_table[id],
-     shortest.cost_from_start + curr_cost --edge_cost(p, n, flying)
-    
-    if not old_best then
-     -- create an expensive
-     -- dummy path step whose
-     -- cost_from_start will
-     -- immediately be
-     -- overwritten
-     old_best = {
-      last = n,
-      cost_from_start = max_number,
-      cost_to_goal = estimate(n, goal)
-     }
- 
-     -- insert into queue
-     frontier_len += 1
-     frontier[frontier_len], best_table[id] = old_best, old_best
-    end -- if old_best was nil
- 
-    -- have we discovered a new
-    -- best way to n?
-    if not old_best.dead and old_best.cost_from_start > new_cost_from_start then
-     -- update the step at this
-     -- node
-     old_best.cost_from_start, old_best.prev = new_cost_from_start, p
-    end -- if
-   end -- for each neighbor
-   
-   -- (pn) added "unreachable destination" check
-   count+=1
-   if count%4==0 then
-    yield()
-    if (count>3000 or stat(0)/2048>.8) return nil --printh(">> assume unreachable!")
-   end
-
-  end -- while frontier not empty
- 
-  -- unreachable, so implicitly
-  -- return nil
- end
- 
 
 --
 -- particle related
