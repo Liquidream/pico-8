@@ -605,6 +605,11 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
         if (self.procstep>(self.process==1 and 3 or 100) and transact(-1,self.process==1 and self.parent or self)) self.procstep=0 self.spent+=1
       end
      end
+
+     -- firing
+     if self.fire_cooldown>0 then 
+      self.fire_cooldown-=.1
+     end
    end,
 
    setpos=function(self,x,y)
@@ -1129,8 +1134,8 @@ function do_attack(unit, target)
      end
      -- 3) commence firing
      if (targdist<=unit.range*5) then
-      unit.fire_cooldown-=1
-      if (unit.fire_cooldown<=0 and not unit.bullet_x) unit.fire(unit) unit.fire_cooldown=unit.arms*4
+      --unit.fire_cooldown-=1
+      if (unit.fire_cooldown<=0 and not unit.bullet_x) unit.fire(unit) unit.fire_cooldown=unit.arms/4
      elseif unit.speed==0 then
       -- turrets default to guard if out of range
       do_guard(unit)
@@ -1165,7 +1170,7 @@ function do_attack(unit, target)
   else 
    -- emperor?
   end
-
+  last_selected_obj.fire_cooldown = 1750 --350=1m (so 1750 = 5mins for palace weapon again, avg for all factions)
  end
 end
 
@@ -1568,8 +1573,8 @@ function draw_ui()
   -- fire palace weapon?
   if selected_obj.id==19 
    and selected_obj.fire_cooldown<=0 then
-   launch_obj:setpos(109,29) 
-   launch_obj:draw()
+    launch_obj:setpos(109,29)
+    launch_obj:draw()  
   end
  end
 

@@ -34,7 +34,7 @@ levelend_mode=3
 mission_data={
 -- # |	Credits |	Target Cred |	Enemy |	AI Level
  { 1,	999,	 1000,	nil, nil },	-- No enemy, just reach 1000 credits
- { 2,	1200,	2700,	1,   1 },	  -- 2700 credits of spice, OR eliminate Atreides presence
+ { 2,	1200,	9700,	1,   1 },	  -- 2700 credits of spice, OR eliminate Atreides presence
  { 3,	1500,	0,    2,   2	}, -- Eliminate enemy
  { 4,	1500,	0,    2,   3	}, -- Eliminate enemy
  { 5,	1500,	0,    1,   4 }, --	Eliminate enemy
