@@ -24,9 +24,13 @@ p_level,p_faction,p_col1,p_col2=dget"0",dget"1",dget"2",dget"3"
 ai_faction,ai_col1,ai_col2,ai_level=dget"20",dget"21",dget"22",dget"23" -- difficulty level (1=hardest?)
 
 -- DEBUG
---atreides
+-- [player]
+-- atreides
 --p_level,p_faction,p_col1,p_col2=dget"0",1,12,1
---harkonen ai
+-- ordos
+--p_level,p_faction,p_col1,p_col2=dget"0",2,11,3
+-- [ai]
+-- harkonen
 --ai_faction,ai_col1,ai_col2,ai_level=3,8,2,1 -- difficulty level (1=hardest?)
 
 
@@ -148,15 +152,17 @@ obj_data=[[id|name|obj_spr|ico_spr|map_spr|type|w|h|z|trans_col|parent_id|parent
 29|rOCKET lAUNCHER|53|202||1|1|1|1|11|12|17||||7|5||450||112|400|0.3|9|2||||tHE sIEGE tANK IS A~HEAVY ARMOURED TANK,~WHICH HAS DUAL CANNONS,~BUT IS SLOW.||||
 30|hARVESTER|49|192||1|1|1|1|11|12|17|||||2||300||0|600|0.1|0|||||tHE hARVESTER SEPARATES~SPICE FROM THE SAND &~RETURNS RAW SPICE TO THE~rEFINERY FOR PROCESSING.||||
 31|cARRYALL|73|238||1|1|1|8|11|13|||||13|5||800||0|400|2|0|||||tHE cARRYALL IS A LIGHTLY~ARMOURED AIRCRAFT WITH~NO WEAPONS. mAINLY USED~TO LIFT+TRANSPORT~hARVESTERS.||||
-22|fREMEN (X3)|55|236||1|1|1|1|11|||0|9|4||8|1|0||8|880|0.1|3|1|1|56|10|tHE fREMEN ARE NATIVE~TO dUNE. eLITE FIGHTERS~IN ALLIANCE WITH THE~aTREIDES.||||
+22|fREMEN|55|236||1|1|1|1|11|||0|9|4||8|1|0||8|880|0.1|3|1|1|56|10|tHE fREMEN ARE NATIVE~TO dUNE. eLITE FIGHTERS~IN ALLIANCE WITH THE~aTREIDES.||||
 35|dEVASTATOR|52|200||1|1|1|1|11|12|||||13|8|3|800||60|1600|0.1|7|1||||tHE dEVESTATOR IS A~NUCLEAR-POWERED TANK,~WHICH FIRES DUAL PLASMA~CHARGES. mOST POWERFUL~TANK ON dUNE, BUT~POTENTIALLY UNSTABLE~IN COMBAT.||||
 36|dEATH hAND|72|||1|1|1|8|11|||0|||13|8|3|0||150|280|0.5|0|20||||tHE dEATH hAND IS A~SPECIAL hARKONNEN~pALACE WEAPON. aN~INACCURATE, BUT VERY~DESTRUCTIVE BALLISTIC~MISSILE.||||
 37|rAIDER|54|204||1|1|1|1|11|11||||||2|2|150||8|320|0.75|3|1||||tHE oRDOS rAIDER IS~SIMILAR TO THE STANDARD~tRIKE, BUT WITH LESS~ARMOUR IN FAVOUR OF~SPEED.||||
-23|sABOTEUR|-1|236||1|1|1|1|11|||0|1|0||8|2|0||150|160|0.4|2|||||tHE sABOTEUR IS A~SPECIAL MILITARY UNIT,~TRAINED AT AN oRDOS~pALACE. cAN DESTROY~ALMOST ANY STRUCTURE OR~VEHICLE.||||
+23|sABOTEUR|55|236||1|0.5|0.5|1|11|||0|1|0||8|2|0||150|160|0.4|0|1|1|56|10|tHE sABOTEUR IS A~SPECIAL MILITARY UNIT,~TRAINED AT AN oRDOS~pALACE. cAN DESTROY~ALMOST ANY STRUCTURE OR~VEHICLE.||||
 24|sARDAUKAR|62|236||1|1|1|1|11|||0|14|2||4||0||5|440|0.1|1|||||tHE sARDUKAR ARE THE~eMPEROR'S ELITE TROOPS.~WITH SUPERIOR FIREPOWER~AND ARMOUR.||||
 39|sANDWORM|88|||9|1|1|1|11|nil|||||nil|3||0||300|4000|0.35|0|30||||tHE sAND wORMS ARE~INDIGEONOUS TO dUNE.~aTTRACTED BY VIBRATIONS~ALMOST IMPOSSIBLE TO~DESTROY, WILL CONSUME~ANYTHING THAT MOVES.||||
 80|rEPAIR|19|||5|1|1|1|11|nil|||||nil|||||||||||||||draw_action||action_click
 81|pICK TARGET|1|||5|1|1|1|11|nil|||||nil|||||||||||||||draw_action||action_click]]
+
+
 
 
 
@@ -272,7 +278,7 @@ function m_map_obj_tree(objref, x,y, owner, factory)
   local newobj=m_obj_from_ref(objref, x,y, objref.type, nil, _g[objref.func_init], _g[objref.func_draw], _g[objref.func_update], nil)
   -- set type==3 (icon!)
   newobj.ico_obj=m_obj_from_ref(objref, 109,0, 3, newobj, nil, nil, _g[objref.func_onclick])
-  newobj.life=placement_damage and objref.hitpoint/2 or objref.hitpoint -- unless built without concrete
+  newobj.life=placement_damage and objref.hitpoint/2 or objref.hitpoint -- unless built without concrete  
   -- factory?
   newobj.build_objs={}
   -- go through all ref's and see if any valid for this building
@@ -473,7 +479,7 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
          if (this.life>0 and not show_menu) rectfill(self.x,self.y+17,self.x+val,self.y+18,col)
        end
        -- non-rotational sprite
-       if self.type>2 then 
+       if self.type>2 then
         -- icon
         spr(self.ico_spr, self.x, self.y,
          self.type==5 and 1 or 2, 
@@ -496,7 +502,7 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
       end
      end
      -- smoking?
-     if (self.type<=2 and self.id>24 and self.life<self.hitpoint*.33 and rnd"10"<1) add_particle(self.x+3.5,self.y+3.5, 1, .1,-.02,.05, -.002, 80,{10,9,6,5}, rnd(2)<1 and 0xa5a5.8 or 0)
+     if (self.type<=2 and self.id>24 and self.life<self.hitpoint*.33 and rnd"10"<1) add_particle(self.x+3.5,self.y+3.5, 1, .1,-.02,.05, -.002, 80,{10,9,6,5}, rnd"2"<1 and 0xa5a5.8 or 0)
      -- reset hit flag
      self.hit=0
  
@@ -628,9 +634,7 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
         -- continue
         self.procstep+=1
         -- repair (only if have money)
-        --printh(self.name)
-        --if (credits[self.owner]>0) 
-        self.life=(self.process==1 and (self.spent/self.cost)*100 or credits[self.owner]>0 and self.life+.5)
+        self.life+=(self.process==1 and (self.spent/self.cost)*100 or credits[self.owner]>0 and .5 or 0)
         -- time to update credits?
         if (self.procstep>(self.process==1 and 3 or 100) and transact(-1,self.process==1 and self.parent or self)) self.procstep=0 self.spent+=1
       end
@@ -990,7 +994,7 @@ function do_guard(unit, start_state)
  unit.cor = cocreate(function(self)
   while true do
    -- be on look-out
-   if rnd(500)<1 and self.arms>0 and self.state!=8 then 
+   if rnd"500"<1 and self.arms>0 and self.state!=8 then 
     ping(self,flr(self.x/8),flr(self.y/8),is_danger_tile,self.range)
    end
 
@@ -1157,14 +1161,17 @@ function do_attack(unit, target)
       -- move to within firing range of target
       move_unit_pos(unit,flr(target.x/8),flr(target.y/8),unit.range*5)
 
-      -- death hand?
-      if unit.id==36 then
+      -- saboteur or death hand?
+      if unit.id==23 or unit.id==36 then
        unit.life=0
-       for i=1,10 do
-        make_explosion(unit.x+rnd(32)-16,unit.y+rnd(32)-16, 2)
-        target.life-=rnd(unit.arms)
-        target.hitby=unit
-       end
+       -- death hand specific?
+       --if unit.id==36 then
+        for i=1,unit.id/3 do
+         make_explosion(unit.x+rnd"32"-16,unit.y+rnd"32"-16, 2)
+        end
+       --end
+       target.life-=(100+rnd"50")--unit.arms
+       target.hitby=unit
        return
       end
      end
@@ -1177,7 +1184,6 @@ function do_attack(unit, target)
      end
      -- 3) commence firing
      if targdist<=unit.range*5 then
-      --unit.fire_cooldown-=1
       if (unit.fire_cooldown<=0 and not unit.bullet_x) unit.fire(unit) unit.fire_cooldown=unit.arms/4
      elseif unit.speed==0 then
       -- turrets default to guard if out of range
@@ -1191,18 +1197,17 @@ function do_attack(unit, target)
    end)
   
  else
+  --
   -- palace attack!
-  -- 22|fREMEN (X3)(atreides = 1)
-  -- 23|sABOTEUR   (ordos = 2)
-  -- 36|dEATH hAND (harkonen = 3)  
-  -- (Emperor = 4?)
+  --
   if p_faction == 1 then
-   -- atreides
+   -- atreides (fremen)
    do_attack(m_map_obj_tree(obj_data[22], unit.x,unit.y, unit.owner), target)    
   elseif p_faction == 2 then
-   -- ordos
+   -- ordos (saboteur)
+   do_attack(m_map_obj_tree(obj_data[23], unit.x,unit.y, unit.owner), target)    
   elseif p_faction == 3 then
-   -- harkonen
+   -- harkonen (death hand)
    do_attack(m_map_obj_tree(obj_data[36], unit.x,unit.y, unit.owner), target)   
   else 
    -- emperor?
@@ -1461,7 +1466,7 @@ function draw_level()
 	cls"15" --draw_sand
  
  -- cam position (+ any "shaking")
- camera(camx+(16-rnd(32))*shake, camy+(16-rnd(32))*shake)
+ camera(camx+(16-rnd"32")*shake, camy+(16-rnd"32")*shake)
  
  -- finally, fade out the shake
  shake = (shake>0.05) and shake*0.95 or 0
@@ -1819,7 +1824,7 @@ function collisions()
  
   if clickedsomething then    
     -- clicked quick build?
-    if (not show_menu and selected_obj.func_onclick and selected_obj.parent!=nil) printh(">>>>") selected_obj:func_onclick() selected_obj=last_selected_obj return
+    if (not show_menu and selected_obj.func_onclick and selected_obj.parent!=nil) selected_obj:func_onclick() selected_obj=last_selected_obj return
     -- click button?
     if (show_menu and selected_subobj.text and selected_subobj.func_onclick) selected_subobj:func_onclick()  
     -- clicked own unit, first time?
@@ -1934,7 +1939,7 @@ function update_ai()
   local ai_unit=units[flr(rnd(#units))+1]
   if ai_unit.owner==2 and ai_unit.arms>0 and ai_unit.state==0 then
    -- select a random target (unit or building)
-   local p_target=(rnd(2)<1)and units[flr(rnd(#units))+1] or buildings[flr(rnd(#buildings))+1]
+   local p_target=(rnd"2"<1)and units[flr(rnd(#units))+1] or buildings[flr(rnd(#buildings))+1]
    if (p_target and p_target.owner==1 or p_target.created_by==1) do_attack(ai_unit, p_target)
   end
   -- --------------------
@@ -1977,9 +1982,9 @@ function update_ai()
    worm_segs=nil
   else
    -- show worm
-   worm_segs,worm_dir,worm_turn,worm_cols,worm_frame={{rnd(500),rnd(500)}},rnd(1),0,{15,9,4},0    
+   worm_segs,worm_dir,worm_turn,worm_cols,worm_frame={{rnd"500",rnd"500"}},rnd"1",0,{15,9,4},0    
   end
-  worm_life_start=rnd(5000) -- worm probability
+  worm_life_start=rnd"5000" -- worm probability
   worm_life=worm_life_start
  end
 
@@ -1987,7 +1992,7 @@ function update_ai()
   -- movement/turning
   if (_t%6<1 or #worm_segs<30) and worm_frame==0 then
    while #worm_segs<31 do
-    if(rnd(9)<.5) worm_turn=rnd(.04)-.02
+    if(rnd"9"<.5) worm_turn=rnd".04"-.02
     -- ref to head
     head_worm_x,head_worm_y=worm_segs[#worm_segs][1],worm_segs[#worm_segs][2]
     add(worm_segs,{head_worm_x+sin(worm_dir),head_worm_y-cos(worm_dir)})
