@@ -14,19 +14,20 @@ cartdata("pn_undune2")
 
 -- faction_cols = {
 --  { 12, 1}, -- 1 = Atreides
+
 --  { 11, 3}, -- 2 = Ordos
 --  { 8,  2}, -- 3 = Harkonnen
 --  { 14, 2}, -- 4 = Emperor?
 -- }
 
---p_level,p_faction,p_col1,p_col2=dget"0",dget"1",dget"2",dget"3"
---ai_faction,ai_col1,ai_col2,ai_level=dget"20",dget"21",dget"22",dget"23" -- difficulty level (1=hardest?)
+p_level,p_faction,p_col1,p_col2=dget"0",dget"1",dget"2",dget"3"
+ai_faction,ai_col1,ai_col2,ai_level=dget"20",dget"21",dget"22",dget"23" -- difficulty level (1=hardest?)
 
 -- DEBUG
 --atreides
-p_level,p_faction,p_col1,p_col2=dget"0",1,12,1
+--p_level,p_faction,p_col1,p_col2=dget"0",1,12,1
 --harkonen ai
-ai_faction,ai_col1,ai_col2,ai_level=3,8,2,1 -- difficulty level (1=hardest?)
+--ai_faction,ai_col1,ai_col2,ai_level=3,8,2,1 -- difficulty level (1=hardest?)
 
 
 
@@ -1624,6 +1625,7 @@ function draw_ui()
    selected_obj.build_obj:draw() 
   end
   -- repair?
+  repair_obj:setpos(109,-20)
   if selected_obj.life<selected_obj.hitpoint 
    and selected_obj.owner==1
    and selected_obj.id!=4
@@ -1633,6 +1635,7 @@ function draw_ui()
     repair_obj:draw()
   end
   -- fire palace weapon?
+  launch_obj:setpos(109,-20)
   if selected_obj.id==19 
    and selected_obj.fire_cooldown<=0 then
     launch_obj:setpos(109,29)
