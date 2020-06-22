@@ -46,23 +46,23 @@ message,msgcount="",0
 _g.factory_click=function(self)
   menu_pos,selected_subobj,ui_controls=1,self.parent.build_objs[1],{}
   -- create buttons
-  m_button(6,84,"⬆️",function(self)
+  m_button(6,84,"⬆️",function()
    sel_build_item_idx=mid(1,sel_build_item_idx-1,#selected_obj.valid_build_objs)
    selected_subobj = selected_obj.valid_build_objs[sel_build_item_idx]
    if (sel_build_item_idx<menu_pos) menu_pos-=1
   end, 10)
-  m_button(17,84,"⬇️",function(self)
+  m_button(17,84,"⬇️",function()
    local len=#selected_obj.valid_build_objs
    sel_build_item_idx=mid(1,sel_build_item_idx+1,len)
    selected_subobj = selected_obj.valid_build_objs[sel_build_item_idx]
    menu_pos=mid(menu_pos+1,len-2)
    if (sel_build_item_idx>menu_pos+2) menu_pos=min(menu_pos+1,len-2)
   end, 10)
-  m_button(32,83,"build",function(self)
+  m_button(32,83,"build",function()
    show_menu, selected_obj.build_obj = nil, last_selected_subobj   
    last_selected_subobj:func_onclick()
   end)
-  m_button(96,83,"close",function(self)
+  m_button(96,83,"close",function()
    show_menu=nil
   end)
   -- show build menu
@@ -99,10 +99,10 @@ draw_action=function(self)
  spr(self.obj_spr, self.x, self.y)
  pal()
 end
-repair_click=function(self)
+repair_click=function()
   process_click(last_selected_obj, 2)
 end
-launch_click=function(self)
+launch_click=function()
  -- todo: go into launch mode
  set_message"pick target"
  target_mode=true
@@ -110,11 +110,6 @@ end
 
 
 function process_click(self, mode)
-  -- printh("in process_click...")
-  -- printh("  self = "..tostr(self.name))
-  -- printh("  mode = "..tostr(mode))
-  -- printh("  self.process = "..tostr(self.process))
-  -- printh("  self.life = "..tostr(self.life))
   self.procstep=0
   -- toggle/switch mode (building/repairing) depending on state & click
   self.last_process=self.process
@@ -347,7 +342,8 @@ function m_map_obj_tree(objref, x,y, owner, factory)
     local slabs=(objref.id==2 or objref.id==3)    
     for xx=0,objref.w-1 do
       for yy=0,objref.h-1 do
-       wrap_mset(xpos+xx, ypos+yy, slabs and 16 or 149)
+       -- block map under building (diff tiles for player/ai-owned)
+       wrap_mset(xpos+xx, ypos+yy, slabs and 16 or newobj.owner==1 and 149 or 27)
       end
     end
     if (not slabs) add(buildings,newobj)
@@ -434,7 +430,7 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
      h=(self.type>2 and self.type<5 and 16 or self.h)-1
     }
    end,
-   draw=func_draw or function(self)--, x,y) 
+   draw=func_draw or function(self)
      -- abort if off-screen
      if self.type<=2
       and (self.x+self.w<camx
@@ -1190,21 +1186,13 @@ function do_attack(unit, target)
   
  else
   -- palace attack!
-  --printh(">>>>>>>> palace attack!")
   -- 22|fREMEN (X3)(atreides = 1)
   -- 23|sABOTEUR   (ordos = 2)
   -- 36|dEATH hAND (harkonen = 3)  
   -- (Emperor = 4?)
-  --printh("p_faction="..tostr(p_faction))
   if p_faction == 1 then
    -- atreides
-   do_attack(m_map_obj_tree(obj_data[22], unit.x,unit.y, unit.owner), target) 
-   --local fremen = m_map_obj_tree(obj_data[22], unit.x,unit.y, unit.owner)
-   --todo:use data to populate this!
-   --fremen.col1 = 9
-   --fremen.col2 = 4
-   --do_attack(fremen, target) 
-   --m_map_obj_tree(objref, x,y, owner, factory)
+   do_attack(m_map_obj_tree(obj_data[22], unit.x,unit.y, unit.owner), target)    
   elseif p_faction == 2 then
    -- ordos
   elseif p_faction == 3 then
@@ -1443,7 +1431,7 @@ function move_unit_pos(unit,x,y,dist_to_keep)
       object_tiles[node.x..","..node.y]=unit
 
       -- reveal fog?
-      -- todo: stop flying units doing this?
+      -- todo: stop flying units doing this (shouldn't need to, as owner will be diff.)
       reveal_fow(unit)
 
       -- are we close enough?
@@ -1667,7 +1655,7 @@ function draw_ui()
     for yy=-1,h do
      if xx==-1 or xx==w or yy==-1 or yy==h then     
       -- check edges
-      if (wrap_mget(mxpos+xx, mypos+yy)==16 or wrap_mget(mxpos+xx, mypos+yy)>=63) placement_pos_ok=true
+      if (wrap_mget(mxpos+xx, mypos+yy)==16 or wrap_mget(mxpos+xx, mypos+yy)>=58) placement_pos_ok=true
      else
       -- check inner
       local val=wrap_mget(mxpos+xx, mypos+yy)
@@ -1734,7 +1722,7 @@ function draw_ui()
 
  -- cursor
  palt(11,true)
- cursor:draw() 
+ cursor:draw()
 end
 
 function m_button(x,y,text,func_onclick,_w)
@@ -1745,13 +1733,7 @@ function m_button(x,y,text,func_onclick,_w)
   h=8,
   text=text,
   get_hitbox=function(self)
-   return self
-    -- return {
-    --  x=self.x,
-    --  y=self.y,
-    --  w=self.w,
-    --  h=self.h
-    -- }
+   return self    
    end,
   draw=function(self)
     if(#text>1)rectfill(self.x,self.y,self.x+self.w,self.y+self.h, 7)
@@ -1900,7 +1882,6 @@ function check_hover_select(obj)
     if (obj.type<=2 and fow[flr((cursor.x+camx)/8)][flr((cursor.y+camy)/8)]!=16 or obj.state==8) return
     
     -- was our harvester selected before clicking a refinery/repair?
-    -- todo: bug allowing sending of own harvester into enemy factory?
     if selected_obj
      and (obj.id==6 and selected_obj.id==30 
        or obj.id==14 and selected_obj.id>24)
@@ -1910,9 +1891,7 @@ function check_hover_select(obj)
      -- update last factory (in case changed)     
      selected_obj.last_fact=obj
      obj.incoming=true
-        
-     --todo: problem here, doesnt actually do this .cor for other units on repair fact
-   
+
      selected_obj.cor = cocreate(function(unit)
       move_unit_pos(unit, (obj.x+16)/8, (obj.y+16)/8)
       do_guard(unit, 9)
@@ -2380,7 +2359,7 @@ bbdddddd5ddddddd4445649994666dddf9999fcccf6ccfccddd65dddddddddddccdd66ddddddd5cc
 44449999449444944444ffffffff560f6666ddddddddddddfff4f4f4f56ddddd99ddd66dd566d5999995d665dd66ddd9446f2446f09999ff9999999999998999
 44444444444444444444ffffffffffffddddddddddddddddffffffffffffffff99dd666dd5666d59995d6665dd666dd9443324430044499f9999999999999999
 __gff__
-0400040404040404040202020202000000000600040406010101010101010101010101010000000000000101010000000101010101010101010001010101010101010101010102010101020201010000010101010101020101010202010101010101010101010101010101010101010101010101010101010101010101010101
+0400040404040404040202020202000000000600040406010101010101010101010101010000000000000101010000000101010101010101010001010101010101010101010102010000010101020201010101010101020101010101010202010101010101010101010101010101010101010101010101010101010101010101
 0101010101010000000001010000000001010101010100000000010100000000000000000000000001010000000000000000000000000000010100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 __map__
 1015000000000000000000000000000000000000000000000000000000000000000000000000000000000000000012121212120000000000000000000000151516161600000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000161616
