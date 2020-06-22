@@ -336,6 +336,13 @@ function m_map_obj_tree(objref, x,y, owner, factory)
     newobj.ico_obj.func_onclick=nil
   end
 
+  -- override cols?
+  if objref.col1 then
+   newobj.col1=objref.col1
+   newobj.col2=objref.col2
+  end
+
+
   local xpos=flr(x/8)
   local ypos=flr(y/8)
   
@@ -1198,11 +1205,12 @@ function do_attack(unit, target)
   --printh("p_faction="..tostr(p_faction))
   if p_faction == 1 then
    -- atreides
-   local fremen = m_map_obj_tree(obj_data[22], unit.x,unit.y, unit.owner)
+   do_attack(m_map_obj_tree(obj_data[22], unit.x,unit.y, unit.owner), target) 
+   --local fremen = m_map_obj_tree(obj_data[22], unit.x,unit.y, unit.owner)
    --todo:use data to populate this!
-   fremen.col1 = 9
-   fremen.col2 = 4
-   do_attack(fremen, target) 
+   --fremen.col1 = 9
+   --fremen.col2 = 4
+   --do_attack(fremen, target) 
    --m_map_obj_tree(objref, x,y, owner, factory)
   elseif p_faction == 2 then
    -- ordos
