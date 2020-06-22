@@ -103,7 +103,7 @@ repair_click=function()
   process_click(last_selected_obj, 2)
 end
 launch_click=function()
- -- todo: go into launch mode
+ -- go into launch mode
  set_message"pick target"
  target_mode=true
 end
@@ -157,6 +157,9 @@ obj_data=[[id|name|obj_spr|ico_spr|map_spr|type|w|h|z|trans_col|parent_id|parent
 39|sANDWORM|88|||9|1|1|1|11|nil|||||nil|3||0||300|4000|0.35|0|30||||tHE sAND wORMS ARE~INDIGEONOUS TO dUNE.~aTTRACTED BY VIBRATIONS~ALMOST IMPOSSIBLE TO~DESTROY, WILL CONSUME~ANYTHING THAT MOVES.||||
 80|rEPAIR|19|||5|1|1|1|11|nil|||||nil|||||||||||||||draw_action||action_click
 81|pICK TARGET|1|||5|1|1|1|11|nil|||||nil|||||||||||||||draw_action||action_click]]
+
+
+
 
 
 --[[
@@ -476,8 +479,8 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
          self.type==5 and 1 or 2, 
          self.type==5 and 1 or 2)
        else
-        -- building
-        if(self.obj_spr)spr(self.obj_spr, self.x, self.y, self.w/8, self.h/8)
+        -- building/non-rotational unit
+        if(self.obj_spr)spr(self.obj_spr, self.x, self.y, self.spr_w, self.spr_h)
        end
      end
 
@@ -512,6 +515,9 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
        if (music_state==0 or stat(24)>5) music_state=1 music"0"
        -- can we retaliate (unit/turret)?
        if (self.arms>0 and self.state==0) do_attack(self, self.hitby)
+
+       -- todo: lose soldiers - when tokens permit (takes 20!)
+       --if (self.type==1 and self.id<=24 and self.life<this.hitpoint/2) self.spr_w/2 self.spr_h/2
      end
      -- check for death
      if (self.type<=2 and self.life<=0 and self.death_time==nil) self.state=5 self.cor=nil self.death_time=(self.type==2 and 1 or .5) sfx(self.deathsfx, 3) shake+=((self.type==2 or self.id==36) and 0.25 or 0)
