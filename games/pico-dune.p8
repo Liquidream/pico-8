@@ -191,8 +191,8 @@ function _init()
 
  explode_data()
 
- repair_obj=m_obj_from_ref(obj_data[80], 109,-20, 5, {}, nil,draw_action, repair_click) 
- launch_obj=m_obj_from_ref(obj_data[81], 100,-20, 5, {}, nil,draw_action, launch_click) 
+ -- repair_obj=m_obj_from_ref(obj_data[80], 109,-20, 5, {}, nil,draw_action, repair_click) 
+ -- launch_obj=m_obj_from_ref(obj_data[81], 100,-20, 5, {}, nil,draw_action, launch_click) 
 
  -- init the game/title
  level_init()
@@ -1625,20 +1625,23 @@ function draw_ui()
    selected_obj.build_obj:draw() 
   end
   -- repair?
-  repair_obj:setpos(109,-20)
+  repair_obj=nil
+  --repair_obj:setpos(109,-20)
   if selected_obj.life<selected_obj.hitpoint 
    and selected_obj.owner==1
    and selected_obj.id!=4
    and (selected_obj.type==2
      or selected_obj.speed==0) then
-    repair_obj:setpos(117,28) 
+     repair_obj=m_obj_from_ref(obj_data[80], 117,28, 5, {}, nil,draw_action, repair_click) 
+    --repair_obj:setpos(117,28) 
     repair_obj:draw()
   end
   -- fire palace weapon?
-  launch_obj:setpos(109,-20)
+  launch_obj=nil--:setpos(109,-20)
   if selected_obj.id==19 
    and selected_obj.fire_cooldown<=0 then
-    launch_obj:setpos(109,29)
+    launch_obj=m_obj_from_ref(obj_data[81], 109,29, 5, {}, nil,draw_action, launch_click) 
+    --launch_obj:setpos(109,29)
     launch_obj:draw()  
   end
  end
@@ -1896,6 +1899,8 @@ end
 
 
 function check_hover_select(obj)
+  -- null-check
+  if (obj==nil) return
   obj.hover = collide(cursor, obj)
   if left_button_clicked and obj.hover then
    if show_menu then
