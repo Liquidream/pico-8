@@ -300,7 +300,7 @@ function m_map_obj_tree(objref, x,y, owner, factory)
       or (req_fact>0 and o.req_faction==p_faction)
       or (req_fact<0 and -p_faction!=req_fact))
     then
-      local new = add(newobj.build_objs,
+      add(newobj.build_objs,
         -- note: setting type==4 (build icon!)
         m_obj_from_ref(o, 109,0, 4, newobj, nil, nil, function(self)
           -- building icon clicked
@@ -312,8 +312,7 @@ function m_map_obj_tree(objref, x,y, owner, factory)
             process_click(self, 1)
           end
         end)
-      )
-      new.owner=newobj.owner -- needed to check funds for build/repair
+      )      
       newobj.build_obj=newobj.build_objs[1]
     end
   end
@@ -635,14 +634,17 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
          self.x,self.y=nearest_space_to_object(self, self.last_fact)
         end
       else
-        -- continue
-        self.procstep+=1
-        -- build/repair (only if have money)
-        --printh(tostr(self.owner))
-        if (credits[self.owner]>0) self.life=(self.process==1 and (self.spent/self.cost)*100 or self.life+.5)
-	      --self.life+=(self.process==1 and (self.spent/self.cost)*100 or credits[self.owner]>0 and .5 or 0)
+        -- continue...
         -- time to update credits?
-        if (self.procstep>(self.process==1 and 3 or 100) and transact(-1,self.process==1 and self.parent or self)) self.procstep=0 self.spent+=1
+        if self.procstep>(self.process==1 and 3 or 100) then
+         -- build/repair (only if have money)
+         -- note: only reset the procstep if have funds (no free build/upgrades!)
+         if (transact(-1,self.process==1 and self.parent or self)) self.procstep=0 self.spent+=1
+        else
+         -- just continue
+         self.procstep+=1
+         self.life=(self.process==1 and (self.spent/self.cost)*100 or self.life+.5)
+        end
       end
      end
 
