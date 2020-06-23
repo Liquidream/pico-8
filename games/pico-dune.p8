@@ -334,6 +334,8 @@ function m_map_obj_tree(objref, x,y, owner, factory)
     newobj.col2=ai_col2
     --make ai icons un-clickable
     newobj.ico_obj.func_onclick=nil
+    -- palace?
+    if (newobj.id==19) ai_palace=newobj
   end
 
   -- override cols?
@@ -1208,19 +1210,12 @@ function do_attack(unit, target)
   --
   -- palace attack!
   --
-  if p_faction == 1 then
-   -- atreides (fremen)
-   do_attack(m_map_obj_tree(obj_data[22], unit.x,unit.y, unit.owner), target)    
-  elseif p_faction == 2 then
-   -- ordos (saboteur)
-   do_attack(m_map_obj_tree(obj_data[23], unit.x,unit.y, unit.owner), target)    
-  elseif p_faction == 3 then
-   -- harkonen (death hand)
-   do_attack(m_map_obj_tree(obj_data[36], unit.x,unit.y, unit.owner), target)   
-  else 
-   -- emperor?
-  end
-  last_selected_obj.fire_cooldown = 1750 --350=1m (so 1750 = 5mins for palace weapon again, avg for all factions)
+  -- palace weapons (emperor also uses death hand)
+  local weapons={22,23,36,36}
+  -- printh("target id = "..target.id)
+  -- printh("target owner = "..target.owner)
+  do_attack(m_map_obj_tree(obj_data[weapons[unit.faction]], unit.x,unit.y, unit.owner), target)      
+  unit.fire_cooldown = 1750 --350=1m (so 1750 = 5mins for palace weapon again, avg for all factions)
  end
 end
 
@@ -1944,23 +1939,22 @@ function update_ai()
   -- unit attacks
   -- 
   -- find the first ai unit and attack player  
-  local ai_unit=units[flr(rnd(#units))+1]
+  local ai_unit=rnd(units)
   if ai_unit.owner==2 and ai_unit.arms>0 and ai_unit.state==0 then
    -- select a random target (unit or building)
-   local p_target=(rnd"2"<1)and units[flr(rnd(#units))+1] or buildings[flr(rnd(#buildings))+1]
+   p_target=(rnd"2"<1)and rnd(units) or rnd(buildings)
    if (p_target and p_target.owner==1 or p_target.created_by==1) do_attack(ai_unit, p_target)
   end
   -- --------------------
   -- repair/build units
   -- 
-  local ai_building=buildings[flr(rnd(#buildings))+1]  
+  local ai_building=rnd(buildings) 
   -- if ai owned...
   if ai_building.owner==2 then
     -- if building is factory, builds units and is not already building...
     if ai_building.build_obj and ai_building.build_obj.ref.type==1 and ai_building.build_obj.process!=1 then
      -- select a random unit to build
-     local u=ai_building.build_objs[flr(rnd(#ai_building.build_objs))+1]
-     --printh("  > BUILD  unit "..tostr(u.name))
+     local u=rnd(ai_building.build_objs)
      ai_building.build_obj=u
      u:func_onclick()
     end
@@ -1968,7 +1962,6 @@ function update_ai()
     -- repair?
     if ai_building.life<ai_building.hitpoint and ai_building.process!=2 then
      -- auto-repair
-     --printh("auto repair!#######")
      process_click(ai_building, 2)
     end
   end
@@ -1976,6 +1969,10 @@ function update_ai()
   -- -------------------------
   -- todo: fire palace weapons
   -- 
+  if p_target and p_target.owner==1 and p_target.type==2 
+   and ai_palace and ai_palace.fire_cooldown<=0 then 
+    do_attack(ai_palace, p_target)
+  end
 
  end
 
