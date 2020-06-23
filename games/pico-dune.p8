@@ -35,7 +35,7 @@ ai_faction,ai_col1,ai_col2,ai_level=dget"20",dget"21",dget"22",dget"23" -- diffi
 
 
 credits={
- shr(dget(6),16), -- player starting credits
+ 0.001,--shr(dget(6),16), -- player starting credits
  shr(500,16),     -- ai starting credits (always 500?)
  shr(dget(7),16), -- target credits
 }
@@ -277,8 +277,19 @@ function m_map_obj_tree(objref, x,y, owner, factory)
   --printh("name=.."..objref.name)
   local newobj=m_obj_from_ref(objref, x,y, objref.type, nil, _g[objref.func_init], _g[objref.func_draw], _g[objref.func_update], nil)
   -- set type==3 (icon!)
+  
   newobj.ico_obj=m_obj_from_ref(objref, 109,0, 3, newobj, nil, nil, _g[objref.func_onclick])
-  newobj.life=placement_damage and objref.hitpoint/2 or objref.hitpoint -- unless built without concrete  
+  newobj.life=placement_damage and objref.hitpoint/2 or objref.hitpoint -- unless built without concrete    
+
+  -- player-controlled or ai?
+  -- note: this whole thing may not be needed 
+  -- as once we have plr start pos, that might be all we need
+  newobj.owner=newobj.owner or owner or (dist(x,y,pstartx,pstarty)<75 and 1 or 2)
+  
+  -- who created? (do avoid "guard" attacking units created by same faction)
+  newobj.created_by=owner or newobj.owner
+
+
   -- factory?
   newobj.build_objs={}
   -- go through all ref's and see if any valid for this building
@@ -289,7 +300,7 @@ function m_map_obj_tree(objref, x,y, owner, factory)
       or (req_fact>0 and o.req_faction==p_faction)
       or (req_fact<0 and -p_faction!=req_fact))
     then
-      add(newobj.build_objs,
+      local new = add(newobj.build_objs,
         -- note: setting type==4 (build icon!)
         m_obj_from_ref(o, 109,0, 4, newobj, nil, nil, function(self)
           -- building icon clicked
@@ -302,18 +313,11 @@ function m_map_obj_tree(objref, x,y, owner, factory)
           end
         end)
       )
+      new.owner=newobj.owner -- needed to check funds for build/repair
       newobj.build_obj=newobj.build_objs[1]
     end
   end
 
-
-  -- player-controlled or ai?
-  -- note: this whole thing may not be needed 
-  -- as once we have plr start pos, that might be all we need
-  newobj.owner=newobj.owner or owner or (dist(x,y,pstartx,pstarty)<75 and 1 or 2)
-
-  -- who created? (do avoid "guard" attacking units created by same faction)
-  newobj.created_by=owner or newobj.owner
 
   -- store the factory that made it (mostly for harvesters)
   --newobj.last_fact = last_fact
@@ -633,8 +637,10 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
       else
         -- continue
         self.procstep+=1
-        -- repair (only if have money)
-        self.life+=(self.process==1 and (self.spent/self.cost)*100 or credits[self.owner]>0 and .5 or 0)
+        -- build/repair (only if have money)
+        --printh(tostr(self.owner))
+        if (credits[self.owner]>0) self.life=(self.process==1 and (self.spent/self.cost)*100 or self.life+.5)
+	      --self.life+=(self.process==1 and (self.spent/self.cost)*100 or credits[self.owner]>0 and .5 or 0)
         -- time to update credits?
         if (self.procstep>(self.process==1 and 3 or 100) and transact(-1,self.process==1 and self.parent or self)) self.procstep=0 self.spent+=1
       end
