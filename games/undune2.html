@@ -340,8 +340,8 @@
 		if (is_fullscreen) update_hash += 0.1237;
 
 		// unexpected things can happen in the first few seconds, so just keep re-calculating layout. wasm version breaks layout otherwise.
-		// also: bonus refresh at 5 seconds just in case ._.
-		if (p8_layout_frames < 120 || p8_layout_frames == 60*5)
+		// also: bonus refresh at 5, 8 seconds just in case ._.
+		if (p8_layout_frames < 180 || p8_layout_frames == 60*5 || p8_layout_frames == 60*8 )
 			update_hash = p8_layout_frames;
 
 		if (!is_fullscreen) // fullscreen: update every frame for safety. should be cheap!
@@ -592,14 +592,18 @@
 				if (gp.axes[1] && gp.axes[1] < -threshold) pico8_buttons[i] |= 0x4;
 				if (gp.axes[1] && gp.axes[1] > threshold) pico8_buttons[i] |= 0x8;
 
-				// buttons: first 4 are O/X; everything else is menu button
+				// buttons: first 4 are O/X; (almost) everything else taken to be menu button
+				// ref: https://w3c.github.io/gamepad/#remapping (er.. that mapping doesn't agree with xbox, buffalo snes)
 				for (j = 0; j < gp.buttons.length; j++)
 				if (gp.buttons[j].value > 0 || gp.buttons[j].pressed)
 				{
 					if (j < 4)
 						pico8_buttons[i] |= (0x10 << (((j+1)/2)&1)); // 0 1 1 0 0 1 -- A,X are O,X on xbox controller
 					else
-						pico8_buttons[0] |= 0x40; // menu button
+					{
+						if (j >= 6 && j <= 8) // PICO-8 0.2.0g: seems usually 6,7,8 are menu buttons (?) // others might be easy to accidentally bump
+							pico8_buttons[0] |= 0x40; // menu button
+					}
 				}
 			}
 		}

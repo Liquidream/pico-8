@@ -113,7 +113,7 @@ function _update60()
   if btnp(5) then
    
    --load_level(p_level)
-   load_level(2)
+   load_level(3)
 
   end
 
