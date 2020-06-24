@@ -452,28 +452,42 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
       return
      end
 
-     pal()
-     palt(0,false)
-     if (self.trans_col) palt(self.trans_col,true)     
-     -- faction? (if not IX)
-     if (self.faction and self.id!=18) pal(12,self.col1) pal(14,self.col2)
-     -- colour anim?
-     if self.col_cycle then
-      pal(self.col_cycle_src, self.col_cycle[self.col_cycle_pos])
-     end
+
+     spr_pal(self)
+     -- pal()
+     -- palt(0,false)
+     -- if (self.trans_col) palt(self.trans_col,true)     
+     -- -- faction? (if not IX)
+     -- if (self.faction and self.id!=18) pal(12,self.col1) pal(14,self.col2)
+     -- -- colour anim?
+     -- if self.col_cycle then
+     --  pal(self.col_cycle_src, self.col_cycle[self.col_cycle_pos])
+     -- end
+
      -- rotating obj?
      if self.r then
       if not self.death_time or self.death_time>.025  then
-       --printh("self.mx="..tostr(self.mx).." ("..self.name..")")
+       -- shadow
+       if (self.speed>0) then
+        pal({5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5})
+        rsprt(self.x+4, self.y+5, .25-self.r, self.mx, self.my, self.spr_w, self.spr_h)
+       end
        --if (self.speed>0) rspr(self.obj_spr%16*8,flr(self.obj_spr/16)*8, self.x, self.y, .25-self.r, 1, self.trans_col, 5)
        --rsprt(self.x, self.y, .25-self.r, 0,1, 1,1)
+       -- pal()
+       -- palt(0,false)
+       spr_pal(self)
+       --palt(11,true)
+       -- faction? (if not IX)
+       --if (self.faction and self.id!=18) pal(12,self.col1) pal(14,self.col2)
        rsprt(self.x+4, self.y-self.z+5, .25-self.r, self.mx, self.my, self.spr_w, self.spr_h)
+       
        -- if (self.speed>0) rspr(self.obj_spr%16*8,flr(self.obj_spr/16)*8, self.x, self.y, .25-self.r, 1, self.trans_col, 5)
        -- rspr(self.obj_spr%16*8,flr(self.obj_spr/16)*8, self.x, self.y-self.z, .25-self.r, 1, self.trans_col, flr(self.flash_count)%2==0 and 7 or nil)
        --rect(self.x,self.y,self.x+7,self.y+7,8)
       end
      -- norm sprite
-     else      
+     else
        -- icon mode
        if self.type>2 and self.type<5 then        
          rectfill(self.x-1,self.y-1,self.x+16,self.y+19,0)
@@ -820,7 +834,7 @@ function update_radar_data()
  -- landscape/fow
  if hq then  
   for i=0,124,4 do
-     for l=0,124,4 do
+     for l=4,124,4 do
      -- look at tile spr and if not fow, get col?
      local mx=i/2
      local my=l/2
@@ -2133,37 +2147,23 @@ end
  return a
  end
 
--- rotate sprite (modified to allow for trans cols)
--- by freds72
--- https://www.lexaloffle.com/bbs/?pid=52525#p52541
 
--- function rspr(sx,sy,x,y,a,w,trans,single_col)
--- 	local ca,sa=cos(a),sin(a)
--- 	local srcx,srcy,addr,pixel_pair
--- 	local ddx0,ddy0=ca,sa
--- 	local mask=shl(0xfff8,(w-1))
--- 	w*=4
--- 	ca*=w-0.5
--- 	sa*=w-0.5
--- 	local dx0,dy0=sa-ca+w,-ca-sa+w
--- 	w=2*w-1
--- 	for ix=0,w do
--- 		srcx,srcy=dx0,dy0
--- 		for iy=0,w do
--- 			if band(bor(srcx,srcy),mask)==0 then
--- 				local c=sget(sx+srcx,sy+srcy)
--- 				if (c!=trans) pset(x+ix,y+iy, single_col or c)
--- 			end
--- 			srcx-=ddy0
--- 			srcy+=ddx0
--- 		end
--- 		dx0+=ddx0
--- 		dy0+=ddy0
--- 	end
--- end
+function spr_pal(obj)
+ pal()
+ palt(0,false)
+ if (obj.trans_col) palt(obj.trans_col,true)     
+ -- faction? (if not IX)
+ if (obj.faction and obj.id!=18) pal(12,obj.col1) pal(14,obj.col2)
+ -- colour anim?
+ if obj.col_cycle then
+  pal(obj.col_cycle_src, obj.col_cycle[obj.col_cycle_pos])
+ end
+end
 
---154 tokens
-function rsprt(x,y,sw_rot,mx,my,w,h)
+-- tline sprite rotation
+-- by TheRoboZ
+-- https://www.lexaloffle.com/bbs/?tid=38548
+function rsprt(x,y,sw_rot,mx,my,w,h)    
     local dx, dy, r, cs, ss = 0, 0, max(w,h)/2, cos(sw_rot), -sin(sw_rot)
     if w>h then dy = (w-h)/2 else dx = (h-w)/2 end
     local ssx, ssy, cx, cy = mx - 0.4 -dx, my - 0.4 -dy, mx+r-dx, my+r-dy
@@ -2176,10 +2176,13 @@ function rsprt(x,y,sw_rot,mx,my,w,h)
     --rect(x-delta_px,y-delta_px,x+delta_px,y+delta_px,5)
 
     for py = y-delta_px, y+delta_px-1 do
-        local sx, sy = cs * ssx + cx + ss * ssy, 
-                      -ss * ssx + cy + cs * ssy
+        -- local sx, sy = cs * ssx + cx + ss * ssy, 
+        --               -ss * ssx + cy + cs * ssy
 
-        tline(x-delta_px, py, x+delta_px-1, py, sx, sy, cs/8, -ss/8)
+        tline(x-delta_px, py, x+delta_px-1, py, 
+         cs * ssx + cx + ss * ssy,  --sx
+         -ss * ssx + cy + cs * ssy, --sy 
+         cs/8, -ss/8)
         ssy+=1/8
     end
 end
