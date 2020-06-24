@@ -32,7 +32,7 @@ levelend_mode=3
 
 -- mission data (harkonnen)
 mission_data={
--- # |	Credits |	Target Cred |	Enemy |	AI Level
+-- # |	Credits |	Target Cred |	Enemy Fact |	AI Level
  { 1,	999,	 1000,	nil, nil },	-- No enemy, just reach 1000 credits
  { 2,	1200,	2700,	1,   1 },	  -- 2700 credits of spice, OR eliminate Atreides presence
  { 3,	1500,	0,    2,   2	}, -- Eliminate enemy
@@ -181,8 +181,9 @@ function load_level(num)
 
  local mdata = mission_data[num]
 
- -- set player to harkonnen
- p_fact = 3
+ -- set player to faction
+ p_fact = 1 -- (1=atreides, 2=ordos, 3-harkonen)
+ 
  dset(0, num)
  dset(1, p_fact) -- p_faction
  dset(2, faction_cols[p_fact][1]) -- p_col1
