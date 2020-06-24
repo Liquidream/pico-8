@@ -123,44 +123,46 @@ end
 
 
 -- object data
-obj_data=[[id|name|obj_spr|ico_spr|mx|my|type|w|h|z|trans_col|parent_id|parent2_id|owner|col1|col2|req_id|req_level|req_faction|cost|power|arms|hitpoint|speed|range|fire_type|norotate|altframe|framecount|description|func_init|func_draw|func_update|func_onclick
-1|cONSTRUCTION yARD|64|170|||2|2|2|1|nil|nil|||||nil|1||100|0|0|1600|||||||aLL STRUCTURES ARE~BUILT BY THE~CONSTRUCTION YARD.||||factory_click
-2|lARGE cONCRETE sLAB|16|162|||2|2|2|1|nil|1|||||1|4||20|0|0|0|||||||uSE CONCRETE TO MAKE A~STURDY FOUNDATION FOR~YOUR STRUCTURES.||||
-3|sMALL cONCRETE sLAB|16|160|||2|1|1|1|nil|1|||||1|1||5|0|0|0|||||||uSE CONCRETE TO MAKE A~STURDY FOUNDATION FOR~YOUR STRUCTURES.||||
-4|dEFENSIVE wALL|133|164|||2|1|1|1|nil|1|||||7|4||50|0|0|200|||||||tHE wALL IS USED FOR~PASSIVE DEFENSE.||||
-5|wINDTRAP|66|172|||2|2|2|1|nil|1|||||1|1||300|-100|0|800||||||10|tHE WINDTRAP SUPPLIES~POWER TO YOUR BASE.~wITHOUT POWER YOUR~STRUCTURES WILL DECAY.|init_windtrap|||
-6|sPICE rEFINERY|68|174|||2|3|2|1|nil|1|||||1|1||400|30|0|1800||||||10|tHE rEFINERY CONVERTS~SPICE INTO CREDITS.|init_refinery|draw_refinery||
-7|rADAR oUTPOST|106|136|||2|2|2|1|nil|1|||||1|2||400|30|0|2000|||||||tHE oUTPOST PROVIDES~RADAR AND AIDS CONTROL~OF DISTANT VEHICLES.||||
-8|sPICE sTORAGE sILO|104|134|||2|2|2|1|nil|1|||||6|2||150|5|0|600|||||||tHE sPICE SILO IS USED ~TO STORE REFINED SPICE.||||
-9|bARRACKS|108|168|||2|2|2|1|nil|1|||||7|2||300|10|0|1200|||||||tHE bARRACKS IS USED TO~TRAIN YOUR lIGHT ~INFANTRY.||||factory_click
-10|wor tROOPER fACILITY|110|138|||2|2|2|1|nil|1|||||7|2||400|10|0|1600|||||||wor IS USED TO TRAIN~YOUR hEAVY INFANTRY.||||factory_click
-11|lIGHT vEHICLE fACTORY|96|140|||2|2|2|1|nil|1|||||6|2||400|20|0|1400|||||||tHE lIGHT fACTORY~PRODUCES LIGHT ATTACK~VEHICLES.||||factory_click
-12|hEAVY vEHICLE fACTORY|98|142|||2|3|2|1|nil|1|||||6|3||600|20|0|800|||||||tHE hEAVY fACTORY~PRODUCES HEAVY ATTACK~VEHICLES.||||factory_click
-13|hI-tECH fACTORY|101|166|||2|3|2|1|nil|1|||||12|5||500|35|0|1600|||||||tHE hI-tECH fACTORY~PRODUCES FLYING~VEHICLES.||||factory_click
-14|rEPAIR fACILITY|128|230|||2|3|2|1|nil|1|||||12|5|99|700|20|0|800||||||4|tHE rEPAIR fACILITY~IS USED TO REPAIR YOUR~VEHICLES.|init_repairfact|||
-15|cANNON tURRET|71|232|16|0|1|1|1|1|11|1|||||7|5||125|10|38|1200|0|4|1||||tHE cANNON tURRET IS~USED FOR SHORT RANGE~ACTIVE DEFENSE.||||
-16|rOCKET tURRET|87|234|18|0|1|1|1|1|11|1|||||7|6||250|20|112|1200|0|9|2||||tHE rOCKET TURRET IS~USED FOR MEDIUM RANGE~ACTIVE DEFENSE.||||
-17|sTARPORT|61|228|||2|3|3|1|nil|1|||||6|6||500|50|0|2000|||||||tHE sTARPORT IS USED TO~ORDER AND RECEIVED~SHIPMENTS FROM~c.h.o.a.m.|init_refinery|draw_refinery||factory_click
-18|hOUSE OF ix|131|224|||2|2|2|1|nil|1|||||12|5||500|40|0|1600|||||||tHE ix rESEARCH~fACILITY ADVANCES YOUR~hOUSE'S TECHNOLOGY.||||
-19|pALACE|58|226|||2|3|3|1|nil|1|||||17|8||999|80|0|4000|||||||tHIS IS YOUR pALACE.||||
-20|lIGHT iNFANTRY (X3)|55|236|||1|1|1|1|11|9|||||9|2|-3|60||4|200|0.05|2|1|1|56|10|iNFANTRY ARE LIGHTLY~ARMOURED FOOTSOLDIERS,~WITH LIMITED FIRING~RANGE AND SPEED.||||
-21|hEAVY tROOPERS (X3)|55|194|||1|1|1|1|11|10|||||9|3|-1|100||8|440|0.1|3|1|1|56|10|tROOPERS ARE HEAVILY~ARMOURED FOOTSOLDIERS,~WITH IMPROVED FIRING~RANGE AND SPEED.||||
-25|tRIKE|54|204|12|0|1|1|1|1|11|11|17|||||2||150||8|400|0.6|3|1||||tHE tRIKE IS A LIGHTLY-~ARMOURED, 3-WHEELED~VEHICLE, WITH LIMITED~FIRING RANGE, BUT RAPID~SPEED.||||
-26|qUAD|48|206|0|0|1|1|1|1|11|11|17|||||3||200||10|520|0.5|3|1||||tHE qUAD IS A LIGHTLY-~ARMOURED, 4-WHEELED~VEHICLE. sLOWER THAN~THE tRIKE, BUT STRONGER~ARMOUR AND FIREPOWER.||||
-27|cOMBAT tANK|51|196|6|0|1|1|1|1|11|12|17||||7|4||300||38|800|0.25|4|1||||tHE cOMBAT tANK IS A~MEDIUM ARMOURED TANK,~FIRES HIGH-EXPLOSIVE~ROUNDS.||||
-28|sIEGE tANK|50|198|4|0|1|1|1|1|11|12|17||||7|6||600||45|1200|0.2|5|1||||tHE mISSILE tANK IS A~MEDIUM ARMOURED TANK,~WHICH FIRES MISSILES.~lONG-RANGE, BUT~INACCURATE.||||
-29|rOCKET lAUNCHER|53|202|10|0|1|1|1|1|11|12|17||||7|5||450||112|400|0.3|9|2||||tHE sIEGE tANK IS A~HEAVY ARMOURED TANK,~WHICH HAS DUAL CANNONS,~BUT IS SLOW.||||
-30|hARVESTER|49|192|2|0|1|1|1|1|11|12|17|||||2||300||0|600|0.1|0|||||tHE hARVESTER SEPARATES~SPICE FROM THE SAND &~RETURNS RAW SPICE TO THE~rEFINERY FOR PROCESSING.||||
-31|cARRYALL|73|238|20|0|1|1|1|8|11|13|||||13|5||800||0|400|2|0|||||tHE cARRYALL IS A LIGHTLY~ARMOURED AIRCRAFT WITH~NO WEAPONS. mAINLY USED~TO LIFT+TRANSPORT~hARVESTERS.||||
-22|fREMEN|55|236|||1|1|1|1|11|||0|9|4||8|1|0||8|880|0.1|3|1|1|56|10|tHE fREMEN ARE NATIVE~TO dUNE. eLITE FIGHTERS~IN ALLIANCE WITH THE~aTREIDES.||||
-35|dEVASTATOR|52|200|8|0|1|1|1|1|11|12|||||13|8|3|800||60|1600|0.1|7|1||||tHE dEVESTATOR IS A~NUCLEAR-POWERED TANK,~WHICH FIRES DUAL PLASMA~CHARGES. mOST POWERFUL~TANK ON dUNE, BUT~POTENTIALLY UNSTABLE~IN COMBAT.||||
-36|dEATH hAND|72||22|0|1|1|1|8|11|||0|||13|8|3|0||150|280|0.5|0|20||||tHE dEATH hAND IS A~SPECIAL hARKONNEN~pALACE WEAPON. aN~INACCURATE, BUT VERY~DESTRUCTIVE BALLISTIC~MISSILE.||||
-37|rAIDER|54|204|||1|1|1|1|11|11||||||2|2|150||8|320|0.75|3|1||||tHE oRDOS rAIDER IS~SIMILAR TO THE STANDARD~tRIKE, BUT WITH LESS~ARMOUR IN FAVOUR OF~SPEED.||||
-23|sABOTEUR|55|236|||1|0.5|0.5|1|11|||0|1|0||8|2|0||150|160|0.4|0|1|1|56|10|tHE sABOTEUR IS A~SPECIAL MILITARY UNIT,~TRAINED AT AN oRDOS~pALACE. cAN DESTROY~ALMOST ANY STRUCTURE OR~VEHICLE.||||
-24|sARDAUKAR|55|236|||1|1|1|1|11|||0|14|2||4||0||5|440|0.1|1|||||tHE sARDUKAR ARE THE~eMPEROR'S ELITE TROOPS.~WITH SUPERIOR FIREPOWER~AND ARMOUR.||||
-39|sANDWORM|88||||9|1|1|1|11|nil|||||nil|3||0||300|4000|0.35|0|30||||tHE sAND wORMS ARE~INDIGEONOUS TO dUNE.~aTTRACTED BY VIBRATIONS~ALMOST IMPOSSIBLE TO~DESTROY, WILL CONSUME~ANYTHING THAT MOVES.||||
-80|rEPAIR|19||||5|1|1|1|11|nil|||||nil|||||||||||||||draw_action||action_click
-81|pICK TARGET|1||||5|1|1|1|11|nil|||||nil|||||||||||||||draw_action||action_click]]
+obj_data=[[id|name|obj_spr|ico_spr|map_spr|type|w|h|z|trans_col|parent_id|parent2_id|owner|col1|col2|req_id|req_level|req_faction|cost|power|arms|hitpoint|speed|range|fire_type|norotate|altframe|framecount|description|func_init|func_draw|func_update|func_onclick
+1|cONSTRUCTION yARD|64|170||2|2|2|1|nil|nil|||||nil|1||100|0|0|1600|||||||aLL STRUCTURES ARE~BUILT BY THE~CONSTRUCTION YARD.||||factory_click
+2|lARGE cONCRETE sLAB|16|162||2|2|2|1|nil|1|||||1|4||20|0|0|0|||||||uSE CONCRETE TO MAKE A~STURDY FOUNDATION FOR~YOUR STRUCTURES.||||
+3|sMALL cONCRETE sLAB|16|160||2|1|1|1|nil|1|||||1|1||5|0|0|0|||||||uSE CONCRETE TO MAKE A~STURDY FOUNDATION FOR~YOUR STRUCTURES.||||
+4|dEFENSIVE wALL|133|164||2|1|1|1|nil|1|||||7|4||50|0|0|200|||||||tHE wALL IS USED FOR~PASSIVE DEFENSE.||||
+5|wINDTRAP|66|172||2|2|2|1|nil|1|||||1|1||300|-100|0|800||||||10|tHE WINDTRAP SUPPLIES~POWER TO YOUR BASE.~wITHOUT POWER YOUR~STRUCTURES WILL DECAY.|init_windtrap|||
+6|sPICE rEFINERY|68|174||2|3|2|1|nil|1|||||1|1||400|30|0|1800||||||10|tHE rEFINERY CONVERTS~SPICE INTO CREDITS.|init_refinery|draw_refinery||
+7|rADAR oUTPOST|106|136||2|2|2|1|nil|1|||||1|2||400|30|0|2000|||||||tHE oUTPOST PROVIDES~RADAR AND AIDS CONTROL~OF DISTANT VEHICLES.||||
+8|sPICE sTORAGE sILO|104|134||2|2|2|1|nil|1|||||6|2||150|5|0|600|||||||tHE sPICE SILO IS USED ~TO STORE REFINED SPICE.||||
+9|bARRACKS|108|168||2|2|2|1|nil|1|||||7|2||300|10|0|1200|||||||tHE bARRACKS IS USED TO~TRAIN YOUR lIGHT ~INFANTRY.||||factory_click
+10|wor tROOPER fACILITY|110|138||2|2|2|1|nil|1|||||7|2||400|10|0|1600|||||||wor IS USED TO TRAIN~YOUR hEAVY INFANTRY.||||factory_click
+11|lIGHT vEHICLE fACTORY|96|140||2|2|2|1|nil|1|||||6|2||400|20|0|1400|||||||tHE lIGHT fACTORY~PRODUCES LIGHT ATTACK~VEHICLES.||||factory_click
+12|hEAVY vEHICLE fACTORY|98|142||2|3|2|1|nil|1|||||6|3||600|20|0|800|||||||tHE hEAVY fACTORY~PRODUCES HEAVY ATTACK~VEHICLES.||||factory_click
+13|hI-tECH fACTORY|101|166||2|3|2|1|nil|1|||||12|5||500|35|0|1600|||||||tHE hI-tECH fACTORY~PRODUCES FLYING~VEHICLES.||||factory_click
+14|rEPAIR fACILITY|128|230||2|3|2|1|nil|1|||||12|5|99|700|20|0|800||||||4|tHE rEPAIR fACILITY~IS USED TO REPAIR YOUR~VEHICLES.|init_repairfact|||
+15|cANNON tURRET|71|232||1|1|1|1|11|1|||||7|5||125|10|38|1200|0|4|1||||tHE cANNON tURRET IS~USED FOR SHORT RANGE~ACTIVE DEFENSE.||||
+16|rOCKET tURRET|87|234||1|1|1|1|11|1|||||7|6||250|20|112|1200|0|9|2||||tHE rOCKET TURRET IS~USED FOR MEDIUM RANGE~ACTIVE DEFENSE.||||
+17|sTARPORT|61|228||2|3|3|1|nil|1|||||6|6||500|50|0|2000|||||||tHE sTARPORT IS USED TO~ORDER AND RECEIVED~SHIPMENTS FROM~c.h.o.a.m.|init_refinery|draw_refinery||factory_click
+18|hOUSE OF ix|131|224||2|2|2|1|nil|1|||||12|5||500|40|0|1600|||||||tHE ix rESEARCH~fACILITY ADVANCES YOUR~hOUSE'S TECHNOLOGY.||||
+19|pALACE|58|226||2|3|3|1|nil|1|||||17|8||999|80|0|4000|||||||tHIS IS YOUR pALACE.||||
+20|lIGHT iNFANTRY (X3)|55|236||1|1|1|1|11|9|||||9|2|-3|60||4|200|0.05|2|1|1|56|10|iNFANTRY ARE LIGHTLY~ARMOURED FOOTSOLDIERS,~WITH LIMITED FIRING~RANGE AND SPEED.||||
+21|hEAVY tROOPERS (X3)|55|194||1|1|1|1|11|10|||||9|3|-1|100||8|440|0.1|3|1|1|56|10|tROOPERS ARE HEAVILY~ARMOURED FOOTSOLDIERS,~WITH IMPROVED FIRING~RANGE AND SPEED.||||
+25|tRIKE|54|204||1|1|1|1|11|11|17|||||2||150||8|400|0.6|3|1||||tHE tRIKE IS A LIGHTLY-~ARMOURED, 3-WHEELED~VEHICLE, WITH LIMITED~FIRING RANGE, BUT RAPID~SPEED.||||
+26|qUAD|48|206||1|1|1|1|11|11|17|||||3||200||10|520|0.5|3|1||||tHE qUAD IS A LIGHTLY-~ARMOURED, 4-WHEELED~VEHICLE. sLOWER THAN~THE tRIKE, BUT STRONGER~ARMOUR AND FIREPOWER.||||
+27|cOMBAT tANK|51|196||1|1|1|1|11|12|17||||7|4||300||38|800|0.25|4|1||||tHE cOMBAT tANK IS A~MEDIUM ARMOURED TANK,~FIRES HIGH-EXPLOSIVE~ROUNDS.||||
+28|sIEGE tANK|50|198||1|1|1|1|11|12|17||||7|6||600||45|1200|0.2|5|1||||tHE mISSILE tANK IS A~MEDIUM ARMOURED TANK,~WHICH FIRES MISSILES.~lONG-RANGE, BUT~INACCURATE.||||
+29|rOCKET lAUNCHER|53|202||1|1|1|1|11|12|17||||7|5||450||112|400|0.3|9|2||||tHE sIEGE tANK IS A~HEAVY ARMOURED TANK,~WHICH HAS DUAL CANNONS,~BUT IS SLOW.||||
+30|hARVESTER|49|192||1|1|1|1|11|12|17|||||2||300||0|600|0.1|0|||||tHE hARVESTER SEPARATES~SPICE FROM THE SAND &~RETURNS RAW SPICE TO THE~rEFINERY FOR PROCESSING.||||
+31|cARRYALL|73|238||1|1|1|8|11|13|||||13|5||800||0|400|2|0|||||tHE cARRYALL IS A LIGHTLY~ARMOURED AIRCRAFT WITH~NO WEAPONS. mAINLY USED~TO LIFT+TRANSPORT~hARVESTERS.||||
+22|fREMEN|55|236||1|1|1|1|11|||0|9|4||8|1|0||8|880|0.1|3|1|1|56|10|tHE fREMEN ARE NATIVE~TO dUNE. eLITE FIGHTERS~IN ALLIANCE WITH THE~aTREIDES.||||
+35|dEVASTATOR|52|200||1|1|1|1|11|12|||||13|8|3|800||60|1600|0.1|7|1||||tHE dEVESTATOR IS A~NUCLEAR-POWERED TANK,~WHICH FIRES DUAL PLASMA~CHARGES. mOST POWERFUL~TANK ON dUNE, BUT~POTENTIALLY UNSTABLE~IN COMBAT.||||
+36|dEATH hAND|72|||1|1|1|8|11|||0|||13|8|3|0||150|280|0.5|0|20||||tHE dEATH hAND IS A~SPECIAL hARKONNEN~pALACE WEAPON. aN~INACCURATE, BUT VERY~DESTRUCTIVE BALLISTIC~MISSILE.||||
+37|rAIDER|54|204||1|1|1|1|11|11||||||2|2|150||8|320|0.75|3|1||||tHE oRDOS rAIDER IS~SIMILAR TO THE STANDARD~tRIKE, BUT WITH LESS~ARMOUR IN FAVOUR OF~SPEED.||||
+23|sABOTEUR|55|236||1|0.5|0.5|1|11|||0|1|0||8|2|0||150|160|0.4|0|1|1|56|10|tHE sABOTEUR IS A~SPECIAL MILITARY UNIT,~TRAINED AT AN oRDOS~pALACE. cAN DESTROY~ALMOST ANY STRUCTURE OR~VEHICLE.||||
+24|sARDAUKAR|55|236||1|1|1|1|11|||0|14|2||4||0||5|440|0.1|1|||||tHE sARDUKAR ARE THE~eMPEROR'S ELITE TROOPS.~WITH SUPERIOR FIREPOWER~AND ARMOUR.||||
+39|sANDWORM|88|||9|1|1|1|11|nil|||||nil|3||0||300|4000|0.35|0|30||||tHE sAND wORMS ARE~INDIGEONOUS TO dUNE.~aTTRACTED BY VIBRATIONS~ALMOST IMPOSSIBLE TO~DESTROY, WILL CONSUME~ANYTHING THAT MOVES.||||
+80|rEPAIR|19|||5|1|1|1|11|nil|||||nil|||||||||||||||draw_action||action_click
+81|pICK TARGET|1|||5|1|1|1|11|nil|||||nil|||||||||||||||draw_action||action_click]]
+
+
 
 
 
@@ -223,7 +225,7 @@ function discover_objs()
   -- (first find the player start pos/const yard)
   -- (second finds everything else)
   for i=1,2 do
-   for my=1,31 do  -- skip the first row (rspr data)
+   for my=0,31 do
      for mx=0,127 do
        local objref=nil
        local spr_val=mget(mx,my)
@@ -452,42 +454,23 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
       return
      end
 
-
-     spr_pal(self)
-     -- pal()
-     -- palt(0,false)
-     -- if (self.trans_col) palt(self.trans_col,true)     
-     -- -- faction? (if not IX)
-     -- if (self.faction and self.id!=18) pal(12,self.col1) pal(14,self.col2)
-     -- -- colour anim?
-     -- if self.col_cycle then
-     --  pal(self.col_cycle_src, self.col_cycle[self.col_cycle_pos])
-     -- end
-
+     pal()
+     palt(0,false)
+     if (self.trans_col) palt(self.trans_col,true)     
+     -- faction? (if not IX)
+     if (self.faction and self.id!=18) pal(12,self.col1) pal(14,self.col2)
+     -- colour anim?
+     if self.col_cycle then
+      pal(self.col_cycle_src, self.col_cycle[self.col_cycle_pos])
+     end
      -- rotating obj?
      if self.r then
       if not self.death_time or self.death_time>.025  then
-       -- shadow
-       if (self.speed>0) then
-        pal({5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5})
-        rsprt(self.x+4, self.y+5, .25-self.r, self.mx, self.my, self.spr_w, self.spr_h)
-       end
-       --if (self.speed>0) rspr(self.obj_spr%16*8,flr(self.obj_spr/16)*8, self.x, self.y, .25-self.r, 1, self.trans_col, 5)
-       --rsprt(self.x, self.y, .25-self.r, 0,1, 1,1)
-       -- pal()
-       -- palt(0,false)
-       spr_pal(self)
-       --palt(11,true)
-       -- faction? (if not IX)
-       --if (self.faction and self.id!=18) pal(12,self.col1) pal(14,self.col2)
-       rsprt(self.x+4, self.y-self.z+5, .25-self.r, self.mx, self.my, self.spr_w, self.spr_h)
-       
-       -- if (self.speed>0) rspr(self.obj_spr%16*8,flr(self.obj_spr/16)*8, self.x, self.y, .25-self.r, 1, self.trans_col, 5)
-       -- rspr(self.obj_spr%16*8,flr(self.obj_spr/16)*8, self.x, self.y-self.z, .25-self.r, 1, self.trans_col, flr(self.flash_count)%2==0 and 7 or nil)
-       --rect(self.x,self.y,self.x+7,self.y+7,8)
+       if (self.speed>0) rspr(self.obj_spr%16*8,flr(self.obj_spr/16)*8, self.x, self.y, .25-self.r, 1, self.trans_col, 5)
+       rspr(self.obj_spr%16*8,flr(self.obj_spr/16)*8, self.x, self.y-self.z, .25-self.r, 1, self.trans_col, flr(self.flash_count)%2==0 and 7 or nil)
       end
      -- norm sprite
-     else
+     else      
        -- icon mode
        if self.type>2 and self.type<5 then        
          rectfill(self.x-1,self.y-1,self.x+16,self.y+19,0)
@@ -834,12 +817,15 @@ function update_radar_data()
  -- landscape/fow
  if hq then  
   for i=0,124,4 do
-     for l=4,124,4 do
+     for l=0,124,4 do
      -- look at tile spr and if not fow, get col?
      local mx=i/2
      local my=l/2
      if(my>=32)mx+=64 my-=32
      local mspr=mget(mx,my)
+     -- local sx=(mspr*8)%128
+     -- local sy=(mspr*8)/16
+     --local col=sget(sx+4,sy)
      local col=sget((mspr*8)%128+4, (mspr*8)/16)
      if(fow[i/2][l/2]==16) radar_data[(i/2/2)..","..(l/2/2)] = col!=11 and col or 15
      end
@@ -1513,7 +1499,7 @@ function draw_level()
  -- don't trans black
  palt(0,false) 
   
- map(0,1, 0,8, 64,32)
+ map(0,0, 0,0, 64,32)
  map(64,0, 0,256, 64,32)
 
  -- debug pathfinding
@@ -1717,9 +1703,7 @@ function draw_ui()
     for i=1,#selected_obj.build_objs do
      local curr_item=selected_obj.build_objs[i]
      if curr_item.req_id==nil 
-      or built[curr_item.req_id] 
-      -- todo: filter out palace + starport if build (built[newobj.id])
-      then
+      or built[curr_item.req_id] then
       selected_obj.valid_build_objs[icount]=curr_item
       if icount>=menu_pos and icount<=menu_pos+2 then
         curr_item:setpos(9,28+(icount-menu_pos)*19)
@@ -2090,8 +2074,8 @@ function explode_data()
   for j=1,#str_arrays[i] do
    local val=str_arrays[i][j]
    -- convert all but the text columns to numbers
-   if (j!=2 and j<30)val=tonum(val)
-   if j==30 then
+   if (j!=2 and j<29)val=tonum(val)
+   if j==29 then
     --restore new lines
     str_breaks=split(val,"~")
     val=""
@@ -2147,46 +2131,34 @@ end
  return a
  end
 
+-- rotate sprite (modified to allow for trans cols)
+-- by freds72
+-- https://www.lexaloffle.com/bbs/?pid=52525#p52541
 
-function spr_pal(obj)
- pal()
- palt(0,false)
- if (obj.trans_col) palt(obj.trans_col,true)     
- -- faction? (if not IX)
- if (obj.faction and obj.id!=18) pal(12,obj.col1) pal(14,obj.col2)
- -- colour anim?
- if obj.col_cycle then
-  pal(obj.col_cycle_src, obj.col_cycle[obj.col_cycle_pos])
- end
+function rspr(sx,sy,x,y,a,w,trans,single_col)
+	local ca,sa=cos(a),sin(a)
+	local srcx,srcy,addr,pixel_pair
+	local ddx0,ddy0=ca,sa
+	local mask=shl(0xfff8,(w-1))
+	w*=4
+	ca*=w-0.5
+	sa*=w-0.5
+	local dx0,dy0=sa-ca+w,-ca-sa+w
+	w=2*w-1
+	for ix=0,w do
+		srcx,srcy=dx0,dy0
+		for iy=0,w do
+			if band(bor(srcx,srcy),mask)==0 then
+				local c=sget(sx+srcx,sy+srcy)
+				if (c!=trans) pset(x+ix,y+iy, single_col or c)
+			end
+			srcx-=ddy0
+			srcy+=ddx0
+		end
+		dx0+=ddx0
+		dy0+=ddy0
+	end
 end
-
--- tline sprite rotation
--- by TheRoboZ
--- https://www.lexaloffle.com/bbs/?tid=38548
-function rsprt(x,y,sw_rot,mx,my,w,h)    
-    local dx, dy, r, cs, ss = 0, 0, max(w,h)/2, cos(sw_rot), -sin(sw_rot)
-    if w>h then dy = (w-h)/2 else dx = (h-w)/2 end
-    local ssx, ssy, cx, cy = mx - 0.4 -dx, my - 0.4 -dy, mx+r-dx, my+r-dy
-
-    ssy -=cy
-    ssx -=cx
-
-    local delta_px = max(-ssx,-ssy)*8
-
-    --rect(x-delta_px,y-delta_px,x+delta_px,y+delta_px,5)
-
-    for py = y-delta_px, y+delta_px-1 do
-        -- local sx, sy = cs * ssx + cx + ss * ssy, 
-        --               -ss * ssx + cy + cs * ssy
-
-        tline(x-delta_px, py, x+delta_px-1, py, 
-         cs * ssx + cx + ss * ssy,  --sx
-         -ss * ssx + cy + cs * ssy, --sy 
-         cs/8, -ss/8)
-        ssy+=1/8
-    end
-end
-
 
 -- fixed sqrt to avoid overflow
 -- https://www.lexaloffle.com/bbs/?tid=29528
@@ -2405,7 +2377,7 @@ __gff__
 0400040404040404040000000000000200000600060604010101010101010101010101010000000000000101010000000000000000000000000001010101010101010101010102010000010101020201010101010101020101010101010202010101010101010101010101010101010101010101010101010101010101010101
 0101010101010000000001010000000001010101010100000000010100000000000000000000000001010000000000000000000000000000010100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 __map__
-3000310032003300340035003600000047005700490048000000000000000000000000000000000000000000000012121212120000000000000000000000151516161600000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000161616
+0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000012121212120000000000000000000000151516161600000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000161616
 0000000000000000000000000000000000000000000000000000000000000000000000000000000000121200000000121200000000000000000000000000001516030303030303030303030303030303030303030300000000000000000000000000000000000000000000000000000000000000000000000000000000000016
 1515000000000000001616160000003300001200000008030300000000000000000000000000000000001212121212120000000000000000000003030300000016000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000016
 151212360000001616161637420a000012120000000203030303000000000000000000000000000000000000000012000000000000000000000303030303030000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
