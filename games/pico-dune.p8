@@ -531,7 +531,7 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
          build_dest[self.hitby.created_by]+=1
         else
          -- unit
-         local gx,gy = flr(self.x/8), flr(self.y/8)
+         local gx,gy = self:getTilePos() --flr(self.x/8), flr(self.y/8)
          if (gy>31) gx+=64 gy-=32
          if (wrap_mget(gx,gy)<9) wrap_mset(gx,gy,20) --scortch sand
          if (self.speed==0) wrap_mset(gx,gy,15)
@@ -651,7 +651,12 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
     self.x,self.y=x,y
    end,
    getTilePosIndex=function(self)
-    return flr(self.x/8)..","..flr(self.y/8)
+    local x,y = self:getTilePos()
+    return x..","..y
+    --return flr(self.x/8)..","..flr(self.y/8)
+   end,
+   getTilePos=function(self)
+    return flr(self.x/8),flr(self.y/8)
    end
   }
 
@@ -808,13 +813,9 @@ function update_radar_data()
   for i=0,124,4 do
      for l=0,124,4 do
      -- look at tile spr and if not fow, get col?
-     local mx=i/2
-     local my=l/2
+     local mx,my = i/2,l/2
      if(my>=32)mx+=64 my-=32
      local mspr=mget(mx,my)
-     -- local sx=(mspr*8)%128
-     -- local sy=(mspr*8)/16
-     --local col=sget(sx+4,sy)
      local col=sget((mspr*8)%128+4, (mspr*8)/16)
      if(fow[i/2][l/2]==16) radar_data[(i/2/2)..","..(l/2/2)] = col!=11 and col or 15
      end
@@ -825,9 +826,7 @@ function update_radar_data()
  power_bal,total_storage,has_radar,has_build,building_count = 0,0,false,{},{0,0}
 
  for _,building in pairs(buildings) do  
-  --printh("build "..building.id.." = "..building.name.." | owner="..building.owner)
-   local posx=flr(building.x/8)
-   local posy=flr(building.y/8)
+   local posx,posy = building:getTilePos()--flr(building.x/8),flr(building.y/8)
    -- if our building, or ai not under fog of war
    if building.owner==1 or (hq and fow[posx][posy]==16) then
     radar_data[flr(building.x/2/8)..","..flr(building.y/2/8)] = building.col1
@@ -858,11 +857,9 @@ function update_radar_data()
   end
  
   -- has radar-outpost and enough power (for HQ radar)?
-  hq=(has_radar and power_bal>0) 
-
+  hq,music_state = (has_radar and power_bal>0),2  
   -- reset music back (will set again if more attackers)
   set_loop(false)  --5
-  music_state=2
 
  -- ----------------------
  -- check end states
@@ -905,9 +902,7 @@ end
 function update_level()
   -- mouse control
   mouse_x,mouse_y,mouse_btn=stat"32",stat"33",stat"34"
-  left_button_clicked = (mouse_btn==1 and last_mouse_btn != mouse_btn) or btnp"4"
-  left_button_down = (mouse_btn>0) or btn"4"
-  right_button_clicked = (mouse_btn==2 and last_mouse_btn != mouse_btn) or btnp"5"
+  left_button_clicked,left_button_down,right_button_clicked = (mouse_btn==1 and last_mouse_btn != mouse_btn) or btnp"4", (mouse_btn>0) or btn"4", (mouse_btn==2 and last_mouse_btn != mouse_btn) or btnp"5"
   
   -- keyboard input
   for k=0,1 do
@@ -916,12 +911,9 @@ function update_level()
    if (btnp(4,1)) stop("paused") --TODO:remove on release 
   end
 
- -- update cursor pos
- cursx = mid(0,mouse_x+keyx,127) -- mouse xpos
- cursy = mid(0,mouse_y+keyy,127) -- mouse ypos
-  
- cursor.x = cursx
- cursor.y = cursy
+ -- update cursor/mouse pos
+ cursx,cursy = mid(0,mouse_x+keyx,127),mid(0,mouse_y+keyy,127)
+ cursor.x,cursor.y = cursx,cursy
 
  --
  -- game mode
@@ -934,9 +926,8 @@ function update_level()
   if (cursy>123) camy+=2
 
   -- lock cam to map
-  camx = mid(camx,384)
-  camy = mid(-8,camy,384)
-
+  camx,camy = mid(camx,384),mid(-8,camy,384)
+   
   -- update all unit coroutines 
   -- (pathfinding, moving, attacking, etc.)
   for _,unit in pairs(units) do
@@ -949,7 +940,8 @@ function update_level()
 
       -- check sandworm collision        
       if worm_segs -- worm present
-       and fget(wrap_mget(flr(unit.x/8),flr(unit.y/8)),2)  --unit on sand
+       and fget(wrap_mget(unit:getTilePos()),2)  --unit on sand
+       --and fget(wrap_mget(flr(unit.x/8),flr(unit.y/8)),2)  --unit on sand
        and dist(head_worm_x,head_worm_y,unit.x,unit.y) < 1
        and unit.z==1
        then
@@ -960,7 +952,6 @@ function update_level()
   end
    
   --update_particles()
-  --function update_particles()
   for k,p in pairs(particles) do
     -- acceleration
    p.dy += p.ddy
@@ -970,9 +961,8 @@ function update_level()
    p.r += p.dr
    p.life += 1
    -- check for dead
-   if(p.life>=p.life_orig)del(particles,p)
+   if (p.life>=p.life_orig) del(particles,p)
   end
---end
     
  end
  
@@ -989,7 +979,6 @@ end
 function do_guard(unit, start_state)
  -- 0=idle/guarding, 1=pathfinding, 2=moving, 3=attacking, 4=firing, 5=exploding, 
  --(6=harvesting, 7=returning, 9=ready-to-unload/repair, 8=offloading/repairing)
- --if (start_state) printh(">>> start_state="..start_state)
  unit.state = start_state or 0
  unit.cor = cocreate(function(self)
   while true do
@@ -1006,7 +995,7 @@ function do_guard(unit, start_state)
      if self.capacity<=1500 
       and self.state!=7 and self.state!=9 then 
       local sx,sy
-      local tx,ty=flr(self.x/8),flr(self.y/8)
+      local tx,ty=self:getTilePos() --flr(self.x/8),flr(self.y/8)
       if is_spice_tile(tx,ty) and not self.newspot then
         sx,sy=tx,ty
       else
@@ -1026,7 +1015,8 @@ function do_guard(unit, start_state)
         move_unit_pos(unit,sx,sy)
         -- landed on spice tile?
         -- switch to harvesting
-        if (is_spice_tile(flr(unit.x/8),flr(unit.y/8))) unit.state=6
+        if (is_spice_tile(unit:getTilePos())) unit.state=6
+        --if (is_spice_tile(flr(unit.x/8),flr(unit.y/8))) unit.state=6
       end
 
      end -- check factory busy
@@ -1035,8 +1025,7 @@ function do_guard(unit, start_state)
     elseif self.capacity >= 1500 
      and self.state!=7 then
       -- return to refinery when full      
-      self.state=7      
-      last_fact.incoming=true
+      self.state,last_fact.incoming = 7,true
       move_unit_pos(self, (last_fact.x+16)/8, last_fact.y/8)
       self.state=9
 
@@ -1044,19 +1033,16 @@ function do_guard(unit, start_state)
     elseif self.state==6 then
      self.newspot=false
      -- spice clouds
-     local r=unit.r+.75
      add_spice_cloud(unit.x, unit.y, unit.r+.75+rnd".2"-.1)
 
      -- update spice tile state
      local unit_pos = unit:getTilePosIndex()
-     spice_tiles[unit_pos] = (spice_tiles[unit_pos] or 1000)-1
      --harvester should take about 110 secs to fill!
-     self.capacity = (self.capacity or 0)+.5
+     spice_tiles[unit_pos],self.capacity = (spice_tiles[unit_pos] or 1000)-1, (self.capacity or 0)+.5
      -- done current spot?
      if spice_tiles[unit_pos] <= 0 then      
       -- (clear spice tile + depleat surrounding tiles)
-      local xpos=flr(self.x/8)
-      local ypos=flr(self.y/8)
+      local xpos,ypos=self:getTilePos()--flr(self.x/8),flr(self.y/8)
       for yy=-1,1 do
        for xx=-1,1 do
         val=wrap_mget(xpos+xx,ypos+yy)        
