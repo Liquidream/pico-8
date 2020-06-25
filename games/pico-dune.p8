@@ -2102,21 +2102,28 @@ end
 -- pathfinding-related
 --
 
-function turntowardtarget(unit, targetangle)
+function turntowardtarget(unit, targetangle)  
   local pi,diff = 3.14159,targetangle-unit.r
+  
   -- never turn more than 180
-  if diff > 0.0087 then
+  if diff > 0.5 then
+   diff -= 1
+  elseif diff < -0.5 then
+   diff += 1
+  end
+
+  if diff > 0.0087 then   
    unit.r += 0.0087
   elseif diff < -0.0087 then
    unit.r -= 0.0087
   else
-   -- we're already very close
+  -- we're already very close
    unit.r = targetangle
-  end
-
+  end  
+  
   -- make sure that our rotation value always stays within a "one-cycle" range
-  if (unit.r > pi) unit.r-=2*pi
-  if (unit.r < -pi) unit.r+=2*pi   
+  -- if (unit.r > 1) unit.r-=1
+  -- if (unit.r < -1) unit.r+=1
 
   yield()
 end
