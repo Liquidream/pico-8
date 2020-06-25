@@ -136,7 +136,7 @@ obj_data=[[id|name|obj_spr|ico_spr|type|w|h|z|trans_col|parent_id|parent2_id|own
 11|lIGHT vEHICLE fACTORY|96|140|2|2|2|1|nil|1|||||6|2|||400|20|0|1400|||||||tHE lIGHT fACTORY~PRODUCES LIGHT ATTACK~VEHICLES.||||factory_click
 12|hEAVY vEHICLE fACTORY|98|142|2|3|2|1|nil|1|||||6|3|||600|20|0|800|||||||tHE hEAVY fACTORY~PRODUCES HEAVY ATTACK~VEHICLES.||||factory_click
 13|hI-tECH fACTORY|101|166|2|3|2|1|nil|1|||||12|5|||500|35|0|1600|||||||tHE hI-tECH fACTORY~PRODUCES FLYING~VEHICLES.||||factory_click
-14|rEPAIR fACILITY|128|230|2|3|2|1|nil|1|||||12|5|99||700|20|0|800||||||4|tHE rEPAIR fACILITY~IS USED TO REPAIR YOUR~VEHICLES.|init_repairfact|||
+14|rEPAIR fACILITY|128|230|2|3|2|1|nil|1|||||12|5|||700|20|0|800||||||4|tHE rEPAIR fACILITY~IS USED TO REPAIR YOUR~VEHICLES.|init_repairfact|||
 15|cANNON tURRET|71|232|1|1|1|1|11|1|||||7|5|||125|10|38|1200|0|4|1||||tHE cANNON tURRET IS~USED FOR SHORT RANGE~ACTIVE DEFENSE.||||
 16|rOCKET tURRET|87|234|1|1|1|1|11|1|||||7|6|||250|20|112|1200|0|9|2||||tHE rOCKET TURRET IS~USED FOR MEDIUM RANGE~ACTIVE DEFENSE.||||
 17|sTARPORT|61|228|2|3|3|1|nil|1|||||6|6||1|500|50|0|2000|||||||tHE sTARPORT IS USED TO~ORDER AND RECEIVED~SHIPMENTS FROM~c.h.o.a.m.|init_refinery|draw_refinery||factory_click
@@ -151,6 +151,7 @@ obj_data=[[id|name|obj_spr|ico_spr|type|w|h|z|trans_col|parent_id|parent2_id|own
 26|qUAD|48|206|1|1|1|1|11|11|17|||||3|||200||10|520|0.5|3|1||||tHE qUAD IS A LIGHTLY-~ARMOURED, 4-WHEELED~VEHICLE. sLOWER THAN~THE tRIKE, BUT STRONGER~ARMOUR AND FIREPOWER.||||
 27|cOMBAT tANK|51|196|1|1|1|1|11|12|17||||7|4|||300||38|800|0.25|4|1||||tHE cOMBAT tANK IS A~MEDIUM ARMOURED TANK,~FIRES HIGH-EXPLOSIVE~ROUNDS.||||
 28|sIEGE tANK|50|198|1|1|1|1|11|12|17||||7|6|||600||45|1200|0.2|5|1||||tHE mISSILE tANK IS A~MEDIUM ARMOURED TANK,~WHICH FIRES MISSILES.~lONG-RANGE, BUT~INACCURATE.||||
+29|rOCKET lAUNCHER|53|202|1|1|1|1|11|12|17||||7|5|||450||112|400|0.3|9|2||||tHE sIEGE tANK IS A~HEAVY ARMOURED TANK,~WHICH HAS DUAL CANNONS,~BUT IS SLOW.||||
 30|hARVESTER|49|192|1|1|1|1|11|12|17|||||2|||300||0|600|0.1|0|||||tHE hARVESTER SEPARATES~SPICE FROM THE SAND &~RETURNS RAW SPICE TO THE~rEFINERY FOR PROCESSING.||||
 31|cARRYALL|73|238|1|1|1|8|11|13|||||13|5|||800||0|400|2|0|||||tHE cARRYALL IS A LIGHTLY~ARMOURED AIRCRAFT WITH~NO WEAPONS. mAINLY USED~TO LIFT+TRANSPORT~hARVESTERS.||||
 34|sONIC tANK|57|198|1|1|1|1|11|12|||||7|7|1||600||90|440|0.3|8|3||||dEVELOPED BY THE~aTREIDES,THIS ENHANCED~TANK FIRES POWERFUL~BLAST WAVES OF SONIC~ENERGY.||||
@@ -161,8 +162,6 @@ obj_data=[[id|name|obj_spr|ico_spr|type|w|h|z|trans_col|parent_id|parent2_id|own
 39|sANDWORM|88||9|1|1|1|11|nil|||||nil|3|||0||300|4000|0.35|0|30||||tHE sAND wORMS ARE~INDIGEONOUS TO dUNE.~aTTRACTED BY VIBRATIONS~ALMOST IMPOSSIBLE TO~DESTROY, WILL CONSUME~ANYTHING THAT MOVES.||||
 80|rEPAIR|19||5|1|1|1|11|nil|||||nil||||||||||||||||draw_action||action_click
 81|pICK TARGET|1||5|1|1|1|11|nil|||||nil||||||||||||||||draw_action||action_click]]
-
-
 
 
 
@@ -371,8 +370,7 @@ function m_map_obj_tree(objref, x,y, owner, factory)
        -- normalize dx,dy
        local dx,dy = self.bullet_tx-self.bullet_x,self.bullet_ty-self.bullet_y
        local d=sqrt(dx * dx + dy * dy)
-       self.bullet_dx = (dx/d)*2
-       self.bullet_dy = (dy/d)*2
+       self.bullet_dx,self.bullet_dy = (dx/d)*2,(dy/d)*2
        sfx(self.arms<100 and 60 or 58, 3)
        reveal_fow(self)
      end
@@ -393,8 +391,6 @@ function m_map_obj_tree(objref, x,y, owner, factory)
 end
 
 function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, func_onclick)
- local _w=(ref_obj.w or 1)*8 -- pixel dimensions
- local _h=(ref_obj.h or 1)*8 --
  local obj={
   ref=ref_obj,
   id=ref_obj.id,
@@ -405,8 +401,8 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
   type=in_type, -- 1=unit, 2=structure, 3=obj_status_icon, 4=build_icon, 5=small_icon, 9=worm
   parent=parent,
   func_onclick=func_onclick,
-  w=_w,
-  h=_h,
+  w=(ref_obj.w or 1)*8, -- pixel dimensions 
+  h=(ref_obj.h or 1)*8,
   orig_spr=ref_obj.obj_spr,
   spr_w=ref_obj.w, -- defaults
   spr_h=ref_obj.h, --
@@ -586,15 +582,12 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
         target.y+target.h/2) < 4 
        then
         target.life-=self.arms
-        target.hit=self.fire_type --0=none, 1=bullet, 2=missile
-        target.hitby=self
+        --firetype: 0=none, 1=bullet, 2=missile, 3=sonic
+        target.hit,target.hitby=self.fire_type,self
 
         -- deviator specific
         if self.id==38 and target.type==1 then
-         target.owner=self.owner
-         target.faction=self.faction
-         target.col1=self.col1
-         target.col2=self.col2
+         target.owner,target.faction,target.col1,target.col2 = self.owner,self.faction,self.col1,self.col2
          do_guard(self) -- stop attacking "converted" obj
         end
        end
@@ -655,8 +648,7 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
    end,
 
    setpos=function(self,x,y)
-    self.x=x
-    self.y=y
+    self.x,self.y=x,y
    end,
    getTilePosIndex=function(self)
     return flr(self.x/8)..","..flr(self.y/8)
@@ -701,17 +693,16 @@ function reveal_fow(object)
  -- clear group of tiles
  for xx=-size,size do
   for yy=-size,size do
-    -- clear tile
-    local posx=flr(object.x/8)+xx
-    local posy=flr(object.y/8)+yy    
-    fow[posx][posy]=16 
-    test_tile(posx,posy)
-    -- update neighborhood
-    for dy=-1,1 do
-        for dx=-1,1 do
-          test_tile(posx+dx,posy+dy)
-        end
+   -- clear tile
+   local posx,posy = flr(object.x/8)+xx,flr(object.y/8)+yy
+   fow[posx][posy]=16 
+   test_tile(posx,posy)
+   -- update neighborhood
+   for dy=-1,1 do
+    for dx=-1,1 do
+     test_tile(posx+dx,posy+dy)
     end
+   end
   end
  end
 end
@@ -766,8 +757,7 @@ end
 
 -- fog of war
 function draw_fow()
- local mapx=flr(camx/8)
- local mapy=flr(camy/8)
+ local mapx,mapy=flr(camx/8),flr(camy/8) 
  palt(0,false)
  palt(11,true)
  for xx=mapx-1,mapx+16 do
