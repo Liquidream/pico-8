@@ -182,7 +182,7 @@ function load_level(num)
  local mdata = mission_data[num]
 
  -- set player to faction
- p_fact = 1 -- (1=atreides, 2=ordos, 3-harkonen)
+ p_fact = 2 -- (1=atreides, 2=ordos, 3-harkonen)
  
  dset(0, num)
  dset(1, p_fact) -- p_faction
@@ -196,7 +196,7 @@ function load_level(num)
  dset(12, 0) -- buildings destroyed
  dset(13, 0) -- playing time
 
- ai_fact = mdata[4]
+ ai_fact = 1 --mdata[4]
  dset(20, ai_fact) -- ai_faction
  dset(21, ai_fact and faction_cols[ai_fact][1] or nil) -- ai_col1
  dset(22, ai_fact and faction_cols[ai_fact][2] or nil) -- ai_col2

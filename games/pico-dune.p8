@@ -114,9 +114,8 @@ end
 
 
 function process_click(self, mode)
-  self.procstep=0
   -- toggle/switch mode (building/repairing) depending on state & click
-  self.last_process=self.process
+  self.procstep,self.last_process=0,self.process  
   if (self.life>0 and self.last_process>0) self.procpaused=not self.procpaused
   self.process=mode
 end
@@ -152,17 +151,24 @@ obj_data=[[id|name|obj_spr|ico_spr|type|w|h|z|trans_col|parent_id|parent2_id|own
 26|qUAD|48|206|1|1|1|1|11|11|17|||||3|||200||10|520|0.5|3|1||||tHE qUAD IS A LIGHTLY-~ARMOURED, 4-WHEELED~VEHICLE. sLOWER THAN~THE tRIKE, BUT STRONGER~ARMOUR AND FIREPOWER.||||
 27|cOMBAT tANK|51|196|1|1|1|1|11|12|17||||7|4|||300||38|800|0.25|4|1||||tHE cOMBAT tANK IS A~MEDIUM ARMOURED TANK,~FIRES HIGH-EXPLOSIVE~ROUNDS.||||
 28|sIEGE tANK|50|198|1|1|1|1|11|12|17||||7|6|||600||45|1200|0.2|5|1||||tHE mISSILE tANK IS A~MEDIUM ARMOURED TANK,~WHICH FIRES MISSILES.~lONG-RANGE, BUT~INACCURATE.||||
-29|rOCKET lAUNCHER|53|202|1|1|1|1|11|12|17||||7|5|||450||112|400|0.3|9|2||||tHE sIEGE tANK IS A~HEAVY ARMOURED TANK,~WHICH HAS DUAL CANNONS,~BUT IS SLOW.||||
 30|hARVESTER|49|192|1|1|1|1|11|12|17|||||2|||300||0|600|0.1|0|||||tHE hARVESTER SEPARATES~SPICE FROM THE SAND &~RETURNS RAW SPICE TO THE~rEFINERY FOR PROCESSING.||||
 31|cARRYALL|73|238|1|1|1|8|11|13|||||13|5|||800||0|400|2|0|||||tHE cARRYALL IS A LIGHTLY~ARMOURED AIRCRAFT WITH~NO WEAPONS. mAINLY USED~TO LIFT+TRANSPORT~hARVESTERS.||||
 34|sONIC tANK|57|198|1|1|1|1|11|12|||||7|7|1||600||90|440|0.3|8|3||||dEVELOPED BY THE~aTREIDES,THIS ENHANCED~TANK FIRES POWERFUL~BLAST WAVES OF SONIC~ENERGY.||||
 35|dEVASTATOR|52|200|1|1|1|1|11|12|||||13|8|3||800||60|1600|0.1|7|1||||tHE dEVESTATOR IS A~NUCLEAR-POWERED TANK,~WHICH FIRES DUAL PLASMA~CHARGES. mOST POWERFUL~TANK ON dUNE, BUT~POTENTIALLY UNSTABLE~IN COMBAT.||||
 36|dEATH hAND|72||1|1|1|8|11|||0|||13|8|3||0||150|280|0.5|0|20||||tHE dEATH hAND IS A~SPECIAL hARKONNEN~pALACE WEAPON. aN~INACCURATE, BUT VERY~DESTRUCTIVE BALLISTIC~MISSILE.||||
 37|rAIDER|54|204|1|1|1|1|11|11||||||2|2||150||8|320|0.75|3|1||||tHE oRDOS rAIDER IS~SIMILAR TO THE STANDARD~tRIKE, BUT WITH LESS~ARMOUR IN FAVOUR OF~SPEED.||||
-38|dEVIATOR|53|202|1|1|1|1|11|12|||||13|7|2||750||0|480|0.3|7|11||||tHE oRDOS dEVIATOR IS A~STANDARD mISSILE tANK,~WHICH FIRES UNIQUE~NERVE GAS MISSILES THAT~MAY TEMPORARILY CHANGE~ENEMY LOYALTY.||||
+38|dEVIATOR|53|202|1|1|1|1|11|12|||||13|7|2||750||30|480|0.3|7|2||||tHE oRDOS dEVIATOR IS A~STANDARD mISSILE tANK,~WHICH FIRES UNIQUE~NERVE GAS MISSILES THAT~MAY TEMPORARILY CHANGE~ENEMY LOYALTY.||||
 39|sANDWORM|88||9|1|1|1|11|nil|||||nil|3|||0||300|4000|0.35|0|30||||tHE sAND wORMS ARE~INDIGEONOUS TO dUNE.~aTTRACTED BY VIBRATIONS~ALMOST IMPOSSIBLE TO~DESTROY, WILL CONSUME~ANYTHING THAT MOVES.||||
 80|rEPAIR|19||5|1|1|1|11|nil|||||nil||||||||||||||||draw_action||action_click
 81|pICK TARGET|1||5|1|1|1|11|nil|||||nil||||||||||||||||draw_action||action_click]]
+
+
+
+
+
+
+
+
 
 --[[
   ## messages ##
@@ -274,20 +280,17 @@ function m_map_obj_tree(objref, x,y, owner, factory)
   local newobj=m_obj_from_ref(objref, x,y, objref.type, nil, _g[objref.func_init], _g[objref.func_draw], _g[objref.func_update], nil)
   -- set type==3 (icon!)
   
-  newobj.ico_obj=m_obj_from_ref(objref, 109,0, 3, newobj, nil, nil, _g[objref.func_onclick])
-  newobj.life=placement_damage and objref.hitpoint/2 or objref.hitpoint -- unless built without concrete    
-
+  newobj.ico_obj,newobj.life = m_obj_from_ref(objref, 109,0, 3, newobj, nil, nil, _g[objref.func_onclick]),placement_damage and objref.hitpoint/2 or objref.hitpoint -- unless built without concrete
+  
   -- player-controlled or ai?
   -- note: this whole thing may not be needed 
   -- as once we have plr start pos, that might be all we need
   newobj.owner=newobj.owner or owner or (dist(x,y,pstartx,pstarty)<75 and 1 or 2)
   
   -- who created? (do avoid "guard" attacking units created by same faction)
-  newobj.created_by=owner or newobj.owner
-
-
   -- factory?
-  newobj.build_objs={}
+  newobj.created_by,newobj.build_objs = owner or newobj.owner, {}
+
   -- go through all ref's and see if any valid for this building
   for o in all(obj_data) do
     local req_fact=o.req_faction
@@ -319,36 +322,24 @@ function m_map_obj_tree(objref, x,y, owner, factory)
 
   -- 0=auto, 1=player, 2=computer/ai
   if newobj.owner==1 then
-    newobj.faction=p_faction
-    newobj.col1=p_col1
-    newobj.col2=p_col2
-    -- record built type
-    -- REPLACED with has[] (done on radar update)
-    --built[newobj.id]=true
+    newobj.faction,newobj.col1,newobj.col2 = p_faction,p_col1,p_col2
   else
-    newobj.faction=ai_faction
-    newobj.col1=ai_col1
-    newobj.col2=ai_col2
-    --make ai icons un-clickable
-    newobj.ico_obj.func_onclick=nil
+    newobj.faction,newobj.col1,newobj.col2,newobj.ico_obj.func_onclick = ai_faction,ai_col1,ai_col2,nil --make ai icons un-clickable
     -- palace?
     if (newobj.id==19) ai_palace=newobj
   end
 
   -- override cols?
   if objref.col1 then
-   newobj.col1=objref.col1
-   newobj.col2=objref.col2
+   newobj.col1,newobj.col2 = objref.col1,objref.col2
   end
 
 
-  local xpos=flr(x/8)
-  local ypos=flr(y/8)
+  local xpos,ypos = flr(x/8),flr(y/8)
   
   -- building props?        
   if objref.type==2 then
-    newobj.deathsfx=53
-    newobj.fire_cooldown=0 -- palace weapon
+    newobj.deathsfx,newobj.fire_cooldown = 53,0 -- palace weapon cooldown
     -- prepare the map?
     local slabs=(objref.id==2 or objref.id==3)    
     for xx=0,objref.w-1 do
@@ -375,16 +366,10 @@ function m_map_obj_tree(objref, x,y, owner, factory)
     if newobj.arms>0 then
      -- combat stuff
      newobj.fire=function(self)
-       -- now firing
-       self.state=4      
-       -- fire bullet/missile
-       self.bullet_x=self.x+4
-       self.bullet_y=self.y+4
-       self.bullet_tx=self.target.x+self.target.w/2
-       self.bullet_ty=self.target.y+self.target.h/2
+       -- now firing, fire bullet/missile
+       self.state,self.bullet_x,self.bullet_y,self.bullet_tx,self.bullet_ty = 4,self.x+4,self.y+4,self.target.x+self.target.w/2,self.target.y+self.target.h/2
        -- normalize dx,dy
-       local dx=self.bullet_tx-self.bullet_x
-       local dy=self.bullet_ty-self.bullet_y
+       local dx,dy = self.bullet_tx-self.bullet_x,self.bullet_ty-self.bullet_y
        local d=sqrt(dx * dx + dy * dy)
        self.bullet_dx = (dx/d)*2
        self.bullet_dy = (dy/d)*2
@@ -493,18 +478,20 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
      end
 
      -- bullets/missiles
-     if self.bullet_x then
+     if self.bullet_x then      
       if self.fire_type==1 then
        -- shell
-       circfill(self.bullet_x,self.bullet_y,0, rnd"2"<1 and 8 or 9)
-      elseif self.fire_type==2 then
-       -- missile
-       add_particle(self.bullet_x, self.bullet_y, 
-        0, 0, 0, .15,-.01, 20, {7, 7, 10, 9, 8, 2, 13, 6, 7}, rnd"2"<1 and 0xa5a5.8 or 0)
-      else 
-       -- sonic wave
+       pset(self.bullet_x,self.bullet_y, rnd"2"<1 and 8 or 9)
+      else
+       -- missile/sonic wave
+       local is_missile = self.fire_type==2
        add_particle(self.bullet_x, self.bullet_y, 0, 
-       0, 0, 2,-.01, 2.5, {15}, rnd"2"<1 and 0xa5a5.8 or 0)
+        0, 0, 
+        is_missile and .15 or 2,
+        -.01, 
+        is_missile and 20 or 2.5, 
+        is_missile and {7, 7, 10, 9, 8, 2, 13, 6, 7} or {15}, 
+        rnd"2"<1 and 0xa5a5.8 or 0)
       end
      end
      -- smoking?
@@ -601,6 +588,15 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
         target.life-=self.arms
         target.hit=self.fire_type --0=none, 1=bullet, 2=missile
         target.hitby=self
+
+        -- deviator specific
+        if self.id==38 and target.type==1 then
+         target.owner=self.owner
+         target.faction=self.faction
+         target.col1=self.col1
+         target.col2=self.col2
+         do_guard(self) -- stop attacking "converted" obj
+        end
        end
        -- kill bullet/missile & do damage
        self.bullet_x=nil
@@ -2404,12 +2400,12 @@ __map__
 0000000012121216850a0a100a0a0a0a0a0a17191b1c0a0a0a0a0a0a0000001200000003030303031d1f0303030000000000000000000000000000000003030000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 000000121200000057854785576a0a5785571d1e1e1f0a0a0a0a0a0a42000012000000030303030303030303030300000000000012000000000000000000030000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 000000000032000000000000850a0a8500000d0d0d0d0d0d0d0d0d0d0d121212000003030303030303030303030303000000120012121212121200000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
-0000000000000000003900005747475700360000000000001200001212120000000003030303030303030303030303030000120000000000000000000000000000000000000000000000000000000000000000000000000000121212121212120000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000035005747475700360000000000001200001212120000000003030303030303030303030303030000120000000000000000000000000000000000000000000000000000000000000000000000000000121212121212120000000000000000000000000000000000000000000000000000000000000000
 0000120012120000000000121200121212120000000000001212121200000000000003030000000000000000000303030000001200120000000000000000000000000000000000000000000000000000000000000000000012121212121212120000000000000000000000000000000000000000000000000000000000000000
 0012120012120036000000121200121212121212000000000000000000000000000003000000000000000000000003030300000000120000000000000000000000000000000000000000000000000000000000000000001212121212121212120000000000000000000000000000000000000000000000000000000000000000
 0000120000003d00000000000000000000000000000000000000000012000000000000000012121212121200000000030300000000001212000000000000000000000000000000000000000000000000000000000000001212121200121212000000000000000000000000000000000000000000000000000000000000000000
-1212000000000000000000350000000000000000000000000000000012121212000000000000001212121212120000000000000600000012121203000000060000000000000000000000000000000000000000001212121212120000000000000000000000000000000000000000000000000000000000000000000000000000
-1212000000000000000000000000000303030000000000000000000000000012120000000000000000121212120000000000000000000000000003000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+1212000000000000000000000000000000000000000000000000000012121212000000000000001212121212120000000000000600000012121203000000060000000000000000000000000000000000000000001212121212120000000000000000000000000000000000000000000000000000000000000000000000000000
+1212000000000000003900000000000303030000000000000000000000000012120000000000000000121212120000000000000000000000000003000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 0000000012120000000000121200000303030000000000000000000000000000120000000000000000000000120000000000000000000000000003000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 0000000012120000000000121200000000000000000000000000000000000012000000000000000000000000000000000000000003000000000303000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 00000000000000000000000044090c0000000000000000000000000000121212000000000000000000000000000000000000000003030303030300000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
