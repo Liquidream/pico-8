@@ -151,7 +151,6 @@ obj_data=[[id|name|obj_spr|ico_spr|type|w|h|z|trans_col|parent_id|parent2_id|own
 26|qUAD|48|206|1|1|1|1|11|11|17|||||3|||200||10|520|0.5|3|1||||tHE qUAD IS A LIGHTLY-~ARMOURED, 4-WHEELED~VEHICLE. sLOWER THAN~THE tRIKE, BUT STRONGER~ARMOUR AND FIREPOWER.||||
 27|cOMBAT tANK|51|196|1|1|1|1|11|12|17||||7|4|||300||38|800|0.25|4|1||||tHE cOMBAT tANK IS A~MEDIUM ARMOURED TANK,~FIRES HIGH-EXPLOSIVE~ROUNDS.||||
 28|sIEGE tANK|50|198|1|1|1|1|11|12|17||||7|6|||600||45|1200|0.2|5|1||||tHE mISSILE tANK IS A~MEDIUM ARMOURED TANK,~WHICH FIRES MISSILES.~lONG-RANGE, BUT~INACCURATE.||||
-29|rOCKET lAUNCHER|53|202|1|1|1|1|11|12|17||||7|5|||450||112|400|0.3|9|2||||tHE sIEGE tANK IS A~HEAVY ARMOURED TANK,~WHICH HAS DUAL CANNONS,~BUT IS SLOW.||||
 30|hARVESTER|49|192|1|1|1|1|11|12|17|||||2|||300||0|600|0.1|0|||||tHE hARVESTER SEPARATES~SPICE FROM THE SAND &~RETURNS RAW SPICE TO THE~rEFINERY FOR PROCESSING.||||
 31|cARRYALL|73|238|1|1|1|8|11|13|||||13|5|||800||0|400|2|0|||||tHE cARRYALL IS A LIGHTLY~ARMOURED AIRCRAFT WITH~NO WEAPONS. mAINLY USED~TO LIFT+TRANSPORT~hARVESTERS.||||
 34|sONIC tANK|57|198|1|1|1|1|11|12|||||7|7|1||600||90|440|0.3|8|3||||dEVELOPED BY THE~aTREIDES,THIS ENHANCED~TANK FIRES POWERFUL~BLAST WAVES OF SONIC~ENERGY.||||
@@ -586,10 +585,15 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
         target.hit,target.hitby=self.fire_type,self
 
         -- deviator specific
-        if self.id==38 and target.type==1 then
+        if self.id==38 and target.speed>0 then
          target.owner,target.faction,target.col1,target.col2 = self.owner,self.faction,self.col1,self.col2
          do_guard(self) -- stop attacking "converted" obj
+        elseif target.old_faction then
+         -- revert back to orig faction
+         target.faction,target.col1,target.col2,target.old_faction = target.old_faction,target.old_col1,target.old_col2,nil
+         do_guard(target)
         end
+
        end
        -- kill bullet/missile & do damage
        self.bullet_x=nil
@@ -1143,7 +1147,7 @@ function do_attack(unit, target)
          make_explosion(unit.x+rnd"32"-16,unit.y+rnd"32"-16, 2)
         end
        --end
-       target.life-=(100+rnd"50")--unit.arms
+       target.life-=(100+rnd"50")
        target.hitby=unit
        return
       end
@@ -1163,6 +1167,9 @@ function do_attack(unit, target)
       do_guard(unit)
      end
      yield()
+     -- deviators should only fire once, per attack
+     -- likewise, abort attack if unit becomes converted to "our" side
+     if (unit.id==38 or target.faction==unit.faction) break
     end -- 4) repeat 1-3 until target destroyed
 
     -- reset to guard
@@ -1602,17 +1609,10 @@ function draw_ui()
   and selected_obj.build_obj.life>=100 then
   -- draw placement
   -- todo: improve this code!
-  local mxpos=flr((cursor.x+camx)/8)
-  local mypos=flr((cursor.y+camy)/8)
-  local sxpos=mxpos*8-camx
-  local sypos=mypos*8-camy
-
+  local mxpos,mypos = flr((cursor.x+camx)/8), flr((cursor.y+camy)/8)
+  local sxpos,sypos,w,h = mxpos*8-camx,mypos*8-camy,selected_obj.build_obj.spr_w,selected_obj.build_obj.spr_h
   -- check ok to place
-  placement_pos_ok=false
-  placement_inner_invalid=false
-  placement_damage=false
-  local w,h = selected_obj.build_obj.spr_w,selected_obj.build_obj.spr_h
-
+  placement_pos_ok,placement_inner_invalid,placement_damage = false,false,false
   for xx=-1,w do
     for yy=-1,h do
      if xx==-1 or xx==w or yy==-1 or yy==h then     
