@@ -531,7 +531,7 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
          build_dest[self.hitby.created_by]+=1
         else
          -- unit
-         local gx,gy = self:getTilePos() --flr(self.x/8), flr(self.y/8)
+         local gx,gy = self:get_tile_pos() --flr(self.x/8), flr(self.y/8)
          if (gy>31) gx+=64 gy-=32
          if (wrap_mget(gx,gy)<9) wrap_mset(gx,gy,20) --scortch sand
          if (self.speed==0) wrap_mset(gx,gy,15)
@@ -647,15 +647,15 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
      end
    end,
 
-   setpos=function(self,x,y)
+   set_pos=function(self,x,y)
     self.x,self.y=x,y
    end,
-   getTilePosIndex=function(self)
-    local x,y = self:getTilePos()
+   get_tile_pos_index=function(self)
+    local x,y = self:get_tile_pos()
     return x..","..y
     --return flr(self.x/8)..","..flr(self.y/8)
    end,
-   getTilePos=function(self)
+   get_tile_pos=function(self)
     return flr(self.x/8),flr(self.y/8)
    end
   }
@@ -826,7 +826,7 @@ function update_radar_data()
  power_bal,total_storage,has_radar,has_build,building_count = 0,0,false,{},{0,0}
 
  for _,building in pairs(buildings) do  
-   local posx,posy = building:getTilePos()--flr(building.x/8),flr(building.y/8)
+   local posx,posy = building:get_tile_pos()--flr(building.x/8),flr(building.y/8)
    -- if our building, or ai not under fog of war
    if building.owner==1 or (hq and fow[posx][posy]==16) then
     radar_data[flr(building.x/2/8)..","..flr(building.y/2/8)] = building.col1
@@ -894,7 +894,7 @@ function update_obj_tiles()
  object_tiles={}
  -- (The pico-8 map is a 128x32 (or 128x64 using shared space))
  for k,unit in pairs(units) do  
-  object_tiles[unit:getTilePosIndex()]=k
+  object_tiles[unit:get_tile_pos_index()]=k
  end
 end
 
@@ -940,7 +940,7 @@ function update_level()
 
       -- check sandworm collision        
       if worm_segs -- worm present
-       and fget(wrap_mget(unit:getTilePos()),2)  --unit on sand
+       and fget(wrap_mget(unit:get_tile_pos()),2)  --unit on sand
        --and fget(wrap_mget(flr(unit.x/8),flr(unit.y/8)),2)  --unit on sand
        and dist(head_worm_x,head_worm_y,unit.x,unit.y) < 1
        and unit.z==1
@@ -995,7 +995,7 @@ function do_guard(unit, start_state)
      if self.capacity<=1500 
       and self.state!=7 and self.state!=9 then 
       local sx,sy
-      local tx,ty=self:getTilePos() --flr(self.x/8),flr(self.y/8)
+      local tx,ty=self:get_tile_pos() --flr(self.x/8),flr(self.y/8)
       if is_spice_tile(tx,ty) and not self.newspot then
         sx,sy=tx,ty
       else
@@ -1015,7 +1015,7 @@ function do_guard(unit, start_state)
         move_unit_pos(unit,sx,sy)
         -- landed on spice tile?
         -- switch to harvesting
-        if (is_spice_tile(unit:getTilePos())) unit.state=6
+        if (is_spice_tile(unit:get_tile_pos())) unit.state=6
         --if (is_spice_tile(flr(unit.x/8),flr(unit.y/8))) unit.state=6
       end
 
@@ -1036,13 +1036,13 @@ function do_guard(unit, start_state)
      add_spice_cloud(unit.x, unit.y, unit.r+.75+rnd".2"-.1)
 
      -- update spice tile state
-     local unit_pos = unit:getTilePosIndex()
+     local unit_pos = unit:get_tile_pos_index()
      --harvester should take about 110 secs to fill!
      spice_tiles[unit_pos],self.capacity = (spice_tiles[unit_pos] or 1000)-1, (self.capacity or 0)+.5
      -- done current spot?
      if spice_tiles[unit_pos] <= 0 then      
       -- (clear spice tile + depleat surrounding tiles)
-      local xpos,ypos=self:getTilePos()--flr(self.x/8),flr(self.y/8)
+      local xpos,ypos=self:get_tile_pos()--flr(self.x/8),flr(self.y/8)
       for yy=-1,1 do
        for xx=-1,1 do
         val=wrap_mget(xpos+xx,ypos+yy)        
@@ -1067,17 +1067,10 @@ function do_guard(unit, start_state)
     if self.state==9 then --dist(self.x,self.y,self.last_fact.x,self.last_fact.y)<22 then  
      
      -- check last factory is not destroyed or already busy
-     if last_fact.life>0 and not last_fact.occupied then
-      last_fact.incoming=false
-      
-      -- make sure can't overlap
-      -- todo: block the tiles as well
-      
-      -- center inside factory (refinary)
-      self.state=8
-      self.r=.25
-      self.x=last_fact.x+16
-      self.y=last_fact.y+4
+     if last_fact.life>0 and not last_fact.occupied then      
+      -- center inside factory (refinery)
+      -- todo: make sure can't overlap (block the tiles as well?)      
+      last_fact.incoming,self.state,self.r,self.x,self.y = false,8,.25,last_fact.x+16,last_fact.y+4
       
       -- if selected, deselect
       if (selected_obj==self) selected_obj=nil
@@ -1092,17 +1085,12 @@ function do_guard(unit, start_state)
         if (flr(self.capacity)%4==0 and tonum(strnum)<total_storage) transact(2,self)
         yield()       
        end --while unloading
-       self.capacity=0 
-       last_fact.occupied=false
        -- go back to guard (search for spice) mode
-       self.state=0
+       self.capacity,last_fact.occupied,self.state = 0,false,0
       else
        -- must be a repairable unit
-       self.process=2
-       self.procstep=0
        -- spark flash while repairing
-       last_fact.col_cycle_src=8
-       last_fact.col_cycle = {7,10,0,0,7,0,0}
+       self.process,self.procstep,last_fact.col_cycle_src,last_fact.col_cycle = 2,0,8, {7,10,0,0,7,0,0}        
       end -- capacity check
      
      end -- if unloading/repairing
@@ -1136,8 +1124,7 @@ function do_attack(unit, target)
  -- normal attack?
  if unit.id != 19 then
    -- 0=idle/guarding, 1=pathfinding, 2=moving, 3=attacking, 5=exploding
-   unit.state = 3
-   unit.target=target
+   unit.state,unit.target = 3,target
    unit.cor = cocreate(function(self)
     while target.life>0 do
      local targdist=dist(unit.x,unit.y,target.x,target.y)
@@ -1245,11 +1232,8 @@ function move_unit_pos(unit,x,y,dist_to_keep)
   end
 
   -- create co-routine to find path (over number of cycles)  
-  unit.tx = x
-  unit.ty = y
   -- 0=idle/guarding, 1=pathfinding, 2=moving, 3=attacking, 4=firing, 5=exploding
-  unit.prev_state = unit.state
-  unit.state = 1
+  unit.tx,unit.ty,unit.prev_state,unit.state = x,y,unit.state,1
    
   -- (pn-minified/modified) "pathfinder"
   -- by @casualeffects
@@ -1372,13 +1356,9 @@ function move_unit_pos(unit,x,y,dist_to_keep)
 
 
 
-
-
-
   -- todo: check path valid???
   -- now auto-move to path
-  unit.prev_state = unit.state
-  unit.state = 2 --moving
+  unit.prev_state,unit.state = unit.state,2 --moving
 
   -- loop all path nodes...
   if unit.path!=nil then
@@ -1405,9 +1385,8 @@ function move_unit_pos(unit,x,y,dist_to_keep)
       
       -- don't remove these!
       -- (must capture _outside_ the for..loop below)
-      local step_x = scaled_speed * (node.x*8 - unit.x) / distance
-      local step_y = scaled_speed * (node.y*8 - unit.y) / distance 
-
+      local step_x,step_y = scaled_speed * (node.x*8 - unit.x) / distance, scaled_speed * (node.y*8 - unit.y) / distance
+      
       for i = 0, distance/scaled_speed-1 do
         -- declare intentions (do it here so always present)
         object_tiles[node.x..","..node.y]=unit
@@ -1415,11 +1394,9 @@ function move_unit_pos(unit,x,y,dist_to_keep)
         unit.y+=step_y
         yield()
       end
-      unit.x,unit.y = node.x*8, node.y*8
-
       -- update tile blocking
-      object_tiles[node.x..","..node.y]=unit
-
+      unit.x,unit.y,object_tiles[node.x..","..node.y] = node.x*8, node.y*8,unit
+      
       -- reveal fog?
       -- todo: stop flying units doing this (shouldn't need to, as owner will be diff.)
       reveal_fow(unit)
@@ -1538,8 +1515,7 @@ function draw_radar()
  -- anim?
  -- https://youtu.be/T337FK6L0h0?t=2891
  if hq!=last_hq then
-  radar_frame=hq and 1 or 59
-  radar_dir=hq and 1 or -1
+  radar_frame,radar_dir = hq and 1 or 59, hq and 1 or -1  
   sfx"55"
   update_radar_data()
  end  
@@ -1568,15 +1544,12 @@ function draw_radar()
   end
   
   -- draw "view" bounds
-  local cx=92+camx/16
-  local cy=92+camy/16
+  local cx,cy=92+camx/16,92+camy/16
   rect(cx,cy, cx+7,cy+7, 7)
-
 end
 
 function set_message(msg)
-  message = msg
-  msgcount = 500
+  message,msgcount = msg,500
 end
 
 function draw_ui()
@@ -1588,10 +1561,10 @@ function draw_ui()
  
  -- object menu icon/buttons?
  if selected_obj and selected_obj.ico_obj then
-  selected_obj.ico_obj:setpos(109,20)
+  selected_obj.ico_obj:set_pos(109,20)
   selected_obj.ico_obj:draw() 
   if selected_obj.build_obj and selected_obj.owner==1 then
-   selected_obj.build_obj:setpos(109,44)
+   selected_obj.build_obj:set_pos(109,44)
    selected_obj.build_obj:draw() 
   end
   -- repair?
@@ -1638,8 +1611,7 @@ function draw_ui()
   placement_pos_ok=false
   placement_inner_invalid=false
   placement_damage=false
-  local w=selected_obj.build_obj.spr_w
-  local h=selected_obj.build_obj.spr_h
+  local w,h = selected_obj.build_obj.spr_w,selected_obj.build_obj.spr_h
 
   for xx=-1,w do
     for yy=-1,h do
@@ -1686,11 +1658,11 @@ function draw_ui()
      then
       selected_obj.valid_build_objs[icount]=curr_item
       if icount>=menu_pos and icount<=menu_pos+2 then
-        curr_item:setpos(9,28+(icount-menu_pos)*19)
+        curr_item:set_pos(9,28+(icount-menu_pos)*19)
         curr_item:draw()
       else
         -- hide!
-        curr_item:setpos(-16,16)
+        curr_item:set_pos(-16,16)
       end
       -- draw selected reticule
       if selected_subobj == curr_item then 
@@ -1797,14 +1769,11 @@ function collisions()
     and cursx>89 and cursx<122
     and cursy>90 and cursy<123 then
       -- clicked radar
-      camx=mid(0,(cursx-94)*16, 400)
-      camy=mid(-8,(cursy-94)*16, 400)
+      camx,camy = mid(0,(cursx-94)*16, 400),mid(-8,(cursy-94)*16, 400)
 
  -- clicked something?
  elseif left_button_clicked then
-
   target_mode=false
-
   -- update message
   if (selected_obj) set_message(selected_obj.name)
  
@@ -1853,16 +1822,12 @@ function collisions()
  
  elseif right_button_clicked and not show_menu then
   -- cancel selection
-  selected_obj=nil
-  target_mode=false
+  selected_obj,target_mode = nil,false
  end --if buttonclicked
 end
 
 function reset_build(obj)
-  obj.life=0
-  obj.process=0
-  obj.spent=0
-  obj.done=false
+  obj.life,obj.process,obj.spent,obj.done = 0,0,0,false
 end
 
 
@@ -1886,9 +1851,7 @@ function check_hover_select(obj)
      -- send harvester to refinery/repair facility
      selected_obj.state=7
      -- update last factory (in case changed)     
-     selected_obj.last_fact=obj
-     obj.incoming=true
-
+     selected_obj.last_fact,obj.incoming = obj,true
      selected_obj.cor = cocreate(function(unit)
       move_unit_pos(unit, (obj.x+16)/8, (obj.y+16)/8)
       do_guard(unit, 9)
@@ -1972,7 +1935,7 @@ function update_ai()
    -- show worm
    worm_segs,worm_dir,worm_turn,worm_cols,worm_frame={{rnd"500",rnd"500"}},rnd"1",0,{15,9,4},0    
   end
-  worm_life_start=rnd"5000" -- worm probability
+  worm_life_start=rnd"5000"
   worm_life=worm_life_start
  end
 
@@ -2002,17 +1965,10 @@ end
 
 -- set/unset the loop flag
 -- for specified pattern
-function set_loop(enabled) --,pattern (5)
- --local addr = 0x3100
- --local channel = 1 -- 0..3 (+1 to get 2nd channel's byte)
- -- local pattern=5
- --	pattern*=4 -- find right byte (each pattern has 4 channels)
-	--local val=peek(0x3100 + pattern + 1)
+function set_loop(enabled)
  local val=peek(0x3115)
  if ((band(val, 128) > 0) != enabled) val=bxor(val,128)
  poke(0x3115, val)  
- --poke(0x3100+pattern+1, val)  
- --printh("a)"..(0x3115).." enabled="..tostr(enabled))
 end
 
 --print string with outline.
@@ -2028,9 +1984,7 @@ end
 -- end
 
 function collide(o1, o2)
- local hb1=o1:get_hitbox()
- local hb2=o2:get_hitbox()
- 
+ local hb1,hb2 = o1:get_hitbox(),o2:get_hitbox()
  return hb1.x < hb2.x + hb2.w and
   hb1.x + hb1.w > hb2.x and
   hb1.y < hb2.y + hb2.h and
@@ -2076,8 +2030,7 @@ end
 -- Large scores (by @Felice)
 -- https://www.lexaloffle.com/bbs/?pid=22677
 function getscoretext(val)
- local s = ""
- local v = abs(val)
+ local s,v = "",abs(val)
  repeat
      s = (v % 0x0.000a / 0x.0001)..s
      v /= 10
@@ -2090,9 +2043,7 @@ end
 -- split string
 -- https://www.lexaloffle.com/bbs/?tid=32520
  function split(str,d,dd)
- local a={}
- local s=""
- local tk=""
+ local a,s,tk={},"",""
  
  if (dd~=nil) str=split(str,dd)
  while #str>0 do
@@ -2101,8 +2052,7 @@ end
    add(a,split(s,d))
    del(str,s)
   else
-   s=sub(str,1,1)
-   str=sub(str,2)
+   s,str=sub(str,1,1),sub(str,2)
    if s==d then 
     add(a,tk)
     tk=""
@@ -2120,17 +2070,14 @@ end
 -- https://www.lexaloffle.com/bbs/?pid=52525#p52541
 
 function rspr(sx,sy,x,y,a,w,trans,single_col)
-	local ca,sa=cos(a),sin(a)
-	local srcx,srcy,addr,pixel_pair
-	local ddx0,ddy0=ca,sa
-	local mask=shl(0xfff8,(w-1))
+	local ca,sa=cos(a),sin(a)	
+	local ddx0,ddy0,mask = ca,sa,shl(0xfff8,(w-1))
 	w*=4
 	ca*=w-0.5
 	sa*=w-0.5
-	local dx0,dy0=sa-ca+w,-ca-sa+w
-	w=2*w-1
+	local dx0,dy0,w = sa-ca+w,-ca-sa+w,2*w-1	
 	for ix=0,w do
-		srcx,srcy=dx0,dy0
+		local srcx,srcy=dx0,dy0
 		for iy=0,w do
 			if band(bor(srcx,srcy),mask)==0 then
 				local c=sget(sx+srcx,sy+srcy)
@@ -2156,22 +2103,15 @@ end
 --
 
 function turntowardtarget(unit, targetangle)
-  local pi = 3.14159
-  --local turnspeed = 0.0087 -- .5 * (3.14159/180)
-  local diff = targetangle-unit.r   
+  local pi,diff = 3.14159,targetangle-unit.r
   -- never turn more than 180
-  if diff > 0.5 then
-  diff -= 1
-  elseif diff < -0.5 then
-  diff += 1
-  end
   if diff > 0.0087 then
-  unit.r += 0.0087
+   unit.r += 0.0087
   elseif diff < -0.0087 then
-  unit.r -= 0.0087
+   unit.r -= 0.0087
   else
-  -- we're already very close
-  unit.r = targetangle
+   -- we're already very close
+   unit.r = targetangle
   end
 
   -- make sure that our rotation value always stays within a "one-cycle" range
@@ -2368,7 +2308,7 @@ __map__
 12120a0a0a0a0000165785850a0a001200020508030303030303000000000000000000000000000000000000000000000000030303030303030303030303030000000012121212000000000000000000120012000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 12120a3a10100c830a85420a6c0a000205030303030303030642000000000000000000000000000000000000000000000000000003000000000303030303030000001212121212121200000000000000121212000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 12120a1010100a0a0a850a0a0a0a000203030307030303060000000000120000000000000000030303030303030303030000000000000000000003030303030000121212121212000000000000001212121212000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
-000000101010420a0d470e0e0a00000006030303030306000000121212000000000000000003030303171819030303030303000000000000000003030303030012120000000000000000000000121212121200000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+000000101010420a0d47800e0a00000006030303030306000000121212000000000000000003030303171819030303030303000000000000000003030303030012120000000000000000000000121212121200000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 0012120d0d090d0e00850a0a0e0000121200650a0a0a0a0b00001200000000000000000000030303171b1b1b190303030303000000000000000000030303030012000000000000000000000000121212120000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 12121212120000160047010a00001244090c0a0a0a0a0a0a0b12120000000000000000000003031a1b1b1e1e1e1e03030303030000000000000000000303030000000000000000000012120000121212120000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 121212121200160057850a0a0c00120a0a0a1718190a0a0a0a12000000000000000000000303031d1b1f0303030303030303030300000003030303030303000000000000000000000012121212121212000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
