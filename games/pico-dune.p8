@@ -988,7 +988,7 @@ end
 function do_guard(unit, start_state)
  -- 0=idle/guarding, 1=pathfinding, 2=moving, 3=attacking, 4=firing, 5=exploding, 
  --(6=harvesting, 7=returning, 9=ready-to-unload/repair, 8=offloading/repairing)
- unit.state = start_state or 0
+ unit.state,unit.hail = start_state or 0, nil
  unit.cor = cocreate(function(self)
   while true do
    --printh("guarding-id="..self.id)
@@ -1000,10 +1000,7 @@ function do_guard(unit, start_state)
    local last_fact = self.last_fact
 
    -- if a carryall only
-   if self.id==31 then        
-    if self.hail then
-     goto skip_end_guard
-    else
+   if self.id==31 then
      -- todo: #1 move to random place in map
      move_unit_pos(self, flr(rnd"26"), flr(rnd"26"))
      -- todo: #2 see if harvester awaiting pickup
@@ -1021,7 +1018,6 @@ function do_guard(unit, start_state)
      -- todo:  > pick-up unit
      -- todo:  > move to repair facility
      -- todo:  > drop-off unit, then goto #1     
-    end
    end
 
    -- if a harvester only
@@ -1050,9 +1046,8 @@ function do_guard(unit, start_state)
       if sx and sy then
         move_unit_pos(unit,sx,sy)
         -- landed on spice tile?
-        -- switch to harvesting
+        -- switch to harvesting        
         if (is_spice_tile(unit:get_tile_pos())) unit.state=6
-        --if (is_spice_tile(flr(unit.x/8),flr(unit.y/8))) unit.state=6
       end
 
      end -- check factory busy
@@ -1257,41 +1252,33 @@ function is_danger_tile(unit,x,y)
  if (target!=null and target.owner!=unit.owner and target.created_by!=unit.created_by and fow[x][y]==16) do_attack(unit,target) return true
 end
 
-function move_unit_pos(unit,x,y,dist_to_keep)--,hail)
-  printh(unit.id)
+function move_unit_pos(unit,x,y,dist_to_keep,try_hail)
   local flying = unit.z>1
 
   -- before moving, can carryall take us?
   local carryall=has_obj and has_obj[31] or false
-  if carryall and not carryall.hail then
-   --stop("breakpoint")
-   --printh("if...TRUE")
-   --unit.state=7
-   carryall.hail=unit
-   unit.hx=x
-   unit.hy=y
-   unit.lift=carryall   
-   unit.cor=cocreate(function(unit2)
-    --stop("here2")
-    --printh("1")
-    move_unit_pos(unit.lift,flr(unit2.x/8),flr(unit2.y/8))
-    --del(units, unit2)
-    --printh("2")
-    move_unit_pos(unit.lift,unit2.hx,unit2.hy)
-    --printh(">>>")
-    --printh("3")
-    unit2:set_pos(unit.x,unit.y)
-    --add(units, unit2)
-    --unit.lift.hail=nil
-    --do_guard(unit2)    
-   end)
+  if try_hail then 
+   if carryall and not carryall.hail then
+    --stop("breakpoint")
+    --unit.state=7
+    carryall.hail,carryall.hx,carryall.hy = unit,x,y
+    --unit.lift=carryall   
+    carryall.cor=cocreate(function(unit_c)
+     local fare=unit_c.hail
+     move_unit_pos(unit_c,flr(fare.x/8),flr(fare.y/8))
+     del(units, fare)
+     move_unit_pos(carryall,carryall.hx,carryall.hy)
+     fare:set_pos(carryall.x,carryall.y)
+     add(units, fare)
+     --unit.lift.hail=nil
+     do_guard(carryall)
+    end)
+   end
    return
   end
   
   ::restart_move_unit::
 
-  printh("routeplan:"..unit.id)
-  --unit.path="init"   
   -- check target valid
   if not flying and not is_free_tile(nil,x,y) then   
     -- target tile occupied
@@ -1875,12 +1862,11 @@ function check_hover_select(obj)
        or obj.id==14 and selected_obj.id>24)
      and obj.owner==1 then
      -- send harvester/unit to refinery/repair facility
-     selected_obj.state=7
+     --selected_obj.state=7
      -- update last factory (in case changed)     
-     selected_obj.last_fact,obj.incoming = obj,true
-     --printh(">>>>>>>>>")
+     selected_obj.state,selected_obj.last_fact,obj.incoming = 7,obj,true
      selected_obj.cor = cocreate(function(unit)
-      move_unit_pos(unit, (obj.x+16)/8, (obj.y+16)/8)
+      move_unit_pos(unit, (obj.x+16)/8, (obj.y+16)/8, 0, true)
       --do_guard(unit, 9)
      end)
      return -- register "no click"
@@ -2119,7 +2105,7 @@ end
 --
 
 function turntowardtarget(unit, targetangle)  
-  local pi,diff = 3.14159,targetangle-unit.r
+  local diff = targetangle-unit.r
   
   -- skip?
   if (unit.z>1) unit.r = targetangle
@@ -2138,8 +2124,7 @@ function turntowardtarget(unit, targetangle)
   else
   -- we're already very close
    unit.r = targetangle
-  end  
-    
+  end   
   
   yield()
 end
