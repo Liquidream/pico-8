@@ -1005,7 +1005,7 @@ function do_guard(unit, start_state)
      -- todo:  > move to unit
      -- todo:  > pick-up unit
      -- todo:  > move to repair facility
-     -- todo:  > drop-off unit, then goto #1     
+     -- todo:  > drop-off unit, then goto #1   
    end
 
    -- if a harvester only
@@ -1041,12 +1041,12 @@ function do_guard(unit, start_state)
      end -- check factory busy
 
     -- are we full?
-    elseif self.capacity >= 1500 
+    elseif self.capacity >= 100--1500 
      and self.state!=7 then
-      -- return to refinery when full      
-      self.state,last_fact.incoming = 7,true
-      move_unit_pos(self, (last_fact.x+16)/8, last_fact.y/8)
-      self.state=9
+      -- return to refinery when full
+      self.sx,self.sy=self:get_tile_pos() -- remember where we were!
+      printh(last_fact)
+      return_to_fact(self,last_fact)
 
      -- harvesting spice
     elseif self.state==6 then
@@ -1107,6 +1107,7 @@ function do_guard(unit, start_state)
        end --while unloading
        -- go back to guard (search for spice) mode
        self.capacity,last_fact.occupied,self.state = 0,false,0
+       if (self.sx) move_unit_pos(self, self.sx, self.sy, 0, true)   
       else
        -- must be a repairable unit
        -- spark flash while repairing
@@ -1241,23 +1242,25 @@ function is_danger_tile(unit,x,y)
  if (target!=null and target.owner!=unit.owner and target.created_by!=unit.created_by and fow[x][y]==16) do_attack(unit,target) return true
 end
 
-function move_unit_pos(unit,x,y,dist_to_keep,try_hail)
+function move_unit_pos(unit,x,y,dist_to_keep,try_hail,start_state)
   local flying = unit.z>1
 
   -- before moving, can carryall take us?
   local carryall=has_obj and has_obj[31] or false
+  --printh(carryall)
   if try_hail and carryall and not carryall.hail then
     carryall.hail,carryall.hx,carryall.hy = unit,x,y
-    unit.hail=carryall   
+    unit.hail=carryall
+    --unit.state=7
     carryall.cor=cocreate(function(unit_c)
-     local fare=unit_c.hail
+     local fare=unit_c.hail     
      move_unit_pos(unit_c,flr(fare.x/8),flr(fare.y/8))
      del(units, fare)
      move_unit_pos(carryall,carryall.hx,carryall.hy)
      fare:set_pos(carryall.x,carryall.y)
      add(units, fare)
-     do_guard(carryall)
-     do_guard(fare, 9)
+     do_guard(carryall)     
+     do_guard(fare, start_state)
     end)
    return
   end
@@ -1542,6 +1545,9 @@ function draw_radar()
  rect(91,91,124,124,p_col2)  
  rectfill(92,92,123,123,0)
 
+ -- update/draw message
+ if (msgcount>0) msgcount-=1 print(message, 2,2)
+
  -- anim?
  -- https://youtu.be/T337FK6L0h0?t=2891
  if hq!=last_hq then
@@ -1618,8 +1624,6 @@ function draw_ui()
 
  -- top/header bar
  rectfill(0,0,127,8,9) 
- -- update/draw message
- if (msgcount>0) msgcount-=1 print(message, 2,2,0)
  -- score
  strnum=getscoretext(credits[1])
  ?sub("000000", #strnum+1)..strnum, 103,2, p_col2
@@ -1849,16 +1853,10 @@ function check_hover_select(obj)
      if selected_obj
       and (obj.id==6 and selected_obj.id==30 
        or obj.id==14 and selected_obj.id>24)
-      and obj.owner==1 then
-     -- send harvester/unit to refinery/repair facility
-     -- todo: make this a func that can then be called by harvesters full & units w/ low health
-     -- update last factory (in case changed)     
-     selected_obj.state,selected_obj.last_fact,obj.incoming = 7,obj,true
-     selected_obj.cor = cocreate(function(unit)
-      move_unit_pos(unit, (obj.x+16)/8, (obj.y+16)/8, 0, true)
-      if (unit.hail==nil) do_guard(unit, 9)
-     end)
-     return -- register "no click"
+      and obj.owner==1
+     then
+      return_to_fact(selected_obj,obj)
+      return -- register "no click"
 
     else 
      -- somethign else clicked (e.g. building) - so select it
@@ -1870,7 +1868,17 @@ function check_hover_select(obj)
 
 end
 
-
+function return_to_fact(unit,fact)
+ -- send harvester/unit to refinery/repair facility
+ -- todo: make this a func that can then be called by harvesters full & units w/ low health
+ -- update last factory (in case changed)     
+ unit.state,unit.last_fact,fact.incoming = 7,fact,true
+ unit.cor = cocreate(function(unit)
+  move_unit_pos(unit, (fact.x+16)/8, fact.y/8, 0, true, 9)  
+  --move_unit_pos(unit, (fact.x+16)/8, (fact.y+16)/8, 0, true, 9)  
+  if (unit.hail==nil) do_guard(unit, 9)  
+ end)
+end
 
 
 -->8
@@ -1981,15 +1989,6 @@ function collide(o1, o2)
   hb1.y < hb2.y + hb2.h and
   hb1.y + hb1.h >hb2.y
 end
-
--- function draw_hitbox(obj)
---  local hb=obj:get_hitbox()
---  rect(hb.x,hb.y,hb.x+hb.w,hb.y+hb.h,obj.hover and 11 or 8)
--- end
-
--- function alternate()
---  return flr(t())%2==0
--- end
 
 -- explode object data
 function explode_data()
@@ -2132,16 +2131,10 @@ function map_neighbors(node,flying)
  return neighbors
 end
 
--- maybe adds the node to neighbors table
--- (if flag zero is unset at this position)
 function maybe_add(nx, ny, ntable, flying)
  if (flying or not fget(wrap_mget(nx,ny),0) and object_tiles[nx..","..ny]==nil and nx>=0 and ny>=0 and nx<=63 and ny<=63) add(ntable, {x=nx, y=ny})
 end
 
--- estimates the cost from a to
--- b by assuming that the graph
--- is a regular grid and all
--- steps cost 1.
 function manhattan_distance(a, b)
  return abs(a.x - b.x) + abs(a.y - b.y)
 end
