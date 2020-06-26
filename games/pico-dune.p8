@@ -402,7 +402,10 @@ function m_map_obj_tree(objref, x,y, owner, factory)
      -- rocket/cannon turret?
      if (newobj.id==15 or newobj.id==16) wrap_mset(xpos, ypos, 149)
     else
+     --
      -- non-fighting units   
+     --
+     newobj.last_fact=factory --default, for retreating
      -- harvesters (auto parent to last created refinary)
      if (newobj.id==30) newobj.capacity=0 newobj.last_fact=last_facts[newobj.owner]
     end
@@ -754,14 +757,107 @@ function _update60()  --game_update
  
  if (not show_menu) update_ai()  -- ai overall decision making (not individual units)
  
- -- update positions of pathfinding "blocker" objects 
- if t()%1==0 then
-  if t()%2==0 then
-   update_obj_tiles()
-  else 
-   update_radar_data()
-  end
- end
+ 
+
+  if _t%60==0 then
+   -- ---------------------
+   -- update_radar_data()
+   -- ---------------------
+   printh("update_radar_data")
+   radar_data={} 
+   -- landscape/fow
+   if hq then  
+    for i=0,124,4 do
+       for l=0,124,4 do
+       -- look at tile spr and if not fow, get col?
+       local mx,my = i/2,l/2
+       if(my>=32)mx+=64 my-=32
+       local mspr=mget(mx,my)
+       local col=sget((mspr*8)%128+4, (mspr*8)/16)
+       if(fow[i/2][l/2]==16) radar_data[(i/2/2)..","..(l/2/2)] = col!=11 and col or 15
+       end
+    end
+   end
+   -- -- structures
+   -- reset vars for this pass
+   power_bal,total_storage,has_radar,building_count = 0,0,false,{0,0}
+
+   for _,building in pairs(buildings) do  
+     local posx,posy = building:get_tile_pos()--flr(building.x/8),flr(building.y/8)
+     -- if our building, or ai not under fog of war
+     if building.owner==1 or (hq and fow[posx][posy]==16) then
+      radar_data[flr(building.x/2/8)..","..flr(building.y/2/8)] = building.col1
+     end
+     -- track power/radar
+     if building.owner==1 then
+      -- player owned
+      has_obj[building.id]=building
+      power_bal -= building.power
+      if (building.id==7) has_radar=true
+      if (sub(building.name,1,5)=="sPICE") total_storage+=1000
+     end
+     -- track counts
+     building_count[building.owner]+=1
+    end
+
+    if hq then
+     -- units
+     for _,unit in pairs(units) do
+      -- if our unit, or ai not under fog of war
+      if unit.owner==1 or fow[flr(unit.x/8)][flr(unit.y/8)]==16 then
+       has_obj[unit.id]=unit
+       radar_data[flr(unit.x/2/8)..","..flr(unit.y/2/8)] = unit.col1
+      end
+     end
+
+     -- sandworm?
+     --if (worm_segs and fow[mid(0,flr(head_worm_x/8),31)][mid(0,flr(head_worm_y/8),31)]==16) radar_data[flr(head_worm_x/2/8)..","..flr(head_worm_y/2/8)] = 7
+    end
+   
+    -- has radar-outpost and enough power (for HQ radar)?
+    hq,music_state = (has_radar and power_bal>0),2  
+    -- reset music back (will set again if more attackers)
+    set_loop(false)  --5
+
+   -- ----------------------
+   -- check end states
+   --
+   -- player credits >= quota
+   if (credits[3]>0 and credits[1]>credits[3]) endstate=1
+   -- ai has no buildings
+   if (building_count[2]==0 and p_level>1) endstate=2
+   -- player has no buildings
+   if (building_count[1]==0) endstate=3
+
+   -- game over?
+   if endstate then 
+    dset(14, endstate)
+    dset(13, t()-start_time)
+    dset(10,strnum)
+    dset(24,getscoretext(credits[2]))
+    dset(11,unit_dest[1])
+    dset(25,unit_dest[2])
+    dset(12,build_dest[1])
+    dset(26,build_dest[2])  
+    rectfill(30,54,104,70,0)
+    ?"mission "..(endstate<3 and "complete" or "failed"),36,60,p_col1
+    flip()
+    load("pico-dune-main")
+   end
+
+  elseif _t%60==30 then
+   -- ---------------------
+   -- update_obj_tiles()
+   -- ---------------------
+   -- update positions of pathfinding "blocker" objects 
+   object_tiles={}
+   -- (The pico-8 map is a 128x32 (or 128x64 using shared space))
+   for k,unit in pairs(units) do  
+    object_tiles[unit:get_tile_pos_index()]=k
+   end
+
+  end -- (alt processing cycle)
+
  _t+=1
 
 end
@@ -772,10 +868,6 @@ function _draw()
  draw_level()
  -- draw score, mouse, etc.
  draw_ui()
-  
-  --printh("cpu: "..flr(stat(1)*100).."% mem: "..(flr(stat(0)/2048*100)).."% fps: "..stat(7))--,2,109,8,0)
-  --if (debug_mode) printo("cpu: "..flr(stat(1)*100).."%\nmem: "..(flr(stat(0)/2048*100)).."%\nfps: "..stat(7),2,109,8,0)
-
 end
 
 -->8
@@ -809,101 +901,6 @@ end
 -->8
 -- update related
 --------------------------------
-
-
-function update_radar_data()
- radar_data={} 
- -- landscape/fow
- if hq then  
-  for i=0,124,4 do
-     for l=0,124,4 do
-     -- look at tile spr and if not fow, get col?
-     local mx,my = i/2,l/2
-     if(my>=32)mx+=64 my-=32
-     local mspr=mget(mx,my)
-     local col=sget((mspr*8)%128+4, (mspr*8)/16)
-     if(fow[i/2][l/2]==16) radar_data[(i/2/2)..","..(l/2/2)] = col!=11 and col or 15
-     end
-  end
- end
- -- -- structures
- -- reset vars for this pass
- power_bal,total_storage,has_radar,building_count = 0,0,false,{0,0}
-
- for _,building in pairs(buildings) do  
-   local posx,posy = building:get_tile_pos()--flr(building.x/8),flr(building.y/8)
-   -- if our building, or ai not under fog of war
-   if building.owner==1 or (hq and fow[posx][posy]==16) then
-    radar_data[flr(building.x/2/8)..","..flr(building.y/2/8)] = building.col1
-   end
-   -- track power/radar
-   if building.owner==1 then
-    -- player owned
-    has_obj[building.id]=building
-    power_bal -= building.power
-    if (building.id==7) has_radar=true
-    if (sub(building.name,1,5)=="sPICE") total_storage+=1000
-   end
-   -- track counts
-   building_count[building.owner]+=1
-  end
-
-  if hq then
-   -- units
-   for _,unit in pairs(units) do
-    -- if our unit, or ai not under fog of war
-    if unit.owner==1 or fow[flr(unit.x/8)][flr(unit.y/8)]==16 then
-     has_obj[unit.id]=unit
-     radar_data[flr(unit.x/2/8)..","..flr(unit.y/2/8)] = unit.col1
-    end
-   end
-
-   -- sandworm?
-   --if (worm_segs and fow[mid(0,flr(head_worm_x/8),31)][mid(0,flr(head_worm_y/8),31)]==16) radar_data[flr(head_worm_x/2/8)..","..flr(head_worm_y/2/8)] = 7
-  end
- 
-  -- has radar-outpost and enough power (for HQ radar)?
-  hq,music_state = (has_radar and power_bal>0),2  
-  -- reset music back (will set again if more attackers)
-  set_loop(false)  --5
-
- -- ----------------------
- -- check end states
- --
- -- player credits >= quota
- if (credits[3]>0 and credits[1]>credits[3]) endstate=1
- -- ai has no buildings
- if (building_count[2]==0 and p_level>1) endstate=2
- -- player has no buildings
- if (building_count[1]==0) endstate=3
-
- -- game over?
- if endstate then 
-  dset(14, endstate)
-  dset(13, t()-start_time)
-  dset(10,strnum)
-  dset(24,getscoretext(credits[2]))
-  dset(11,unit_dest[1])
-  dset(25,unit_dest[2])
-  dset(12,build_dest[1])
-  dset(26,build_dest[2])  
-  rectfill(30,54,104,70,0)
-  ?"mission "..(endstate<3 and "complete" or "failed"),36,60,p_col1
-  flip()
-  load("pico-dune-main")
- end
- 
-end
-
-
-function update_obj_tiles()
- object_tiles={}
- -- (The pico-8 map is a 128x32 (or 128x64 using shared space))
- for k,unit in pairs(units) do  
-  object_tiles[unit:get_tile_pos_index()]=k
- end
-end
-
 
 function update_level()
   -- mouse control
@@ -990,7 +987,12 @@ function do_guard(unit, start_state)
    --printh("guarding-id="..self.id)
    -- be on look-out
    if rnd"500"<1 and self.arms>0 and self.state!=8 then 
-    ping(self,flr(self.x/8),flr(self.y/8),is_danger_tile,self.range)
+    ping(self,flr(self.x/8),flr(self.y/8),
+    function (unit,x,y)
+     local target=units[object_tiles[x..","..y]]
+     if (target!=null and target.owner!=unit.owner and target.created_by!=unit.created_by and fow[x][y]==16) do_attack(unit,target) return true
+    end,
+    self.range)
    end
 
    local last_fact = self.last_fact
@@ -999,16 +1001,6 @@ function do_guard(unit, start_state)
    if self.id==31 then
      -- todo: #1 move to random place in map
      move_unit_pos(self, flr(rnd"26"), flr(rnd"26"))
-     -- todo: #2 see if harvester awaiting pickup
-     -- todo:  > move to harvester
-     -- todo:  > pick-up harvester
-     -- todo:  > move to harvester's last factory
-     -- todo:  > drop-off harvester, then goto #1
-     -- todo: #3 see if harvester finished unloading
-     -- todo:  > move to harvester
-     -- todo:  > pick-up harvester
-     -- todo:  > move to harvester's last mining pos
-     -- todo:  > drop-off harvester, then goto #1
      -- todo: #4 see if any unit is near-death
      -- todo:  > move to unit
      -- todo:  > pick-up unit
@@ -1245,10 +1237,7 @@ function is_free_tile(unit,x,y)
    and object_tiles[x..","..y]==nil
 end
 
-function is_danger_tile(unit,x,y)
- local target=units[object_tiles[x..","..y]]
- if (target!=null and target.owner!=unit.owner and target.created_by!=unit.created_by and fow[x][y]==16) do_attack(unit,target) return true
-end
+
 
 function move_unit_pos(unit,x,y,dist_to_keep,try_hail,start_state)
   local flying = unit.z>1
@@ -1642,12 +1631,10 @@ function draw_ui()
  -- update/draw message
  if (msgcount>0) msgcount-=1 print(message, 2,2)
 
- -- anim?
- -- https://youtu.be/T337FK6L0h0?t=2891
+ -- turn on/off radar
  if hq!=last_hq then
   radar_frame,radar_dir = hq and 1 or 59, hq and 1 or -1  
   sfx"55"
-  update_radar_data()
  end  
  last_hq=hq
 
@@ -2300,7 +2287,7 @@ __map__
 0012120012120000000000121200121212121212000000000000000000000000000003000000000000000000000003030300000000120000000000000000000000000000000000000000000000000000000000000000001212121212121212120000000000000000000000000000000000000000000000000000000000000000
 0000120000003d00000000490000000000000000000000000000000012000000000000000012121212121200000000030300000000001212000000000000000000000000000000000000000000000000000000000000001212121200121212000000000000000000000000000000000000000000000000000000000000000000
 1212000000000000000000000000000000000000000000000000000012121212000000000000001212121212120000000000000600000012121203000000060000000000000000000000000000000000000000001212121212120000000000000000000000000000000000000000000000000000000000000000000000000000
-1212000000000000000000000000000303030000000000000000000000000012120000000000000000121212120000000000000000000000000003000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+1212000000000000000030000000000303030000000000000000000000000012120000000000000000121212120000000000000000000000000003000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 0000000012120000000000121200000303030000000000000000000000000000120000000000000000000000120000000000000000000000000003000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 0000000012120000000000121200000000000000000000000000000000000012000000000000000000000000000000000000000003000000000303000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 0000000000000000000000000c090c0000000000000000000000000000121212000000000000000000000000000000000000000003030303030300000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
