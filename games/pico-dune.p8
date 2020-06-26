@@ -383,8 +383,7 @@ function m_map_obj_tree(objref, x,y, owner, factory)
 end
 
 function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, func_onclick)
- local obj={
-  --hail=false,
+ local obj={  
   ref=ref_obj,
   id=ref_obj.id,
   hitpoint=ref_obj.hitpoint,
@@ -766,9 +765,9 @@ function draw_fow()
  for xx=mapx-1,mapx+16 do
   for yy=mapy-1,mapy+16 do
     if fow[xx][yy]!=0 and fow[xx][yy]!=16 then
-     --spr(fow[xx][yy]+31,xx*8,yy*8)
+     spr(fow[xx][yy]+31,xx*8,yy*8)
     elseif fow[xx][yy]<16 then
-     --rectfill(xx*8, yy*8, xx*8+7, yy*8+7, 0)
+     rectfill(xx*8, yy*8, xx*8+7, yy*8+7, 0)
     end
   end
  end
@@ -851,8 +850,8 @@ function update_radar_data()
     end
    end
 
-   -- sandworm
-   if (worm_segs and fow[mid(0,flr(head_worm_x/8),31)][mid(0,flr(head_worm_y/8),31)]==16) radar_data[flr(head_worm_x/2/8)..","..flr(head_worm_y/2/8)] = 7
+   -- sandworm?
+   --if (worm_segs and fow[mid(0,flr(head_worm_x/8),31)][mid(0,flr(head_worm_y/8),31)]==16) radar_data[flr(head_worm_x/2/8)..","..flr(head_worm_y/2/8)] = 7
   end
  
   -- has radar-outpost and enough power (for HQ radar)?
@@ -1253,9 +1252,10 @@ function move_unit_pos(unit,x,y,dist_to_keep,try_hail)
     carryall.cor=cocreate(function(unit_c)
      local fare=unit_c.hail
      move_unit_pos(unit_c,flr(fare.x/8),flr(fare.y/8))
-     --del(units, fare)
+     del(units, fare)
      move_unit_pos(carryall,carryall.hx,carryall.hy)
      fare:set_pos(carryall.x,carryall.y)
+     add(units, fare)
      do_guard(carryall)
      do_guard(fare, 9)
     end)
@@ -1503,12 +1503,16 @@ function draw_level()
 
  pal()
  
- -- draw units
- for _,unit in pairs(units) do
-  if (not show_menu) unit:update()
-  if (unit.process!=2 or unit.speed==0) unit:draw()
-  -- draw selected reticule
-  if (unit == selected_obj) spr(17, selected_obj.x, selected_obj.y)
+ -- draw units (2-passes, ground & flying)
+ for p=1,2 do
+  for _,unit in pairs(units) do
+   if (p==1 and unit.z==1) or (p==2 and unit.z>1) then
+    if (not show_menu) unit:update()
+    if (unit.process!=2 or unit.speed==0) unit:draw()
+    -- draw selected reticule
+    if (unit == selected_obj) spr(17, selected_obj.x, selected_obj.y)
+   end
+  end
  end
 
  -- particles
@@ -1615,7 +1619,7 @@ function draw_ui()
  -- top/header bar
  rectfill(0,0,127,8,9) 
  -- update/draw message
- --if (msgcount>0) msgcount-=1 print(message, 2,2,0)
+ if (msgcount>0) msgcount-=1 print(message, 2,2,0)
  -- score
  strnum=getscoretext(credits[1])
  ?sub("000000", #strnum+1)..strnum, 103,2, p_col2
@@ -1784,10 +1788,7 @@ function collisions()
     -- clicked own unit, first time?
     if (selected_obj.owner==1 and selected_obj.type==1 and selected_obj!=last_selected_obj and selected_obj.speed>0) sfx"62"    
     -- clicked enemy object, last clicked ours (unit or palace)?... attack!
-    if (selected_obj.owner==2 and last_selected_obj and (last_selected_obj.type==1 or last_selected_obj.id==19) and last_selected_obj.owner==1) selected_obj.flash_count=10 do_attack(last_selected_obj, selected_obj) selected_obj=nil
-    -- periodically reset the list of built obj's
-    -- (done here as bug if done in radar code, as delay in populating)
-    has_obj={}
+    if (selected_obj.owner==2 and last_selected_obj and (last_selected_obj.type==1 or last_selected_obj.id==19) and last_selected_obj.owner==1) selected_obj.flash_count=10 do_attack(last_selected_obj, selected_obj) selected_obj=nil has_obj={} -- periodically reset the list of built obj's (done here as bug if done in radar code, as delay in populating)   
   -- deselect?
   else 
     -- do we have a unit selected?
@@ -1850,7 +1851,7 @@ function check_hover_select(obj)
        or obj.id==14 and selected_obj.id>24)
       and obj.owner==1 then
      -- send harvester/unit to refinery/repair facility
-     --selected_obj.state=7
+     -- todo: make this a func that can then be called by harvesters full & units w/ low health
      -- update last factory (in case changed)     
      selected_obj.state,selected_obj.last_fact,obj.incoming = 7,obj,true
      selected_obj.cor = cocreate(function(unit)
@@ -1952,9 +1953,9 @@ function update_ai()
    end   
   end
   if (#worm_segs>30) del(worm_segs,worm_segs[1])
-  if (worm_frame>0) worm_frame+=.01 add_spice_cloud(head_worm_x,head_worm_y,rnd"1")
+  --if (worm_frame>0) worm_frame+=.01 add_spice_cloud(head_worm_x,head_worm_y,rnd"1")
   if (worm_frame>2) worm_frame=0
-  if (worm_life>worm_life_start-128 or worm_life<128) add_spice_cloud(head_worm_x,head_worm_y,rnd"1")
+  --if (worm_life>worm_life_start-128 or worm_life<128) add_spice_cloud(head_worm_x,head_worm_y,rnd"1")
  end
 
 end
