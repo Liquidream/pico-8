@@ -976,7 +976,7 @@ end
 function do_guard(unit, start_state)
  -- 0=idle/guarding, 1=pathfinding, 2=moving, 3=attacking, 4=firing, 5=exploding, 
  --(6=harvesting, 7=returning, 9=ready-to-unload/repair, 8=offloading/repairing)
- unit.state,unit.hail = start_state or 0, nil
+ unit.state,unit.link = start_state or 0, nil
  unit.cor = cocreate(function(self)
   while true do
    --printh("guarding-id="..self.id)
@@ -1248,19 +1248,16 @@ function move_unit_pos(unit,x,y,dist_to_keep,try_hail,start_state)
   -- before moving, can carryall take us?
   local carryall=has_obj and has_obj[31] or false
   --printh(carryall)
-  if try_hail and carryall and not carryall.hail then
-    carryall.hail,carryall.hx,carryall.hy = unit,x,y
-    unit.hail=carryall
-    --unit.state=7
+  if try_hail and carryall and not carryall.link then
+    carryall.link,unit.link = unit,carryall    
     carryall.cor=cocreate(function(unit_c)
-     local fare=unit_c.hail     
-     move_unit_pos(unit_c,flr(fare.x/8),flr(fare.y/8))
-     del(units, fare)
-     move_unit_pos(carryall,carryall.hx,carryall.hy)
-     fare:set_pos(carryall.x,carryall.y)
-     add(units, fare)
+     move_unit_pos(unit_c,flr(unit.x/8),flr(unit.y/8))
+     del(units, unit)
+     move_unit_pos(carryall,x,y)
+     unit:set_pos(carryall.x,carryall.y)
+     add(units, unit)
      do_guard(carryall)     
-     do_guard(fare, start_state)
+     do_guard(unit, start_state)
     end)
    return
   end
@@ -1874,9 +1871,8 @@ function return_to_fact(unit,fact)
  -- update last factory (in case changed)     
  unit.state,unit.last_fact,fact.incoming = 7,fact,true
  unit.cor = cocreate(function(unit)
-  move_unit_pos(unit, (fact.x+16)/8, fact.y/8, 0, true, 9)  
-  --move_unit_pos(unit, (fact.x+16)/8, (fact.y+16)/8, 0, true, 9)  
-  if (unit.hail==nil) do_guard(unit, 9)  
+  move_unit_pos(unit, (fact.x+16)/8, fact.y/8, 0, true, 9)
+  if (unit.link==nil) do_guard(unit, 9)  
  end)
 end
 
