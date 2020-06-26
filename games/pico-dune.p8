@@ -177,10 +177,45 @@ function _init()
   load("pico-dune-main")
  end)
 
- explode_data()
+ -- ------------------------- 
+ -- explode object data
+ -- -------------------------
+ str_arrays=split(obj_data,"|","\n")
+ -- replace with exploded data
+ obj_data={}
+ -- loop all objects
+ for i=2,#str_arrays-1 do
+  new_obj={}
+  -- loop all properties
+  for j=1,#str_arrays[i] do
+   local val=str_arrays[i][j]
+   -- convert all but the text columns to numbers
+   if (j!=2 and j<29)val=tonum(val)
+   if j==29 then
+    --restore new lines
+    str_breaks=split(val,"~")
+    val=""
+    for i=1,#str_breaks do
+      val=val.."\n"..str_breaks[i]
+    end
+   end
+   new_obj[str_arrays[1][j]]=val
+  end
+  obj_data[tonum(str_arrays[i][1])]=new_obj
+ end
 
+ -- ------------------------- 
  -- init the game/title
- level_init()
+ -- ------------------------- 
+ -- init fog of war?
+ fow={}
+ for i=-2,66 do
+  fow[i]={}
+  for l=-2,66 do
+   fow[i][l]=0
+   --fow[i][l]=16 -- no fog
+  end
+ end
 
  -- create cursor ui "object" (for collisions)
  cursor = {
@@ -267,7 +302,7 @@ function m_map_obj_tree(objref, x,y, owner, factory)
   local newobj=m_obj_from_ref(objref, x,y, objref.type, nil, _g[objref.func_init], _g[objref.func_draw], _g[objref.func_update], nil)
   -- set type==3 (icon!)
   
-  newobj.ico_obj,newobj.life = m_obj_from_ref(objref, 109,0, 3, newobj, nil, nil, _g[objref.func_onclick]), placement_damage and objref.hitpoint/2 or objref.hitpoint -- unless built without concrete
+  newobj.ico_obj,newobj.life = m_obj_from_ref(objref, 109,0, 3, newobj, nil, nil, _g[objref.func_onclick]), placement_damage and objref.hitpoint/2 or objref.hitpoint -150 -- unless built without concrete
   
   -- player-controlled or ai?
   -- note: this whole thing may not be needed 
@@ -745,34 +780,6 @@ end
 -->8
 -- init related
 --------------------------------
-function level_init()
- -- init fog of war?
- fow={}
- for i=-2,66 do
-  fow[i]={}
-  for l=-2,66 do
-   fow[i][l]=0
-   --fow[i][l]=16 -- no fog
-  end
- end
-end
-
--- fog of war
-function draw_fow()
- local mapx,mapy=flr(camx/8),flr(camy/8) 
- palt(0,false)
- palt(11,true)
- for xx=mapx-1,mapx+16 do
-  for yy=mapy-1,mapy+16 do
-    if fow[xx][yy]!=0 and fow[xx][yy]!=16 then
-     spr(fow[xx][yy]+31,xx*8,yy*8)
-    elseif fow[xx][yy]<16 then
-     rectfill(xx*8, yy*8, xx*8+7, yy*8+7, 0)
-    end
-  end
- end
-end
-
 
 
 -- https://www.lexaloffle.com/bbs/?tid=30902
@@ -1531,7 +1538,18 @@ function draw_level()
  end
 
  -- draw fog-of-war
- draw_fow()
+ local mapx,mapy=flr(camx/8),flr(camy/8) 
+ palt(0,false)
+ palt(11,true)
+ for xx=mapx-1,mapx+16 do
+  for yy=mapy-1,mapy+16 do
+    if fow[xx][yy]!=0 and fow[xx][yy]!=16 then
+     spr(fow[xx][yy]+31,xx*8,yy*8)
+    elseif fow[xx][yy]<16 then
+     rectfill(xx*8, yy*8, xx*8+7, yy*8+7, 0)
+    end
+  end
+ end
 
 end
 
@@ -1987,32 +2005,7 @@ function collide(o1, o2)
   hb1.y + hb1.h >hb2.y
 end
 
--- explode object data
-function explode_data()
- str_arrays=split(obj_data,"|","\n")
- -- replace with exploded data
- obj_data={}
- -- loop all objects
- for i=2,#str_arrays-1 do
-  new_obj={}
-  -- loop all properties
-  for j=1,#str_arrays[i] do
-   local val=str_arrays[i][j]
-   -- convert all but the text columns to numbers
-   if (j!=2 and j<29)val=tonum(val)
-   if j==29 then
-    --restore new lines
-    str_breaks=split(val,"~")
-    val=""
-    for i=1,#str_breaks do
-      val=val.."\n"..str_breaks[i]
-    end
-   end
-   new_obj[str_arrays[1][j]]=val
-  end
-  obj_data[tonum(str_arrays[i][1])]=new_obj
- end
-end
+
 
 -- Large scores (by @Felice)
 -- https://www.lexaloffle.com/bbs/?pid=22677
