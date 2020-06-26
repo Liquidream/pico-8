@@ -776,9 +776,9 @@ function draw_fow()
  for xx=mapx-1,mapx+16 do
   for yy=mapy-1,mapy+16 do
     if fow[xx][yy]!=0 and fow[xx][yy]!=16 then
-     spr(fow[xx][yy]+31,xx*8,yy*8)
+     --spr(fow[xx][yy]+31,xx*8,yy*8)
     elseif fow[xx][yy]<16 then
-     rectfill(xx*8, yy*8, xx*8+7, yy*8+7, 0)
+     --rectfill(xx*8, yy*8, xx*8+7, yy*8+7, 0)
     end
   end
  end
@@ -1095,6 +1095,7 @@ function do_guard(unit, start_state)
    if self.id>24 then
     -- is carrying spice & close to refinary
     -- or been sent to repair facility
+    -- todo: if route possible, use carryall to move unit
     if self.state==9 then --dist(self.x,self.y,self.last_fact.x,self.last_fact.y)<22 then  
      
      -- check last factory is not destroyed or already busy
@@ -1262,7 +1263,7 @@ function move_unit_pos(unit,x,y,dist_to_keep,try_hail)
     --stop("breakpoint")
     --unit.state=7
     carryall.hail,carryall.hx,carryall.hy = unit,x,y
-    --unit.lift=carryall   
+    unit.hail=carryall   
     carryall.cor=cocreate(function(unit_c)
      local fare=unit_c.hail
      move_unit_pos(unit_c,flr(fare.x/8),flr(fare.y/8))
@@ -1272,6 +1273,7 @@ function move_unit_pos(unit,x,y,dist_to_keep,try_hail)
      add(units, fare)
      --unit.lift.hail=nil
      do_guard(carryall)
+     do_guard(fare, 9)
     end)
    end
    return
@@ -1633,7 +1635,7 @@ function draw_ui()
  --if (msgcount>0) msgcount-=1 print(message, 2,2,0)
  -- score
  strnum=getscoretext(credits[1])
- --?sub("000000", #strnum+1)..strnum, 103,2, p_col2
+ ?sub("000000", #strnum+1)..strnum, 103,2, p_col2
  
  -- placement?
  if selected_obj 
@@ -1867,7 +1869,7 @@ function check_hover_select(obj)
      selected_obj.state,selected_obj.last_fact,obj.incoming = 7,obj,true
      selected_obj.cor = cocreate(function(unit)
       move_unit_pos(unit, (obj.x+16)/8, (obj.y+16)/8, 0, true)
-      --do_guard(unit, 9)
+      if (unit.hail==nil) do_guard(unit, 9)
      end)
      return -- register "no click"
 
