@@ -394,6 +394,7 @@ end
 
 function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, func_onclick)
  local obj={
+  --hail=false,
   ref=ref_obj,
   id=ref_obj.id,
   hitpoint=ref_obj.hitpoint,
@@ -830,7 +831,7 @@ function update_radar_data()
  end
  -- -- structures
  -- reset vars for this pass
- power_bal,total_storage,has_radar,has_build,building_count = 0,0,false,{},{0,0}
+ power_bal,total_storage,has_radar,has_obj,building_count = 0,0,false,{},{0,0}
 
  for _,building in pairs(buildings) do  
    local posx,posy = building:get_tile_pos()--flr(building.x/8),flr(building.y/8)
@@ -841,7 +842,7 @@ function update_radar_data()
    -- track power/radar
    if building.owner==1 then
     -- player owned
-    has_build[building.id]=true
+    has_obj[building.id]=building
     power_bal -= building.power
     if (building.id==7) has_radar=true
     if (sub(building.name,1,5)=="sPICE") total_storage+=1000
@@ -855,6 +856,7 @@ function update_radar_data()
    for _,unit in pairs(units) do
     -- if our unit, or ai not under fog of war
     if unit.owner==1 or fow[flr(unit.x/8)][flr(unit.y/8)]==16 then
+     has_obj[unit.id]=unit
      radar_data[flr(unit.x/2/8)..","..flr(unit.y/2/8)] = unit.col1
     end
    end
@@ -989,6 +991,7 @@ function do_guard(unit, start_state)
  unit.state = start_state or 0
  unit.cor = cocreate(function(self)
   while true do
+   --printh("guarding-id="..self.id)
    -- be on look-out
    if rnd"500"<1 and self.arms>0 and self.state!=8 then 
     ping(self,flr(self.x/8),flr(self.y/8),is_danger_tile,self.range)
@@ -997,30 +1000,34 @@ function do_guard(unit, start_state)
    local last_fact = self.last_fact
 
    -- if a carryall only
-   if self.id==31 then
-    -- todo: #1 move to random place in map
-    move_unit_pos(self, flr(rnd"26"), flr(rnd"26"))
-    -- todo: #2 see if harvester awaiting pickup
-    -- todo:  > move to harvester
-    -- todo:  > pick-up harvester
-    -- todo:  > move to harvester's last factory
-    -- todo:  > drop-off harvester, then goto #1
-    -- todo: #3 see if harvester finished unloading
-    -- todo:  > move to harvester
-    -- todo:  > pick-up harvester
-    -- todo:  > move to harvester's last mining pos
-    -- todo:  > drop-off harvester, then goto #1
-    -- todo: #4 see if any unit is near-death
-    -- todo:  > move to unit
-    -- todo:  > pick-up unit
-    -- todo:  > move to repair facility
-    -- todo:  > drop-off unit, then goto #1
-
+   if self.id==31 then        
+    if self.hail then
+     goto skip_end_guard
+    else
+     -- todo: #1 move to random place in map
+     move_unit_pos(self, flr(rnd"26"), flr(rnd"26"))
+     -- todo: #2 see if harvester awaiting pickup
+     -- todo:  > move to harvester
+     -- todo:  > pick-up harvester
+     -- todo:  > move to harvester's last factory
+     -- todo:  > drop-off harvester, then goto #1
+     -- todo: #3 see if harvester finished unloading
+     -- todo:  > move to harvester
+     -- todo:  > pick-up harvester
+     -- todo:  > move to harvester's last mining pos
+     -- todo:  > drop-off harvester, then goto #1
+     -- todo: #4 see if any unit is near-death
+     -- todo:  > move to unit
+     -- todo:  > pick-up unit
+     -- todo:  > move to repair facility
+     -- todo:  > drop-off unit, then goto #1     
+    end
    end
 
    -- if a harvester only
-   if self.id==30 then
-    if self.state==0 or self.state==7 or self.state==9 then
+   if self.id==30 then   
+    if self.state==0 or self.state==9 then
+    --if self.state==0 or self.state==7 or self.state==9 then
      if self.capacity<=1500 
       and self.state!=7 and self.state!=9 then 
       local sx,sy
@@ -1130,7 +1137,7 @@ function do_guard(unit, start_state)
 
    
    -- todo: if other unit type (carrier, worm, etc.)
-
+   ::skip_end_guard::
    yield()
   
   end -- end while
@@ -1250,11 +1257,40 @@ function is_danger_tile(unit,x,y)
  if (target!=null and target.owner!=unit.owner and target.created_by!=unit.created_by and fow[x][y]==16) do_attack(unit,target) return true
 end
 
-function move_unit_pos(unit,x,y,dist_to_keep)  
+function move_unit_pos(unit,x,y,dist_to_keep)--,hail)
+  printh(unit.id)
   local flying = unit.z>1
+
+  -- before moving, can carryall take us?
+  local carryall=has_obj and has_obj[31] or false
+  if carryall and not carryall.hail then
+   --stop("breakpoint")
+   --printh("if...TRUE")
+   --unit.state=7
+   carryall.hail=unit
+   unit.hx=x
+   unit.hy=y
+   unit.lift=carryall   
+   unit.cor=cocreate(function(unit2)
+    --stop("here2")
+    --printh("1")
+    move_unit_pos(unit.lift,flr(unit2.x/8),flr(unit2.y/8))
+    --del(units, unit2)
+    --printh("2")
+    move_unit_pos(unit.lift,unit2.hx,unit2.hy)
+    --printh(">>>")
+    --printh("3")
+    unit2:set_pos(unit.x,unit.y)
+    --add(units, unit2)
+    --unit.lift.hail=nil
+    --do_guard(unit2)    
+   end)
+   return
+  end
   
   ::restart_move_unit::
 
+  printh("routeplan:"..unit.id)
   --unit.path="init"   
   -- check target valid
   if not flying and not is_free_tile(nil,x,y) then   
@@ -1448,7 +1484,6 @@ end
 -- draw related 
 --------------------------------
 function draw_level()
- --pal()
  -- draw the map, objects - everything except ui
 	cls"15" --draw_sand
  
@@ -1460,11 +1495,6 @@ function draw_level()
  -- reset to 0 when very low
  --if (shake<0.05) shake=0
 
- -- palt()
- -- pal()
-  --palt(11,true)
-
- 
  -- draw sandworm
  if worm_segs then
   for i=1,#worm_segs do
@@ -1486,13 +1516,6 @@ function draw_level()
   
  map(0,0, 0,0, 64,32)
  map(64,0, 0,256, 64,32)
-
- -- debug pathfinding
- -- if (debug_mode) draw_pathfinding()
-
- -- if path != nil and path != "init" then
- --  spr(144, path[1].x*8, path[1].y*8)
- -- end
 
 
  -- buildings
@@ -1620,10 +1643,10 @@ function draw_ui()
  -- top/header bar
  rectfill(0,0,127,8,9) 
  -- update/draw message
- if (msgcount>0) msgcount-=1 print(message, 2,2,0)
+ --if (msgcount>0) msgcount-=1 print(message, 2,2,0)
  -- score
  strnum=getscoretext(credits[1])
- ?sub("000000", #strnum+1)..strnum, 103,2, p_col2
+ --?sub("000000", #strnum+1)..strnum, 103,2, p_col2
  
  -- placement?
  if selected_obj 
@@ -1676,9 +1699,9 @@ function draw_ui()
     for i=1,#selected_obj.build_objs do
      local curr_item=selected_obj.build_objs[i]
      if curr_item.req_id==nil 
-      or has_build[curr_item.req_id]
+      or has_obj[curr_item.req_id]
       -- todo: filter out palace + starport if already built (takes more tokens tho!)
-      --and (curr_item.max==nil or not has_build[curr_item.id])
+      --and (curr_item.max==nil or not has_obj[curr_item.id])
      then
       selected_obj.valid_build_objs[icount]=curr_item
       if icount>=menu_pos and icount<=menu_pos+2 then
@@ -1737,26 +1760,6 @@ end
 function draw_obj(obj)
  spr(obj.obj_spr, obj.x, obj.y, obj.spr_w, obj.spr_h)
 end
-
--- function draw_pathfinding()
---  -- debug pathfinding
---  if (lastunit!=selected_obj and selected_obj!=nil) lastunit=selected_obj
-
---  if lastunit and lastunit.path != nil and lastunit.path != "init" then
---   draw_path(lastunit.path, 1, 1)
---   draw_path(lastunit.path, 0, 12)
---  end
--- end
-
--- function draw_path(path, dy, clr)
---  local p = path[1]
---  for i = 2, #path do
---   local n = path[i]
---    line((p.x * 8) + 4 + dy, (p.y * 8) + 4 + dy, 
---         (n.x * 8) + 4 + dy, (n.y * 8) + 4 + dy, clr)
---   p = n
---  end
--- end
 
 
 
@@ -1817,8 +1820,7 @@ function collisions()
      and selected_obj.type==1
      and selected_obj.owner==1 
      and selected_obj.speed>0 
-     and selected_obj.state!=7 then
-
+     and selected_obj.state!=7 then     
      selected_obj.cor = cocreate(function(unit)
        move_unit_pos(unit, flr((camx+cursx)/8), flr((camy+cursy)/8))
        do_guard(unit)
@@ -1872,13 +1874,14 @@ function check_hover_select(obj)
      and (obj.id==6 and selected_obj.id==30 
        or obj.id==14 and selected_obj.id>24)
      and obj.owner==1 then
-     -- send harvester to refinery/repair facility
+     -- send harvester/unit to refinery/repair facility
      selected_obj.state=7
      -- update last factory (in case changed)     
      selected_obj.last_fact,obj.incoming = obj,true
+     --printh(">>>>>>>>>")
      selected_obj.cor = cocreate(function(unit)
       move_unit_pos(unit, (obj.x+16)/8, (obj.y+16)/8)
-      do_guard(unit, 9)
+      --do_guard(unit, 9)
      end)
      return -- register "no click"
 
@@ -1995,17 +1998,6 @@ function set_loop(enabled)
  poke(0x3115, val)  
 end
 
---print string with outline.
--- function printo(str,startx,
---  starty,col,
---  col_bg)
---  for xx = -1, 1 do
---  for yy = -1, 1 do
---  print(str, startx+xx, starty+yy, col_bg)
---  end
---  end
---  print(str,startx,starty,col)
--- end
 
 function collide(o1, o2)
  local hb1,hb2 = o1:get_hitbox(),o2:get_hitbox()
@@ -2341,7 +2333,7 @@ __map__
 12120a1010100a0a0a850a0a0a0a000203030307030303060000000000120000000000000000030303030303030303030000000000000000000003030303030000121212121212000000000000001212121212000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 000000101010420a0d00800e0a00000006030303030306000000121212000000000000000003030303171819030303030303000000000000000003030303030012120000000000000000000000121212121200000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 0012120d0d090d0e00850a0a0e0000121200650a0a0a0a0b00001200000000000000000000030303171b1b1b190303030303000000000000000000030303030012000000000000000000000000121212120000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
-12121212120000160000010a0000120c090c0a0a0a0a0a0a0b12120000000000000000000003031a1b1b1e1e1e1e03030303030000000000000000000303030000000000000000000012120000121212120000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+12121212120000160000010a00001244090c0a0a0a0a0a0a0b12120000000000000000000003031a1b1b1e1e1e1e03030303030000000000000000000303030000000000000000000012120000121212120000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 121212121200160000850a0a0c00120a0a0a1718190a0a0a0a12000000000000000000000303031d1b1f0303030303030303030300000003030303030303000000000000000000000012121212121212000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 001212001212161685680a10620c0c680a0a1d1e1b190a0a0a0c0a0b0000000000000000030303031a030303030303030300000000000000030303030303030000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 0000000012121216850a0a100a0a0a0a0a0a17191b1c0a0a0a0a0a0a0000001200000003030303031d1f0303030000000000000000000000000000000003030000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
