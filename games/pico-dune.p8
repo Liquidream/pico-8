@@ -155,8 +155,6 @@ obj_data=[[id|name|obj_spr|ico_spr|type|w|h|z|trans_col|parent_id|parent2_id|own
 
 
 
-
-
 --[[
   ## messages ##
 There isn't enough open concrete to place this structure. You may proceed, but without enough concrete the building will need repairs.
@@ -513,7 +511,7 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
         is_missile and .15 or 2,
         -.01, 
         is_missile and 20 or 2.5, 
-        is_missile and {7, 7, 10, 9, 8, 2, 13, 6, 7} or {15}, 
+        self.id==38 and {11} or is_missile and {7, 7, 10, 9, 8, 2, 13, 6, 7} or {15}, 
         rnd"2"<1 and 0xa5a5.8 or 0)
       end
      end
@@ -540,7 +538,10 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
        if (self.arms>0 and self.state==0) do_attack(self, self.hitby)
 
        -- lose soldiers - when tokens permit (takes ~20!)
-       if (self.obj_spr==55 and life<100) self.spr_w=0.5 self.spr_h=0.5
+       if (self.obj_spr==55 and life<100) self.spr_w,self.spr_h=0.5,0.5
+       -- req repair pickup
+       if (life<50 and self.state!=7) return_to_fact(self,has_obj[14] or self.last_fact) --TODO: chk last fact being set to facts (unless harvester!)
+       
      end
      -- check for death
      if (self.type<=2 and life<=0 and self.death_time==nil) self.state=5 self.cor=nil self.death_time=(self.type==2 and 1 or .5) sfx(self.deathsfx, 3) shake+=((self.type==2 or self.id==36) and 0.25 or 0)
@@ -613,7 +614,7 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
         target.hit,target.hitby=self.fire_type,self
 
         -- deviator specific
-        if self.id==38 and target.speed>0 then
+        if self.id==38 and target.speed!=nil then
          target.owner,target.faction,target.col1,target.col2 = self.owner,self.faction,self.col1,self.col2
          do_guard(self) -- stop attacking "converted" obj
         elseif target.old_faction then
@@ -970,7 +971,7 @@ function update_level()
     
  end
  
- collisions()
+ update_collisions()
 
  last_mouse_btn,last_selected_obj,last_selected_subobj = mouse_btn,selected_obj,selected_subobj  
 end
@@ -1554,51 +1555,6 @@ function draw_level()
 end
 
 
-
-function draw_radar()  
- rect(90,90,125,125,p_col1)
- rect(91,91,124,124,p_col2)  
- rectfill(92,92,123,123,0)
-
- -- update/draw message
- if (msgcount>0) msgcount-=1 print(message, 2,2)
-
- -- anim?
- -- https://youtu.be/T337FK6L0h0?t=2891
- if hq!=last_hq then
-  radar_frame,radar_dir = hq and 1 or 59, hq and 1 or -1  
-  sfx"55"
-  update_radar_data()
- end  
- last_hq=hq
-
- if radar_frame>0 and radar_frame<60 then
-   radar_frame+=radar_dir
-   -- draw radar anim
-   clip(
-     max(108-radar_frame,91),
-     max(108-(radar_frame>20 and radar_frame-20 or 0),91),
-     min(radar_frame*2,33),
-     min((radar_frame>20 and radar_frame-20 or 1)*2,33))
-   for i=1,300 do
-     pset(92+rnd"32",92+rnd"32",5+rnd"3")
-   end
-   clip()
-   return
- end
-   
-  -- draw radar data
-  for xx=0,31 do
-   for yy=0,31 do
-    if (radar_data[xx..","..yy]) pset(92+xx,92+yy,radar_data[xx..","..yy])
-   end
-  end
-  
-  -- draw "view" bounds
-  local cx,cy=92+camx/16,92+camy/16
-  rect(cx,cy, cx+7,cy+7, 7)
-end
-
 function set_message(msg)
   message,msgcount = msg,500
 end
@@ -1676,7 +1632,54 @@ function draw_ui()
   fillp()
  end
 
- draw_radar()
+ -- ------------------------
+ -- draw_radar()
+ -- ------------------------
+ rect(90,90,125,125,p_col1)
+ rect(91,91,124,124,p_col2)  
+ rectfill(92,92,123,123,0)
+
+ -- update/draw message
+ if (msgcount>0) msgcount-=1 print(message, 2,2)
+
+ -- anim?
+ -- https://youtu.be/T337FK6L0h0?t=2891
+ if hq!=last_hq then
+  radar_frame,radar_dir = hq and 1 or 59, hq and 1 or -1  
+  sfx"55"
+  update_radar_data()
+ end  
+ last_hq=hq
+
+ if radar_frame>0 and radar_frame<60 then
+   radar_frame+=radar_dir
+   -- draw radar anim
+   clip(
+     max(108-radar_frame,91),
+     max(108-(radar_frame>20 and radar_frame-20 or 0),91),
+     min(radar_frame*2,33),
+     min((radar_frame>20 and radar_frame-20 or 1)*2,33))
+   for i=1,300 do
+     pset(92+rnd"32",92+rnd"32",5+rnd"3")
+   end
+   clip()
+   return
+ end
+  
+ -- draw radar data
+ for xx=0,31 do
+  for yy=0,31 do
+   if (radar_data[xx..","..yy]) pset(92+xx,92+yy,radar_data[xx..","..yy])
+  end
+ end
+ 
+ -- draw "view" bounds
+ local cx,cy=92+camx/16,92+camy/16
+ rect(cx,cy, cx+7,cy+7, 7)
+
+ ---
+
+
 
  if show_menu then
   fillp(0xA5A5.8)
@@ -1764,7 +1767,7 @@ end
 
 
 -- check all collisions
-function collisions()
+function update_collisions()
  clickedsomething=false 
  -- selected obj ui collision
  if selected_obj then
@@ -1855,7 +1858,13 @@ end
 function check_hover_select(obj)
   -- null-check
   if (obj==nil) return
-  obj.hover = collide(cursor, obj)
+  --  collide()
+  local hb1,hb2 = cursor:get_hitbox(),obj:get_hitbox()
+  obj.hover = hb1.x < hb2.x + hb2.w and
+   hb1.x + hb1.w > hb2.x and
+   hb1.y < hb2.y + hb2.h and
+   hb1.y + hb1.h >hb2.y
+
   if left_button_clicked and obj.hover then
    if show_menu then
     selected_subobj = obj
@@ -1995,16 +2004,6 @@ function set_loop(enabled)
  if ((band(val, 128) > 0) != enabled) val=bxor(val,128)
  poke(0x3115, val)  
 end
-
-
-function collide(o1, o2)
- local hb1,hb2 = o1:get_hitbox(),o2:get_hitbox()
- return hb1.x < hb2.x + hb2.w and
-  hb1.x + hb1.w > hb2.x and
-  hb1.y < hb2.y + hb2.h and
-  hb1.y + hb1.h >hb2.y
-end
-
 
 
 -- Large scores (by @Felice)
@@ -2296,7 +2295,7 @@ __map__
 0000000012121216850a0a100a0a0a0a0a0a17191b1c0a0a0a0a0a0a0000001200000003030303031d1f0303030000000000000000000000000000000003030000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 000000121200000000850085006a0a0085001d1e1e1f0a0a0a0a0a0a42000012000000030303030303030303030300000000000012000000000000000000030000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 000000000000000000000000850a0a8500000d0d0d0d0d0d0d0d0d0d0d121212000003030303030303030303030303000000120012121212121200000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
-0000000000000000000000000000000000000000000000001200001212120000000003030303030303030303030303030000120000000000000000000000000000000000000000000000000000000000000000000000000000121212121212120000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000035000000000000000000000000001200001212120000000003030303030303030303030303030000120000000000000000000000000000000000000000000000000000000000000000000000000000121212121212120000000000000000000000000000000000000000000000000000000000000000
 0000120012120000000000121200121212120000000000001212121200000000000003030000000000000000000303030000001200120000000000000000000000000000000000000000000000000000000000000000000012121212121212120000000000000000000000000000000000000000000000000000000000000000
 0012120012120000000000121200121212121212000000000000000000000000000003000000000000000000000003030300000000120000000000000000000000000000000000000000000000000000000000000000001212121212121212120000000000000000000000000000000000000000000000000000000000000000
 0000120000003d00000000490000000000000000000000000000000012000000000000000012121212121200000000030300000000001212000000000000000000000000000000000000000000000000000000000000001212121200121212000000000000000000000000000000000000000000000000000000000000000000
