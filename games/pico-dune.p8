@@ -324,10 +324,6 @@ function m_map_obj_tree(objref, x,y, owner, factory)
     end
   end
 
-
-  -- store the factory that made it (mostly for harvesters)
-  --newobj.last_fact = last_fact
-
   -- 0=auto, 1=player, 2=computer/ai
   if newobj.owner==1 then
     newobj.faction,newobj.col1,newobj.col2 = p_faction,p_col1,p_col2
@@ -977,10 +973,11 @@ function do_guard(unit, start_state)
    --printh("guarding-id="..self.id)
    -- be on look-out
    if rnd"500"<1 and self.arms>0 and self.state!=8 then 
+    -- is danger tile?
     ping(self,flr(self.x/8),flr(self.y/8),
     function (unit,x,y)
      local target=units[object_tiles[x..","..y]]
-     if (target!=null and target.owner!=unit.owner and target.created_by!=unit.created_by and fow[x][y]==16) do_attack(unit,target) return true
+     if (target!=null and target.created_by!=unit.created_by and fow[x][y]==16 and target.z==1) do_attack(unit,target) return true
     end,
     self.range)
    end
@@ -1878,9 +1875,10 @@ function check_hover_select(obj)
 
 end
 
-function return_to_fact(unit,fact)
  -- send harvester/unit to refinery/repair facility
- -- todo: make this a func that can then be called by harvesters full & units w/ low health
+function return_to_fact(unit,fact)
+ -- ensure that we always have a value (even for discovered objs)
+ fact = fact or has_obj[unit.created_by][1]
  -- update last factory (in case changed)     
  unit.state,fact.incoming = 7,true
  if (unit.id!=30 or fact.id==6) unit.last_fact=fact
