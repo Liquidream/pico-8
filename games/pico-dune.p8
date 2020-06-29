@@ -34,7 +34,7 @@ credits={
 
 
 -- fields
-_g,buildings,units,object_tiles,last_facts,radar_data,spice_tiles,particles,has_obj={},{},{},{},{},{},{},{},{}
+_g,buildings,units,object_tiles,last_facts,radar_data,spice_tiles,particles,has_obj={},{},{},{},{},{},{},{},{{},{}}
 start_time,_t,build_dest,unit_dest,keyx,keyy,hq,radar_frame=t(),0,{0,0},{0,0},0,0,false,0
 last_hq=hq
 message,msgcount="",0
@@ -530,9 +530,10 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
        if (self.arms>0 and self.state==0) do_attack(self, self.hitby)
 
        -- lose soldiers - when tokens permit (takes ~20!)
-       if (self.obj_spr==55 and life<100) self.spr_w,self.spr_h=0.5,0.5
+      -- if (self.obj_spr==55 and life<100) self.spr_w,self.spr_h=0.5,0.5
        -- req repair pickup
-       if (life<50 and self.state!=7) return_to_fact(self,has_obj[14] or self.last_fact) --TODO: chk last fact being set to facts (unless harvester!)
+       printh("self.last_fact="..tostr(self.last_fact)..self.name)
+       if (life<50 and self.state!=7) return_to_fact(self,has_obj[self.created_by][14] or self.last_fact) --TODO: chk last fact being set to facts (unless harvester!)
        
      end
      -- check for death
@@ -779,13 +780,13 @@ function _update60()  --game_update
      -- track power/radar
      if building.owner==1 then
       -- player owned
-      has_obj[building.id]=building
       power_bal -= building.power
       if (building.id==7) has_radar=true
       if (sub(building.name,1,5)=="sPICE") total_storage+=1000
      end
-     -- track counts
+     -- track counts & objs
      building_count[building.owner]+=1
+     has_obj[building.created_by][building.id]=building
     end
 
     if hq then
@@ -793,9 +794,10 @@ function _update60()  --game_update
      for _,unit in pairs(units) do
       -- if our unit, or ai not under fog of war
       if unit.owner==1 or fow[flr(unit.x/8)][flr(unit.y/8)]==16 then
-       has_obj[unit.id]=unit
        radar_data[flr(unit.x/2/8)..","..flr(unit.y/2/8)] = unit.col1
       end
+      --printh(unit.created_by..","..unit.id..","..unit.name)
+      has_obj[unit.created_by][unit.id]=unit
      end
 
      -- sandworm?
@@ -1231,20 +1233,24 @@ function move_unit_pos(unit,x,y,dist_to_keep,try_hail,start_state)
   local flying = unit.z>1
 
   -- before moving, can carryall take us?
-  local carryall=has_obj and has_obj[31] or false
   --printh(carryall)
-  if try_hail and carryall and not carryall.link then
-    carryall.link,unit.link = unit,carryall    
-    carryall.cor=cocreate(function(unit_c)
-     move_unit_pos(unit_c,flr(unit.x/8),flr(unit.y/8))
-     del(units, unit)
-     move_unit_pos(carryall,x,y)
-     unit:set_pos(carryall.x,carryall.y)
-     add(units, unit)
-     do_guard(carryall)     
-     do_guard(unit, start_state)
-    end)
-   return
+  if try_hail then
+   --printh(tostr(has_obj[unit.owner][31]))
+   --stop(unit.name..","..unit.owner)   
+   local carryall=has_obj and has_obj[unit.created_by][31] or false
+   if  carryall and not carryall.link then
+     carryall.link,unit.link = unit,carryall    
+     carryall.cor=cocreate(function(unit_c)
+      move_unit_pos(unit_c,flr(unit.x/8),flr(unit.y/8))
+      del(units, unit)
+      move_unit_pos(carryall,x,y)
+      unit:set_pos(carryall.x,carryall.y)
+      add(units, unit)
+      do_guard(carryall)     
+      do_guard(unit, start_state)
+     end)
+    return
+   end
   end
   
   ::restart_move_unit::
@@ -1677,7 +1683,7 @@ function draw_ui()
     for i=1,#selected_obj.build_objs do
      local curr_item=selected_obj.build_objs[i]
      if curr_item.req_id==nil 
-      or has_obj[curr_item.req_id]
+      or has_obj[selected_obj.created_by][curr_item.req_id]
       -- todo: filter out palace + starport if already built (takes more tokens tho!)
       --and (curr_item.max==nil or not has_obj[curr_item.id])
      then
@@ -1726,9 +1732,9 @@ function m_button(x,y,text,func_onclick,_w)
    return self    
    end,
   draw=function(self)
-    if(#text>1)rectfill(self.x,self.y,self.x+self.w,self.y+self.h, 7)
-    if(#text>1)rectfill(self.x+1,self.y+1,self.x+self.w-1,self.y+self.h-1, self.hover and 12 or 6)
-    ?self.text,self.x+2,self.y+2,(#text>1) and 0 or (self.hover and 12 or 7)
+    rectfill(self.x,self.y,self.x+self.w,self.y+self.h, 7)
+    rectfill(self.x+1,self.y+1,self.x+self.w-1,self.y+self.h-1, self.hover and 12 or 6)
+    ?self.text,self.x+2,self.y+2,0
     --if (debug_collision) draw_hitbox(self)
   end,
   func_onclick = func_onclick
@@ -1790,7 +1796,7 @@ function update_collisions()
     -- clicked own unit, first time?
     if (selected_obj.owner==1 and selected_obj.type==1 and selected_obj!=last_selected_obj and selected_obj.speed>0) sfx"62"    
     -- clicked enemy object, last clicked ours (unit or palace)?... attack!
-    if (selected_obj.owner==2 and last_selected_obj and (last_selected_obj.type==1 or last_selected_obj.id==19) and last_selected_obj.owner==1) selected_obj.flash_count=10 do_attack(last_selected_obj, selected_obj) selected_obj=nil has_obj={} -- periodically reset the list of built obj's (done here as bug if done in radar code, as delay in populating)   
+    if (selected_obj.owner==2 and last_selected_obj and (last_selected_obj.type==1 or last_selected_obj.id==19) and last_selected_obj.owner==1) selected_obj.flash_count=10 do_attack(last_selected_obj, selected_obj) selected_obj=nil has_obj={{},{}} -- periodically reset the list of built obj's (done here as bug if done in radar code, as delay in populating)   
   -- deselect?
   else 
     -- do we have a unit selected?
@@ -2284,9 +2290,9 @@ __map__
 0000000012120000000000121200000303030000000000000000000000000000120000000000000000000000120000000000000000000000000003000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 0000000012120000000000121200000000000000000000000000000000000012000000000000000000000000000000000000000003000000000303000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 0000000000000000000000000c090c0000000000000000000000000000121212000000000000000000000000000000000000000003030303030300000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
-000000001200000000000000000a0e0068000000000000000000000012120000000000000000000006060606060600000000000000030303000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+000000001200004900000000000a0e0068000000000000000000000012120000000000000000000006060606060600000000000000030303000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 001212121200000000390c0c0c0a0a0a00000000000000000000000012000000030000000000000000000000000606000600060000000003030303000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
-121200000000000000090a1818190a0a0a6a0000000000000000000000000000030000000000000000000000000000000000000000030300000003000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+121200008000000000090a1818190a0a0a6a0000000000000000000000000000030000000000000000000000000000000000000000030300000003000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 000000000000000040090a1e1b1b1818190a0000000000000000000000000000000000000000000000000000000000000000000000030303030300000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 00000000000000090a0a0a0a1e1b1b1b1c0a6000000000000002050700000000000000000000000000000000000000000000000000030603030600000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 16003300000000000d620a0a0a1a1b1c1f0a0a0a0a0000000002060600000000000000000000000000000000000000000000000000000000000000000000001600000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
