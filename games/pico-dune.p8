@@ -530,9 +530,9 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
        if (self.arms>0 and self.state==0) do_attack(self, self.hitby)
 
        -- lose soldiers - when tokens permit (takes ~20!)
-      -- if (self.obj_spr==55 and life<100) self.spr_w,self.spr_h=0.5,0.5
+       if (self.obj_spr==55 and life<100) self.spr_w,self.spr_h=0.5,0.5
        -- req repair pickup
-       printh("self.last_fact="..tostr(self.last_fact)..self.name)
+       --printh("self.last_fact="..tostr(self.last_fact)..self.name)
        if (life<50 and self.state!=7) return_to_fact(self,has_obj[self.created_by][14] or self.last_fact) --TODO: chk last fact being set to facts (unless harvester!)
        
      end
@@ -1732,10 +1732,10 @@ function m_button(x,y,text,func_onclick,_w)
    return self    
    end,
   draw=function(self)
-    rectfill(self.x,self.y,self.x+self.w,self.y+self.h, 7)
-    rectfill(self.x+1,self.y+1,self.x+self.w-1,self.y+self.h-1, self.hover and 12 or 6)
-    ?self.text,self.x+2,self.y+2,0
-    --if (debug_collision) draw_hitbox(self)
+    if(#text>1)rectfill(self.x,self.y,self.x+self.w,self.y+self.h, self.hover and 12 or 6)
+    --if(#text>1)rectfill(self.x,self.y,self.x+self.w,self.y+self.h, 7)
+    --if(#text>1)rectfill(self.x+1,self.y+1,self.x+self.w-1,self.y+self.h-1, self.hover and 12 or 6)
+    ?self.text,self.x+2,self.y+2,(#text>1) and 0 or (self.hover and 12 or 6)
   end,
   func_onclick = func_onclick
  })
