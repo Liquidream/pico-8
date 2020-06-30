@@ -34,10 +34,8 @@ credits={
 
 
 -- fields
-_g,buildings,units,object_tiles,radar_data,spice_tiles,particles,has_obj={},{},{},{},{},{},{},{{},{}}
-start_time,_t,build_dest,unit_dest,keyx,keyy,hq,radar_frame=t(),0,{0,0},{0,0},0,0,false,0
-last_hq=hq
-message,msgcount="",0
+_g,buildings,units,object_tiles,radar_data,spice_tiles,particles,has_obj,start_time,_t,build_dest,unit_dest,keyx,keyy,hq,radar_frame={},{},{},{},{},{},{},{{},{}},t(),0,{0,0},{0,0},0,0,false,0
+last_hq,message,msgcount,fow=hq,"",0,{}
 
 _g.factory_click=function(self)
   menu_pos,selected_subobj,ui_controls=1,self.parent.build_objs[1],{}
@@ -194,8 +192,7 @@ function _init()
    if (j!=2 and j<31)val=tonum(val)
    if j==31 then
     --restore new lines
-    str_breaks=split(val,"~")
-    val=""
+    str_breaks,val=split(val,"~"),""    
     for i=1,#str_breaks do
       val=val.."\n"..str_breaks[i]
     end
@@ -209,7 +206,6 @@ function _init()
  -- init the game/title
  -- ------------------------- 
  -- init fog of war?
- fow={}
  for i=-2,66 do
   fow[i]={}
   for l=-2,66 do
@@ -231,7 +227,7 @@ function _init()
    }
   end,
   draw=function(self)
-   spr((selected_obj and (selected_obj.type==1 and selected_obj.owner==1) or target_mode) and 1 or 0, --self.obj_spr, 
+   spr((selected_obj and (selected_obj.type==1 and selected_obj.owner==1) or target_mode) and 1,
     self.x, self.y, self.w/8, self.h/8)
   end
   }
@@ -245,16 +241,14 @@ function _init()
   for my=0,31 do
     for mx=0,127 do
       local objref=nil
-      local spr_val=mget(mx,my)      
+      local spr_val=mget(mx,my)
       
       -- handle player start pos (const yard) as a special case
       if i==1 and spr_val==1 then
        -- found player start position
        pstartx,pstarty=mx*8,my*8        
-       -- center camera
-       camx,camy=pstartx-56,pstarty-56
-       -- create player const yard
-       objref=obj_data[1]
+       -- center camera & create player const yard
+       camx,camy,objref=pstartx-56,pstarty-56,obj_data[1]
 
       elseif i==2
        and spr_val>=48 then --don't create "concrete" as objs
@@ -293,7 +287,7 @@ function m_map_obj_tree(objref, x,y, owner, factory)
   -- player-controlled or ai?
   -- note: this whole thing may not be needed 
   -- as once we have plr start pos, that might be all we need
-  newobj.owner=newobj.owner or owner or (dist(x,y,pstartx,pstarty)<75 and 1 or 2)
+  newobj.owner=newobj.owner or owner or dist(x,y,pstartx,pstarty)<75 and 1 or 2
   
   -- who created? (do avoid "guard" attacking units created by same faction)
   -- factory?
@@ -340,14 +334,14 @@ function m_map_obj_tree(objref, x,y, owner, factory)
   
   -- override owner? 
   -- (carryalls are automomous & don't reveal map, etc.)
-  if (newobj.id==31) newobj.owner=0 --printh("cols="..newobj.col1)
+  if (newobj.id==31) newobj.owner=0
 
 
   local xpos,ypos = flr(x/8),flr(y/8)
   
   -- building props?        
   if objref.type==2 then
-    newobj.deathsfx,newobj.fire_cooldown = 53,0 -- palace weapon cooldown
+    newobj.fire_cooldown = 0 -- palace weapon cooldown
     -- prepare the map?
     local slabs=(objref.id==2 or objref.id==3)    
     for xx=0,objref.w-1 do
@@ -362,14 +356,13 @@ function m_map_obj_tree(objref, x,y, owner, factory)
     if newobj.id==6 and newobj.parent==nil then
       --last_facts[newobj.owner]=newobj
      -- auto create a harvester
-     -- todo : have freighter deploy it
+     -- todo : have carryall deploy it
      local ux,uy=ping(newobj,(newobj.x+32)/8, (newobj.y+8)/8, is_free_tile)
      m_map_obj_tree(obj_data[30],ux*8,uy*8,nil,newobj)
     end
   end
   -- unit props
-  if objref.type==1 then
-   newobj.deathsfx=54
+  if objref.type==1 then   
     if (newobj.norotate!=1) newobj.r=flr(rnd"8")*.125
     if newobj.arms>0 then
      -- combat stuff
@@ -458,8 +451,10 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
      -- rotating obj?
      if self.r then
       if not self.death_time or self.death_time>.025  then
-       if (self.speed>0) rspr(self.obj_spr%16*8,flr(self.obj_spr/16)*8, self.x, self.y, .25-self.r, 1, self.trans_col, 5)
-       rspr(self.obj_spr%16*8,flr(self.obj_spr/16)*8, self.x, self.y-self.z, .25-self.r, 1, self.trans_col, flr(self.flash_count)%2==0 and 7 or nil)
+       -- draw twice (shadow first, then norm)
+       for i=1,2 do
+        if (i==2 or self.speed>0) rspr(self.obj_spr%16*8,flr(self.obj_spr/16)*8, self.x, self.y-(i==2 and self.z or 0), .25-self.r, 1, self.trans_col, i==1 and 5 or flr(self.flash_count)%2==0 and 7 or nil)
+       end
       end
      -- norm sprite
      else      
@@ -533,7 +528,7 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
        
      end
      -- check for death
-     if (self.type<=2 and life<=0 and self.death_time==nil) self.state=5 self.cor=nil self.death_time=(self.type==2 and 1 or .5) sfx(self.deathsfx, 3) shake+=((self.type==2 or self.id==36) and 0.25 or 0)
+     if (self.type<=2 and life<=0 and self.death_time==nil) self.state=5 self.cor=nil self.death_time=(self.type==2 and 1 or .5) sfx(self.type==2 and 53 or 54, 3) shake+=((self.type==2 or self.id==36) and 0.25 or 0)
      if self.death_time then
       self.death_time-=.025
       if self.death_time<=0 then
@@ -1931,6 +1926,7 @@ function update_ai()
   -- -------------------------
   -- todo: fire palace weapons
   -- 
+  -- todo: could be a bug here where ai_palace holds obj in mem
   if p_target and p_target.owner==1 and p_target.type==2 
    and ai_palace and ai_palace.fire_cooldown<=0 then 
     do_attack(ai_palace, p_target)
@@ -2279,7 +2275,7 @@ __map__
 000000000000000000000000850d0d850e000d0d0d0d0d0d0d0d0d0d0d121212000003030303030303030303030303000000120012121212121200000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 0000000000000000004900000000000000000000000000001200001212120000000003030303030303030303030303030000120000000000000000000000000000000000000000000000000000000000000000000000000000121212121212120000000000000000000000000000000000000000000000000000000000000000
 0000120012120000000000121200121212120000000000001212121200000000000003030000000000000000000303030000001200120000000000000000000000000000000000000000000000000000000000000000000012121212121212120000000000000000000000000000000000000000000000000000000000000000
-0012120012120000000000121200121212121212000000000000000000000000000003000000000000000000000003030300000000120000000000000000000000000000000000000000000000000000000000000000001212121212121212120000000000000000000000000000000000000000000000000000000000000000
+0012120012120035360000121200121212121212000000000000000000000000000003000000000000000000000003030300000000120000000000000000000000000000000000000000000000000000000000000000001212121212121212120000000000000000000000000000000000000000000000000000000000000000
 0000120000000000000000000000000000000000000000000000000012000000000000000012121212121200000000030300000000001212000000000000000000000000000000000000000000000000000000000000001212121200121212000000000000000000000000000000000000000000000000000000000000000000
 1212000000000000000000000000000000000000000000000000000012121212000000000000001212121212120000000000000600000012121203000000060000000000000000000000000000000000000000001212121212120000000000000000000000000000000000000000000000000000000000000000000000000000
 1212000000000000000000000000000303030000000000000000000000000012120000000000000000121212120000000000000000000000000003000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
@@ -2291,7 +2287,7 @@ __map__
 121200008000000000090a1818190a0a0a6a0000000000000000000000000000030000000000000000000000000000000000000000030300000003000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 000000000000000040090a1e1b1b1818190a0000000000000000000000000000000000000000000000000000000000000000000000030303030300000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 00000000000000090a0a0a0a1e1b1b1b1c0a0a00000000000002050700000000000000000000000000000000000000000000000000030603030600000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
-16000000000000000d0a0a0a0a1a1b1c1f0a0a0a0a0000000002060600000000000000000000000000000000000000000000000000000000000000000000001600000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+16000000003600000d0a0a0a0a1a1b1c1f0a0a0a0a0000000002060600000000000000000000000000000000000000000000000000000000000000000000001600000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 1600000000000000000d0a0a0a1d1e1f0a0a0a0a0a0a0a000000000000000000000000000000000000000000000000000000000000000000000000000000001600000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000015
 1616160000000000000000090a0a0a0a0a0a0a0a0a0a0a0a0000000000000000000000000000000000000000000000000000000000000000000000000016161600000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001515
 __sfx__
