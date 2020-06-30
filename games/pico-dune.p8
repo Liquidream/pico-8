@@ -34,7 +34,7 @@ credits={
 
 
 -- fields
-_g,buildings,units,object_tiles,last_facts,radar_data,spice_tiles,particles,has_obj={},{},{},{},{},{},{},{},{{},{}}
+_g,buildings,units,object_tiles,radar_data,spice_tiles,particles,has_obj={},{},{},{},{},{},{},{{},{}}
 start_time,_t,build_dest,unit_dest,keyx,keyy,hq,radar_frame=t(),0,{0,0},{0,0},0,0,false,0
 last_hq=hq
 message,msgcount="",0
@@ -360,7 +360,7 @@ function m_map_obj_tree(objref, x,y, owner, factory)
     -- other building stuff
     -- refinery?
     if newobj.id==6 and newobj.parent==nil then
-      last_facts[newobj.owner]=newobj
+      --last_facts[newobj.owner]=newobj
      -- auto create a harvester
      -- todo : have freighter deploy it
      local ux,uy=ping(newobj,(newobj.x+32)/8, (newobj.y+8)/8, is_free_tile)
@@ -391,7 +391,7 @@ function m_map_obj_tree(objref, x,y, owner, factory)
      --
      newobj.last_fact=factory --default, for retreating
      -- harvesters (auto parent to last created refinary)
-     if (newobj.id==30) newobj.capacity=0 newobj.last_fact=last_facts[newobj.owner]
+     if (newobj.id==30) newobj.capacity=0 newobj.last_fact=has_obj[newobj.created_by][6]--newobj.last_fact=last_facts[newobj.owner]
     end
     add(units,newobj)
     -- default to guard
