@@ -64,10 +64,10 @@ _g.factory_click=function(self)
 end
 _g.init_windtrap=function(self)
   self.col_cycle_src=11
-  self.col_cycle = {12,12,12,12,13,1,1,1,1,13}
+  self.col_cycle = split("12,12,12,12,13,1,1,1,1,13",",")
 end
 _g.init_refinery=function(self)
- self.col_cycle = {11,10,8}
+ self.col_cycle = split("11,10,8,8",",")
 end
 _g.draw_refinery=function(self)
   pal()
@@ -118,7 +118,7 @@ obj_data=[[id|name|obj_spr|ico_spr|type|w|h|z|trans_col|parent_id|parent2_id|own
 3|sMALL cONCRETE sLAB|16|160|2|1|1|1|nil|1|||||||1|1|||5|0|0|0|||||||uSE CONCRETE TO MAKE A~STURDY FOUNDATION FOR~YOUR STRUCTURES.||||
 4|dEFENSIVE wALL|133|164|2|1|1|1|nil|1|||||||7|4|||50|0|0|200|||||||tHE wALL IS USED FOR~PASSIVE DEFENSE.||||
 5|wINDTRAP|66|172|2|2|2|1|nil|1|||||||1|1|||300|-100|0|800||||||10|tHE WINDTRAP SUPPLIES~POWER TO YOUR BASE.~wITHOUT POWER YOUR~STRUCTURES WILL DECAY.|init_windtrap|||
-6|sPICE rEFINERY|68|174|2|3|2|1|nil|1|||||||1|1|||400|30|0|1800||||||10|tHE rEFINERY CONVERTS~SPICE INTO CREDITS.|init_refinery|draw_refinery||
+6|sPICE rEFINERY|68|174|2|3|2|1|nil|1|||||||1|1|||400|30|0|1800||||||20|tHE rEFINERY CONVERTS~SPICE INTO CREDITS.|init_refinery|draw_refinery||
 7|rADAR oUTPOST|106|136|2|2|2|1|nil|1|||||||1|2|||400|30|0|2000|||||||tHE oUTPOST PROVIDES~RADAR AND AIDS CONTROL~OF DISTANT VEHICLES.||||
 8|sPICE sTORAGE sILO|104|134|2|2|2|1|nil|1|||||||6|2|||150|5|0|600|||||||tHE sPICE SILO IS USED ~TO STORE REFINED SPICE.||||
 9|bARRACKS|108|168|2|2|2|1|nil|1|||||11|3|7|2|||300|10|0|1200|||||||tHE bARRACKS IS USED TO~TRAIN YOUR lIGHT ~INFANTRY.||||factory_click
@@ -354,7 +354,6 @@ function m_map_obj_tree(objref, x,y, owner, factory)
     -- other building stuff
     -- refinery?
     if newobj.id==6 and newobj.parent==nil then
-      --last_facts[newobj.owner]=newobj
      -- auto create a harvester
      -- todo : have carryall deploy it
      local ux,uy=ping(newobj,(newobj.x+32)/8, (newobj.y+8)/8, is_free_tile)
@@ -384,7 +383,7 @@ function m_map_obj_tree(objref, x,y, owner, factory)
      --
      newobj.last_fact=factory --default, for retreating
      -- harvesters (auto parent to last created refinary)
-     if (newobj.id==30) newobj.capacity=0 newobj.last_fact=has_obj[newobj.created_by][6]--newobj.last_fact=last_facts[newobj.owner]
+     if (newobj.id==30) newobj.capacity=0 --newobj.last_fact=has_obj[newobj.owner][6]--newobj.last_fact=last_facts[newobj.owner]
     end
     add(units,newobj)
     -- default to guard
@@ -465,7 +464,7 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
          local this = self.type==4 and self or self.parent
          local hp = this.hitpoint
          local col = self.process==1 and 12 or this.life<hp*.33 and 8 or this.life<hp*.66 and 10 or 11
-         local val = self.process==1 and (15*(this.life/100)) or (15*(this.life/hp))
+         local val = self.process==1 and 15*(this.life/100) or 15*(this.life/hp)
          if (this.life>0 and not show_menu) rectfill(self.x,self.y+17,self.x+val,self.y+18,col)
          pal(11,this.icol1) pal(3,this.icol2)
        end
@@ -494,12 +493,12 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
         is_missile and .15 or 2,
         -.01, 
         is_missile and 20 or 2.5, 
-        self.id==38 and {11} or is_missile and {7, 7, 10, 9, 8, 2, 13, 6, 7} or {15}, 
+        self.id==38 and {11} or is_missile and split("7,7,10,9,8,2,13,6,7",",") or {15},
         rnd"2"<1 and 0xa5a5.8 or 0)
       end
      end
      -- smoking?
-     if (self.type<=2 and self.id>24 and self.life<self.hitpoint*.33 and rnd"10"<1) add_particle(self.x+3.5,self.y+3.5, 1, .1,-.02,.05, -.002, 80,{10,9,6,5}, rnd"2"<1 and 0xa5a5.8 or 0)
+     if (self.type<=2 and self.id>24 and self.life<self.hitpoint*.33 and rnd"10"<1) add_particle(self.x+3.5,self.y+3.5, 1, .1,-.02,.05, -.002, 80,split("10,9,6,5",","), rnd"2"<1 and 0xa5a5.8 or 0)
      -- reset hit flag
      self.hit=0
  
@@ -701,7 +700,7 @@ end
 
 function make_explosion(x,y,size_type)
  add_particle(x, y, 2, 
-         0,0,.1,0, size_type==1 and 5 or 30, {5,7,10,8,9,2}, rnd"2"<1 and 0xa5a5.8 or 0)
+         0,0,.1,0, size_type==1 and 5 or 30, split("5,7,10,8,9,2",","), rnd"2"<1 and 0xa5a5.8 or 0)
 end
 
 function reveal_fow(object)
@@ -1090,7 +1089,7 @@ function do_guard(unit, start_state)
       else
        -- must be a repairable unit
        -- spark flash while repairing       
-       self.process,self.procstep,last_fact.col_cycle_src,last_fact.col_cycle = 2,0,8, {7,10,0,0,7,0,0}        
+       self.process,self.procstep,last_fact.col_cycle_src,last_fact.col_cycle = 2,0,8, split("7,10,0,0,7,0,0",",")
       end -- capacity check
      
      end -- if unloading/repairing
@@ -1117,7 +1116,7 @@ end
 function add_spice_cloud(x,y,r)
  -- spice clouds
  local cx,cy = sin(r)*5.5,-cos(r)*5.5
- if (rnd"5"<1) add_particle(x+cx+3.5,y+cy+3.5, rnd"2", .15,0,.1, -.01, 25,{2,4,9,15}, 0xa5a5.8)
+ if (rnd"5"<1) add_particle(x+cx+3.5,y+cy+3.5, rnd"2", .15,0,.1, -.01, 25,split("2,4,9,15",","), 0xa5a5.8)
 end
 
 function do_attack(unit, target)
@@ -1620,6 +1619,8 @@ function draw_ui()
   end
  end
 
+ pal()
+
  -- placement?
  if selected_obj 
   and selected_obj.build_obj 
@@ -1655,8 +1656,7 @@ function draw_ui()
 
 
 
- if show_menu then
-  pal()
+ if show_menu then  
   fillp(0xA5A5.8)
   rectfill(0,0,127,127,0)
   fillp()
