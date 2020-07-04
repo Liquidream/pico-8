@@ -510,7 +510,7 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
       end
      end
      -- smoking?
-     if (self.type<=2 and self.id>24 and self.life<self.hitpoint*.33 and rnd"10"<1) add_particle(self.x+3.5,self.y+3.5, 1, .1,-.02,.05, -.002, 80,split2d("10,9,6,5",","), rnd"2"<1 and 0xa5a5.8 or 0)
+     if (self.type<=2 and self.id!=55 and self.life<self.hitpoint*.33 and rnd"10"<1) add_particle(self.x+3.5,self.y+3.5, 1, .1,-.02,.05, -.002, 80,split2d("10,9,6,5",","), rnd"2"<1 and 0xa5a5.8 or 0)
      -- reset hit flag
      self.hit=0
  
