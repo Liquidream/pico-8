@@ -1,5 +1,5 @@
 pico-8 cartridge // http://www.pico-8.com
-version 27
+version 28
 __lua__
 -- undune ii
 -- by paul nicholas
@@ -64,10 +64,10 @@ _g.factory_click=function(self)
 end
 _g.init_windtrap=function(self)
   self.col_cycle_src=11
-  self.col_cycle = split("12,12,12,12,13,1,1,1,1,13",",")
+  self.col_cycle = split2d("12,12,12,12,13,1,1,1,1,13",",")
 end
 _g.init_refinery=function(self)
- self.col_cycle = split("11,10,8,8",",")
+ self.col_cycle = split2d("11,10,8,8",",")
 end
 _g.draw_refinery=function(self)
   pal()
@@ -184,15 +184,14 @@ function _init()
  -- enable mouse
  poke(0x5f2d, 1)
 
--- todo: re-add this! (when tokens allow)
- -- menuitem(1,"exit to title",function()
- --  load("pico-dune-main")
- -- end)
+ menuitem(1,"exit to title",function()
+  load("pico-dune-main")
+ end)
 
  -- ------------------------- 
  -- explode object data
  -- -------------------------
- str_arrays=split(obj_data,"|","\n")
+ local str_arrays=split2d(obj_data,"|","\n")
  -- replace with exploded data
  obj_data={}
  -- loop all objects
@@ -205,7 +204,7 @@ function _init()
    if (j!=2 and j<31)val=tonum(val)
    if j==31 then
     --restore new lines
-    str_breaks,val=split(val,"~"),""    
+    str_breaks,val=split2d(val,"~"),""    
     for i=1,#str_breaks do
       val=val.."\n"..str_breaks[i]
     end
@@ -308,8 +307,7 @@ function m_map_obj_tree(objref, x,y, owner, factory)
 
   -- go through all ref's and see if any valid for this building
   for o in all(obj_data) do
-    local req_fact=o.req_faction
-    if (o.parent_id!=nil and (o.parent_id==newobj.id or o.parent2_id==newobj.id))
+    if (o.parent_id!=nil and (o.parent_id==newobj.id or o.parent2_id==newobj.id))					
      and (req_fact==nil
       or (req_fact>0 and o.req_faction==p_faction)
       or (req_fact<0 and -p_faction!=req_fact))
@@ -507,12 +505,12 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
         is_missile and .15 or 2,
         -.01, 
         is_missile and 20 or 2.5, 
-        self.id==38 and {11} or is_missile and split("7,7,10,9,8,2,13,6,7",",") or {15},
+        self.id==38 and {11} or is_missile and split2d("7,7,10,9,8,2,13,6,7",",") or {15},
         rnd"2"<1 and 0xa5a5.8 or 0)
       end
      end
      -- smoking?
-     if (self.type<=2 and self.id>24 and self.life<self.hitpoint*.33 and rnd"10"<1) add_particle(self.x+3.5,self.y+3.5, 1, .1,-.02,.05, -.002, 80,split("10,9,6,5",","), rnd"2"<1 and 0xa5a5.8 or 0)
+     if (self.type<=2 and self.id>24 and self.life<self.hitpoint*.33 and rnd"10"<1) add_particle(self.x+3.5,self.y+3.5, 1, .1,-.02,.05, -.002, 80,split2d("10,9,6,5",","), rnd"2"<1 and 0xa5a5.8 or 0)
      -- reset hit flag
      self.hit=0
  
@@ -714,7 +712,7 @@ end
 
 function make_explosion(x,y,size_type)
  add_particle(x, y, 2, 
-         0,0,.1,0, size_type==1 and 5 or 30, split("5,7,10,8,9,2",","), rnd"2"<1 and 0xa5a5.8 or 0)
+         0,0,.1,0, size_type==1 and 5 or 30, split2d("5,7,10,8,9,2",","), rnd"2"<1 and 0xa5a5.8 or 0)
 end
 
 function reveal_fow(object)
@@ -1033,7 +1031,7 @@ function do_guard(unit, start_state)
      end -- check factory busy
 
     -- are we full?
-    elseif self.capacity >= 15 --1500 
+    elseif self.capacity >= 1500 
      and self.state!=7 then
       -- return to refinery when full
       self.sx,self.sy=self:get_tile_pos() -- remember where we were!
@@ -1075,7 +1073,7 @@ function do_guard(unit, start_state)
    if self.id>24 then    
     -- is carrying spice & close to refinary
     -- or been sent to repair facility
-    -- todo: if route possible, use carryall to move unit
+    -- todo: if route impossible, use carryall to move unit
     if self.state==9 then --dist(self.x,self.y,self.last_fact.x,self.last_fact.y)<22 then  
      
      -- check last factory is not destroyed or already busy
@@ -1104,7 +1102,7 @@ function do_guard(unit, start_state)
       else
        -- must be a repairable unit
        -- spark flash while repairing       
-       self.process,self.procstep,last_fact.col_cycle_src,last_fact.col_cycle = 2,0,8, split("7,10,0,0,7,0,0",",")
+       self.process,self.procstep,last_fact.col_cycle_src,last_fact.col_cycle = 2,0,8, split2d("7,10,0,0,7,0,0",",")
       end -- capacity check
      
      end -- if unloading/repairing
@@ -1131,7 +1129,7 @@ end
 function add_spice_cloud(x,y,r)
  -- spice clouds
  local cx,cy = sin(r)*5.5,-cos(r)*5.5
- if (rnd"5"<1) add_particle(x+cx+3.5,y+cy+3.5, rnd"2", .15,0,.1, -.01, 25,split("2,4,9,15",","), 0xa5a5.8)
+ if (rnd"5"<1) add_particle(x+cx+3.5,y+cy+3.5, rnd"2", .15,0,.1, -.01, 25,split2d("2,4,9,15",","), 0xa5a5.8)
 end
 
 function do_attack(unit, target)
@@ -1237,8 +1235,6 @@ function move_unit_pos(unit,x,y,dist_to_keep,try_hail,start_state)
   -- before moving, can carryall take us?
   --printh(carryall)
   if try_hail then
-   --printh(tostr(has_obj[unit.owner][31]))
-   --stop(unit.name..","..unit.owner)   
    local carryall=has_obj and has_obj[unit.created_by][31] or false
    if  carryall and not carryall.link then
      carryall.link,unit.link = unit,carryall    
@@ -1430,7 +1426,6 @@ function move_unit_pos(unit,x,y,dist_to_keep,try_hail,start_state)
       unit.x,unit.y,object_tiles[node.x..","..node.y] = node.x*8, node.y*8,unit
       
       -- reveal fog?
-      -- todo: stop flying units doing this (shouldn't need to, as owner will be diff.)
       reveal_fow(unit)
 
       -- are we close enough?
@@ -1689,6 +1684,7 @@ function draw_ui()
      local curr_item=selected_obj.build_objs[i]
      if curr_item.req_id==nil 
       or has_obj[selected_obj.created_by][curr_item.req_id]
+      -- todo: filter req_level
       -- todo: filter out palace + starport if already built (takes more tokens tho!)
       --and (curr_item.max==nil or not has_obj[curr_item.id])
      then
@@ -1939,7 +1935,7 @@ function update_ai()
   end
 
   -- -------------------------
-  -- todo: fire palace weapons
+  -- fire palace weapons
   -- 
   -- todo: could be a bug here where ai_palace holds obj in mem
   if p_target and p_target.owner==1 and p_target.type==2 
@@ -2012,30 +2008,21 @@ function getscoretext(val)
 end
 
 
--- split string
--- https://www.lexaloffle.com/bbs/?tid=32520
- function split(str,d,dd)
- local a,s,tk={},"",""
- 
- if (dd~=nil) str=split(str,dd)
- while #str>0 do
-  if type(str)=="table" then
-   s=str[1]
-   add(a,split(s,d))
+function split2d(str,d,dd) 
+ if (dd~=nil) str=split(str,dd) 
+ if type(str)=="table" then
+  local t={}
+  while #str>0 do
+   local s=str[1]
+   add(t,split(s,d))
    del(str,s)
-  else
-   s,str=sub(str,1,1),sub(str,2)
-   if s==d then 
-    add(a,tk)
-    tk=""
-   else
-    tk=tk..s
-   end
   end
- end
- add(a,tk)
- return a
- end
+  return t
+ else
+  return split(str,d)
+ end 
+end
+
 
 -- rotate sprite (modified to allow for trans cols)
 -- by freds72
