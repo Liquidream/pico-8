@@ -2122,7 +2122,7 @@ function add_particle(x, y, r, dx, dy, dr, ddy, life, cols, pattern)
     cols=cols, pattern=pattern,
     y_orig=y, life_orig=life
   }
-  add(particles, p)
+  add(particles, p, 1)
 end
 
 
