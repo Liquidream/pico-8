@@ -112,49 +112,47 @@ end
 
 
 -- object data
-obj_data=[[id|name|obj_spr|ico_spr|type|w|h|z|trans_col|parent_id|parent2_id|owner|col1|col2|icol1|icol2|req_id|req_level|req_faction|max|cost|power|arms|hitpoint|speed|range|fire_type|norotate|altframe|framecount|description|func_init|func_draw|func_update|func_onclick
-1|cONSTRUCTION yARD|64|170|2|2|2|1|nil|nil|||||||nil|1|||100|0|0|1600|||||||aLL STRUCTURES ARE~BUILT BY THE~CONSTRUCTION YARD.||||factory_click
-2|lARGE cONCRETE sLAB|16|162|2|2|2|1|nil|1|||||7|5|1|4|||20|0|0|0|||||||uSE CONCRETE TO MAKE A~STURDY FOUNDATION FOR~YOUR STRUCTURES.||||
-3|sMALL cONCRETE sLAB|16|162|2|1|1|1|nil|1|||||6|6|1|1|||5|0|0|0|||||||uSE CONCRETE TO MAKE A~STURDY FOUNDATION FOR~YOUR STRUCTURES.||||
-4|dEFENSIVE wALL|133|164|2|1|1|1|nil|1|||||||7|4|||50|0|0|200|||||||tHE wALL IS USED FOR~PASSIVE DEFENSE.||||
-5|wINDTRAP|66|172|2|2|2|1|nil|1|||||||1|1|||300|-100|0|800||||||10|tHE WINDTRAP SUPPLIES~POWER TO YOUR BASE.~wITHOUT POWER YOUR~STRUCTURES WILL DECAY.|init_windtrap|||
-6|sPICE rEFINERY|68|174|2|3|2|1|nil|1|||||||1|1|||400|30|0|1800||||||10|tHE rEFINERY CONVERTS~SPICE INTO CREDITS.|init_refinery|draw_refinery||
-7|rADAR oUTPOST|106|136|2|2|2|1|nil|1|||||||1|2|||400|30|0|2000|||||||tHE oUTPOST PROVIDES~RADAR AND AIDS CONTROL~OF DISTANT VEHICLES.||||
-8|sPICE sTORAGE sILO|104|134|2|2|2|1|nil|1|||||||6|2|||150|5|0|600|||||||tHE sPICE SILO IS USED ~TO STORE REFINED SPICE.||||
-9|bARRACKS|108|168|2|2|2|1|nil|1|||||11|3|7|2|||300|10|0|1200|||||||tHE bARRACKS IS USED TO~TRAIN YOUR lIGHT ~INFANTRY.||||factory_click
-10|wor tROOPER fACILITY|110|138|2|2|2|1|nil|1|||||||7|2|||400|10|0|1600|||||||wor IS USED TO TRAIN~YOUR hEAVY INFANTRY.||||factory_click
-11|lIGHT vEHICLE fACTORY|96|140|2|2|2|1|nil|1|||||||6|2|||400|20|0|1400|||||||tHE lIGHT fACTORY~PRODUCES LIGHT ATTACK~VEHICLES.||||factory_click
-12|hEAVY vEHICLE fACTORY|98|142|2|3|2|1|nil|1|||||||6|3|||600|20|0|800|||||||tHE hEAVY fACTORY~PRODUCES HEAVY ATTACK~VEHICLES.||||factory_click
-13|hI-tECH fACTORY|101|166|2|3|2|1|nil|1|||||||12|5|||500|35|0|1600|||||||tHE hI-tECH fACTORY~PRODUCES FLYING~VEHICLES.||||factory_click
-14|rEPAIR fACILITY|128|230|2|3|2|1|nil|1|||||||12|5|||700|20|0|800||||||4|tHE rEPAIR fACILITY~IS USED TO REPAIR YOUR~VEHICLES.|init_repairfact|||
-15|cANNON tURRET|71|232|1|1|1|1|11|1|||||||7|5|||125|10|38|1200|0|4|1||||tHE cANNON tURRET IS~USED FOR SHORT RANGE~ACTIVE DEFENSE.||||
-16|rOCKET tURRET|87|234|1|1|1|1|11|1|||||||7|6|||250|20|112|1200|0|9|2||||tHE rOCKET TURRET IS~USED FOR MEDIUM RANGE~ACTIVE DEFENSE.||||
-17|sTARPORT|61|228|2|3|3|1|nil|1|||||11|3|6|6||1|500|50|0|2000|||||||tHE sTARPORT IS USED TO~ORDER AND RECEIVED~SHIPMENTS FROM~c.h.o.a.m.|init_refinery|draw_refinery||factory_click
-18|hOUSE OF ix|131|224|2|2|2|1|nil|1|||||||12|5|||500|40|0|1600|||||||tHE ix rESEARCH~fACILITY ADVANCES YOUR~hOUSE'S TECHNOLOGY.||||
-19|pALACE|58|226|2|3|3|1|nil|1|||||||17|8||1|999|80|0|4000|||||||tHIS IS YOUR pALACE.||||
-20|lIGHT iNFANTRY (X3)|48|236|1|1|1|1|11|9|||||15|3|9|2|-3||60||4|200|0.05|2|1|1|49|10|iNFANTRY ARE LIGHTLY~ARMOURED FOOTSOLDIERS,~WITH LIMITED FIRING~RANGE AND SPEED.||||
-21|hEAVY tROOPERS (X3)|48|194|1|1|1|1|11|10|||||||9|3|-1||100||8|440|0.1|3|1|1|49|10|tROOPERS ARE HEAVILY~ARMOURED FOOTSOLDIERS,~WITH IMPROVED FIRING~RANGE AND SPEED.||||
-22|fREMEN|48|236|1|1|1|1|11|||0|9|4|9|1||8|1||0||8|880|0.1|3|1|1|49|10|tHE fREMEN ARE NATIVE~TO dUNE. eLITE FIGHTERS~IN ALLIANCE WITH THE~aTREIDES.||||
-23|sABOTEUR|48|236|1|0.5|0.5|1|11|||0|1|0|13|1||8|2||0||150|160|0.4|0|1|1|49|10|tHE sABOTEUR IS A~SPECIAL MILITARY UNIT,~TRAINED AT AN oRDOS~pALACE. cAN DESTROY~ALMOST ANY STRUCTURE OR~VEHICLE.||||
-24|sARDAUKAR|48|236|1|1|1|1|11|||0|14|2|14|2||4|||0||5|440|0.1|1|||||tHE sARDUKAR ARE THE~eMPEROR'S ELITE TROOPS.~WITH SUPERIOR FIREPOWER~AND ARMOUR.||||
-25|tRIKE|51|204|1|1|1|1|11|11|17||||15|4||2|||150||8|400|0.6|3|1||||tHE tRIKE IS A LIGHTLY-~ARMOURED, 3-WHEELED~VEHICLE, WITH LIMITED~FIRING RANGE, BUT RAPID~SPEED.||||
-26|qUAD|52|206|1|1|1|1|11|11|17|||||||3|||200||10|520|0.5|3|1||||tHE qUAD IS A LIGHTLY-~ARMOURED, 4-WHEELED~VEHICLE. sLOWER THAN~THE tRIKE, BUT STRONGER~ARMOUR AND FIREPOWER.||||
-27|cOMBAT tANK|53|196|1|1|1|1|11|12|17||||||7|4|||300||38|800|0.25|4|1||||tHE cOMBAT tANK IS A~MEDIUM ARMOURED TANK,~FIRES HIGH-EXPLOSIVE~ROUNDS.||||
-28|sIEGE tANK|55|198|1|1|1|1|11|12|17||||15|4|7|6|||600||45|1200|0.2|5|1||||tHE mISSILE tANK IS A~MEDIUM ARMOURED TANK,~WHICH FIRES MISSILES.~lONG-RANGE, BUT~INACCURATE.||||
-29|rOCKET lAUNCHER|54|202|1|1|1|1|11|12|17||||15|4|7|5|||450||112|400|0.3|9|2||||tHE sIEGE tANK IS A~HEAVY ARMOURED TANK,~WHICH HAS DUAL CANNONS,~BUT IS SLOW.||||
-30|hARVESTER|50|192|1|1|1|1|11|12|17|||||||2|||300||0|600|0.1|0|||||tHE hARVESTER SEPARATES~SPICE FROM THE SAND &~RETURNS RAW SPICE TO THE~rEFINERY FOR PROCESSING.||||
-31|cARRYALL|73|238|1|1|1|8|11|13|||||11|3|13|5|||800||0|400|1|0|||||tHE cARRYALL IS A LIGHTLY~ARMOURED AIRCRAFT WITH~NO WEAPONS. mAINLY USED~TO LIFT+TRANSPORT~hARVESTERS.||||
-32|oRNITHOPTER|160|166|1|1|1|4|11|13|||||||13|7|-3||600||75|20|1.25|9|2||161|5|tHE oRNITHOPTER IS A~LIGHTLY ARMOURED~AIRCRAFT THAT FIRES~ROCKETS.hIGHLY MANOUVERABLE~+ FASTEST AIRCRAFT ON~dUNE.||||
-34|sONIC tANK|57|198|1|1|1|1|11|12|||||12|9|7|7|1||600||90|440|0.3|8|3||||dEVELOPED BY THE~aTREIDES,THIS ENHANCED~TANK FIRES POWERFUL~BLAST WAVES OF SONIC~ENERGY.||||
-35|dEVASTATOR|56|200|1|1|1|1|11|12|||||||13|8|3||800||60|1600|0.1|7|1||||tHE dEVESTATOR IS A~NUCLEAR-POWERED TANK,~WHICH FIRES DUAL PLASMA~CHARGES. mOST POWERFUL~TANK ON dUNE, BUT~POTENTIALLY UNSTABLE~IN COMBAT.||||
-36|dEATH hAND|72||1|1|1|8|11|||0|||||13|8|3||0||150|280|0.5|0|20||||tHE dEATH hAND IS A~SPECIAL hARKONNEN~pALACE WEAPON. aN~INACCURATE, BUT VERY~DESTRUCTIVE BALLISTIC~MISSILE.||||
-37|rAIDER|51|204|1|1|1|1|11|11|||||12|1||2|2||150||8|320|0.75|3|1||||tHE oRDOS rAIDER IS~SIMILAR TO THE STANDARD~tRIKE, BUT WITH LESS~ARMOUR IN FAVOUR OF~SPEED.||||
-38|dEVIATOR|54|202|1|1|1|1|11|12|||||11|3|13|7|2||750||50|480|0.3|7|2||||tHE oRDOS dEVIATOR IS A~STANDARD mISSILE tANK,~WHICH FIRES UNIQUE~NERVE GAS MISSILES THAT~MAY TEMPORARILY CHANGE~ENEMY LOYALTY.||||
-39|sANDWORM|88||9|1|1|1|11|nil|||||||nil|3|||0||300|4000|0.35|0|30||||tHE sAND wORMS ARE~INDIGEONOUS TO dUNE.~aTTRACTED BY VIBRATIONS~ALMOST IMPOSSIBLE TO~DESTROY, WILL CONSUME~ANYTHING THAT MOVES.||||
-80|rEPAIR|19||5|1|1|1|11|nil|||||||nil||||||||||||||||draw_action||action_click
-81|pICK TARGET|1||5|1|1|1|11|nil|||||||nil||||||||||||||||draw_action||action_click]]
-
-
+obj_data=[[id|name|obj_spr|ico_spr|type|w|h|z|trans_col|parent_id|parent2_id|owner|col1|col2|icol1|icol2|req_id|req_level|req_faction|max|cost|power|arms|hitpoint|speed|range|fire_type|fire_rate|norotate|altframe|framecount|description|func_init|func_draw|func_update|func_onclick
+1|cONSTRUCTION yARD|64|170|2|2|2|1|nil|nil|||||||nil|1|||100|0|0|1600||||||||aLL STRUCTURES ARE~BUILT BY THE~CONSTRUCTION YARD.||||factory_click
+2|lARGE cONCRETE sLAB|16|162|2|2|2|1|nil|1|||||7|5|1|4|||20|0|0|0||||||||uSE CONCRETE TO MAKE A~STURDY FOUNDATION FOR~YOUR STRUCTURES.||||
+3|sMALL cONCRETE sLAB|16|162|2|1|1|1|nil|1|||||6|6|1|1|||5|0|0|0||||||||uSE CONCRETE TO MAKE A~STURDY FOUNDATION FOR~YOUR STRUCTURES.||||
+4|dEFENSIVE wALL|133|164|2|1|1|1|nil|1|||||||7|4|||50|0|0|200||||||||tHE wALL IS USED FOR~PASSIVE DEFENSE.||||
+5|wINDTRAP|66|172|2|2|2|1|nil|1|||||||1|1|||300|-100|0|800|||||||10|tHE WINDTRAP SUPPLIES~POWER TO YOUR BASE.~wITHOUT POWER YOUR~STRUCTURES WILL DECAY.|init_windtrap|||
+6|sPICE rEFINERY|68|174|2|3|2|1|nil|1|||||||1|1|||400|30|0|1800|||||||10|tHE rEFINERY CONVERTS~SPICE INTO CREDITS.|init_refinery|draw_refinery||
+7|rADAR oUTPOST|106|136|2|2|2|1|nil|1|||||||1|2|||400|30|0|2000||||||||tHE oUTPOST PROVIDES~RADAR AND AIDS CONTROL~OF DISTANT VEHICLES.||||
+8|sPICE sTORAGE sILO|104|134|2|2|2|1|nil|1|||||||6|2|||150|5|0|600||||||||tHE sPICE SILO IS USED ~TO STORE REFINED SPICE.||||
+9|bARRACKS|108|168|2|2|2|1|nil|1|||||11|3|7|2|||300|10|0|1200||||||||tHE bARRACKS IS USED TO~TRAIN YOUR lIGHT ~INFANTRY.||||factory_click
+10|wor tROOPER fACILITY|110|138|2|2|2|1|nil|1|||||||7|2|||400|10|0|1600||||||||wor IS USED TO TRAIN~YOUR hEAVY INFANTRY.||||factory_click
+11|lIGHT vEHICLE fACTORY|96|140|2|2|2|1|nil|1|||||||6|2|||400|20|0|1400||||||||tHE lIGHT fACTORY~PRODUCES LIGHT ATTACK~VEHICLES.||||factory_click
+12|hEAVY vEHICLE fACTORY|98|142|2|3|2|1|nil|1|||||||6|3|||600|20|0|800||||||||tHE hEAVY fACTORY~PRODUCES HEAVY ATTACK~VEHICLES.||||factory_click
+13|hI-tECH fACTORY|101|166|2|3|2|1|nil|1|||||||12|5|||500|35|0|1600||||||||tHE hI-tECH fACTORY~PRODUCES FLYING~VEHICLES.||||factory_click
+14|rEPAIR fACILITY|128|230|2|3|2|1|nil|1|||||||12|5|||700|20|0|800|||||||4|tHE rEPAIR fACILITY~IS USED TO REPAIR YOUR~VEHICLES.|init_repairfact|||
+15|cANNON tURRET|71|232|1|1|1|1|11|1|||||||7|5|||125|10|38|1200|0|4|1|9.5||||tHE cANNON tURRET IS~USED FOR SHORT RANGE~ACTIVE DEFENSE.||||
+16|rOCKET tURRET|87|234|1|1|1|1|11|1|||||||7|6|||250|20|112|1200|0|9|2|28||||tHE rOCKET TURRET IS~USED FOR MEDIUM RANGE~ACTIVE DEFENSE.||||
+17|sTARPORT|61|228|2|3|3|1|nil|1|||||11|3|6|6||1|500|50|0|2000||||||||tHE sTARPORT IS USED TO~ORDER AND RECEIVED~SHIPMENTS FROM~c.h.o.a.m.|init_refinery|draw_refinery||factory_click
+18|hOUSE OF ix|131|224|2|2|2|1|nil|1|||||||12|5|||500|40|0|1600||||||||tHE ix rESEARCH~fACILITY ADVANCES YOUR~hOUSE'S TECHNOLOGY.||||
+19|pALACE|58|226|2|3|3|1|nil|1|||||||17|8||1|999|80|0|4000||||1750||||tHIS IS YOUR pALACE.||||
+20|lIGHT iNFANTRY (X3)|48|236|1|1|1|1|11|9|||||15|3|9|2|-3||60||4|200|0.05|2|1|1|1|49|10|iNFANTRY ARE LIGHTLY~ARMOURED FOOTSOLDIERS,~WITH LIMITED FIRING~RANGE AND SPEED.||||
+21|hEAVY tROOPERS (X3)|48|194|1|1|1|1|11|10|||||||9|3|-1||100||8|440|0.1|3|1|2|1|49|10|tROOPERS ARE HEAVILY~ARMOURED FOOTSOLDIERS,~WITH IMPROVED FIRING~RANGE AND SPEED.||||
+22|fREMEN|48|236|1|1|1|1|11|||0|9|4|9|1||8|1||0||8|880|0.1|3|1|2|1|49|10|tHE fREMEN ARE NATIVE~TO dUNE. eLITE FIGHTERS~IN ALLIANCE WITH THE~aTREIDES.||||
+23|sABOTEUR|48|236|1|0.5|0.5|1|11|||0|1|0|13|1||8|2||0||150|160|0.4|0|1|37.5|1|49|10|tHE sABOTEUR IS A~SPECIAL MILITARY UNIT,~TRAINED AT AN oRDOS~pALACE. cAN DESTROY~ALMOST ANY STRUCTURE OR~VEHICLE.||||
+24|sARDAUKAR|48|236|1|1|1|1|11|||0|14|2|14|2||4|||0||5|440|0.1|1||1.25||||tHE sARDUKAR ARE THE~eMPEROR'S ELITE TROOPS.~WITH SUPERIOR FIREPOWER~AND ARMOUR.||||
+25|tRIKE|51|204|1|1|1|1|11|11|17||||15|4||2|||150||8|400|0.6|3|1|2||||tHE tRIKE IS A LIGHTLY-~ARMOURED, 3-WHEELED~VEHICLE, WITH LIMITED~FIRING RANGE, BUT RAPID~SPEED.||||
+26|qUAD|52|206|1|1|1|1|11|11|17|||||||3|||200||10|520|0.5|3|1|2.5||||tHE qUAD IS A LIGHTLY-~ARMOURED, 4-WHEELED~VEHICLE. sLOWER THAN~THE tRIKE, BUT STRONGER~ARMOUR AND FIREPOWER.||||
+27|cOMBAT tANK|53|196|1|1|1|1|11|12|17||||||7|4|||300||38|800|0.25|4|1|9.5||||tHE cOMBAT tANK IS A~MEDIUM ARMOURED TANK,~FIRES HIGH-EXPLOSIVE~ROUNDS.||||
+28|sIEGE tANK|55|198|1|1|1|1|11|12|17||||15|4|7|6|||600||45|1200|0.2|5|1|11.25||||tHE mISSILE tANK IS A~MEDIUM ARMOURED TANK,~WHICH FIRES MISSILES.~lONG-RANGE, BUT~INACCURATE.||||
+29|rOCKET lAUNCHER|54|202|1|1|1|1|11|12|17||||15|4|7|5|||450||112|400|0.3|9|2|28||||tHE sIEGE tANK IS A~HEAVY ARMOURED TANK,~WHICH HAS DUAL CANNONS,~BUT IS SLOW.||||
+30|hARVESTER|50|192|1|1|1|1|11|12|17|||||||2|||300||0|600|0.1|0||0||||tHE hARVESTER SEPARATES~SPICE FROM THE SAND &~RETURNS RAW SPICE TO THE~rEFINERY FOR PROCESSING.||||
+31|cARRYALL|73|238|1|1|1|8|11|13|||||11|3|13|5|||800||0|400|1|0||0||||tHE cARRYALL IS A LIGHTLY~ARMOURED AIRCRAFT WITH~NO WEAPONS. mAINLY USED~TO LIFT+TRANSPORT~hARVESTERS.||||
+32|oRNITHOPTER|160|166|1|1|1|4|11|13|||||||13|7|-3||600||75|20|1.25|9|2|20||161|5|tHE oRNITHOPTER IS A~LIGHTLY ARMOURED~AIRCRAFT THAT FIRES~ROCKETS.hIGHLY MANOUVERABLE~+ FASTEST AIRCRAFT ON~dUNE.||||
+34|sONIC tANK|57|198|1|1|1|1|11|12|||||12|9|7|7|1||600||90|440|0.3|8|3|22.5||||dEVELOPED BY THE~aTREIDES,THIS ENHANCED~TANK FIRES POWERFUL~BLAST WAVES OF SONIC~ENERGY.||||
+35|dEVASTATOR|56|200|1|1|1|1|11|12|||||||13|8|3||800||60|1600|0.1|7|1|15||||tHE dEVESTATOR IS A~NUCLEAR-POWERED TANK,~WHICH FIRES DUAL PLASMA~CHARGES. mOST POWERFUL~TANK ON dUNE, BUT~POTENTIALLY UNSTABLE~IN COMBAT.||||
+36|dEATH hAND|72||1|1|1|8|11|||0|||||13|8|3||0||150|280|0.5|0|20|37.5||||tHE dEATH hAND IS A~SPECIAL hARKONNEN~pALACE WEAPON. aN~INACCURATE, BUT VERY~DESTRUCTIVE BALLISTIC~MISSILE.||||
+37|rAIDER|51|204|1|1|1|1|11|11|||||12|1||2|2||150||8|320|0.75|3|1|2||||tHE oRDOS rAIDER IS~SIMILAR TO THE STANDARD~tRIKE, BUT WITH LESS~ARMOUR IN FAVOUR OF~SPEED.||||
+38|dEVIATOR|54|202|1|1|1|1|11|12|||||11|3|13|7|2||750||50|480|0.3|7|2|500||||tHE oRDOS dEVIATOR IS A~STANDARD mISSILE tANK,~WHICH FIRES UNIQUE~NERVE GAS MISSILES THAT~MAY TEMPORARILY CHANGE~ENEMY LOYALTY.||||
+39|sANDWORM|88||9|1|1|1|11|nil|||||||nil|3|||0||300|4000|0.35|0|30|75||||tHE sAND wORMS ARE~INDIGEONOUS TO dUNE.~aTTRACTED BY VIBRATIONS~ALMOST IMPOSSIBLE TO~DESTROY, WILL CONSUME~ANYTHING THAT MOVES.||||
+80|rEPAIR|19||5|1|1|1|11|nil|||||||nil|||||||||||||||||draw_action||action_click
+81|pICK TARGET|1||5|1|1|1|11|nil|||||||nil|||||||||||||||||draw_action||action_click]]
 
 
 
@@ -170,7 +168,7 @@ You have successfully completed your mission.
 
 -->8
 --p8 functions
---------------------------------
+--
 
 function _init()
  -- enable mouse
@@ -180,9 +178,9 @@ function _init()
   load("pico-dune-main")
  end)
 
- -- ------------------------- 
+ --  
  -- explode object data
- -- -------------------------
+ -- 
  local str_arrays=split2d(obj_data,"|","\n")
  -- replace with exploded data
  obj_data={}
@@ -193,8 +191,8 @@ function _init()
   for j=1,#str_arrays[i] do
    local val=str_arrays[i][j]
    -- convert all but the text columns to numbers
-   if (j!=2 and j<31)val=tonum(val)
-   if j==31 then
+   if (j!=2 and j<32)val=tonum(val)
+   if j==32 then
     --restore new lines
     str_breaks,val=split2d(val,"~"),""    
     for i=1,#str_breaks do
@@ -279,10 +277,8 @@ end
 
 
 function m_map_obj_tree(objref, x,y, owner, factory)
-  --printh("name=.."..objref.name)
   local newobj=m_obj_from_ref(objref, x,y, objref.type, nil, _g[objref.func_init], _g[objref.func_draw], _g[objref.func_update], nil)
-  -- set type==3 (icon!)
-  
+  -- set type==3 (icon!)  
   newobj.ico_obj,newobj.life = m_obj_from_ref(objref, 109,0, 3, newobj, nil, nil, _g[objref.func_onclick]), placement_damage and objref.hitpoint/2 or objref.hitpoint -- unless built without concrete
   
   -- player-controlled or ai?
@@ -335,14 +331,12 @@ function m_map_obj_tree(objref, x,y, owner, factory)
   -- override owner? 
   -- (carryalls are automomous & don't reveal map, etc.)
   if (newobj.z>1) newobj.owner=0
-  --if (newobj.id==31) newobj.owner=0
-
 
   local xpos,ypos = flr(x/8),flr(y/8)
   
   -- building props?        
   if objref.type==2 then
-    newobj.fire_cooldown = 0 -- palace weapon cooldown
+    --newobj.fire_cooldown = 0 -- palace weapon cooldown
     -- prepare the map?
     local slabs=(objref.id==2 or objref.id==3)    
     for xx=0,objref.w-1 do
@@ -504,9 +498,6 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
      if (self.id>=50 and self.life<self.hitpoint*.33 and rnd"10"<1) add_particle(self.x+3.5,self.y+3.5, 1, .1,-.02,.05, -.002, 80,split2d("10,9,6,5",","), rnd"2"<1 and 0xa5a5.8 or 0)
      -- reset hit flag
      self.hit=0
- 
-     --if (debug_collision) draw_hitbox(self)
-     --pset(self.x,self.y,11)
    end,
    update=function(self)
      local life=self.life
@@ -521,11 +512,9 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
        if (music_state==0 or stat(24)>5) music_state=1 music"0"
        -- can we retaliate (unit/turret)?
        if (self.arms>0 and self.state==0) do_attack(self, self.hitby)
-
        -- lose soldiers - when tokens permit (takes ~20!)
        if (self.obj_spr==48 and life<100) self.spr_w,self.spr_h=0.5,0.5
        -- req repair pickup
-       --printh("self.last_fact="..tostr(self.last_fact)..self.name)
        if (life<50 and self.state!=7) return_to_fact(self,has_obj[self.created_by][14] or self.last_fact) --TODO: chk last fact being set to facts (unless harvester!)
        
      end
@@ -672,7 +661,6 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
    get_tile_pos_index=function(self)
     local x,y = self:get_tile_pos()
     return x..","..y
-    --return flr(self.x/8)..","..flr(self.y/8)
    end,
    get_tile_pos=function(self)
     return flr(self.x/8),flr(self.y/8)
@@ -693,8 +681,7 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
 end
 
 
-function transact(diff, obj) 
- --printh(_t.." transact >> "..diff.." (obj.owner = "..obj.owner)
+function transact(diff, obj)
  if (getscoretext(credits[obj.owner])+diff<0) return false
  credits[obj.owner]+=sgn(diff)*shr(abs(diff),16)
  if (obj.owner==1) sfx"63"
@@ -740,13 +727,11 @@ function _update60()  --game_update
  
  if (not show_menu) update_ai()  -- ai overall decision making (not individual units)
  
- 
-
   if _t%60==0 then
-   -- ---------------------
+   -- 
    -- update_radar_data()
-   -- ---------------------
-   radar_data={} 
+   -- 
+   radar_data={}
    -- landscape/fow
    if hq then  
     for i=0,124,4 do
@@ -789,7 +774,6 @@ function _update60()  --game_update
       if unit.owner==1 or fow[flr(unit.x/8)][flr(unit.y/8)]==16 then
        radar_data[flr(unit.x/2/8)..","..flr(unit.y/2/8)] = unit.col1
       end
-      --printh(unit.created_by..","..unit.id..","..unit.name)
       has_obj[unit.created_by][unit.id]=unit
      end
 
@@ -802,7 +786,7 @@ function _update60()  --game_update
     -- reset music back (will set again if more attackers)
     set_loop(false)  --5
 
-   -- ----------------------
+   -- 
    -- check end states
    --
    -- player credits >= quota
@@ -829,9 +813,9 @@ function _update60()  --game_update
    end
 
   elseif _t%60==30 then
-   -- ---------------------
+   -- 
    -- update_obj_tiles()
-   -- ---------------------
+   -- 
    -- update positions of pathfinding "blocker" objects 
    object_tiles={}
    -- (The pico-8 map is a 128x32 (or 128x64 using shared space))
@@ -855,8 +839,7 @@ end
 
 -->8
 -- init related
---------------------------------
-
+--
 
 -- https://www.lexaloffle.com/bbs/?tid=30902
 function test_tile(x,y) 
@@ -883,7 +866,7 @@ end
 
 -->8
 -- update related
---------------------------------
+--
 
 function update_level()
   -- mouse control
@@ -987,6 +970,15 @@ function do_guard(unit, start_state)
      if (target!=null and target.created_by!=unit.created_by and fow[x][y]==16 and target.z==1) do_attack(unit,target) return true
     end,
     self.range)
+
+    -- ornithopter?
+    if self.id==32 then
+     -- select a random target (unit or building)
+     -- (will ignore fow!)
+     attack_rnd_enemy(self)
+     --p_target=find_rnd_enemy(self)
+     --if (p_target) do_attack(self, p_target)
+    end
    end
 
    local last_fact = self.return_to or self.last_fact
@@ -1128,7 +1120,6 @@ function add_spice_cloud(x,y,r)
 end
 
 function do_attack(unit, target)
- --printh(_t..") do_attack")
  -- normal attack?
  if unit.id != 19 then
    -- 0=idle/guarding, 1=pathfinding, 2=moving, 3=attacking, 5=exploding
@@ -1165,7 +1156,7 @@ function do_attack(unit, target)
      end
      -- 3) commence firing
      if targdist<=unit.range*5 then
-      if (unit.fire_cooldown<=0 and not unit.bullet_x) unit.fire(unit) unit.fire_cooldown=unit.arms/4
+      if (unit.fire_cooldown<=0 and not unit.bullet_x) unit.fire(unit) unit.fire_cooldown=unit.fire_rate --unit.arms/4
      elseif unit.speed==0 then
       -- turrets default to guard if out of range
       do_guard(unit)
@@ -1186,8 +1177,6 @@ function do_attack(unit, target)
   --
   -- palace weapons (emperor also uses death hand)
   local weapons={22,23,36,36}
-  -- printh("target id = "..target.id)
-  -- printh("target owner = "..target.owner)
   do_attack(m_map_obj_tree(obj_data[weapons[unit.faction]], unit.x,unit.y, unit.owner), target)      
   unit.fire_cooldown = 1750 --350=1m (so 1750 = 5mins for palace weapon again, avg for all factions)
  end
@@ -1224,12 +1213,9 @@ function is_free_tile(unit,x,y)
    and object_tiles[x..","..y]==nil
 end
 
-
-
 function move_unit_pos(unit,x,y,dist_to_keep,try_hail,start_state)
   local flying = unit.z>1
   -- before moving, can carryall take us?
-  --printh(carryall)
   if try_hail then
    local carryall=has_obj and has_obj[unit.created_by][31] or false
    if  carryall and not carryall.link then
@@ -1323,7 +1309,6 @@ function move_unit_pos(unit,x,y,dist_to_keep,try_hail,start_state)
     -- we've found the shortest path
     unit.path = p
     goto end_pathfinding
-    --return p
    end -- if
  
    -- consider each neighbor n of
@@ -1438,7 +1423,7 @@ end
 
 -->8
 -- draw related 
---------------------------------
+--
 function draw_level()
  -- draw the map, objects - everything except ui
 	cls"15" --draw_sand
@@ -1507,8 +1492,6 @@ function draw_level()
   -- check1 = 0XA5A5
   -- check2 = 0XA0A0
   -- check3 = 0X8020
-  --
-  --local col=flr((#p.cols/p.life_orig)*p.life)+1
   if (p.pattern) fillp(p.pattern)
   circfill(p.x,p.y,p.r,p.cols[ flr((#p.cols/p.life_orig)*p.life)+1 ]) --col
   fillp()
@@ -1545,9 +1528,9 @@ function draw_ui()
  -- top/header bar
  rectfill(0,0,127,8,9) 
 
- -- ------------------------
+ -- 
  -- draw_radar()
- -- ------------------------
+ -- 
  rect(90,90,125,125,p_col1)
  rect(91,91,124,124,p_col2)  
  rectfill(92,92,123,123,0)
@@ -1596,9 +1579,9 @@ function draw_ui()
  ---
 
 
- -- --------------------------
+ -- 
  -- object menu icon/buttons?
- -- -------------------------- 
+ --  
  if selected_obj and selected_obj.ico_obj then  
   selected_obj.ico_obj:set_pos(109,20)
   selected_obj.ico_obj:draw() 
@@ -1669,11 +1652,9 @@ function draw_ui()
  if show_menu then  
   fillp(0xA5A5.8)
   rectfill(0,0,127,127,0)
-  fillp()
-  
+  fillp()  
   rectfill(3, 22, 124, 95, p_col2)
   rect(4, 23, 123, 94, p_col1) 
- 
 
   -- build menu?
   if selected_obj.build_objs then
@@ -1734,8 +1715,6 @@ function m_button(x,y,text,func_onclick,_w)
    end,
   draw=function(self)
     if(#text>1)rectfill(self.x,self.y,self.x+self.w,self.y+self.h, self.hover and 12 or 6)
-    --if(#text>1)rectfill(self.x,self.y,self.x+self.w,self.y+self.h, 7)
-    --if(#text>1)rectfill(self.x+1,self.y+1,self.x+self.w-1,self.y+self.h-1, self.hover and 12 or 6)
     ?self.text,self.x+2,self.y+2,(#text>1) and 0 or (self.hover and 12 or 6)
   end,
   func_onclick = func_onclick
@@ -1747,10 +1726,8 @@ function draw_obj(obj)
 end
 
 
-
 -->8
 -- game flow / collisions
---------------------------------
 
 
 -- check all collisions
@@ -1840,7 +1817,7 @@ function update_collisions()
 end
 
 function reset_build(obj)
-  obj.life,obj.process,obj.spent,obj.done = 0,0,0,false
+ obj.life,obj.process,obj.spent,obj.done = 0,0,0,false
 end
 
 
@@ -1905,19 +1882,20 @@ worm_life=0
 function update_ai()
  -- depending on ai level...
  if t()>ai_level and t()%ai_level*2==0 then  
-  -- --------------------
+  -- 
   -- unit attacks
   -- 
   -- find the first ai unit and attack player  
   local ai_unit=rnd(units)
   if ai_unit.owner==2 and ai_unit.arms>0 and ai_unit.state==0 then
    -- select a random target (unit or building)
-   p_target=find_rnd_enemy(ai_unit)
-   if (p_target) do_attack(ai_unit, p_target)
+   attack_rnd_enemy(ai_unit)
+   --p_target=find_rnd_enemy(ai_unit)
+   --if (p_target) do_attack(ai_unit, p_target)
    --p_target=(rnd"2"<1)and rnd(units) or rnd(buildings)
    --if (p_target and p_target.owner==1 or p_target.created_by==1) do_attack(ai_unit, p_target)
   end
-  -- --------------------
+  -- 
   -- repair/build units
   -- 
   local ai_building=rnd(buildings) 
@@ -1942,7 +1920,7 @@ function update_ai()
   -- fire palace weapons
   -- 
   -- todo: could be a bug here where ai_palace holds obj in mem
-  if p_target and p_target.owner==1 and p_target.type==2 
+  if p_target and p_target.type==2 --(always an enemy at this point)
    and ai_palace and ai_palace.fire_cooldown<=0 then 
     do_attack(ai_palace, p_target)
   end
@@ -1983,6 +1961,12 @@ function update_ai()
   --if (worm_life>worm_life_start-128 or worm_life<128) add_spice_cloud(head_worm_x,head_worm_y,rnd"1")
  end
 
+end
+
+
+function attack_rnd_enemy(obj)
+ local p_target=find_rnd_enemy(obj)
+ if (p_target) do_attack(obj, p_target)
 end
 
 -- find rnd enemy unit (or building) to attack
@@ -2283,8 +2267,8 @@ __map__
 001212001212161685680a10620c0c680a0a1d1e1b190a0a0a0c0a0b0000000000000000030303031a030303030303030300000000000000030303030303030000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 0000000012121216850a0a100a0a0a0a0a0a17191b1c0a0a0a0a0a0a0000001200000003030303031d1f0303030000000000000000000000000000000003030000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 000000121200000057854785576a0a5785571d1e1e1f0a0a0a0a0a0a42000012000000030303030303030303030300000000000012000000000000000000030000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
-000000000000000000000000850a0a8500000d0d0d0d0d0d0d0d0d0d0d121212000003030303030303030303030303000000120012121212121200000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
-0000000000000000000000005747475700360000000000001200001212120000000003030303030303030303030303030000120000000000000000000000000000000000000000000000000000000000000000000000000000121212121212120000000000000000000000000000000000000000000000000000000000000000
+000000000000330000000000850a0a8500000d0d0d0d0d0d0d0d0d0d0d121212000003030303030303030303030303000000120012121212121200000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+0000000000000000330000005747475700360000000000001200001212120000000003030303030303030303030303030000120000000000000000000000000000000000000000000000000000000000000000000000000000121212121212120000000000000000000000000000000000000000000000000000000000000000
 0000120012120000000000121200121212120000000000001212121200000000000003030000000000000000000303030000001200120000000000000000000000000000000000000000000000000000000000000000000012121212121212120000000000000000000000000000000000000000000000000000000000000000
 00121200121200a0000000121200121212121212000000000000000000000000000003000000000000000000000003030300000000120000000000000000000000000000000000000000000000000000000000000000001212121212121212120000000000000000000000000000000000000000000000000000000000000000
 000012000000003a000000000000000000000000000000000000000012000000000000000012121212121200000000030300000000001212000000000000000000000000000000000000000000000000000000000000001212121200121212000000000000000000000000000000000000000000000000000000000000000000
@@ -2295,9 +2279,9 @@ __map__
 00000000000000000000000009090c0000000000000000000000000000121212000000000000000000000000000000000000000003030303030300000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 000000001200000000000000000a0e0068000000000000000000000012120000000000000000000006060606060600000000000000030303000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 001212121200000000000c0c0c0a0a0a00000000000000000000000012000000030000000000000000000000000606000600060000000003030303000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
-121200000000000000090a1818190a0a0a6a0000000000000000000000000000030000000000000000000000000000000000000000030300000003000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+121200000000330000090a1818190a0a0a6a0000000000000000000000000000030000000000000000000000000000000000000000030300000003000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 0000000000000000400a0a1e1b1b1818190a0000000000000000000000000000000000000000000000000000000000000000000000030303030300000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
-00000000000000090a0a0a0a1e1b1b1b1c0a6000000000000002050700000000000000000000000000000000000000000000000000030603030600000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+00000000330000090a0a0a0a1e1b1b1b1c0a6000000000000002050700000000000000000000000000000000000000000000000000030603030600000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 16000000000000000d620a0a0a1a1b1c1f0a0a0a0a0000000002060600000000000000000000000000000000000000000000000000000000000000000000001600000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 1600000000000000000d0a0a0a1d1e1f0a0a0a0a0a0a0a000000000000000000000000000000000000000000000000000000000000000000000000000000001600000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000015
 1616160000000000000000090a650a0a0a0a0a0a0a0a0a0a0000000000000000000000000000000000000000000000000000000000000000000000000016161600000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001515
