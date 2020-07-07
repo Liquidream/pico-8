@@ -9,9 +9,9 @@ __lua__
 --debug_mode=true
 --debug_collision=false
 
--- data flags (eventually pulled from cartdata)
 cartdata("pn_undune2") 
 
+-- data flags
 p_level,p_faction,p_col1,p_col2=dget"0",dget"1",dget"2",dget"3"
 ai_faction,ai_col1,ai_col2,ai_level=dget"20",dget"21",dget"22",dget"23" -- difficulty level (1=hardest?)
 
@@ -206,9 +206,6 @@ function _init()
   obj_data[tonum(str_arrays[i][1])]=new_obj
  end
 
- -- ------------------------- 
- -- init the game/title
- -- ------------------------- 
  -- init fog of war?
  for i=-2,66 do
   fow[i]={}
@@ -1915,8 +1912,10 @@ function update_ai()
   local ai_unit=rnd(units)
   if ai_unit.owner==2 and ai_unit.arms>0 and ai_unit.state==0 then
    -- select a random target (unit or building)
-   p_target=(rnd"2"<1)and rnd(units) or rnd(buildings)
-   if (p_target and p_target.owner==1 or p_target.created_by==1) do_attack(ai_unit, p_target)
+   p_target=find_rnd_enemy(ai_unit)
+   if (p_target) do_attack(ai_unit, p_target)
+   --p_target=(rnd"2"<1)and rnd(units) or rnd(buildings)
+   --if (p_target and p_target.owner==1 or p_target.created_by==1) do_attack(ai_unit, p_target)
   end
   -- --------------------
   -- repair/build units
@@ -1939,7 +1938,7 @@ function update_ai()
     end
   end
 
-  -- -------------------------
+  -- 
   -- fire palace weapons
   -- 
   -- todo: could be a bug here where ai_palace holds obj in mem
@@ -1950,7 +1949,7 @@ function update_ai()
 
  end
 
- -- --------------------
+ -- 
  -- sandworm
  -- 
  worm_life-=1
@@ -1986,10 +1985,18 @@ function update_ai()
 
 end
 
+-- find rnd enemy unit (or building) to attack
+function find_rnd_enemy(obj)
+ local enemy_obj
+ repeat
+  enemy_obj=(rnd"2"<1)and rnd(units) or rnd(buildings)
+ until enemy_obj.created_by!=obj.created_by
+ return enemy_obj
+end
 
 -->8
 --other helper functions
---------------------------------
+
 
 -- set/unset the loop flag
 -- for specified pattern
@@ -2032,7 +2039,6 @@ end
 -- rotate sprite (modified to allow for trans cols)
 -- by freds72
 -- https://www.lexaloffle.com/bbs/?pid=52525#p52541
-
 function rspr(sx,sy,x,y,a,w,trans,single_col)
 	local ca,sa=cos(a),sin(a)	
 	local ddx0,ddy0,mask = ca,sa,shl(0xfff8,(w-1))
@@ -2115,11 +2121,9 @@ end
 
 
 
---
+
 -- particle related
 -- (loosly inspired by @casualeffects' fast particle system)
---
-
 function add_particle(x, y, r, dx, dy, dr, ddy, life, cols, pattern)
   local p={
     x=x,y=y,r=r,dx=dx,dy=dy,dr=dr,
