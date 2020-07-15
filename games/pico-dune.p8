@@ -94,10 +94,13 @@ launch_click=function(self)
   set_message"pick target"
   target_mode=true
  else
-  -- mcv mode
-  del(units,last_selected_obj)
-  m_map_obj_tree(obj_data[1],last_selected_obj.x,last_selected_obj.y,1)
-  sfx"61"
+  -- mcv mode  
+  local val=wrap_mget(last_selected_obj:get_tile_pos())
+  if val>=9 and val<=15 then
+   del(units,last_selected_obj)
+   m_map_obj_tree(obj_data[1],last_selected_obj.x,last_selected_obj.y,1)
+   sfx"61"
+  end
   last_selected_obj=nil
  end
 end
@@ -152,7 +155,7 @@ obj_data=[[id|name|obj_spr|ico_spr|type|w|h|z|trans_col|parent_id|parent2_id|own
 38|dEVIATOR|54|202|1|1|1|1|11|12|||||11|3|2|2|13|7|2||750||50|480|0.3|7|2|500||||tHE oRDOS dEVIATOR IS A~STANDARD mISSILE tANK,~WHICH FIRES UNIQUE~NERVE GAS MISSILES THAT~MAY TEMPORARILY CHANGE~ENEMY LOYALTY.||||
 39|sANDWORM|88||9|1|1|1|11|nil|||||||2|2|nil|3|||0||300|4000|0.35|0|30|75||||tHE sAND wORMS ARE~INDIGEONOUS TO dUNE.~aTTRACTED BY VIBRATIONS~ALMOST IMPOSSIBLE TO~DESTROY, WILL CONSUME~ANYTHING THAT MOVES.||||
 80|rEPAIR|19||5|1|1|1|11|nil|||||||1|1|nil|||||||||||||||||draw_action||action_click
-81|pICK TARGET|1||5|1|1|1|11|nil|||||||1|1|nil|||||||||||||||||draw_action||action_click]]
+81| |1||5|1|1|1|11|nil|||||||1|1|nil|||||||||||||||||draw_action||action_click]]
 
 
 
@@ -1618,12 +1621,12 @@ function draw_ui()
   placement_pos_ok,placement_inner_invalid,placement_damage = false,false,false
   for xx=-1,w do
     for yy=-1,h do
+     local val=wrap_mget(mxpos+xx, mypos+yy)
      if xx==-1 or xx==w or yy==-1 or yy==h then     
       -- check edges
-      if (wrap_mget(mxpos+xx, mypos+yy)==16 or wrap_mget(mxpos+xx, mypos+yy)>=58) placement_pos_ok=true
+      if (val==16 or val>=58) placement_pos_ok=true
      else
-      -- check inner
-      local val=wrap_mget(mxpos+xx, mypos+yy)
+      -- check inner      
       if (val>=9 and val<=15) placement_damage=true
       if (object_tiles[mxpos+xx..","..mypos+yy] or val==0 or val<8 or val>16) placement_inner_invalid=true
      end
