@@ -19,9 +19,9 @@ ai_faction,ai_col1,ai_col2,ai_level=dget"20",dget"21",dget"22",dget"23"
 
 
 credits={
- shr(dget(6),16), -- player starting credits
+ shr(dget"6",16), -- player starting credits
  shr(500,16),     -- ai starting credits (always 500?)
- shr(dget(7),16), -- target credits
+ shr(dget"7",16), -- target credits
 }
 
 
@@ -89,16 +89,17 @@ repair_click=function()
 end
 launch_click=function(self)
  -- palace? 
- if last_selected_obj.id!=33 then
+ if last_selected_obj.id!=35 then
   -- go into launch mode 
   set_message"pick target"
   target_mode=true
  else
-  -- mcv mode  
-  local val=wrap_mget(last_selected_obj:get_tile_pos())
+  -- mcv mode
+  local mx,my=last_selected_obj:get_tile_pos()
+  local val=wrap_mget(mx,my)
   if val>=9 and val<=15 then
    del(units,last_selected_obj)
-   m_map_obj_tree(obj_data[1],last_selected_obj.x,last_selected_obj.y,1)
+   m_map_obj_tree(obj_data[1],mx*8,my*8,1)
    sfx"61"
   end
   last_selected_obj=nil
@@ -134,30 +135,30 @@ obj_data=[[id|name|obj_spr|ico_spr|type|w|h|z|trans_col|parent_id|parent2_id|own
 17|sTARPORT|61|228|2|3|3|1|nil|1|||||11|3|2|2|6|6||1|500|50|0|2000||||||||tHE sTARPORT IS USED TO~ORDER AND RECEIVED~SHIPMENTS FROM~c.h.o.a.m.|init_refinery|draw_refinery||factory_click
 18|hOUSE OF ix|131|224|2|2|2|1|nil|1|||||||2|2|12|5|||500|40|0|1600||||||||tHE ix rESEARCH~fACILITY ADVANCES YOUR~hOUSE'S TECHNOLOGY.||||
 19|pALACE|58|226|2|3|3|1|nil|1|||||||2|2|17|8||1|999|80|0|4000||||1750||||tHIS IS YOUR pALACE.||||
-20|lIGHT iNFANTRY (X3)|48|236|1|1|1|1|11|9|||||15|3|2|2|9|2|-3||60||4|200|0.05|2|1|1|1|49|10|iNFANTRY ARE LIGHTLY~ARMOURED FOOTSOLDIERS,~WITH LIMITED FIRING~RANGE AND SPEED.||||
-21|hEAVY tROOPERS (X3)|48|194|1|1|1|1|11|10|||||||2|2|9|3|-1||100||8|440|0.1|3|1|2|1|49|10|tROOPERS ARE HEAVILY~ARMOURED FOOTSOLDIERS,~WITH IMPROVED FIRING~RANGE AND SPEED.||||
-22|fREMEN|48|236|1|1|1|1|11|||0|9|4|9|1|2|2||8|1||0||8|880|0.1|3|1|2|1|49|10|tHE fREMEN ARE NATIVE~TO dUNE. eLITE FIGHTERS~IN ALLIANCE WITH THE~aTREIDES.||||
-23|sABOTEUR|48|236|1|0.5|0.5|1|11|||0|1|0|13|1|2|2||8|2||0||150|160|0.4|0|1|37.5|1|49|10|tHE sABOTEUR IS A~SPECIAL MILITARY UNIT,~TRAINED AT AN oRDOS~pALACE. cAN DESTROY~ALMOST ANY STRUCTURE OR~VEHICLE.||||
-24|sARDAUKAR|48|236|1|1|1|1|11|||0|14|2|14|2|2|2||4|||0||5|440|0.1|1||1.25||||tHE sARDUKAR ARE THE~eMPEROR'S ELITE TROOPS.~WITH SUPERIOR FIREPOWER~AND ARMOUR.||||
-25|tRIKE|51|204|1|1|1|1|11|11|17||||15|4|2|2||2|||150||8|400|0.6|3|1|2||||tHE tRIKE IS A LIGHTLY-~ARMOURED, 3-WHEELED~VEHICLE, WITH LIMITED~FIRING RANGE, BUT RAPID~SPEED.||||
-26|qUAD|52|206|1|1|1|1|11|11|17||||||2|2||3|||200||10|520|0.5|3|1|2.5||||tHE qUAD IS A LIGHTLY-~ARMOURED, 4-WHEELED~VEHICLE. sLOWER THAN~THE tRIKE, BUT STRONGER~ARMOUR AND FIREPOWER.||||
-27|cOMBAT tANK|53|196|1|1|1|1|11|12|17||||||2|2|7|4|||300||38|800|0.25|4|1|9.5||||tHE cOMBAT tANK IS A~MEDIUM ARMOURED TANK,~FIRES HIGH-EXPLOSIVE~ROUNDS.||||
-28|sIEGE tANK|55|198|1|1|1|1|11|12|17||||15|4|2|2|7|6|||600||45|1200|0.2|5|1|11.25||||tHE mISSILE tANK IS A~MEDIUM ARMOURED TANK,~WHICH FIRES MISSILES.~lONG-RANGE, BUT~INACCURATE.||||
-29|rOCKET lAUNCHER|54|202|1|1|1|1|11|12|17||||15|4|2|2|7|5|||450||112|400|0.3|9|2|28||||tHE sIEGE tANK IS A~HEAVY ARMOURED TANK,~WHICH HAS DUAL CANNONS,~BUT IS SLOW.||||
-30|hARVESTER|50|192|1|1|1|1|11|12|17||||12|12|2|2||2|||300||0|600|0.1|0||0||||tHE hARVESTER SEPARATES~SPICE FROM THE SAND &~RETURNS RAW SPICE TO THE~rEFINERY FOR PROCESSING.||||
-31|cARRYALL|73|238|1|1|1|8|11|13|||||11|3|2|2|13|5|||800||0|400|0.75|0||0||||tHE cARRYALL IS A LIGHTLY~ARMOURED AIRCRAFT WITH~NO WEAPONS. mAINLY USED~TO LIFT+TRANSPORT~hARVESTERS.||||
-32|oRNITHOPTER|160|166|1|1|1|4|11|13|||||||2|2|13|7|-3||600||75|20|1|9|2|20||161|5|tHE oRNITHOPTER IS A~LIGHTLY ARMOURED~AIRCRAFT THAT FIRES~ROCKETS.hIGHLY MANOUVERABLE~+ FASTEST AIRCRAFT ON~dUNE.||||
-33|mcv|176|192|1|2|1|1|11|12|||||0|5|2|2|7|4|||900||0|600|0.1|0||0||||tHE mcv (mOBILE~cONSTRUCTION vEHICLE)~SCOUT VEHICLE IS USED~TO FIND AND DEPLOY NEW~BASE LOCATIONS.||||
-34|sONIC tANK|57|198|1|1|1|1|11|12|||||12|9|2|2|7|7|1||600||90|440|0.3|8|3|22.5||||dEVELOPED BY THE~aTREIDES,THIS ENHANCED~TANK FIRES POWERFUL~BLAST WAVES OF SONIC~ENERGY.||||
-35|dEVASTATOR|56|200|1|1|1|1|11|12|||||||2|2|13|8|3||800||60|1600|0.1|7|1|15||||tHE dEVESTATOR IS A~NUCLEAR-POWERED TANK,~WHICH FIRES DUAL PLASMA~CHARGES. mOST POWERFUL~TANK ON dUNE, BUT~POTENTIALLY UNSTABLE~IN COMBAT.||||
-36|dEATH hAND|72||1|1|1|8|11|||0|||||2|2|13|8|3||0||150|280|0.5|0|20|37.5||||tHE dEATH hAND IS A~SPECIAL hARKONNEN~pALACE WEAPON. aN~INACCURATE, BUT VERY~DESTRUCTIVE BALLISTIC~MISSILE.||||
-37|rAIDER|51|204|1|1|1|1|11|11|||||12|1|2|2||2|2||150||8|320|0.75|3|1|2||||tHE oRDOS rAIDER IS~SIMILAR TO THE STANDARD~tRIKE, BUT WITH LESS~ARMOUR IN FAVOUR OF~SPEED.||||
-38|dEVIATOR|54|202|1|1|1|1|11|12|||||11|3|2|2|13|7|2||750||50|480|0.3|7|2|500||||tHE oRDOS dEVIATOR IS A~STANDARD mISSILE tANK,~WHICH FIRES UNIQUE~NERVE GAS MISSILES THAT~MAY TEMPORARILY CHANGE~ENEMY LOYALTY.||||
-39|sANDWORM|88||9|1|1|1|11|nil|||||||2|2|nil|3|||0||300|4000|0.35|0|30|75||||tHE sAND wORMS ARE~INDIGEONOUS TO dUNE.~aTTRACTED BY VIBRATIONS~ALMOST IMPOSSIBLE TO~DESTROY, WILL CONSUME~ANYTHING THAT MOVES.||||
+20|iNFANTRY sOLDIER|48|236|1|0.5|0.5|1|11|9|||||15|3|2|2||2|-3||60||2|100|0.05|2|1|0.5|1|49|10|iNFANTRY ARE LIGHTLY~ARMOURED FOOTSOLDIERS,~WITH LIMITED FIRING~RANGE AND SPEED.||||
+21|lIGHT iNFANTRY sQUAD|48|236|1|1|1|1|11|9|||||15|3|2|2||2|-3||100||4|200|0.05|2|1|0.5|1|49|10|iNFANTRY ARE LIGHTLY~ARMOURED FOOTSOLDIERS,~WITH LIMITED FIRING~RANGE AND SPEED.||||
+22|hEAVY tROOPER|48|194|1|0.5|0.5|1|11|10|||||||2|2||3|-1||100||4|440|0.1|3|1|1|1|49|10|tROOPERS ARE HEAVILY~ARMOURED FOOTSOLDIERS,~WITH IMPROVED FIRING~RANGE AND SPEED.||||
+23|hEAVY tROOPERS|48|194|1|1|1|1|11|10|||||||2|2||3|-1||200||8|440|0.1|3|1|2|1|49|10|tROOPERS ARE HEAVILY~ARMOURED FOOTSOLDIERS,~WITH IMPROVED FIRING~RANGE AND SPEED.||||
+24|fREMEN|48|236|1|1|1|1|11|||0|9|4|9|1|2|2||8|1||0||8|880|0.1|3|1|2|1|49|10|tHE fREMEN ARE NATIVE~TO dUNE. eLITE FIGHTERS~IN ALLIANCE WITH THE~aTREIDES.||||
+25|sABOTEUR|48|236|1|0.5|0.5|1|11|||0|1|0|13|1|2|2||8|2||0||150|160|0.4|0|1|37.5|1|49|10|tHE sABOTEUR IS A~SPECIAL MILITARY UNIT,~TRAINED AT AN oRDOS~pALACE. cAN DESTROY~ALMOST ANY STRUCTURE OR~VEHICLE.||||
+26|sARDAUKAR|48|236|1|1|1|1|11|||0|14|2|14|2|2|2||4|||0||5|440|0.1|1||1.25||||tHE sARDUKAR ARE THE~eMPEROR'S ELITE TROOPS.~WITH SUPERIOR FIREPOWER~AND ARMOUR.||||
+27|tRIKE|51|204|1|1|1|1|11|11|17||||15|4|2|2||2|||150||8|400|0.6|3|1|2||||tHE tRIKE IS A LIGHTLY-~ARMOURED, 3-WHEELED~VEHICLE, WITH LIMITED~FIRING RANGE, BUT RAPID~SPEED.||||
+28|qUAD|52|206|1|1|1|1|11|11|17||||||2|2||3|||200||10|520|0.5|3|1|2.5||||tHE qUAD IS A LIGHTLY-~ARMOURED, 4-WHEELED~VEHICLE. sLOWER THAN~THE tRIKE, BUT STRONGER~ARMOUR AND FIREPOWER.||||
+29|cOMBAT tANK|53|196|1|1|1|1|11|12|17||||||2|2|7|4|||300||38|800|0.25|4|1|9.5||||tHE cOMBAT tANK IS A~MEDIUM ARMOURED TANK,~FIRES HIGH-EXPLOSIVE~ROUNDS.||||
+30|sIEGE tANK|55|198|1|1|1|1|11|12|17||||15|4|2|2|7|6|||600||45|1200|0.2|5|1|11.25||||tHE mISSILE tANK IS A~MEDIUM ARMOURED TANK,~WHICH FIRES MISSILES.~lONG-RANGE, BUT~INACCURATE.||||
+31|rOCKET lAUNCHER|54|202|1|1|1|1|11|12|17||||15|4|2|2|7|5|||450||112|400|0.3|9|2|28||||tHE sIEGE tANK IS A~HEAVY ARMOURED TANK,~WHICH HAS DUAL CANNONS,~BUT IS SLOW.||||
+32|hARVESTER|50|192|1|1|1|1|11|12|17||||12|12|2|2||2|||300||0|600|0.1|0||0||||tHE hARVESTER SEPARATES~SPICE FROM THE SAND &~RETURNS RAW SPICE TO THE~rEFINERY FOR PROCESSING.||||
+33|cARRYALL|73|238|1|1|1|8|11|13|||||11|3|2|2|13|5|||800||0|400|0.75|0||0||||tHE cARRYALL IS A LIGHTLY~ARMOURED AIRCRAFT WITH~NO WEAPONS. mAINLY USED~TO LIFT+TRANSPORT~hARVESTERS.||||
+34|oRNITHOPTER|160|166|1|1|1|4|11|13|||||||2|2|13|7|-3||600||75|20|1|9|2|20||161|5|tHE oRNITHOPTER IS A~LIGHTLY ARMOURED~AIRCRAFT THAT FIRES~ROCKETS.hIGHLY MANOUVERABLE~+ FASTEST AIRCRAFT ON~dUNE.||||
+35|mcv|176|192|1|2|1|1|11|12|||||0|5|2|2|7|4|||900||0|600|0.1|0||0||||tHE mcv (mOBILE~cONSTRUCTION vEHICLE)~SCOUT VEHICLE IS USED~TO FIND AND DEPLOY NEW~BASE LOCATIONS.||||
+36|sONIC tANK|57|198|1|1|1|1|11|12|||||12|9|2|2|7|7|1||600||90|440|0.3|8|3|22.5||||dEVELOPED BY THE~aTREIDES,THIS ENHANCED~TANK FIRES POWERFUL~BLAST WAVES OF SONIC~ENERGY.||||
+37|dEVASTATOR|56|200|1|1|1|1|11|12|||||||2|2|13|8|3||800||60|1600|0.1|7|1|15||||tHE dEVESTATOR IS A~NUCLEAR-POWERED TANK,~WHICH FIRES DUAL PLASMA~CHARGES. mOST POWERFUL~TANK ON dUNE, BUT~POTENTIALLY UNSTABLE~IN COMBAT.||||
+38|dEATH hAND|72||1|1|1|8|11|||0|||||2|2|13|8|3||0||150|280|0.5|0|20|37.5||||tHE dEATH hAND IS A~SPECIAL hARKONNEN~pALACE WEAPON. aN~INACCURATE, BUT VERY~DESTRUCTIVE BALLISTIC~MISSILE.||||
+39|rAIDER|51|204|1|1|1|1|11|11|||||12|1|2|2||2|2||150||8|320|0.75|3|1|2||||tHE oRDOS rAIDER IS~SIMILAR TO THE STANDARD~tRIKE, BUT WITH LESS~ARMOUR IN FAVOUR OF~SPEED.||||
+40|dEVIATOR|54|202|1|1|1|1|11|12|||||11|3|2|2|13|7|2||750||50|480|0.3|7|2|500||||tHE oRDOS dEVIATOR IS A~STANDARD mISSILE tANK,~WHICH FIRES UNIQUE~NERVE GAS MISSILES THAT~MAY TEMPORARILY CHANGE~ENEMY LOYALTY.||||
+41|sANDWORM|88||9|1|1|1|11|nil|||||||2|2|nil|3|||0||300|4000|0.35|0|30|75||||tHE sAND wORMS ARE~INDIGEONOUS TO dUNE.~aTTRACTED BY VIBRATIONS~ALMOST IMPOSSIBLE TO~DESTROY, WILL CONSUME~ANYTHING THAT MOVES.||||
 80|rEPAIR|19||5|1|1|1|11|nil|||||||1|1|nil|||||||||||||||||draw_action||action_click
 81| |1||5|1|1|1|11|nil|||||||1|1|nil|||||||||||||||||draw_action||action_click]]
-
-
 
 
 -->8
@@ -176,7 +177,6 @@ function _init()
  -- explode object data
  -- 
  local str_arrays=split2d(obj_data,"|","\n")
- -- replace with exploded data
  obj_data={}
  -- loop all objects
  for i=2,#str_arrays do
@@ -202,12 +202,10 @@ function _init()
  for i=-2,66 do
   fow[i]={}
   for l=-2,66 do
-   fow[i][l]=0
-   --fow[i][l]=16 -- all revealed
+   fow[i][l]=0 --16
   end
  end
 
- -- create cursor ui "object" (for collisions)
  cursor = {
   w=8,
   h=8,
@@ -226,9 +224,8 @@ function _init()
   }
 
  -- discover_objs()
- -- analyse current map & spawn objs  
- -- make 2 passes
- -- (first find the player start pos/const yard)
+ -- analyse current map & spawn objs
+ -- (first pass find the player start pos/const yard)
  -- (second finds everything else)
  for i=1,2 do
   for my=0,31 do
@@ -263,9 +260,6 @@ function _init()
  end
 
  music"7"
-
- -- shake tells how much to
- -- shake the screen
  shake=0
 end
 
@@ -274,11 +268,8 @@ function m_map_obj_tree(objref, x,y, owner, factory)
   local newobj=m_obj_from_ref(objref, x,y, objref.type, nil, _g[objref.func_init], _g[objref.func_draw], _g[objref.func_update], nil)
   newobj.ico_obj,newobj.life = m_obj_from_ref(objref, 109,0, 3, newobj, nil, nil, _g[objref.func_onclick]), placement_damage and objref.hitpoint/2 or objref.hitpoint -- unless built without concrete
   -- player-controlled or ai?
-  -- note: this whole thing may not be needed 
-  -- as once we have plr start pos, that might be all we need
+  -- todo: this whole thing may not be needed as once we have plr start pos, that might be all we need
   newobj.owner=newobj.owner or owner or dist(x,y,pstartx,pstarty)<75 and 1 or 2
-  -- who created? (do avoid "guard" attacking units created by same faction)
-  -- factory?
   newobj.created_by,newobj.build_objs = owner or newobj.owner, {}
   -- go through all ref's and see if any valid for this building
   for o in all(obj_data) do
@@ -288,7 +279,6 @@ function m_map_obj_tree(objref, x,y, owner, factory)
       or (req_fact<0 and -p_faction!=req_fact))
     then
       add(newobj.build_objs,
-        -- note: setting type==4 (build icon!)
         m_obj_from_ref(o, 109,0, 4, newobj, nil, nil, function(self)
           -- building icon clicked
           if show_menu then
@@ -318,8 +308,8 @@ function m_map_obj_tree(objref, x,y, owner, factory)
    newobj.col1,newobj.col2 = objref.col1,objref.col2
   end
   
-  -- override owner? 
-  -- (carryalls are automomous & don't reveal map, etc.)
+  -- override owner?
+  -- (flying objs are automomous & don't reveal map, etc.)
   if (newobj.z>1) newobj.owner=0
 
   local xpos,ypos = flr(x/8),flr(y/8)
@@ -367,7 +357,7 @@ function m_map_obj_tree(objref, x,y, owner, factory)
      --
      newobj.last_fact=factory --default, for retreating
      -- harvesters (auto parent to last created refinary)
-     if (newobj.id==30) newobj.capacity=0
+     if (newobj.id==32) newobj.capacity=0
     end
     add(units,newobj)
     -- default to guard
@@ -480,12 +470,12 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
         is_missile and .15 or 2,
         -.01, 
         is_missile and 20 or 2.5, 
-        self.id==38 and {11} or is_missile and split2d("7,7,10,9,8,2,13,6,7",",") or {15},
+        self.id==40 and {11} or is_missile and split2d("7,7,10,9,8,2,13,6,7",",") or {15},
         rnd"2"<1 and 0xa5a5.8 or 0)
       end
      end
      -- smoking?
-     if (self.id>=25 and self.life<self.hitpoint*.33 and rnd"10"<1) add_particle(self.x+3.5,self.y+3.5, 1, .1,-.02,.05, -.002, 80,split2d("10,9,6,5",","), rnd"2"<1 and 0xa5a5.8 or 0)
+     if (self.id>=27 and self.life<self.hitpoint*.33 and rnd"10"<1) add_particle(self.x+3.5,self.y+3.5, 1, .1,-.02,.05, -.002, 80,split2d("10,9,6,5",","), rnd"2"<1 and 0xa5a5.8 or 0)
      -- reset hit flag
      self.hit=0
    end,
@@ -509,7 +499,7 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
        
      end
      -- check for death
-     if (self.type<=2 and life<=0 and self.death_time==nil) self.state=5 self.cor=nil self.death_time=(self.type==2 and 1 or .5) sfx(self.type==2 and 53 or 54, 3) shake+=((self.type==2 or self.id==36) and 0.25 or 0)
+     if (self.type<=2 and life<=0 and self.death_time==nil) self.state=5 self.cor=nil self.death_time=(self.type==2 and 1 or .5) sfx(self.type==2 and 53 or 54, 3) shake+=((self.type==2 or self.id==38) and 0.25 or 0)
      if self.death_time then
       self.death_time-=.025
       if self.death_time<=0 then
@@ -578,7 +568,7 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
         target.hit,target.hitby=self.fire_type,self
 
         -- deviator specific
-        if self.id==38 and target.speed!=nil then
+        if self.id==40 and target.speed!=nil then
          target.owner,target.faction,target.col1,target.col2 = self.owner,self.faction,self.col1,self.col2
          do_guard(self) -- stop attacking "converted" obj
         elseif target.old_faction then
@@ -962,7 +952,7 @@ function do_guard(unit, start_state)
     self.range)
 
    -- ornithopter?
-   elseif self.id==32 then
+   elseif self.id==34 then
      -- select a random target (unit or building)
      -- (will ignore fow!)
      --printh("ornith > attack_rnd_enemy")
@@ -975,7 +965,7 @@ function do_guard(unit, start_state)
    local last_fact = self.return_to or self.last_fact
    
    -- if a harvester only
-   if self.id==30 then   
+   if self.id==32 then   
     if self.state==0 or self.state==9 then
     
      if self.capacity<=1500 
@@ -1048,7 +1038,7 @@ function do_guard(unit, start_state)
    end  -- if harvester
 
    -- if any "repairable" unit
-   if self.id>24 then    
+   if self.id>26 then    
     -- is carrying spice & close to refinary
     -- or been sent to repair facility
     -- todo: if route impossible, use carryall to move unit
@@ -1125,10 +1115,8 @@ function do_attack(unit, target)
       move_unit_pos(unit,flr(target.x/8),flr(target.y/8),unit.range*5)
 
       -- saboteur or death hand?
-      if unit.id==23 or unit.id==36 then
+      if unit.id==25 or unit.id==38 then
        unit.life=0
-       -- death hand specific?
-       --if unit.id==36 then
         for i=1,unit.id/3 do
          make_explosion(unit.x+rnd"32"-16,unit.y+rnd"32"-16, 2)
         end
@@ -1155,7 +1143,8 @@ function do_attack(unit, target)
      yield()
      -- deviators should only fire once, per attack
      -- likewise, abort attack if unit becomes converted to "our" side
-     if (unit.id==38 or unit.id==32 or target.faction==unit.faction) break
+     -- TODO: remove this as fire-rate should work now!
+     if (unit.id==40 or unit.id==34 or target.faction==unit.faction) break
     end -- 4) repeat 1-3 until target destroyed
 
     -- reset to guard
@@ -1167,7 +1156,7 @@ function do_attack(unit, target)
   -- palace attack!
   --
   -- palace weapons (emperor also uses death hand)
-  local weapons={22,23,36,36}
+  local weapons={24,25,38,38}
   do_attack(m_map_obj_tree(obj_data[weapons[unit.faction]], unit.x,unit.y, unit.owner), target)      
   unit.fire_cooldown = 1750 --350=1m (so 1750 = 5mins for palace weapon again, avg for all factions)
  end
@@ -1596,7 +1585,7 @@ function draw_ui()
    -- fire palace weapon?   
    if (selected_obj.id==19 
     and selected_obj.fire_cooldown<=0)
-     or selected_obj.id==33
+     or selected_obj.id==35
     then
      launch_obj=m_obj_from_ref(obj_data[81], 109,29, 5, {}, nil,draw_action, launch_click) 
      launch_obj:draw()  
@@ -1678,7 +1667,7 @@ function draw_ui()
             7)
         ?selected_subobj.name,30,26,7
         ?"cOST:"..selected_subobj.cost,85,33,9
-        ?selected_subobj.description,30,39,6
+        ?selected_subobj.description,30,34,6
       end
       icount+=1
      end -- unlocked
@@ -1834,8 +1823,8 @@ function check_hover_select(obj)
     
      -- was our harvester selected before clicking a refinery/repair?
      if selected_obj
-      and (obj.id==6 and selected_obj.id==30 
-       or obj.id==14 and selected_obj.id>24)
+      and (obj.id==6 and selected_obj.id==32 
+       or obj.id==14 and selected_obj.id>26)
       and obj.owner==1
      then
       return_to_fact(selected_obj,obj)
@@ -1858,7 +1847,7 @@ function return_to_fact(unit,fact)
  fact = fact or has_obj[unit.created_by][1]
  -- update last factory (in case changed)     
  unit.state,fact.incoming,unit.return_to = 7,true,fact
- if (unit.id!=30 or fact.id==6) unit.last_fact=fact
+ if (unit.id!=32 or fact.id==6) unit.last_fact=fact
  unit.cor = cocreate(function(unit)
   move_unit_pos(unit, (fact.x+16)/8, fact.y/8, 0, true, 9)
   if (unit.link==nil) do_guard(unit, 9)  
