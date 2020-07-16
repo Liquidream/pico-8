@@ -41,8 +41,8 @@ _g.factory_click=function(self)
    local len=#selected_obj.valid_build_objs
    sel_build_item_idx=mid(1,sel_build_item_idx+1,len)
    selected_subobj = selected_obj.valid_build_objs[sel_build_item_idx]
-   menu_pos=mid(menu_pos+1,len-2)
-   if (sel_build_item_idx>menu_pos+2) menu_pos=min(menu_pos+1,len-2)
+   menu_pos=mid(menu_pos+1,len>3 and len-2 or len-1)
+   if (sel_build_item_idx>menu_pos+2) menu_pos=min(menu_pos+1,len-1)
   end, 10)
   m_button(32,83,"build",function()
    show_menu, selected_obj.build_obj = nil, last_selected_subobj   
@@ -169,9 +169,9 @@ function _init()
  -- enable mouse
  poke(0x5f2d, 1)
 
- menuitem(1,"exit to title",function()
-  load("pico-dune-main")
- end)
+ -- menuitem(1,"exit to title",function()
+ --  load("pico-dune-main")
+ -- end)
 
  --  
  -- explode object data
