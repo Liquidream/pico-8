@@ -171,9 +171,9 @@ function _init()
  -- enable mouse
  poke(0x5f2d, 1)
 
- -- menuitem(1,"exit to title",function()
- --  load("pico-dune-main")
- -- end)
+ menuitem(1,"exit to title",function()
+  load("pico-dune-main")
+ end)
 
  --  
  -- explode object data
@@ -293,7 +293,7 @@ function m_map_obj_tree(objref, x,y, owner, factory)
           end
         end)
       )      
-      newobj.build_obj=newobj.build_objs[1]
+      --newobj.build_obj=newobj.build_objs[1]
     end
   end
 
@@ -1559,13 +1559,8 @@ function draw_ui()
  local cx,cy=92+camx/16,92+camy/16
  rect(cx,cy, cx+7,cy+7, 7)
 
- ---
-
-
- -- 
- -- object menu icon/buttons?
- --  
- if selected_obj and selected_obj.ico_obj then  
+ -- object menu icon/buttons? 
+ if selected_obj and selected_obj.ico_obj then
   selected_obj.ico_obj:set_pos(109,20)
   selected_obj.ico_obj:draw() 
 
@@ -1684,7 +1679,7 @@ function draw_ui()
   for _,controls in pairs(ui_controls) do
     controls:draw()
   end
- end
+ end  -- if show_menu
 
  -- cursor
  palt(11,true)
@@ -1726,9 +1721,8 @@ function update_collisions()
    ui_collision_mode=true
    check_hover_select(repair_obj)
    check_hover_select(launch_obj)
-   if (selected_obj.ico_obj and not show_menu and not clickedsomething) check_hover_select(selected_obj.ico_obj)   
-   foreach(selected_obj.build_objs, check_hover_select)   
-   if (show_menu) foreach(ui_controls, check_hover_select)
+   if (selected_obj.ico_obj and not show_menu and not clickedsomething) check_hover_select(selected_obj.ico_obj) check_hover_select(selected_obj.build_obj)
+   if (show_menu) foreach(selected_obj.build_objs, check_hover_select) foreach(ui_controls, check_hover_select)
    ui_collision_mode=false
  end
  -- check map collisions
