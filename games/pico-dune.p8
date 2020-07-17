@@ -30,7 +30,7 @@ _g,buildings,units,object_tiles,radar_data,spice_tiles,particles,has_obj,start_t
 last_hq,message,msgcount,fow=hq,"",0,{}
 
 _g.factory_click=function(self)
-  menu_pos,selected_subobj,ui_controls=1,self.parent.build_objs[1],{}
+  menu_pos,selected_subobj,ui_controls=1,nil,{}
   -- create buttons
   m_button(6,84,"⬆️",function()
    sel_build_item_idx=mid(1,sel_build_item_idx-1,#selected_obj.valid_build_objs)
@@ -123,8 +123,8 @@ obj_data=[[id|name|obj_spr|ico_spr|type|w|h|z|trans_col|parent_id|parent2_id|own
 6|sPICE rEFINERY|68|174|2|3|2|1|nil|1|||||||2|2|1|1|||400|30|0|1800|||||||10|tHE rEFINERY CONVERTS~SPICE INTO CREDITS.|init_refinery|draw_refinery||
 7|rADAR oUTPOST|106|136|2|2|2|1|nil|1|||||||2|2|1|2|||400|30|0|2000||||||||tHE oUTPOST PROVIDES~RADAR AND AIDS CONTROL~OF DISTANT VEHICLES.||||
 8|sPICE sTORAGE sILO|104|134|2|2|2|1|nil|1|||||||2|2|6|2|||150|5|0|600||||||||tHE sPICE SILO IS USED ~TO STORE REFINED SPICE.||||
-9|bARRACKS|108|168|2|2|2|1|nil|1|||||11|3|2|2|7|2|||300|10|0|1200||||||||tHE bARRACKS IS USED TO~TRAIN YOUR lIGHT ~INFANTRY.||||factory_click
-10|wor tROOPER fACILITY|110|138|2|2|2|1|nil|1|||||||2|2|7|2|||400|10|0|1600||||||||wor IS USED TO TRAIN~YOUR hEAVY INFANTRY.||||factory_click
+9|bARRACKS|108|168|2|2|2|1|nil|1|||||11|3|2|2|7|2|-3||300|10|0|1200||||||||tHE bARRACKS IS USED TO~TRAIN YOUR lIGHT ~INFANTRY.||||factory_click
+10|wor tROOPER fACILITY|110|138|2|2|2|1|nil|1|||||||2|2|7|2|3||400|10|0|1600||||||||wor IS USED TO TRAIN~YOUR hEAVY INFANTRY.||||factory_click
 11|lIGHT vEHICLE fACTORY|96|140|2|2|2|1|nil|1|||||||2|2|6|2|||400|20|0|1400||||||||tHE lIGHT fACTORY~PRODUCES LIGHT ATTACK~VEHICLES.||||factory_click
 12|hEAVY vEHICLE fACTORY|98|142|2|3|2|1|nil|1|||||||2|2|6|3|||600|20|0|800||||||||tHE hEAVY fACTORY~PRODUCES HEAVY ATTACK~VEHICLES.||||factory_click
 13|hI-tECH fACTORY|101|166|2|3|2|1|nil|1|||||||2|2|12|5|||500|35|0|1600||||||||tHE hI-tECH fACTORY~PRODUCES FLYING~VEHICLES.||||factory_click
@@ -158,6 +158,9 @@ obj_data=[[id|name|obj_spr|ico_spr|type|w|h|z|trans_col|parent_id|parent2_id|own
 41|sANDWORM|88||9|1|1|1|11|nil|||||||2|2|nil|3|||0||300|4000|0.35|0|30|75||||tHE sAND wORMS ARE~INDIGEONOUS TO dUNE.~aTTRACTED BY VIBRATIONS~ALMOST IMPOSSIBLE TO~DESTROY, WILL CONSUME~ANYTHING THAT MOVES.||||
 80|rEPAIR|19||5|1|1|1|11|nil|||||||1|1|nil|||||||||||||||||draw_action||action_click
 81| |1||5|1|1|1|11|nil|||||||1|1|nil|||||||||||||||||draw_action||action_click]]
+
+
+
 
 
 -->8
@@ -272,10 +275,11 @@ function m_map_obj_tree(objref, x,y, owner, factory)
   newobj.created_by,newobj.build_objs = owner or newobj.owner, {}
   -- go through all ref's and see if any valid for this building
   for o in all(obj_data) do
+   local req_faq=o.req_faction
     if (o.parent_id!=nil and (o.parent_id==newobj.id or o.parent2_id==newobj.id))					
-     and (req_fact==nil
-      or (req_fact>0 and o.req_faction==p_faction)
-      or (req_fact<0 and -p_faction!=req_fact))
+     and (req_faq==nil
+      or (req_faq>0 and req_faq==p_faction)
+      or (req_faq<0 and -p_faction!=req_faq))
     then
       add(newobj.build_objs,
         m_obj_from_ref(o, 109,0, 4, newobj, nil, nil, function(self)
@@ -486,12 +490,12 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
      if self.hit>0 then 
        -- reinstate loop
        set_loop(true) --5
-       -- switch music (if passed the loop point)?    
+       -- switch music (if passed the loop point)?
        -- 0=normal, 1=battle, 2=leaving_battle
        if (music_state==0 or stat(24)>5) music_state=1 music"0"
        -- can we retaliate (unit/turret)?
        if (self.arms>0 and self.state==0) do_attack(self, self.hitby)
-       -- lose soldiers - when tokens permit (takes ~20!)
+       -- lose soldiers
        if (self.obj_spr==48 and life<100) self.spr_w,self.spr_h=0.5,0.5
        -- req repair pickup
        if (life<50 and self.state!=7) return_to_fact(self,has_obj[self.created_by][14] or self.last_fact) --TODO: chk last fact being set to facts (unless harvester!)
@@ -513,7 +517,7 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
          build_dest[self.hitby.created_by]+=1
         else
          -- unit
-         local gx,gy = self:get_tile_pos() --flr(self.x/8), flr(self.y/8)
+         local gx,gy = self:get_tile_pos()
          if (gy>31) gx+=64 gy-=32
          if (wrap_mget(gx,gy)<9) wrap_mset(gx,gy,20) --scortch sand
          if (self.speed==0) wrap_mset(gx,gy,15)
@@ -1629,7 +1633,6 @@ function draw_ui()
  end
 
 
-
  if show_menu then  
   fillp(0xA5A5.8)
   rectfill(0,0,127,127,0)
@@ -1643,11 +1646,13 @@ function draw_ui()
     rectfill(6,25,27,92,0)
     local icount=1
     for i=1,#selected_obj.build_objs do
-     local curr_item=selected_obj.build_objs[i]
+     local curr_item=selected_obj.build_objs[i]     
+     --printh(curr_item.name.."="..curr_item.req_level)
      if curr_item.req_id==nil 
       or has_obj[selected_obj.created_by][curr_item.req_id]
       -- todo: filter req_level
-      -- todo: filter out palace + starport if already built (takes more tokens tho!)
+      and curr_item.req_level<=p_level
+      -- todo: filter out palace + starport if already built
       --and (curr_item.max==nil or not has_obj[curr_item.id])
      then
       selected_obj.valid_build_objs[icount]=curr_item
@@ -1658,6 +1663,8 @@ function draw_ui()
         -- hide!
         curr_item:set_pos(-16,16)
       end
+      -- default selection
+      selected_subobj = selected_subobj or selected_obj.valid_build_objs[1]
       -- draw selected reticule
       if selected_subobj == curr_item then 
         sel_build_item_idx=icount
@@ -2244,7 +2251,7 @@ __map__
 1616000000000000000000000000000000000000000000000000000000000000000000000000000000000000000012121212120000000000000000000000151516161600000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000161616
 1600000000000000000000000000000016000000000000000000000000000000000000000000000000121200000000121200000000000000000000000000001516030303030303030303030303030303030303030300000000000000000000000000000000000000000000000000000000000000000000000000000000000016
 1212000000000000001616160000000000001200000008030300000000000000000000000000000000001212121212120000000000000000000003030300000016000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000016
-1212120000000016161616006c0a000012120000000203030303000000000000000000000000000000000000000012000000000000000000000303030303030000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+1212120000000016161616006c0a3d0012120000000203030303000000000000000000000000000000000000000012000000000000000000000303030303030000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 12120a0a0a0a0000165785850a0a001200020508030303030303000000000000000000000000000000000000000000000000030303030303030303030303030000000012121212000000000000000000120012000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 12120a3a10100c830a856e0a600a000205030303030303030642000000000000000000000000000000000000000000000000000003000000000303030303030000001212121212121200000000000000121212000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 12120a1010100a0a0a850a0a0a0a000203030307030303060000000000120000000000000000030303030303030303030000000000000000000003030303030000121212121212000000000000001212121212000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
