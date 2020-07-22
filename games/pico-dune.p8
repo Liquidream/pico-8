@@ -633,6 +633,10 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
      if self.fire_cooldown>0 then 
       self.fire_cooldown-=.1
      end
+
+     -- name update 
+     -- if self.owner==1 and 
+     if (self.id==5) self.name="wINDTRAP (pOWER="..power_bal..")"
    end,
 
    set_pos=function(self,x,y)
@@ -1012,7 +1016,7 @@ function do_guard(unit, start_state)
      -- update spice tile state
      local unit_pos = unit:get_tile_pos_index()
      --harvester should take about 110 secs to fill!
-     spice_tiles[unit_pos],self.capacity = (spice_tiles[unit_pos] or 1000)-1, (self.capacity or 0)+.5
+     spice_tiles[unit_pos],self.capacity,self.name = (spice_tiles[unit_pos] or 1000)-1, (self.capacity or 0)+.5,"hARVESTER ("..flr(self.capacity/1500*100).."% FULL)"
      -- done current spot?
      if spice_tiles[unit_pos] <= 0 then      
       -- (clear spice tile + depleat surrounding tiles)
@@ -1738,7 +1742,8 @@ function update_collisions()
  elseif left_button_clicked then
   
   -- update message
-  if (selected_obj) set_message(selected_obj.name) --set_message(selected_obj.name..(selected_obj.id==32 and " IS "..flr(selected_obj.capacity/1500*100).."% FULL" or ""))
+  if (selected_obj) set_message(selected_obj.name)
+  --if (selected_obj) set_message(selected_obj.name..(selected_obj.id==32 and " IS "..flr(selected_obj.capacity/1500*100).."% FULL" or ""))
  
   if clickedsomething then    
     -- clicked quick build?
