@@ -55,10 +55,10 @@ _g.factory_click=function(self)
 end
 _g.init_windtrap=function(self)
   self.col_cycle_src=11
-  self.col_cycle = split2d("12,12,12,12,13,1,1,1,1,13",",")
+  self.col_cycle = split2d("12,12,12,12,13,1,1,1,1,13")
 end
 _g.init_refinery=function(self)
- self.col_cycle = split2d("11,10,8,8",",")
+ self.col_cycle = split2d("11,10,8,8")
 end
 _g.draw_refinery=function(self)
   pal()
@@ -259,7 +259,6 @@ function _init()
         if (ox>63) oy+=31 ox-=64
         mset(mx,my,0)
         m_map_obj_tree(objref, ox*8,oy*8)
-        --if (objref.type==1 and objref.speed>0) mset(mx,my,0)
       end
     end
   end
@@ -470,12 +469,12 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
         is_missile and .15 or 2,
         -.01, 
         is_missile and 20 or 2.5, 
-        self.id==40 and {11} or is_missile and split2d("7,7,10,9,8,2,13,6,7",",") or {15},
+        self.id==40 and {11} or is_missile and split2d("7,7,10,9,8,2,13,6,7") or {15},
         rnd"2"<1 and 0xa5a5.8 or 0)
       end
      end
      -- smoking?
-     if (self.life<self.hitpoint*.33 and self.altframe==nil and rnd"10"<1 and self.type<=2) add_particle(self.x+3.5,self.y+3.5, 1, .1,-.02,.05, -.002, 80,split2d("10,8,9,6,5",","), rnd"2"<1 and 0xa5a5.8 or 0)
+     if (self.life<self.hitpoint*.33 and self.altframe==nil and rnd"10"<1 and self.type<=2) add_particle(self.x+3.5,self.y+3.5, 1, .1,-.02,.05, -.002, 80,split2d("10,8,9,6,5"), rnd"2"<1 and 0xa5a5.8 or 0)
      -- reset hit flag
      self.hit=0
    end,
@@ -673,7 +672,7 @@ end
 
 function make_explosion(x,y,size_type)
  add_particle(x, y, 2, 
-         0,0,.1,0, size_type==1 and 5 or 30, split2d("5,7,10,8,9,2",","), rnd"2"<1 and 0xa5a5.8 or 0)
+         0,0,.1,0, size_type==1 and 5 or 30, split2d("5,7,10,8,9,2"), rnd"2"<1 and 0xa5a5.8 or 0)
 end
 
 function reveal_fow(object)
@@ -1061,7 +1060,13 @@ function do_guard(unit, start_state)
        while self.capacity>0 do
         self.capacity-=1        
         -- only make money if human player (and capacity!)
-        if (flr(self.capacity)%4==0 and tonum(strnum)<total_storage) transact(2,self)
+        if flr(self.capacity)%4==0 then
+         if tonum(strnum)<total_storage then
+          transact(2,self)
+         else
+          set_message"sPICE LOST. bUILD sILOS"
+         end
+        end
         yield()       
        end --while unloading
        -- go back to guard (search for spice) mode
@@ -1070,7 +1075,7 @@ function do_guard(unit, start_state)
       else
        -- must be a repairable unit
        -- spark flash while repairing       
-       self.process,self.procstep,last_fact.col_cycle_src,last_fact.col_cycle = 2,0,8, split2d("7,10,0,0,7,0,0",",")
+       self.process,self.procstep,last_fact.col_cycle_src,last_fact.col_cycle = 2,0,8, split2d("7,10,0,0,7,0,0")
       end -- capacity check
      
      end -- if unloading/repairing
@@ -1097,7 +1102,7 @@ end
 function add_spice_cloud(x,y,r)
  -- spice clouds
  local cx,cy = sin(r)*5.5,-cos(r)*5.5
- if (rnd"5"<1) add_particle(x+cx+3.5,y+cy+3.5, rnd"2", .15,0,.1, -.01, 25,split2d("2,4,9,15",","), 0xa5a5.8)
+ if (rnd"5"<1) add_particle(x+cx+3.5,y+cy+3.5, rnd"2", .15,0,.1, -.01, 25,split2d("2,4,9,15"), 0xa5a5.8)
 end
 
 function do_attack(unit, target)
@@ -1197,7 +1202,7 @@ function move_unit_pos(unit,x,y,dist_to_keep,try_hail,start_state)
   local flying = unit.z>1
   -- before moving, can carryall take us?
   if try_hail then
-   local carryall=has_obj and has_obj[unit.created_by][31] or false
+   local carryall=has_obj and has_obj[unit.created_by][33] or false
    if  carryall and not carryall.link then
      carryall.link,unit.link = unit,carryall    
      carryall.cor=cocreate(function(unit_c)
@@ -1742,7 +1747,6 @@ function update_collisions()
   
   -- update message
   if (selected_obj) set_message(selected_obj.name)
-  --if (selected_obj) set_message(selected_obj.name..(selected_obj.id==32 and " IS "..flr(selected_obj.capacity/1500*100).."% FULL" or ""))
  
   if clickedsomething then    
     -- clicked quick build?
@@ -1981,6 +1985,7 @@ function getscoretext(val)
 end
 
 function split2d(str,d,dd) 
+ d=d or ","
  if (dd~=nil) str=split(str,dd) 
  if type(str)=="table" then
   local t={}
