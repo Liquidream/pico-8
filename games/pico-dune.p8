@@ -590,7 +590,7 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
       if self.process==1 and self.spent>self.cost then
         -- const complete!
         self.done = true
-        if (self.owner==1) sfx"56"
+        if (self.parent.owner==1) sfx"56" set_message("cONSTRUCTION cOMPLETE")
         -- auto-deploy units
         if self.ref.type==1
          and self.parent_id != 1 then
@@ -858,7 +858,7 @@ function update_level()
   for k=0,1 do
    if (btn(k)) keyx+=k*2-1
    if (btn(k+2)) keyy+=k*2-1
-   if (btn(4,1)) stop("paused") --TODO:remove on release 
+   --if (btn(4,1)) stop("paused") --TODO:remove on release 
   end
 
  -- update cursor/mouse pos
