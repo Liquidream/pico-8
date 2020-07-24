@@ -17,13 +17,11 @@ ai_faction,ai_col1,ai_col2,ai_level=dget"20",dget"21",dget"22",dget"23"
 --p_level,p_faction,p_col1,p_col2=dget"0",3,8,2
 --ai_faction,ai_col1,ai_col2,ai_level=3,8,2,1
 
-
 credits={
  shr(dget"6",16), -- player starting credits
  shr(500,16),     -- ai starting credits (always 500?)
  shr(dget"7",16), -- target credits
 }
-
 
 -- fields
 _g,buildings,units,object_tiles,radar_data,spice_tiles,particles,has_obj,start_time,_t,build_dest,unit_dest,keyx,keyy,hq,radar_frame={},{},{},{},{},{},{},{{},{}},t(),0,{0,0},{0,0},0,0,false,0
@@ -331,7 +329,7 @@ function m_map_obj_tree(objref, x,y, owner, factory)
      -- auto create a harvester
      -- todo : have carryall deploy it
      local ux,uy=ping(newobj,(newobj.x+32)/8, (newobj.y+8)/8, is_free_tile)
-     m_map_obj_tree(obj_data[32],ux*8,uy*8,nil,newobj)
+     m_map_obj_tree(obj_data[32],ux*8,uy*8,newobj.owner,newobj)
     end
   end
   -- unit props
@@ -424,10 +422,11 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
      -- norm sprite
      else      
        -- icon mode
-       if self.type>2 and self.type<5 then         
-         rectfill(self.x-1,self.y-1,self.x+16,self.y+19,0)
-         -- draw health/progress
+       if self.type>2 and self.type<5 then
          local this = self.type==4 and self or self.parent
+         -- hover
+         rectfill(self.x-1,self.y-1,self.x+16,self.y+19, (self.hover and #this.build_objs>0) and p_col1 or 0)
+         -- draw health/progress
          local hp = this.hitpoint
          local val = self.process==1 and 15*(this.life/100) or 15*(this.life/hp)
          if (this.life>0 and not show_menu) rectfill(self.x,self.y+17,self.x+val,self.y+18, self.process==1 and 12 or this.life<hp*.33 and 8 or this.life<hp*.66 and 10 or 11)
@@ -1336,8 +1335,6 @@ function move_unit_pos(unit,x,y,dist_to_keep,try_hail,start_state)
 
   ::end_pathfinding::
 
-
-  -- todo: check path valid???
   -- now auto-move to path
   unit.prev_state,unit.state = unit.state,2 --moving
 
@@ -1552,15 +1549,14 @@ function draw_ui()
  -- object menu icon/buttons? 
  if selected_obj and selected_obj.ico_obj then
   selected_obj.ico_obj:set_pos(109,20)
-  selected_obj.ico_obj:draw() 
-
+  selected_obj.ico_obj:draw()  
   -- player icons (build, actions, etc.)
   repair_obj,launch_obj=nil,nil
   if selected_obj.owner==1 then   
    -- build
    if selected_obj.build_obj then
     selected_obj.build_obj:set_pos(109,44)
-    selected_obj.build_obj:draw() 
+    selected_obj.build_obj:draw()    
    end
    -- repair? 
    if selected_obj.life<selected_obj.hitpoint   
@@ -1734,7 +1730,7 @@ function update_collisions()
  elseif left_button_clicked then
   
   -- update message
-  if (selected_obj) set_message(selected_obj.name)
+  if (selected_obj and selected_obj.type<=2) set_message(selected_obj.name)
  
   if clickedsomething then    
     -- clicked quick build?
