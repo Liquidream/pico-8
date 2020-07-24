@@ -306,8 +306,7 @@ function m_map_obj_tree(objref, x,y, owner, factory)
    newobj.col1,newobj.col2 = objref.col1,objref.col2
   end
   
-  -- override owner?
-  -- (flying objs are automomous & don't reveal map, etc.)
+  -- (flying objs are automomous & don't reveal map)
   if (newobj.z>1) newobj.owner=0
 
   local xpos,ypos = flr(x/8),flr(y/8)
@@ -327,7 +326,6 @@ function m_map_obj_tree(objref, x,y, owner, factory)
     -- refinery?
     if newobj.id==6 and newobj.parent==nil then
      -- auto create a harvester
-     -- todo : have carryall deploy it
      local ux,uy=ping(newobj,(newobj.x+32)/8, (newobj.y+8)/8, is_free_tile)
      m_map_obj_tree(obj_data[32],ux*8,uy*8,newobj.owner,newobj)
     end
@@ -360,7 +358,6 @@ function m_map_obj_tree(objref, x,y, owner, factory)
     do_guard(newobj)
   end
   reveal_fow(newobj)
-  -- return final obj
   return newobj
 end
 
@@ -425,7 +422,7 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
        if self.type>2 and self.type<5 then
          local this = self.type==4 and self or self.parent
          -- hover
-         rectfill(self.x-1,self.y-1,self.x+16,self.y+19, (self.hover and #this.build_objs>0) and p_col1 or 0)
+         rectfill(self.x-1,self.y-1,self.x+16,self.y+19, 0)--(self.hover and #this.build_objs>0) and p_col1 or 0)         
          -- draw health/progress
          local hp = this.hitpoint
          local val = self.process==1 and 15*(this.life/100) or 15*(this.life/hp)
@@ -581,8 +578,8 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
         if self.ref.type==1
          and self.parent_id != 1 then
           -- find nearest point to factory
-          local ux,uy=nearest_space_to_object(self, self.parent)
-          m_map_obj_tree(self.ref,ux,uy,nil,self.parent)
+          local ux,uy=nearest_space_to_object(self.parent)
+          m_map_obj_tree(self.ref,ux,uy,self.parent.owner,self.parent)
           -- reset build
           reset_build(self)
         end
@@ -596,7 +593,7 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
          -- go back to guard
          self.state=0        
          -- find nearest point to factory
-         self.x,self.y=nearest_space_to_object(self, self.last_fact)
+         self.x,self.y=nearest_space_to_object(self.last_fact)
         end
       else
         -- continue...
@@ -844,7 +841,7 @@ function update_level()
   for k=0,1 do
    if (btn(k)) keyx+=k*2-1
    if (btn(k+2)) keyy+=k*2-1
-   --if (btn(4,1)) stop("paused") --TODO:remove on release 
+   --if (btn(4,1)) stop("paused")
   end
 
  -- update cursor/mouse pos
@@ -988,7 +985,6 @@ function do_guard(unit, start_state)
      and self.state!=7 then
       -- return to refinery when full
       self.sx,self.sy=self:get_tile_pos() -- remember where we were!
-      --printh(last_fact)
       return_to_fact(self,last_fact or has_obj[unit.created_by][6])
 
      -- harvesting spice
@@ -1080,8 +1076,8 @@ function do_guard(unit, start_state)
  end) 
 end
 
-function nearest_space_to_object(obj, target)
- local ux,uy = ping(obj,(target.x+8)/8, (target.y+16)/8, is_free_tile)
+function nearest_space_to_object(target)
+ local ux,uy = ping(target,(target.x+8)/8, (target.y+16)/8, is_free_tile)
  return ux*8, uy*8
 end
 
@@ -1134,8 +1130,7 @@ function do_attack(unit, target)
      yield()
      -- deviators should only fire once, per attack
      -- likewise, abort attack if unit becomes converted to "our" side
-     -- TODO: remove this as fire-rate should work now!
-     if (unit.id==40 or unit.id==34 or target.faction==unit.faction) break
+     if (unit.id==40 or unit.id==34 or target.faction==unit.faction or target.link) break
     end -- 4) repeat 1-3 until target destroyed
 
     -- reset to guard
@@ -1189,16 +1184,19 @@ function move_unit_pos(unit,x,y,dist_to_keep,try_hail,start_state)
   -- before moving, can carryall take us?
   if try_hail then
    local carryall=has_obj and has_obj[unit.created_by][33] or false
-   if  carryall and not carryall.link then
-     carryall.link,unit.link = unit,carryall    
+   if carryall and not carryall.link then
+     carryall.link,unit.link = unit,carryall     
      carryall.cor=cocreate(function(unit_c)
       move_unit_pos(unit_c,flr(unit.x/8),flr(unit.y/8))
-      del(units, unit)
-      move_unit_pos(carryall,x,y)
-      unit:set_pos(carryall.x,carryall.y)
-      add(units, unit)
-      do_guard(carryall)     
-      do_guard(unit, start_state)
+      if(selected_obj==unit) selected_obj=nil
+      if unit.life>0 then
+       del(units, unit)
+       move_unit_pos(carryall,x,y)
+       unit:set_pos(carryall.x,carryall.y)
+       add(units, unit)
+       do_guard(unit, start_state)
+      end
+      do_guard(carryall)
      end)
     return
    end
@@ -1246,7 +1244,6 @@ function move_unit_pos(unit,x,y,dist_to_keep,try_hail,start_state)
 
   -- while there are frontier paths
   while frontier_len > 0 do
-   --printh("searching ..."..frontier_len)
    -- find and extract the shortest path
    local cost, index_of_min = max_number
    for i = 1, frontier_len do
@@ -1328,7 +1325,7 @@ function move_unit_pos(unit,x,y,dist_to_keep,try_hail,start_state)
    count+=1
    if count%4==0 then
     yield()
-    if (count>3000 or stat(0)/2048>.8) goto end_pathfinding --return nil --printh(">> assume unreachable!")
+    if (count>3000 or stat(0)/2048>.8) goto end_pathfinding
    end
 
   end -- while frontier not empty
@@ -1740,7 +1737,7 @@ function update_collisions()
     -- clicked own unit, first time?
     if (selected_obj.owner==1 and selected_obj.type==1 and selected_obj!=last_selected_obj and selected_obj.speed>0) sfx"62"    
     -- clicked enemy object, last clicked ours (unit or palace)?... attack!
-    if (selected_obj.created_by==2 and last_selected_obj and (last_selected_obj.type==1 or (last_selected_obj.id==19 and target_mode)) and last_selected_obj.owner==1) selected_obj.flash_count=10 do_attack(last_selected_obj, selected_obj) selected_obj=nil has_obj={{},{}} -- periodically reset the list of built obj's (done here as bug if done in radar code, as delay in populating)   
+    if (selected_obj.created_by==2 and last_selected_obj and (last_selected_obj.type==1 or (last_selected_obj.id==19 and target_mode)) and last_selected_obj.owner==1) selected_obj.flash_count=10 do_attack(last_selected_obj, selected_obj) has_obj={{},{}} -- selected_obj=nil -- periodically reset the list of built obj's (done here as bug if done in radar code, as delay in populating)   
 
   -- deselect?
   else 
@@ -1771,7 +1768,7 @@ function update_collisions()
       sfx"61"
     end
 
-    if (not show_menu) selected_obj=nil
+    --if (not show_menu) selected_obj=nil
   end 
   
   target_mode=false
@@ -1815,7 +1812,7 @@ function check_hover_select(obj)
       return -- register "no click"
 
     else 
-     -- somethign else clicked (e.g. building) - so select it
+     -- something else clicked, so select it
      selected_obj = obj
     end    
    end
@@ -1832,8 +1829,9 @@ function return_to_fact(unit,fact)
  unit.state,fact.incoming,unit.return_to = 7,true,fact
  if (unit.id!=32 or fact.id==6) unit.last_fact=fact
  unit.cor = cocreate(function(unit)
-  move_unit_pos(unit, (fact.x+16)/8, fact.y/8, 0, true, 9)
-  if (unit.link==nil) do_guard(unit, 9)  
+  local init_state=fact.id!=1 and 9 or 0
+  move_unit_pos(unit, (fact.x+16)/8, fact.y/8, 0, true, init_state)
+  if (unit.link==nil) do_guard(unit, init_state) 
  end)
 end
 
@@ -1848,7 +1846,7 @@ worm_life=0
 function update_ai()
  -- depending on ai level...
  if t()>ai_level and t()%ai_level*2==0 then  
-  -- 
+  
   -- unit attacks
   -- 
   -- find the first ai unit and attack player  
@@ -1888,7 +1886,6 @@ function update_ai()
 
  end
 
- -- 
  -- sandworm
  -- 
  worm_life-=1
