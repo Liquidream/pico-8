@@ -326,8 +326,10 @@ function m_map_obj_tree(objref, x,y, owner, factory)
     -- refinery?
     if newobj.id==6 and newobj.parent==nil then
      -- auto create a harvester
-     local ux,uy=ping(newobj,(newobj.x+32)/8, (newobj.y+8)/8, is_free_tile)
-     m_map_obj_tree(obj_data[32],ux*8,uy*8,newobj.owner,newobj)
+     local ux,uy=nearest_space_to_object(newobj)
+     m_map_obj_tree(obj_data[32],ux,uy,newobj.owner,newobj)
+     --local ux,uy=ping(newobj,(newobj.x+32)/8, (newobj.y+8)/8, is_free_tile)
+     --m_map_obj_tree(obj_data[32],ux*8,uy*8,newobj.owner,newobj)
     end
   end
   -- unit props
@@ -1077,7 +1079,7 @@ function do_guard(unit, start_state)
 end
 
 function nearest_space_to_object(target)
- local ux,uy = ping(target,(target.x+8)/8, (target.y+16)/8, is_free_tile)
+ local ux,uy = ping(target,flr((target.x+8)/8), flr((target.y+8)/8), is_free_tile)
  return ux*8, uy*8
 end
 
