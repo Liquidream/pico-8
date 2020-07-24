@@ -1588,7 +1588,7 @@ function draw_ui()
  if selected_obj 
   and selected_obj.build_obj 
   and (selected_obj.build_obj.type==4
-   or selected_obj.build_obj.speed==0)
+   and selected_obj.build_obj.speed==0)
   and selected_obj.build_obj.life>=100 then
   -- draw placement
   -- todo: improve this code!
