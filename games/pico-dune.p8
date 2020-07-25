@@ -479,7 +479,7 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
        -- lose soldiers
        if (self.obj_spr<=49 and life<100) self.spr_w,self.spr_h=0.5,0.5
        -- req repair pickup
-       if (life<50 and self.state!=7) return_to_fact(self,has_obj[self.created_by][14] or self.last_fact) --TODO: chk last fact being set to facts (unless harvester!)
+       if (life<250 and self.state!=7) return_to_fact(self,has_obj[self.created_by][14] or self.last_fact) --TODO: chk last fact being set to facts (unless harvester!)
        
      end
      -- check for death
@@ -717,9 +717,8 @@ function _update60()  --game_update
    power_bal,total_storage,has_radar,building_count = 0,0,false,{0,0}
 
    for _,building in pairs(buildings) do  
-     local posx,posy = building:get_tile_pos()
      -- if our building, or ai not under fog of war
-     if building.owner==1 or (hq and fow[posx][posy]==16) then
+     if building.owner==1 or (hq and is_visible(building)) then --fow[posx][posy]==16) then
       radar_data[flr(building.x/2/8)..","..flr(building.y/2/8)] = building.col1
      end
      -- track power/radar
@@ -734,19 +733,18 @@ function _update60()  --game_update
      has_obj[building.created_by][building.id]=building
     end
 
-    if hq then
+    
      -- units
      for _,unit in pairs(units) do
       -- if our unit, or ai not under fog of war
-      if unit.owner==1 or enemy_visible(unit) then
+      if hq and (unit.owner==1 or is_visible(unit) and unit.z==1) then
        radar_data[flr(unit.x/2/8)..","..flr(unit.y/2/8)] = unit.col1
       end
       has_obj[unit.created_by][unit.id]=unit
      end
-
      -- sandworm?
-     --if (worm_segs and fow[mid(0,flr(head_worm_x/8),31)][mid(0,flr(head_worm_y/8),31)]==16) radar_data[flr(head_worm_x/2/8)..","..flr(head_worm_y/2/8)] = 7
-    end
+     --if (hq and worm_segs and fow[mid(0,flr(head_worm_x/8),31)][mid(0,flr(head_worm_y/8),31)]==16) radar_data[flr(head_worm_x/2/8)..","..flr(head_worm_y/2/8)] = 7
+    
    
     -- has radar-outpost and enough power (for HQ radar)?
     hq,music_state = (has_radar and power_bal>0),2  
@@ -875,8 +873,7 @@ function update_level()
 
       -- check sandworm collision        
       if worm_segs -- worm present
-       and fget(wrap_mget(unit:get_tile_pos()),2)  --unit on sand
-       --and fget(wrap_mget(flr(unit.x/8),flr(unit.y/8)),2)  --unit on sand
+       and fget(wrap_mget(unit:get_tile_pos()),2)  --unit on sand       
        and dist(head_worm_x,head_worm_y,unit.x,unit.y) < 1
        and unit.z==1
        then
@@ -1185,7 +1182,7 @@ function move_unit_pos(unit,x,y,dist_to_keep,try_hail,start_state)
   local flying = unit.z>1
   -- before moving, can carryall take us?
   if try_hail then
-   local carryall=has_obj and has_obj[unit.created_by][33] or false
+   local carryall=has_obj and has_obj[unit.created_by][33] or false   
    if carryall and not carryall.link then
      carryall.link,unit.link = unit,carryall     
      carryall.cor=cocreate(function(unit_c)
@@ -1213,7 +1210,7 @@ function move_unit_pos(unit,x,y,dist_to_keep,try_hail,start_state)
     x,y=ping(unit,x,y,is_free_tile)
   end
 
-  -- create co-routine to find path (over number of cycles)  
+  -- use co-routine to find path
   -- 0=idle/guarding, 1=pathfinding, 2=moving, 3=attacking, 4=firing, 5=exploding
   unit.tx,unit.ty,unit.prev_state,unit.state = x,y,unit.state,1
    
@@ -1335,7 +1332,7 @@ function move_unit_pos(unit,x,y,dist_to_keep,try_hail,start_state)
   ::end_pathfinding::
 
   -- now auto-move to path
-  unit.prev_state,unit.state = unit.state,2 --moving
+  unit.prev_state,unit.state = unit.state,2
 
   -- loop all path nodes...
   if unit.path!=nil then
@@ -1394,7 +1391,7 @@ end
 --
 function draw_level()
  -- draw the map, objects - everything except ui
-	cls"15" --draw_sand
+	cls"15"
  
  -- cam position (+ any "shaking")
  camera(camx+(16-rnd"32")*shake, camy+(16-rnd"32")*shake)
@@ -1434,7 +1431,7 @@ function draw_level()
     if (building.build_obj) building.build_obj:update()
   end
   building:draw()
-  -- draw selected reticule
+  -- reticule
   if (building == selected_obj) rect(selected_obj.x, selected_obj.y, selected_obj.x+selected_obj.w-1, selected_obj.y+selected_obj.h-1, 7)  
  end
 
@@ -1446,7 +1443,7 @@ function draw_level()
    if (p==1 and unit.z==1) or (p==2 and unit.z>1) then
     if (not show_menu) unit:update()
     if (unit.process!=2 or unit.speed==0) unit:draw()
-    -- draw selected reticule
+    -- reticule
     if (unit == selected_obj) spr(17, selected_obj.x, selected_obj.y)
    end
   end
@@ -1827,6 +1824,7 @@ end
 function return_to_fact(unit,fact)
  -- ensure that we always have a value (even for discovered objs)
  fact = fact or has_obj[unit.created_by][1]
+ --printh(unit.created_by.." returning to "..fact.name)
  -- update last factory (in case changed)     
  unit.state,fact.incoming,unit.return_to = 7,true,fact
  if (unit.id!=32 or fact.id==6) unit.last_fact=fact
@@ -1926,7 +1924,7 @@ end
 
 function attack_rnd_enemy(obj)
  local p_target=find_rnd_enemy(obj)
- if (p_target and enemy_visible(p_target)) do_attack(obj, p_target)
+ if (p_target and is_visible(p_target)) do_attack(obj, p_target)
 end
 
 -- find rnd enemy unit (or building) to attack
@@ -1939,7 +1937,7 @@ function find_rnd_enemy(obj)
  return enemy_obj
 end
 
-function enemy_visible(obj)
+function is_visible(obj)
  local x,y = obj:get_tile_pos()
  return fow[x][y]==16
 end
@@ -2204,15 +2202,15 @@ ffdddddd5ddddddd4445649994666dddf9999fcccf6ccfccddd65dddddddddddccdd66ddddddd5cc
 996666666669699944467777777666dd777666666353655dd8dffffd5ffd5ddd999dd6666666d5999995d6666666dd99244355b332494fff9444444449999999
 9999996999999999444fffffffff942f666666666353d33dfffffffff5f6667d999dd6677766d5999995d6677766dd9924335203504449f9999999999999f999
 44449999449444944444ffffffff560f6666ddddddddddddfff4f4f4f56ddddd99ddd66dd566d5999995d665dd66ddd9446b2446b09999ff9999999999993999
-44444444444444444444ffffffffffffddddddddddddddddffffffffffffffff99dd666dd5666d59995d6665dd666dd9443324430044499f9999999999999999__map__
+44444444444444444444ffffffffffffddddddddddddddddffffffffffffffff99dd666dd5666d59995d6665dd666dd9443324430044499f9999999999999999
 __gff__
 0400040404040404040000000000000200000600060604010101010101010101010101010000000000000101010000000000000000000000000001010101010101010101010102010000010101020201010101010101020101010101010202010101010101010101010101010101010101010101010101010101010101010101
 0101010101010000000001010000000001010101010100000000010100000000000000000000000001010000000000000000000000000000010100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 __map__
 161600000a0000000000000000000000000000000000000000000000000000000000000000000000000000000000121212121200000000000000000000001515161616000000000000000000000000090a0a0d0e0000000000000000000000000000000000000000000000000000000000000000000000000000000000161616
 1600000a0a0000000000000000000000160000000000000000000000000000000000000000000000001212000000001212000000001200120000000000000015161200020508000005050002050803000d0e05000400000000000000000000000000000000000000000000000000000000000000000000000000000000000016
-1212000a0a0a003d001616160000000000001200000008030300000000000000000000000000000000001212121212120000000000001200000203030300000016020503030303030303030303030303030608080000000000000000000000000000000000000000000000000000000000000000000000000000000000000016
-1212126c0a0a0a1616161600420a000012120000000203030303000000000000000000000000000000000000000012000000120002050803030303030303030000020303030703030303030303070303030000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+1212000a0a0a003d001642160000000000001200000008030300000000000000000000000000000000001212121212120000000000001200000203030300000016020503030303030303030303030303030608080000000000000000000000000000000000000000000000000000000000000000000000000000000000000016
+121212800a0a0a1616161600420a000012120000000203030303000000000000000000000000000000000000000012000000120002050803030303030303030000020303030703030303030303070303030000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 1212160a0a0a0000165785850a0a001200020508030303030303000000000000000000000000000000000000000000000000020503030303030303030303030000000012121212000806000008060800120012000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 1212003a10100c830a856e0a600a000205030303030303030642000000000000000000000000000000000000000000000000020303030703030303030303030000001212121212121200000000000000121212000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 1212161010100a0a0a850a0a0a0a000203030307030303060000000000120000000000000000030303030303030303030000000000000000000003030303030000121212121212000000000000001212121212000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
