@@ -708,53 +708,57 @@ function _update60()  --game_update
    if hq then  
     for i=0,124,4 do
       for l=0,124,4 do
-      -- look at tile spr and if not fow, get col?
-      local mx,my = i/2,l/2
-      if(my>=32)mx+=64 my-=32
-      local mspr=mget(mx,my)
-      local col=sget((mspr*8)%128+4, (mspr*8)/16)
-      if(fow[i/2][l/2]==16) radar_data[(i/2/2)..","..(l/2/2)] = col!=11 and col or 15
+       -- look at tile spr and if not fow, get col?
+       local mx,my = i/2,l/2
+       if(my>=32)mx+=64 my-=32
+       local mspr=mget(mx,my)
+       local col=sget((mspr*8)%128+4, (mspr*8)/16)
+       if(fow[i/2][l/2]==16) radar_data[(i/2/2)..","..(l/2/2)] = col!=11 and col or 15
       end
+      if (i%64==0) yield()
     end
    end
+
+   
+
    -- -- structures
    -- reset vars for this pass
    power_bal,total_storage,has_radar,building_count = 0,0,false,{0,0}
 
    for _,building in pairs(buildings) do  
-     -- if our building, or ai not under fog of war
-     if building.owner==1 or (hq and is_visible(building)) then --fow[posx][posy]==16) then
-      radar_data[flr(building.x/2/8)..","..flr(building.y/2/8)] = building.col1
-     end
-     -- track power/radar
-     if building.owner==1 then
-      -- player owned
-      power_bal -= building.power
-      if (building.id==7) has_radar=true
-      if (sub(building.name,1,5)=="sPICE") total_storage+=1000
-     end
-     -- track counts & objs
-     building_count[building.owner]+=1
-     has_obj[building.created_by][building.id]=building
+    -- if our building, or ai not under fog of war
+    if building.owner==1 or (hq and is_visible(building)) then --fow[posx][posy]==16) then
+     radar_data[flr(building.x/2/8)..","..flr(building.y/2/8)] = building.col1
     end
-
-    
-     -- units
-     for _,unit in pairs(units) do
-      -- if our unit, or ai not under fog of war
-      if hq and (unit.owner==1 or is_visible(unit) and unit.z==1) then
-       radar_data[flr(unit.x/2/8)..","..flr(unit.y/2/8)] = unit.col1
-      end
-      has_obj[unit.created_by][unit.id]=unit
-     end
-     -- sandworm?
-     --if (hq and worm_segs and fow[mid(0,flr(head_worm_x/8),31)][mid(0,flr(head_worm_y/8),31)]==16) radar_data[flr(head_worm_x/2/8)..","..flr(head_worm_y/2/8)] = 7
-    
+    -- track power/radar
+    if building.owner==1 then
+     -- player owned
+     power_bal -= building.power
+     if (building.id==7) has_radar=true
+     if (sub(building.name,1,5)=="sPICE") total_storage+=1000
+    end
+    -- track counts & objs
+    building_count[building.owner]+=1
+    has_obj[building.created_by][building.id]=building
+   end
    
-    -- has radar-outpost and enough power (for HQ radar)?
-    hq,music_state = (has_radar and power_bal>0),2  
-    -- reset music back (will set again if more attackers)
-    set_loop(false)  --5
+   
+   -- units
+   for _,unit in pairs(units) do
+    -- if our unit, or ai not under fog of war
+    if hq and (unit.owner==1 or is_visible(unit) and unit.z==1) then
+     radar_data[flr(unit.x/2/8)..","..flr(unit.y/2/8)] = unit.col1
+    end
+    has_obj[unit.created_by][unit.id]=unit
+   end
+   -- sandworm?
+   --if (hq and worm_segs and fow[mid(0,flr(head_worm_x/8),31)][mid(0,flr(head_worm_y/8),31)]==16) radar_data[flr(head_worm_x/2/8)..","..flr(head_worm_y/2/8)] = 7
+  
+  
+   -- has radar-outpost and enough power (for HQ radar)?
+   hq,music_state = (has_radar and power_bal>0),2  
+   -- reset music back (will set again if more attackers)
+   set_loop(false)  --5
 
    -- 
    -- check end states
