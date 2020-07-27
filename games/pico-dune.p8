@@ -24,7 +24,7 @@ credits={
 }
 
 -- fields
-_g,buildings,units,object_tiles,radar_data,spice_tiles,particles,has_obj,start_time,_t,build_dest,unit_dest,keyx,keyy,hq,radar_frame={},{},{},{},{},{},{},{{},{}},t(),0,{0,0},{0,0},0,0,false,0
+_g,buildings,units,object_tiles,radar_data,spice_tiles,particles,has_obj,start_time,_t,build_dest,unit_dest,keyx,keyy,hq,radar_frame={},{},{},{},{},{},{},{[0]={},{},{}},t(),0,{0,0},{0,0},0,0,false,0
 last_hq,message,msgcount,fow=hq,"",0,{}
 
 _g.factory_click=function(self)
@@ -157,7 +157,8 @@ obj_data=[[id|name|obj_spr|ico_spr|type|w|h|z|trans_col|parent_id|parent2_id|own
 41|sANDWORM|88||9|1|1|1|11||||||||2|2||3|||0||300|4000|0.35|0|30|75||||0|0|0|0|0|0|1|1|tHE sAND wORMS ARE~INDIGEONOUS TO dUNE.~aTTRACTED BY VIBRATIONS~ALMOST IMPOSSIBLE TO~DESTROY, WILL CONSUME~ANYTHING THAT MOVES.||||
 42|sPICE bLOOM|177||1|1|1|1|11|||2|||||1|1|||||||0|8|0||||1|||0|0|0|0|0|0|1|1|||||
 80|rEPAIR|19||5|1|1|1|11||||||||1|1||||||||||||||||0|0|0|0|0|0|1|1|||draw_action||action_click
-81|lAUNCH|1||5|1|1|1|11||||||||1|1||||||||||||||||0|0|0|0|0|0|1|1|||draw_action||action_click]]
+81|lAUNCH|1||5|1|1|1|11||||||||1|1||||||||||||||||0|0|0|0|0|0|1|1|||draw_action||action_click
+99|worker|0||10|1|1|1|||||||||||||||||0|99|0|||||||0|0|0|0|0|0|1|1|||||]]
 
 
 -->8
@@ -168,9 +169,9 @@ function _init()
  -- enable mouse
  poke(0x5f2d, 1)
 
- menuitem(1,"exit to title",function()
-  load("pico-dune-main")
- end)
+ -- menuitem(1,"exit to title",function()
+ --  load("pico-dune-main")
+ -- end)
 
  --  
  -- explode object data
@@ -178,7 +179,7 @@ function _init()
  local str_arrays=split2d(obj_data,"|","\n")
  obj_data={}
  -- loop all objects
- for i=2,45 do
+ for i=2,46 do
   new_obj={}
   -- loop all properties
   for j=1,46 do
@@ -258,6 +259,121 @@ function _init()
   end
  end
 
+ -- worker
+ worker = m_map_obj_tree(obj_data[99], -8,-8, 0)
+ worker.cor = cocreate(function()
+
+  --if _t%60==0 then
+  while true do
+
+  if (not show_menu) update_ai()  -- ai overall decision making (not individual units)
+ 
+  if _t%60==0 then
+   -- 
+   -- update_obj_tiles()
+   -- 
+   -- update positions of pathfinding "blocker" objects 
+   object_tiles={}
+   -- (The pico-8 map is a 128x32 (or 128x64 using shared space))
+   for k,unit in pairs(units) do  
+    object_tiles[unit:get_tile_pos_index()]=k
+   end
+
+   -- 
+   -- update_radar_data()
+   -- 
+   new_radar_data={}
+   -- landscape/fow
+   if hq then  
+    for i=0,124,4 do
+      for l=0,124,4 do
+       -- look at tile spr and if not fow, get col?
+       local mx,my = i/2,l/2
+       if(my>=32)mx+=64 my-=32
+       local mspr=mget(mx,my)
+       local col=sget((mspr*8)%128+4, (mspr*8)/16)
+       if(fow[i/2][l/2]==16) new_radar_data[(i/2/2)..","..(l/2/2)] = col!=11 and col or 15
+      end
+      yield()
+    end
+   end  
+
+   -- -- structures
+   -- reset vars for this pass
+   power_bal,total_storage,has_radar,building_count = 0,0,false,{0,0}
+
+   for _,building in pairs(buildings) do  
+    -- if our building, or ai not under fog of war
+    if building.owner==1 or (hq and is_visible(building)) then --fow[posx][posy]==16) then
+     new_radar_data[flr(building.x/2/8)..","..flr(building.y/2/8)] = building.col1
+    end
+    -- track power/radar
+    if building.owner==1 then
+     -- player owned
+     power_bal -= building.power
+     if (building.id==7) has_radar=true
+     if (sub(building.name,1,5)=="sPICE") total_storage+=1000
+    end
+    -- track counts & objs
+    building_count[building.owner]+=1
+    has_obj[building.created_by][building.id]=building
+
+    -- any other tasks?
+    if building.autocreate_harvester then
+     local ux,uy=nearest_space_to_object(building)
+     m_map_obj_tree(obj_data[32],ux,uy,building.owner,building)
+     building.autocreate_harvester = false
+    end
+   end
+   
+   
+   -- units
+   for _,unit in pairs(units) do
+    -- if our unit, or ai not under fog of war
+    if hq and (unit.owner==1 or is_visible(unit) and unit.z==1) then
+     new_radar_data[flr(unit.x/2/8)..","..flr(unit.y/2/8)] = unit.col1
+    end
+    has_obj[unit.created_by][unit.id]=unit
+   end
+  
+   -- has radar-outpost + enough power?
+   hq,music_state,radar_data = (has_radar and power_bal>0),2 ,new_radar_data
+   -- reset music (will set if more attack)
+   set_loop(false)  --5
+ 
+   -- check end states
+   --
+   -- player credits >= quota
+   if (credits[3]>0 and credits[1]>credits[3]) endstate=1
+   -- ai has no buildings
+   if (building_count[2]==0 and p_level>1) endstate=2
+   -- player has no buildings
+   if (building_count[1]==0) endstate=3
+
+   -- game over?
+   if endstate then 
+    dset(14, endstate)
+    dset(13, t()-start_time)
+    dset(10,strnum)
+    dset(24,getscoretext(credits[2]))
+    dset(11,unit_dest[1])
+    dset(25,unit_dest[2])
+    dset(12,build_dest[1])
+    dset(26,build_dest[2])  
+    rectfill(30,54,104,70,0)
+    ?"mission "..(endstate<3 and "complete" or "failed"),36,60,p_col1
+    flip()
+    load("pico-dune-main")
+   end  
+  end --alt?
+
+  yield()
+
+  end -- while
+
+ end) --worker
+
+
  music"7"
  shake=0
 end
@@ -325,10 +441,8 @@ function m_map_obj_tree(objref, x,y, owner, factory)
     if (not slabs) add(buildings,newobj)
     -- other building stuff
     -- refinery?
-    if newobj.id==6 and newobj.parent==nil then
-     -- auto-create a harvester
-     local ux,uy=nearest_space_to_object(newobj)
-     m_map_obj_tree(obj_data[32],ux,uy,newobj.owner,newobj)
+    if newobj.id==6 and newobj.parent==nil then     
+     newobj.autocreate_harvester = true
     end
   else
   -- unit props  
@@ -350,7 +464,7 @@ function m_map_obj_tree(objref, x,y, owner, factory)
     else
      -- non-fighting units
      newobj.last_fact=factory --default, for retreating
-     -- harvesters (auto parent to last created refinary)
+     -- harvesters
      if (newobj.id==32) newobj.capacity=0
     end
     add(units,newobj)
@@ -371,7 +485,7 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
   z=ref_obj.z, -- defaults  
   orig_x=x/8,
   orig_y=y/8,
-  type=in_type, -- 1=unit, 2=structure, 3=obj_status_icon, 4=build_icon, 5=small_icon, 9=worm
+  type=in_type,
   parent=parent,
   func_onclick=func_onclick,
   w=ref_obj.w*8, -- pixel dimensions 
@@ -693,111 +807,10 @@ end
 
 function _update60()  --game_update
 
- --if (t()==0.4) extcmd "rec"
-
  update_level()
  
- if (not show_menu) update_ai()  -- ai overall decision making (not individual units)
  
-  if _t%60==0 then
-   -- 
-   -- update_radar_data()
-   -- 
-   radar_data={}
-   -- landscape/fow
-   if hq then  
-    for i=0,62,4 do
-      for l=0,62,4 do
-       -- look at tile spr and if not fow, get col?
-       local mx,my = i/2,l/2
-       if(my>=32)mx+=64 my-=32
-       local mspr=mget(mx,my)
-       local col=sget((mspr*8)%128+4, (mspr*8)/16)
-       if(fow[i/2][l/2]==16) radar_data[(i/2/2)..","..(l/2/2)] = col!=11 and col or 15
-      end
-      --if (i%64==0) yield()
-    end
-   end
-
-   
-
-   -- -- structures
-   -- reset vars for this pass
-   power_bal,total_storage,has_radar,building_count = 0,0,false,{0,0}
-
-   for _,building in pairs(buildings) do  
-    -- if our building, or ai not under fog of war
-    if building.owner==1 or (hq and is_visible(building)) then --fow[posx][posy]==16) then
-     radar_data[flr(building.x/2/8)..","..flr(building.y/2/8)] = building.col1
-    end
-    -- track power/radar
-    if building.owner==1 then
-     -- player owned
-     power_bal -= building.power
-     if (building.id==7) has_radar=true
-     if (sub(building.name,1,5)=="sPICE") total_storage+=1000
-    end
-    -- track counts & objs
-    building_count[building.owner]+=1
-    has_obj[building.created_by][building.id]=building
-   end
-   
-   
-   -- units
-   for _,unit in pairs(units) do
-    -- if our unit, or ai not under fog of war
-    if hq and (unit.owner==1 or is_visible(unit) and unit.z==1) then
-     radar_data[flr(unit.x/2/8)..","..flr(unit.y/2/8)] = unit.col1
-    end
-    has_obj[unit.created_by][unit.id]=unit
-   end
-   -- sandworm?
-   --if (hq and worm_segs and fow[mid(0,flr(head_worm_x/8),31)][mid(0,flr(head_worm_y/8),31)]==16) radar_data[flr(head_worm_x/2/8)..","..flr(head_worm_y/2/8)] = 7
   
-  
-   -- has radar-outpost and enough power (for HQ radar)?
-   hq,music_state = (has_radar and power_bal>0),2  
-   -- reset music back (will set again if more attackers)
-   set_loop(false)  --5
-
-   -- 
-   -- check end states
-   --
-   -- player credits >= quota
-   if (credits[3]>0 and credits[1]>credits[3]) endstate=1
-   -- ai has no buildings
-   if (building_count[2]==0 and p_level>1) endstate=2
-   -- player has no buildings
-   if (building_count[1]==0) endstate=3
-
-   -- game over?
-   if endstate then 
-    dset(14, endstate)
-    dset(13, t()-start_time)
-    dset(10,strnum)
-    dset(24,getscoretext(credits[2]))
-    dset(11,unit_dest[1])
-    dset(25,unit_dest[2])
-    dset(12,build_dest[1])
-    dset(26,build_dest[2])  
-    rectfill(30,54,104,70,0)
-    ?"mission "..(endstate<3 and "complete" or "failed"),36,60,p_col1
-    flip()
-    load("pico-dune-main")
-   end
-
-  elseif _t%60==30 then
-   -- 
-   -- update_obj_tiles()
-   -- 
-   -- update positions of pathfinding "blocker" objects 
-   object_tiles={}
-   -- (The pico-8 map is a 128x32 (or 128x64 using shared space))
-   for k,unit in pairs(units) do  
-    object_tiles[unit:get_tile_pos_index()]=k
-   end
-
-  end -- (alt processing cycle)
 
  _t+=1
 
@@ -929,9 +942,6 @@ function do_guard(unit, start_state)
     move_unit_pos(self, 
      mid(flr(self.orig_x+rnd"32")-16,64), 
      mid(flr(self.orig_y+rnd"32")-16,64))
-
-    --v1
-    --move_unit_pos(self, flr(rnd"64"), flr(rnd"64"))
    end
 
    -- be on look-out
@@ -1513,7 +1523,7 @@ function draw_ui()
 
  -- score
  strnum=getscoretext(credits[1])
- ?sub("000000", #strnum+1)..strnum, 103,2, p_col2
+ --?sub("000000", #strnum+1)..strnum, 103,2, p_col2
 
  -- turn on/off radar
  if hq!=last_hq then
@@ -1743,7 +1753,7 @@ function update_collisions()
     -- clicked own unit, first time?
     if (selected_obj.owner==1 and selected_obj.type==1 and selected_obj!=last_selected_obj and selected_obj.speed>0) sfx"62"    
     -- clicked enemy object, last clicked ours (unit or palace)?... attack!
-    if (selected_obj.created_by==2 and last_selected_obj and (last_selected_obj.type==1 or (last_selected_obj.id==19 and target_mode)) and last_selected_obj.owner==1) selected_obj.flash_count=10 do_attack(last_selected_obj, selected_obj) has_obj={{},{}} selected_obj=nil -- periodically reset the list of built obj's (done here as bug if done in radar code, as delay in populating)   
+    if (selected_obj.created_by==2 and last_selected_obj and (last_selected_obj.type==1 or (last_selected_obj.id==19 and target_mode)) and last_selected_obj.owner==1) selected_obj.flash_count=10 do_attack(last_selected_obj, selected_obj) has_obj={[0]={},{},{}} selected_obj=nil -- periodically reset the list of built obj's (done here as bug if done in radar code, as delay in populating)   
 
   -- deselect?
   else 
