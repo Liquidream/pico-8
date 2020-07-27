@@ -24,7 +24,7 @@ credits={
 }
 
 -- fields
-_g,buildings,units,object_tiles,radar_data,spice_tiles,particles,has_obj,start_time,_t,build_dest,unit_dest,keyx,keyy,hq,radar_frame={},{},{},{},{},{},{},{[0]={},{},{}},t(),0,{0,0},{0,0},0,0,false,0
+_g,buildings,units,object_tiles,radar_data,spice_tiles,particles,has_obj,start_time,_t,build_dest,unit_dest,keyx,keyy,hq,radar_frame={},{},{},{},{},{},{},{{},{}},t(),0,{0,0},{0,0},0,0,false,0
 last_hq,message,msgcount,fow=hq,"",0,{}
 
 _g.factory_click=function(self)
@@ -155,11 +155,10 @@ obj_data=[[id|name|obj_spr|ico_spr|type|w|h|z|trans_col|parent_id|parent2_id|own
 39|rAIDER|51|204|1|1|1|1|11|11|||||12|1|2|2||2|2||150||8|320|0.75|3|1|2||||0|0|0|0|0|0|1|1|tHE oRDOS rAIDER IS~SIMILAR TO THE STANDARD~tRIKE, BUT WITH LESS~ARMOUR IN FAVOUR OF~SPEED.||||
 40|dEVIATOR|54|202|1|1|1|1|11|12|||||11|3|2|2|13|7|2||750||50|480|0.3|7|2|500||||0|0|0|0|0|0|1|1|tHE oRDOS dEVIATOR IS A~STANDARD mISSILE tANK,~WHICH FIRES UNIQUE~NERVE GAS MISSILES THAT~MAY TEMPORARILY CHANGE~ENEMY LOYALTY.||||
 41|sANDWORM|88||9|1|1|1|11||||||||2|2||3|||0||300|4000|0.35|0|30|75||||0|0|0|0|0|0|1|1|tHE sAND wORMS ARE~INDIGEONOUS TO dUNE.~aTTRACTED BY VIBRATIONS~ALMOST IMPOSSIBLE TO~DESTROY, WILL CONSUME~ANYTHING THAT MOVES.||||
-42|sPICE bLOOM|177||1|1|1|1|11|||2|||||1|1|||||||0|8|0||||1|||0|0|0|0|0|0|1|1|||||
+42|sPICE bLOOM|177||1|1|1|1|11|||0|||||1|1|||||||0|4|0||||1|||0|0|0|0|0|0|1|1|||||
 80|rEPAIR|19||5|1|1|1|11||||||||1|1||||||||||||||||0|0|0|0|0|0|1|1|||draw_action||action_click
 81|lAUNCH|1||5|1|1|1|11||||||||1|1||||||||||||||||0|0|0|0|0|0|1|1|||draw_action||action_click
-99|worker|0||10|1|1|1|||||||||||||||||0|99|0|||||||0|0|0|0|0|0|1|1|||||]]
-
+99|worker|0||10|1|1|1||||0|||||||||||||0|99|0|||||||0|0|0|0|0|0|1|1|||||]]
 
 -->8
 --p8 functions
@@ -169,9 +168,9 @@ function _init()
  -- enable mouse
  poke(0x5f2d, 1)
 
- -- menuitem(1,"exit to title",function()
- --  load("pico-dune-main")
- -- end)
+ menuitem(1,"exit to title",function()
+  load("pico-dune-main")
+ end)
 
  --  
  -- explode object data
@@ -260,7 +259,7 @@ function _init()
  end
 
  -- worker
- worker = m_map_obj_tree(obj_data[99], -8,-8, 0)
+ worker = m_map_obj_tree(obj_data[99], -8,-8)
  worker.cor = cocreate(function()
 
   --if _t%60==0 then
@@ -317,13 +316,6 @@ function _init()
     -- track counts & objs
     building_count[building.owner]+=1
     has_obj[building.created_by][building.id]=building
-
-    -- any other tasks?
-    if building.autocreate_harvester then
-     local ux,uy=nearest_space_to_object(building)
-     m_map_obj_tree(obj_data[32],ux,uy,building.owner,building)
-     building.autocreate_harvester = false
-    end
    end
    
    
@@ -333,7 +325,7 @@ function _init()
     if hq and (unit.owner==1 or is_visible(unit) and unit.z==1) then
      new_radar_data[flr(unit.x/2/8)..","..flr(unit.y/2/8)] = unit.col1
     end
-    has_obj[unit.created_by][unit.id]=unit
+    if (unit.created_by>0) has_obj[unit.created_by][unit.id]=unit
    end
   
    -- has radar-outpost + enough power?
@@ -442,7 +434,8 @@ function m_map_obj_tree(objref, x,y, owner, factory)
     -- other building stuff
     -- refinery?
     if newobj.id==6 and newobj.parent==nil then     
-     newobj.autocreate_harvester = true
+     local ux,uy=nearest_space_to_object(newobj,true)
+     m_map_obj_tree(obj_data[32],ux,uy,newobj.owner,newobj)
     end
   else
   -- unit props  
@@ -580,7 +573,7 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
      -- update targeting flash
      self.flash_count=max(self.flash_count-.4,1)
      -- check for attack
-     if self.hit>0 then 
+     if self.hit>0 and self.created_by>0 then 
        -- reinstate loop
        set_loop(true) --5
        -- switch music (if passed the loop point)?
@@ -620,7 +613,7 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
            function (unit,x,y)
             if (wrap_mget(x,y)==0) wrap_mset(x,y,8)
            end,
-           4)
+           4, true)
          end
          if (self.hitby) unit_dest[self.hitby.created_by]+=1
         end      
@@ -1096,8 +1089,8 @@ function do_guard(unit, start_state)
  end) 
 end
 
-function nearest_space_to_object(target)
- local ux,uy = ping(target,flr((target.x+8)/8), flr((target.y+8)/8), is_free_tile)
+function nearest_space_to_object(target, skip_yield)
+ local ux,uy = ping(target,flr((target.x+8)/8), flr((target.y+8)/8), is_free_tile, nil, skip_yield)
  return ux*8, uy*8
 end
 
@@ -1171,12 +1164,12 @@ end
 -- ping out from initial pos, calling func for each "ripple"
 -- until func returns true, then return position
 -- source = unit doing ping
-function ping(unit,x,y,func,max_dist)
+function ping(unit,x,y,func,max_dist,skip_yield)
  for t=0,max_dist or 64,.02 do
  	local xx,yy=flr(x+t*cos(t)),flr(y+t*sin(t))
 		if (func(unit,xx,yy)) return xx,yy
   -- give others a chance!  
-  yield()  -- (better perf for unit updates, but causes pauses on start/deploy harvester)
+  if (not skip_yield) yield()  -- (better perf for unit updates, but causes pauses on start/deploy harvester)  
  end
 end
 
@@ -1523,7 +1516,7 @@ function draw_ui()
 
  -- score
  strnum=getscoretext(credits[1])
- --?sub("000000", #strnum+1)..strnum, 103,2, p_col2
+ ?sub("000000", #strnum+1)..strnum, 103,2, p_col2
 
  -- turn on/off radar
  if hq!=last_hq then
@@ -1753,7 +1746,7 @@ function update_collisions()
     -- clicked own unit, first time?
     if (selected_obj.owner==1 and selected_obj.type==1 and selected_obj!=last_selected_obj and selected_obj.speed>0) sfx"62"    
     -- clicked enemy object, last clicked ours (unit or palace)?... attack!
-    if (selected_obj.created_by==2 and last_selected_obj and (last_selected_obj.type==1 or (last_selected_obj.id==19 and target_mode)) and last_selected_obj.owner==1) selected_obj.flash_count=10 do_attack(last_selected_obj, selected_obj) has_obj={[0]={},{},{}} selected_obj=nil -- periodically reset the list of built obj's (done here as bug if done in radar code, as delay in populating)   
+    if (selected_obj.created_by==2 and last_selected_obj and (last_selected_obj.type==1 or (last_selected_obj.id==19 and target_mode)) and last_selected_obj.owner==1) selected_obj.flash_count=10 do_attack(last_selected_obj, selected_obj) has_obj={{},{}} selected_obj=nil -- periodically reset the list of built obj's (done here as bug if done in radar code, as delay in populating)   
 
   -- deselect?
   else 
@@ -2231,7 +2224,7 @@ __map__
 1212160a0a0a0a00165785850a0a161212120000000012121200000000000000000000000000000000000000000000000000020503030303030303030303030000000012121212000806000008060800120012000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 1212003a10100a6810856a0a600a001216000000001212000000000000000000000000000000000000000000000000000000020303030703030303030303030000001212121212121200000000000000121212000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 121216101010101010850a0a0a0a160000330012121200000000000000000000000000000000030303030303030303030000000000000000000003030303030000121212121212000000000000001212121212000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
-12000010101010101047420a6c00000000001200120000000000000012000000000000000003030303171819030303030303000000000000000003030303030012120000000000000000000000121212121200000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+12000010101010101047420a6c0000b100001200120000000000000012000000000000000003030303171819030303030303000000000000000003030303030012120000000000000000000000121212121200000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 12123d0a0a0a0a0a0d850a0a0e000000000000120000020303031212000000000000000000030303171b1b1b190303030303000000000000000000030303030012000000000000000000000000121212120000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 12120a0a0a0a0d0e0047010a0000001200020508030303030303000000000000000000000003031a1b1b1e1e1e1e03030303030000000000000000000303030000000000000000000012120000121212120000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 12120a0a0e0d160057850a0a0c00000205030303030303030303020303030000000000000303031d1b1f0303030303030303030300000003030303030303000000000000000000000012121212121212000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
