@@ -256,7 +256,7 @@ function _init()
 
   while true do
 
-  if _t%60==0 then
+  if _t%30==0 then
    -- 
    -- update_obj_tiles()
    -- 
