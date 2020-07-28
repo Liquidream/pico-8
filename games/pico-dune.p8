@@ -575,7 +575,7 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
        -- lose soldiers
        if (self.obj_spr<=49 and life<100) self.spr_w,self.spr_h=0.5,0.5
        -- req repair pickup
-       if (life<250 and self.state!=7) return_to_fact(self,has_obj[self.created_by][14] or self.last_fact) --TODO: chk last fact being set to facts (unless harvester!)
+       if (life<50 and self.state!=7) return_to_fact(self,has_obj[self.created_by][14] or self.last_fact) --TODO: chk last fact being set to facts (unless harvester!)
        
      end
      -- check for death
