@@ -254,11 +254,8 @@ function _init()
  worker = m_map_obj_tree(obj_data[99], -8,-8)
  worker.cor = cocreate(function()
 
-  --if _t%60==0 then
   while true do
 
-  if (not show_menu) update_ai()  -- ai overall decision making (not individual units)
- 
   if _t%60==0 then
    -- 
    -- update_obj_tiles()
@@ -796,11 +793,9 @@ function _update60()  --game_update
 
  update_level()
  
+ if (not show_menu) update_ai()  -- ai overall decision making (not individual units)
  
-  
-
  _t+=1
-
 end
 
 
