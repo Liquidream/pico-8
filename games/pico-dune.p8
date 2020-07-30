@@ -8,20 +8,23 @@ __lua__
 cartdata("pn_undune2") 
 
 -- data flags
-p_level,p_faction,p_col1,p_col2=dget"0",dget"1",dget"2",dget"3"
-ai_faction,ai_col1,ai_col2,ai_level=dget"20",dget"21",dget"22",dget"23"
-
--- DEBUG
---p_level,p_faction,p_col1,p_col2=dget"0",1,12,1
---p_level,p_faction,p_col1,p_col2=dget"0",2,11,3
---p_level,p_faction,p_col1,p_col2=dget"0",3,8,2
---ai_faction,ai_col1,ai_col2,ai_level=3,8,2,1
+p_level,p_faction,p_col1,p_col2,ai_faction,ai_col1,ai_col2,ai_level=dget"0",dget"1",dget"2",dget"3",dget"20",dget"21",dget"22",dget"23"
 
 credits={
  shr(dget"6",16), -- player starting credits
  shr(500,16),     -- ai starting credits (always 500?)
- shr(dget"7",16), -- target credits
+ shr(dget"7",16)  -- target credits
 }
+
+-- DEBUG #####
+-- player
+--p_level,p_faction,p_col1,p_col2=dget"0",1,12,1 -- atreides
+--p_level,p_faction,p_col1,p_col2=dget"0",2,11,3 -- ordos
+--p_level,p_faction,p_col1,p_col2=dget"0",3,8,2  -- harkonnen
+--ai
+--ai_faction,ai_col1,ai_col2,ai_level=3,8,2,1    -- harkonnen
+--credits={shr(2000,16), shr(100,16), shr(9999,16) }
+
 
 -- fields
 _g,buildings,units,object_tiles,radar_data,spice_tiles,particles,has_obj,start_time,_t,build_dest,unit_dest,keyx,keyy,hq,radar_frame={},{},{},{},{},{},{},{{},{}},t(),0,{0,0},{0,0},0,0,false,0
@@ -97,8 +100,9 @@ end
 
 function process_click(self, mode)
   -- toggle/switch mode (building/repairing) depending on state & click
-  self.procstep,self.last_process,self.process,self.parent.incoming=0,self.process,mode,true
+  self.procstep,self.last_process,self.process=0,self.process,mode
   if (self.life>0 and self.last_process>0) self.procpaused=not self.procpaused  
+  if (self.parent) self.parent.incoming=true
 end
 
 -- object data
@@ -136,7 +140,7 @@ obj_data=[[id|name|obj_spr|ico_spr|type|w|h|z|trans_col|parent_id|parent2_id|own
 31|rOCKET lAUNCHER|54|202|1|1|1|1|11|12|17||||15|4|2|2|7|5|||450||112|400|0.3|9|2|28||||0|0|0|0|0|0|1|1|||tHE sIEGE tANK IS A~HEAVY ARMOURED TANK,~WHICH HAS DUAL CANNONS,~BUT IS SLOW.||||
 32|hARVESTER|50|192|1|1|1|1|11|12|17||||12|12|2|2||2|||300||0|600|0.1|0||0||||0|0|0|0|0|0|1|1|||tHE hARVESTER SEPARATES~SPICE FROM THE SAND &~RETURNS RAW SPICE TO~THE rEFINERY FOR~PROCESSING.||||
 33|cARRYALL|73|238|1|1|1|8|11|13|||||11|3|2|2|13|5|||800||0|400|0.75|0||0||||0|0|0|0|0|0|1|1|||tHE cARRYALL IS A~LIGHTLY ARMOURED~AIRCRAFT WITH NO~WEAPONS. mAINLY USED~TO LIFT+TRANSPORT~hARVESTERS.||||
-34|oRNITHOPTER|160|166|1|1|1|4|11|13|||||||2|2|13|7|-3||600||75|20|1|9|2|20||161|5|0|0|0|0|0|0|1|1|||tHE oRNITHOPTER IS A~LIGHTLY ARMOURED~AIRCRAFT THAT FIRES~ROCKETS.hIGHLY MANOUVERABLE~+ FASTEST AIRCRAFT ON~dUNE.||||
+34|oRNITHOPTER|160|166|1|1|1|4|11|13|||||||2|2|13|7|-3||600||75|20|1|9|2|20||161|5|0|0|0|0|0|0|1|1|||tHE oRNITHOPTER IS A~LIGHTLY ARMOURED~AIRCRAFT THAT FIRES~ROCKETS.hIGHLY~MANOUVERABLE + FASTEST~AIRCRAFT ON dUNE.||||
 35|mcv|176|192|1|1|1|1|11|12|||||0|5|2|2|7|4|||900||0|600|0.1|0||0||||0|0|0|0|0|0|1|1|||tHE mcv (mOBILE~cONSTRUCTION vEHICLE)~SCOUT VEHICLE IS USED~TO FIND AND DEPLOY NEW~BASE LOCATIONS.||||
 36|sONIC tANK|57|198|1|1|1|1|11|12|||||12|9|2|2|7|7|1||600||90|440|0.3|8|3|22.5||||0|0|0|0|0|0|1|1|||dEVELOPED BY THE~aTREIDES,THIS ENHANCED~TANK FIRES POWERFUL~BLAST WAVES OF SONIC~ENERGY.||||
 37|dEVASTATOR|56|200|1|1|1|1|11|12|||||||2|2|13|8|3||800||60|1600|0.1|7|1|15||||0|0|0|0|0|0|1|1|||tHE dEVESTATOR IS A~NUCLEAR-POWERED TANK,~WHICH FIRES DUAL PLASMA~CHARGES. mOST POWERFUL~TANK ON dUNE, BUT~POTENTIALLY UNSTABLE~IN COMBAT.||||
@@ -789,54 +793,8 @@ end
 
 function _update60()
 
- update_level()
- 
- if (not show_menu) update_ai()  -- ai overall decision making (not individual units)
- 
- _t+=1
-end
-
-
-function _draw()
- -- draw the map, objects - everything except ui
- draw_level()
- -- draw score, mouse, etc.
- draw_ui()
-end
-
--->8
--- init related
---
-
--- https://www.lexaloffle.com/bbs/?tid=30902
-function test_tile(x,y) 
- -- bail (outside testtile bounds)
- if (x<0 or x>#fow or y<0 or y>#fow) return
-	
- -- figure out bitmask
- local mask = 0
-
-	if fow[x][y]!=0 then  
-    -- north has tile?
-		if (fow[x][y-1]>0) mask+=1
-    -- east has tile?
-		if (fow[x-1][y]>0) mask+=2
-    -- south has tile?
-		if (fow[x+1][y]>0) mask+=4
-    -- west has tile?
-		if (fow[x][y+1]>0) mask+=8
-		
-  fow[x][y]=1 + mask
-	end
-
-end
-
--->8
--- update related
---
-
-function update_level()
-  -- mouse control
+ -- update_level()
+ -- mouse control
   mouse_x,mouse_y,mouse_btn=stat"32",stat"33",stat"34"
   left_button_clicked,left_button_down,right_button_clicked = (mouse_btn==1 and last_mouse_btn != mouse_btn) or btnp"4", (mouse_btn>0) or btn"4", (mouse_btn==2 and last_mouse_btn != mouse_btn) or btnp"5"
   -- keyboard input
@@ -898,12 +856,57 @@ function update_level()
    if (p.life>=p.life_orig) del(particles,p)
   end
     
- end
+  -- ai overall decision making (not individual units)
+  update_ai()  
+ end -- no menu
  
  update_collisions()
 
- last_mouse_btn,last_selected_obj,last_selected_subobj = mouse_btn,selected_obj,selected_subobj  
+ last_mouse_btn,last_selected_obj,last_selected_subobj = mouse_btn,selected_obj,selected_subobj 
+ _t+=1
 end
+
+
+function _draw()
+ -- draw the map, objects - everything except ui
+ draw_level()
+ -- draw score, mouse, etc.
+ draw_ui()
+end
+
+-->8
+-- init related
+--
+
+-- https://www.lexaloffle.com/bbs/?tid=30902
+function test_tile(x,y) 
+ -- bail (outside testtile bounds)
+ if (x<0 or x>#fow or y<0 or y>#fow) return
+	
+ -- figure out bitmask
+ local mask = 0
+
+	if fow[x][y]!=0 then  
+    -- north has tile?
+		if (fow[x][y-1]>0) mask+=1
+    -- east has tile?
+		if (fow[x-1][y]>0) mask+=2
+    -- south has tile?
+		if (fow[x+1][y]>0) mask+=4
+    -- west has tile?
+		if (fow[x][y+1]>0) mask+=8
+		
+  fow[x][y]=1 + mask
+	end
+
+end
+
+-->8
+-- update related
+--
+
+function update_level()
+  end
 
 function is_spice_tile(x,y)
   local val=wrap_mget(x,y)
@@ -1776,7 +1779,8 @@ function update_collisions()
 end
 
 function reset_build(obj)
- obj.life,obj.process,obj.spent,obj.done,obj.parent.incoming = 0,0,0,false,false
+ obj.life,obj.process,obj.spent,obj.done = 0,0,0,false
+ if (obj.parent) obj.parent.incoming=false
 end
 
 
