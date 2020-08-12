@@ -2,9 +2,9 @@ pico-8 cartridge // http://www.pico-8.com
 version 8
 __lua__
 cartdata("pn_undune2")
-a,b,c,d=8,3,8,2
-e,f,g,i=1,12,1,1
-j={shr(999,16),shr(100,16),shr(9999,16)}
+a,b,c,d=6,3,8,2
+e,f,g,i=1,12,1,2
+j={shr(999,16),shr(999,16),shr(9999,16)}
 k,l,m,n,o,p,q,r,s,u,v,x,y,ba,bb,bc={},{},{},{},{},{},{},{{},{}},t(),0,{0,0},{0,0},0,0,false,0
 bd,be,bf,bg=bb,"",0,{}
 k.factory_click=function(self)
@@ -21,8 +21,8 @@ bi=bm.bn[bl]
 if(bl>bh+2) bh=min(bh+1,bo-2)
 end,10)
 bk(32,83,"build",function()
-bp,bm.bq=nil,br
-br:func_onclick()
+bp=nil
+bq:func_onclick()
 end)
 bk(96,83,"close",function()
 bp=nil
@@ -34,45 +34,45 @@ pal()
 pal(11,self.col2)
 pal(10,self.col2)
 pal(8,self.col2)
-if self.bs then
+if self.br then
 pal(self.col_cycle[self.col_cycle_pos],self.col1)
 else
 pal(11,self.col1)
 self.col_cycle_pos=1
 end
-bt(self)
+bs(self)
 end
-bu=function(self)
+bt=function(self)
 palt(11,true)
 pal(7,8)
-if(self.id==80 and bm.process==2 and not bm.bv) pal(7,11)
-bt(self)
+if(self.id==80 and bm.process==2 and not bm.bu) pal(7,11)
+bs(self)
 pal()
 end
 repair_click=function()
-bw(bx,2)
+bv(bw,2)
 end
-by=function(self)
-if bx.id!=35 then
-bz"pick target"
-ca=true
+bx=function(self)
+if bw.id!=35 then
+by"pick target"
+bz=true
 else
-local cb,cc=bx:cd()
-local ce=cf(cb,cc)
-if ce>=9 and ce<=15 then
-bx.life=0
-cg(ch[1],cb*8,cc*8,1)
+local ca,cb=bw:cc()
+local cd=ce(ca,cb)
+if cd>=9 and cd<=15 then
+bw.life=0
+cf(cg[1],ca*8,cb*8,1)
 sfx"61"
 end
-bx=nil
+bw=nil
 end
 end
-function bw(self,ci)
-self.cj,self.ck,self.process=0,self.process,ci
-if(self.life>0 and self.ck>0) self.bv=not self.bv
-if(self.cl) self.cl.bs=true
+function bv(self,ch)
+self.ci,self.cj,self.process=0,self.process,ch
+if(self.life>0 and self.cj>0) self.bu=not self.bu
+if(ch==1) self.ck.br=true self.ck.cl=self
 end
-ch=[[id|name|obj_spr|ico_spr|type|w|h|z|trans_col|parent_id|parent2_id|owner|col1|col2|icol1|icol2|ico_w|ico_h|req_id|req_level|req_faction|max|cost|power|arms|hitpoint|speed|range|fire_type|fire_rate|norotate|altframe|framecount|life|frame|process|spent|fire_cooldown|hit|flash_count|col_cycle_pos|col_cycle_src|col_cycle|description|func_init|func_draw|func_update|func_onclick
+cg=[[id|name|obj_spr|ico_spr|type|w|h|z|trans_col|parent_id|parent2_id|owner|col1|col2|icol1|icol2|ico_w|ico_h|req_id|req_level|req_faction|max|cost|power|arms|hitpoint|speed|range|fire_type|fire_rate|norotate|altframe|framecount|life|frame|process|spent|fire_cooldown|hit|flash_count|col_cycle_pos|col_cycle_src|col_cycle|description|func_init|func_draw|func_update|func_onclick
 1|cONSTRUCTION yARD|64|170|2|2|2|1||nil|||||||2|2|nil|1|||100|0|0|1600|0|||||||0|0|0|0|0|0|1|1|||aLL STRUCTURES ARE~BUILT BY THE~CONSTRUCTION YARD.||||factory_click
 2|lARGE cONCRETE sLAB|16|162|2|2|2|1||1|||||7|5|2|2|1|4|||20|0|0|0|0|||||||0|0|0|0|0|0|1|1|||uSE CONCRETE TO MAKE A~STURDY FOUNDATION FOR~YOUR STRUCTURES.||||
 3|sMALL cONCRETE sLAB|16|162|2|1|1|1||1|||||6|6|2|2|1|1|||5|0|0|0|0|||||||0|0|0|0|0|0|1|1|||uSE CONCRETE TO MAKE A~STURDY FOUNDATION FOR~YOUR STRUCTURES.||||
@@ -92,28 +92,28 @@ ch=[[id|name|obj_spr|ico_spr|type|w|h|z|trans_col|parent_id|parent2_id|owner|col
 17|sTARPORT|61|228|2|3|3|1||1|||||11|3|2|2|6|6||1|500|50|0|2000|0||||||15|0|0|0|0|0|0|1|1|11|11,10,8,8|tHE sTARPORT IS USED TO~ORDER AND RECEIVED~SHIPMENTS FROM~c.h.o.a.m.||draw_refinery||factory_click
 18|hOUSE OF ix|131|224|2|2|2|1||1|||||||2|2|12|5|||500|40|0|1600|0|||||||0|0|0|0|0|0|1|1|||tHE ix rESEARCH~fACILITY ADVANCES YOUR~hOUSE'S TECHNOLOGY.||||
 19|pALACE|58|226|2|3|3|1||1|||||||2|2|17|8||1|999|80|0|4000|0|||1750||||0|0|0|0|0|0|1|1|||tHIS IS YOUR pALACE.||||
-20|iNFANTRY sOLDIER|49|236|1|0.5|0.5|1|11|9|||||15|3|2|2||2|-3||60||2|100|0.05|2|1|2|1|48|10|0|0|0|0|0|0|1|1|||iNFANTRY ARE LIGHTLY~ARMOURED FOOTSOLDIERS,~WITH LIMITED FIRING~RANGE AND SPEED.||||
-21|lIGHT iNFANTRY sQUAD|48|236|1|1|1|1|11|9|||||15|3|2|2||2|-3||100||4|200|0.05|2|1|5|1|49|10|0|0|0|0|0|0|1|1|||iNFANTRY ARE LIGHTLY~ARMOURED FOOTSOLDIERS,~WITH LIMITED FIRING~RANGE AND SPEED.||||
-22|hEAVY tROOPER|49|194|1|0.5|0.5|1|11|10|||||||2|2||3|-1||100||4|440|0.1|6|2|12|1|48|10|0|0|0|0|0|0|1|1|||tROOPERS ARE HEAVILY~ARMOURED FOOTSOLDIERS,~WITH IMPROVED FIRING~RANGE AND SPEED.||||
-23|hEAVY tROOPERS|48|194|1|1|1|1|11|10|||||||2|2||3|-1||200||8|440|0.1|6|2|24|1|49|10|0|0|0|0|0|0|1|1|||tROOPERS ARE HEAVILY~ARMOURED FOOTSOLDIERS,~WITH IMPROVED FIRING~RANGE AND SPEED.||||
-24|fREMEN|48|236|1|1|1|1|11|||0|9|4|9|1|2|2||8|1||0||8|880|0.1|3|1|3|1|49|10|0|0|0|0|0|0|1|1|||tHE fREMEN ARE NATIVE~TO dUNE. eLITE FIGHTERS~IN ALLIANCE WITH THE~aTREIDES.||||
-25|sABOTEUR|48|236|1|0.5|0.5|1|11|||0|1|0|13|1|2|2||8|2||0||150|160|0.4|0|1|37.5|1|49|10|0|0|0|0|0|0|1|1|||tHE sABOTEUR IS A~SPECIAL MILITARY UNIT,~TRAINED AT AN oRDOS~pALACE. cAN DESTROY~ALMOST ANY STRUCTURE OR~VEHICLE.||||
-26|sARDAUKAR|48|236|1|1|1|1|11|||0|14|2|14|2|2|2||4|||0||5|440|0.1|1||1.25||||0|0|0|0|0|0|1|1|||tHE sARDUKAR ARE THE~eMPEROR'S ELITE TROOPS.~WITH SUPERIOR FIREPOWER~AND ARMOUR.||||
-27|tRIKE|51|204|1|1|1|1|11|11|17||||15|4|2|2||2|||150||8|400|0.6|3|1|5||||0|0|0|0|0|0|1|1|||tHE tRIKE IS A LIGHTLY-~ARMOURED, 3-WHEELED~VEHICLE, WITH LIMITED~FIRING RANGE, BUT RAPID~SPEED.||||
-28|qUAD|52|206|1|1|1|1|11|11|17||||||2|2||3|||200||10|520|0.5|3|1|5||||0|0|0|0|0|0|1|1|||tHE qUAD IS A LIGHTLY-~ARMOURED, 4-WHEELED~VEHICLE. sLOWER THAN~THE tRIKE, BUT STRONGER~ARMOUR AND FIREPOWER.||||
-29|cOMBAT tANK|53|196|1|1|1|1|11|12|17||||||2|2|7|4|||300||38|800|0.25|4|1|9.5||||0|0|0|0|0|0|1|1|||tHE cOMBAT tANK IS A~MEDIUM ARMOURED TANK,~FIRES HIGH-EXPLOSIVE~ROUNDS.||||
-30|sIEGE tANK|55|198|1|1|1|1|11|12|17||||15|4|2|2|7|6|||600||45|1200|0.2|5|1|11.25||||0|0|0|0|0|0|1|1|||tHE mISSILE tANK IS A~MEDIUM ARMOURED TANK,~WHICH FIRES MISSILES.~lONG-RANGE, BUT~INACCURATE.||||
-31|rOCKET lAUNCHER|54|202|1|1|1|1|11|12|17||||15|4|2|2|7|5|||450||112|400|0.3|9|2|28||||0|0|0|0|0|0|1|1|||tHE sIEGE tANK IS A~HEAVY ARMOURED TANK,~WHICH HAS DUAL CANNONS,~BUT IS SLOW.||||
+20|iNFANTRY sOLDIER|49|236|1|0.5|0.5|1|11|9|||||15|3|2|2||2|-3||60||8|80|0.05|2|1|2|1|48|10|0|0|0|0|0|0|1|1|||iNFANTRY ARE LIGHTLY~ARMOURED FOOTSOLDIERS,~WITH LIMITED FIRING~RANGE AND SPEED.||||
+21|lIGHT iNFANTRY sQUAD|48|236|1|1|1|1|11|9|||||15|3|2|2||2|-3||100||16|200|0.05|2|1|5|1|49|10|0|0|0|0|0|0|1|1|||iNFANTRY ARE LIGHTLY~ARMOURED FOOTSOLDIERS,~WITH LIMITED FIRING~RANGE AND SPEED.||||
+22|hEAVY tROOPER|49|194|1|0.5|0.5|1|11|10|||||||2|2||3|-1||100||16|180|0.1|6|2|12|1|48|10|0|0|0|0|0|0|1|1|||tROOPERS ARE HEAVILY~ARMOURED FOOTSOLDIERS,~WITH IMPROVED FIRING~RANGE AND SPEED.||||
+23|hEAVY tROOPERS|48|194|1|1|1|1|11|10|||||||2|2||3|-1||200||32|440|0.1|6|2|24|1|49|10|0|0|0|0|0|0|1|1|||tROOPERS ARE HEAVILY~ARMOURED FOOTSOLDIERS,~WITH IMPROVED FIRING~RANGE AND SPEED.||||
+24|fREMEN|48|236|1|1|1|1|11|||0|9|4|9|1|2|2||8|1||0||64|880|0.1|3|1|3|1|49|10|0|0|0|0|0|0|1|1|||tHE fREMEN ARE NATIVE~TO dUNE. eLITE FIGHTERS~IN ALLIANCE WITH THE~aTREIDES.||||
+25|sABOTEUR|48|236|1|0.5|0.5|1|11|||0|1|0|13|1|2|2||8|2||0||600|160|0.4|0|1|150|1|49|10|0|0|0|0|0|0|1|1|||tHE sABOTEUR IS A~SPECIAL MILITARY UNIT,~TRAINED AT AN oRDOS~pALACE. cAN DESTROY~ALMOST ANY STRUCTURE OR~VEHICLE.||||
+26|sARDAUKAR|48|236|1|1|1|1|11|||0|14|2|14|2|2|2||4|||0||20|440|0.1|1||5||||0|0|0|0|0|0|1|1|||tHE sARDUKAR ARE THE~eMPEROR'S ELITE TROOPS.~WITH SUPERIOR FIREPOWER~AND ARMOUR.||||
+27|tRIKE|51|204|1|1|1|1|11|11|17||||15|4|2|2||2|||150||32|400|0.6|3|1|5||||0|0|0|0|0|0|1|1|||tHE tRIKE IS A LIGHTLY-~ARMOURED, 3-WHEELED~VEHICLE, WITH LIMITED~FIRING RANGE, BUT RAPID~SPEED.||||
+28|qUAD|52|206|1|1|1|1|11|11|17||||||2|2||3|||200||40|520|0.5|3|1|5||||0|0|0|0|0|0|1|1|||tHE qUAD IS A LIGHTLY-~ARMOURED, 4-WHEELED~VEHICLE. sLOWER THAN~THE tRIKE, BUT STRONGER~ARMOUR AND FIREPOWER.||||
+29|cOMBAT tANK|53|196|1|1|1|1|11|12|17||||||2|2|7|4|||300||152|800|0.25|4|1|38||||0|0|0|0|0|0|1|1|||tHE cOMBAT tANK IS A~MEDIUM ARMOURED TANK,~FIRES HIGH-EXPLOSIVE~ROUNDS.||||
+30|sIEGE tANK|55|198|1|1|1|1|11|12|17||||15|4|2|2|7|6|||600||180|1200|0.2|5|1|45||||0|0|0|0|0|0|1|1|||tHE mISSILE tANK IS A~MEDIUM ARMOURED TANK,~WHICH FIRES MISSILES.~lONG-RANGE, BUT~INACCURATE.||||
+31|rOCKET lAUNCHER|54|202|1|1|1|1|11|12|17||||15|4|2|2|7|5|||450||448|400|0.3|9|2|112||||0|0|0|0|0|0|1|1|||tHE sIEGE tANK IS A~HEAVY ARMOURED TANK,~WHICH HAS DUAL CANNONS,~BUT IS SLOW.||||
 32|hARVESTER|50|192|1|1|1|1|11|12|17||||12|12|2|2||2|||300||0|600|0.1|0||0||||0|0|0|0|0|0|1|1|||tHE hARVESTER SEPARATES~SPICE FROM THE SAND &~RETURNS RAW SPICE TO~THE rEFINERY FOR~PROCESSING.||||
 33|cARRYALL|73|238|1|1|1|8|11|13|||||11|3|2|2|13|5|||800||0|400|0.75|0||0||||0|0|0|0|0|0|1|1|||tHE cARRYALL IS A~LIGHTLY ARMOURED~AIRCRAFT WITH NO~WEAPONS. mAINLY USED~TO LIFT+TRANSPORT~hARVESTERS.||||
-34|oRNITHOPTER|40|160|1|1|1|4|11|13|17||||||2|2|18|7|-3||600||75|20|1|9|2|20||41|5|0|0|0|0|0|0|1|1|||tHE oRNITHOPTER IS A~LIGHTLY ARMOURED~AIRCRAFT THAT FIRES~ROCKETS.hIGHLY~MANOUVERABLE + FASTEST~AIRCRAFT ON dUNE.||||
+34|oRNITHOPTER|40|160|1|1|1|4|11|13|17||||||2|2|18|7|-3||600||300|20|1|9|2|20||41|5|0|0|0|0|0|0|1|1|||tHE oRNITHOPTER IS A~LIGHTLY ARMOURED~AIRCRAFT THAT FIRES~ROCKETS.hIGHLY~MANOUVERABLE + FASTEST~AIRCRAFT ON dUNE.||||
 35|mcv|38|192|1|1|1|1|11|12|17||||0|5|2|2|7|4|||900||0|600|0.1|0||0||||0|0|0|0|0|0|1|1|||tHE mcv (mOBILE~cONSTRUCTION vEHICLE)~SCOUT VEHICLE IS USED~TO FIND AND DEPLOY NEW~BASE LOCATIONS.||||
-36|sONIC tANK|57|198|1|1|1|1|11|12|||||12|9|2|2|18|7|1||600||90|440|0.3|8|3|22.5||||0|0|0|0|0|0|1|1|||dEVELOPED BY THE~aTREIDES,THIS ENHANCED~TANK FIRES POWERFUL~BLAST WAVES OF SONIC~ENERGY.||||
-37|dEVASTATOR|56|200|1|1|1|1|11|12|||||||2|2|18|8|3||800||60|1600|0.1|7|1|15||||0|0|0|0|0|0|1|1|||tHE dEVESTATOR IS A~NUCLEAR-POWERED TANK,~WHICH FIRES DUAL PLASMA~CHARGES. mOST POWERFUL~TANK ON dUNE, BUT~POTENTIALLY UNSTABLE~IN COMBAT.||||
-38|dEATH hAND|72||1|1|1|8|11|||0|||||2|2|13|8|3||0||150|280|1|0|20|37.5||||0|0|0|0|0|0|1|1|||tHE dEATH hAND IS A~SPECIAL hARKONNEN~pALACE WEAPON. aN~INACCURATE, BUT VERY~DESTRUCTIVE BALLISTIC~MISSILE.||||
-39|rAIDER|51|204|1|1|1|1|11|11|||||12|1|2|2||2|2||150||8|320|0.75|3|1|2||||0|0|0|0|0|0|1|1|||tHE oRDOS rAIDER IS~SIMILAR TO THE STANDARD~tRIKE, BUT WITH LESS~ARMOUR IN FAVOUR OF~SPEED.||||
+36|sONIC tANK|57|198|1|1|1|1|11|12|||||12|9|2|2|18|7|1||600||360|440|0.3|8|3|90||||0|0|0|0|0|0|1|1|||dEVELOPED BY THE~aTREIDES,THIS ENHANCED~TANK FIRES POWERFUL~BLAST WAVES OF SONIC~ENERGY.||||
+37|dEVASTATOR|56|200|1|1|1|1|11|12|||||||2|2|18|8|3||800||240|1600|0.1|7|1|60||||0|0|0|0|0|0|1|1|||tHE dEVESTATOR IS A~NUCLEAR-POWERED TANK,~WHICH FIRES DUAL PLASMA~CHARGES. mOST POWERFUL~TANK ON dUNE, BUT~POTENTIALLY UNSTABLE~IN COMBAT.||||
+38|dEATH hAND|72||1|1|1|8|11|||0|||||2|2|13|8|3||0||600|280|1|0|20|150||||0|0|0|0|0|0|1|1|||tHE dEATH hAND IS A~SPECIAL hARKONNEN~pALACE WEAPON. aN~INACCURATE, BUT VERY~DESTRUCTIVE BALLISTIC~MISSILE.||||
+39|rAIDER|51|204|1|1|1|1|11|11|||||12|1|2|2||2|2||150||32|320|0.75|3|1|8||||0|0|0|0|0|0|1|1|||tHE oRDOS rAIDER IS~SIMILAR TO THE STANDARD~tRIKE, BUT WITH LESS~ARMOUR IN FAVOUR OF~SPEED.||||
 40|dEVIATOR|54|202|1|1|1|1|11|12|||||11|3|2|2|18|7|2||750||50|480|0.3|7|2|500||||0|0|0|0|0|0|1|1|||tHE oRDOS dEVIATOR IS A~STANDARD mISSILE tANK,~WHICH FIRES UNIQUE~NERVE GAS MISSILES THAT~MAY TEMPORARILY CHANGE~ENEMY LOYALTY.||||
-41|sANDWORM|88||9|1|1|1|11||||||||2|2||3|||0||300|4000|0.35|0|30|75||||0|0|0|0|0|0|1|1|||tHE sAND wORMS ARE~INDIGEONOUS TO dUNE.~aTTRACTED BY VIBRATIONS~ALMOST IMPOSSIBLE TO~DESTROY, WILL CONSUME~ANYTHING THAT MOVES.||||
+41|sANDWORM|88||9|1|1|1|11||||||||2|2||3|||0||1200|4000|0.35|0|30|300||||0|0|0|0|0|0|1|1|||tHE sAND wORMS ARE~INDIGEONOUS TO dUNE.~aTTRACTED BY VIBRATIONS~ALMOST IMPOSSIBLE TO~DESTROY, WILL CONSUME~ANYTHING THAT MOVES.||||
 42|sPICE bLOOM|32||1|1|1|1|11|||0|||||1|1|||||||0|4|0||||1|||0|0|0|0|0|0|1|1|||||||
 80|rEPAIR|19||5|1|1|1|11||||||||1|1||||||||||||||||0|0|0|0|0|0|1|1|||||draw_action||action_click
 81|lAUNCH|1||5|1|1|1|11||||||||1|1||||||||||||||||0|0|0|0|0|0|1|1|||||draw_action||action_click
@@ -123,22 +123,22 @@ poke(0x5f2d,1)
 menuitem(1,"exit to title",function()
 load("pico-dune-main")
 end)
-local cm=cn(ch,"|","\n")
-ch={}
+local cm=cn(cg,"|","\n")
+cg={}
 for co=2,46 do
 local cp={}
 for cq=1,48 do
-local ce=cm[co][cq]
-if(cq!=2 and cq<43) ce=tonum(ce)
+local cd=cm[co][cq]
+if(cq!=2 and cq<43) cd=tonum(cd)
 if cq==44 then
-cr,ce=cn(ce,"~"),""
+cr,cd=cn(cd,"~"),""
 for line in all(cr) do
-ce=ce.."\n"..line
+cd=cd.."\n"..line
 end
 end
-cp[cm[1][cq]]=ce
+cp[cm[1][cq]]=cd
 end
-ch[tonum(cm[co][1])]=cp
+cg[tonum(cm[co][1])]=cp
 end
 for co=-2,66 do
 bg[co]={}
@@ -158,34 +158,34 @@ h=1
 }
 end,
 cz=function(self)
-spr((bm and bm.type==1 and bm.owner==1 or ca) and 1,
+spr((bm and bm.type==1 and bm.owner==1 or bz) and 1,
 self.cu,self.cx)
 end
 }
 for co=1,2 do
-for cc=0,31 do
-for cb=0,127 do
+for cb=0,31 do
+for ca=0,127 do
 local da=nil
-local db=mget(cb,cc)
+local db=mget(ca,cb)
 if co==1 and db==1 then
-dc,dd=cb*8,cc*8
-cw,cy,da=dc-56,dd-56,ch[1]
+dc,dd=ca*8,cb*8
+cw,cy,da=dc-56,dd-56,cg[1]
 elseif co==2
 and db>=32 then
-for de,df in pairs(ch) do
+for de,df in pairs(cg) do
 if(df.obj_spr!=nil and df.obj_spr==db) da=df break
 end
 end
 if da!=nil then
-local dg,dh=cb,cc
+local dg,dh=ca,cb
 if(dg>63) dh+=31 dg-=64
-mset(cb,cc,0)
-cg(da,dg*8,dh*8)
+mset(ca,cb,0)
+cf(da,dg*8,dh*8)
 end
 end
 end
 end
-di=cg(ch[99],-8,-8)
+di=cf(cg[99],-8,-8)
 di.dj=cocreate(function()
 while true do
 if u%30==0 then
@@ -197,9 +197,9 @@ dn={}
 if bb then
 for co=0,124,4 do
 for cs=0,124,4 do
-local cb,cc=co/2,cs/2
-if(cc>=32) cb+=64 cc-=32
-local dp=mget(cb,cc)
+local ca,cb=co/2,cs/2
+if(cb>=32) ca+=64 cb-=32
+local dp=mget(ca,cb)
 local dq=sget((dp*8)%128+4,(dp*8)/16)
 if(bg[co/2][cs/2]==16) dn[(co/2/2)..","..(cs/2/2)]=dq!=11 and dq or 15
 end
@@ -252,12 +252,12 @@ end)
 music"7"
 ed=0
 end
-function cg(da,cu,cx,owner,ee)
+function cf(da,cu,cx,owner,ee)
 local ef=eg(da,cu,cx,da.type,nil,k[da.func_init],k[da.func_draw],k[da.func_update],nil)
 ef.eh,ef.life=eg(da,109,0,3,ef,nil,nil,k[da.func_onclick]),ei and da.hitpoint/2 or da.hitpoint
 ef.owner=ef.owner or owner or ej(cu,cx,dc,dd)<75 and 1 or 2
 ef.dx,ef.ek=owner or ef.owner,{}
-for df in all(ch) do
+for df in all(cg) do
 local el=df.req_faction
 if(df.parent_id!=nil and(df.parent_id==ef.id or df.parent2_id==ef.id))
 and(el==nil
@@ -269,7 +269,7 @@ eg(df,109,0,4,ef,nil,nil,function(self)
 if bp then
 bm=self
 else
-bw(self,1)
+bv(self,1)
 end
 end)
 )
@@ -294,9 +294,9 @@ et(eo+er,ep+es,eq and 16 or ef.owner==1 and 149 or 27)
 end
 end
 if(not eq) add(l,ef)
-if ef.id==6 and ef.cl==nil then
+if ef.id==6 and ef.ck==nil then
 local eu,ev=ew(ef)
-cg(ch[32],eu,ev,ef.owner,ef)
+cf(cg[32],eu,ev,ef.owner,ef)
 end
 else
 if(ef.norotate!=1) ef.ex=flr(rnd"8")*.125
@@ -320,7 +320,7 @@ end
 fk(ef)
 return ef
 end
-function eg(fo,cu,cx,fp,cl,func_init,func_draw,func_onclick)
+function eg(fo,cu,cx,fp,ck,func_init,func_draw,func_onclick)
 local fq={
 fr=fo,
 id=fo.id,
@@ -331,7 +331,7 @@ z=fo.z,
 fs=cu/8,
 ft=cx/8,
 type=fp,
-cl=cl,
+ck=ck,
 func_onclick=func_onclick,
 w=fo.w*8,
 h=fo.h*8,
@@ -371,17 +371,17 @@ end
 end
 else
 if self.type>2 and self.type<5 then
-local fz=self.type==4 and self or self.cl
+local fz=self.type==4 and self or self.ck
 rectfill(self.cu-1,self.cx-1,self.cu+16,self.cx+19,0)
 local ga=fz.hitpoint
-local ce=self.process==1 and 15*(fz.life/100) or 15*(fz.life/ga)
-if(fz.life>0 and not bp) rectfill(self.cu,self.cx+17,self.cu+ce,self.cx+18,self.process==1 and 12 or fz.life<ga*.33 and 8 or fz.life<ga*.66 and 10 or 11)
+local cd=self.process==1 and 15*(fz.life/100) or 15*(fz.life/ga)
+if(fz.life>0 and not bp) rectfill(self.cu,self.cx+17,self.cu+cd,self.cx+18,self.process==1 and 12 or fz.life<ga*.33 and 8 or fz.life<ga*.66 and 10 or 11)
 pal(11,fz.icol1) pal(3,fz.icol2)
 end
 if self.type>2 then
 spr(self.ico_spr,self.cu,self.cx,self.ico_w,self.ico_h)
 else
-bt(self)
+bs(self)
 end
 end
 if self.fa then
@@ -424,14 +424,14 @@ end
 del(l,self)
 v[self.gf.dx]+=1
 else
-local gh,gi=self:cd()
-if(cf(gh,gi)<9) et(gh,gi,20)
+local gh,gi=self:cc()
+if(ce(gh,gi)<9) et(gh,gi,20)
 if(self.id<=17) et(gh,gi,15)
 del(m,self)
 if self.id==42 then
 gj(self,gh,gi,
 function(dl,cu,cx)
-if(cf(cu,cx)==0) et(cu,cx,8)
+if(ce(cu,cx)==0) et(cu,cx,8)
 end,
 4,true)
 end
@@ -484,15 +484,15 @@ self.fa=nil
 end
 end
 if self.process>0
-and not self.bv
+and not self.bu
 and not self.go then
 if self.process==1 and self.spent>self.cost then
 self.go=true
-if(self.cl.owner==1) sfx"56"bz("cONSTRUCTION cOMPLETE")
+if(self.ck.owner==1) sfx"56"by("cONSTRUCTION cOMPLETE")
 if self.fr.type==1
 and self.parent_id!=1 then
-local eu,ev=ew(self.cl)
-cg(self.fr,eu,ev,self.cl.owner,self.cl)
+local eu,ev=ew(self.ck)
+cf(self.fr,eu,ev,self.ck.owner,self.ck)
 gp(self)
 end
 elseif self.process==2 and life>self.hitpoint then
@@ -503,10 +503,10 @@ self.ez=0
 self.cu,self.cx=ew(self)
 end
 else
-if self.cj>(self.process==1 and 3 or 100) then
-if(gr(-1,self.process==1 and self.cl or self)) self.cj=0 self.spent+=1
+if self.ci>(self.process==1 and 3 or 100) then
+if(gr(-1,self.process==1 and self.ck or self)) self.ci=0 self.spent+=1
 else
-self.cj+=1
+self.ci+=1
 self.life=(self.process==1 and(self.spent/self.cost)*100 or life+.5)
 end
 end
@@ -520,10 +520,10 @@ gs=function(self,cu,cx)
 self.cu,self.cx=cu,cx
 end,
 dm=function(self)
-local cu,cx=self:cd()
+local cu,cx=self:cc()
 return cu..","..cx
 end,
-cd=function(self)
+cc=function(self)
 return flr(self.cu/8),flr(self.cx/8)
 end
 }
@@ -584,7 +584,7 @@ else
 dl.dj=nil
 end
 if hk
-and fget(cf(dl:cd()),2)
+and fget(ce(dl:cc()),2)
 and ej(hl,hm,dl.cu,dl.cx)<1
 and dl.z==1
 then
@@ -604,7 +604,7 @@ end
 hs()
 end
 ht()
-hh,bx,br=hd,bm,bi
+hh,bw,bq=hd,bm,bi
 u+=1
 end
 function _draw()
@@ -625,8 +625,8 @@ end
 function hx()
 end
 function hy(cu,cx)
-local ce=cf(cu,cx)
-return ce>=2 and ce<=8
+local cd=ce(cu,cx)
+return cd>=2 and cd<=8
 end
 function fn(dl,hz)
 dl.ez,dl.ia=hz or 0,nil
@@ -638,7 +638,7 @@ mid(flr(self.fs+rnd"32")-16,64),
 mid(flr(self.ft+rnd"32")-16,64))
 end
 if rnd"250"<1 and self.arms>0 and self.ez!=8 then
-local gh,gi=self:cd()
+local gh,gi=self:cc()
 gj(self,gh,gi,
 function(dl,cu,cx)
 local fe=m[n[cu..","..cx]]
@@ -655,7 +655,7 @@ if self.fl<=1500
 and self.ez!=7 and self.ez!=9 then
 self.gq=nil
 local ig,ih
-local ii,ij=self:cd()
+local ii,ij=self:cc()
 if hy(ii,ij) and not self.ik then
 ig,ih=ii,ij
 else
@@ -670,12 +670,12 @@ end,
 end
 if ig and ih then
 ib(dl,ig,ih)
-if(hy(dl:cd())) dl.ez=6
+if(hy(dl:cc())) dl.ez=6
 end
 end
 elseif self.fl>=1500
 and self.ez!=7 then
-self.ig,self.ih=self:cd()
+self.ig,self.ih=self:cc()
 gg(self,fm or r[dl.dx][6])
 elseif self.ez==6 then
 self.ik=false
@@ -683,12 +683,12 @@ il(dl.cu,dl.cx,dl.ex+.75+rnd".2"-.1)
 local im=dl:dm()
 p[im],self.fl,self.name=(p[im] or 1000)-1,(self.fl or 0)+.5,"hARVESTER ("..flr(self.fl/1500*100).."% fULL)"
 if p[im]<=0 then
-local eo,ep=self:cd()
+local eo,ep=self:cc()
 for es=-1,1 do
 for er=-1,1 do
-ce=cf(eo+er,ep+es)
+cd=ce(eo+er,ep+es)
 et(eo+er,ep+es,
-(er==0 and es==0) and 0 or((ce>1 and ce<8) and 8 or ce)
+(er==0 and es==0) and 0 or((cd>1 and cd<8) and 8 or cd)
 )
 end
 end
@@ -700,7 +700,7 @@ end
 if self.id>26 then
 if self.ez==9 then
 if fm.life>0 and not fm.io and self.life>0 then
-fm.bs,self.ez,self.ex,self.cu,self.cx=false,8,.25,fm.cu+16,fm.cx+4
+fm.br,self.ez,self.ex,self.cu,self.cx=false,8,.25,fm.cu+16,fm.cx+4
 if(bm==self) bm=nil
 if self.fl and fm.id==6 then
 fm.io=true
@@ -710,7 +710,7 @@ if flr(self.fl)%4==0 then
 if tonum(eb)<ds then
 gr(2,self)
 elseif self.owner==1 then
-bz"sPICE LOST. bUILD sILO"
+by"sPICE LOST. bUILD sILO"
 end
 end
 yield()
@@ -718,7 +718,7 @@ end
 self.fl,fm.io,self.ez=0,false,0
 if(self.ig) ib(self,self.ig,self.ih,0,true)
 else
-self.process,self.cj,fm.col_cycle_src,fm.col_cycle=2,0,8,cn("7,10,0,0,7,0,0")
+self.process,self.ci,fm.col_cycle_src,fm.col_cycle=2,0,8,cn("7,10,0,0,7,0,0")
 end
 end
 end
@@ -749,7 +749,7 @@ dl.life=0
 for co=1,dl.id/3 do
 gk(dl.cu+rnd"32"-16,dl.cx+rnd"32"-16,2)
 end
-fe.life-=(100+rnd"50")
+fe.life-=(400+rnd"200")
 fe.gf=dl
 return
 end
@@ -772,7 +772,7 @@ fn(self)
 end)
 else
 local it={24,25,38,38}
-ge(cg(ch[it[dl.em]],dl.cu,dl.cx,dl.owner),fe)
+ge(cf(cg[it[dl.em]],dl.cu,dl.cx,dl.owner),fe)
 dl.fire_cooldown=1750
 end
 end
@@ -783,16 +783,16 @@ if(iu(dl,er,es)) return er,es
 if(not iw) yield()
 end
 end
-function cf(cb,cc)
-if(cc>31) cb+=64 cc-=32
-return mget(cb,cc)
+function ce(ca,cb)
+if(cb>31) ca+=64 cb-=32
+return mget(ca,cb)
 end
-function et(cb,cc,ix)
-if(cc>31) cb+=64 cc-=32
-mset(cb,cc,ix)
+function et(ca,cb,ix)
+if(cb>31) ca+=64 cb-=32
+mset(ca,cb,ix)
 end
 function ip(dl,cu,cx)
-return not fget(cf(cu,cx),0)
+return not fget(ce(cu,cx),0)
 and n[cu..","..cx]==nil
 end
 function ib(dl,cu,cx,iy,iz,hz)
@@ -852,7 +852,7 @@ goto end_pathfinding
 end
 for jx in all(jy(ho,ja)) do
 local id=jh(jx)
-local jz=not ja and fget(cf(jx.cu,jx.cx),1) and 4 or 1
+local jz=not ja and fget(ce(jx.cu,jx.cx),1) and 4 or 1
 if(ho.cu!=jx.cu and ho.cx!=jx.cx) jz+=.2
 local ka,kb=
 jk[id],
@@ -927,7 +927,7 @@ map(64,0,0,256,64,32)
 for de,dv in pairs(l) do
 if not bp then
 dv:gd()
-if(dv.bq) dv.bq:gd()
+if(dv.cl) dv.cl:gd()
 end
 dv:cz()
 if(dv==bm) rect(bm.cu,bm.cx,bm.cu+bm.w-1,bm.cx+bm.h-1,7)
@@ -960,7 +960,7 @@ end
 end
 end
 end
-function bz(kl)
+function by(kl)
 be,bf=kl,500
 end
 function hv()
@@ -976,7 +976,7 @@ eb=ec(j[1])
 ? sub("000000",#eb+1)..eb,103,2,d
 if bb!=bd then
 bc,km=bb and 1 or 59,bb and 1 or-1
-if(km<1) bz("pOWER LOW.bUILD wINDTRAP")
+if(km<1) by("pOWER LOW.bUILD wINDTRAP")
 sfx"55"
 end
 bd=bb
@@ -1005,50 +1005,50 @@ bm.eh:gs(109,20)
 bm.eh:cz()
 kp,kq=nil,nil
 if bm.owner==1 then
-if bm.bq then
-bm.bq:gs(109,44)
-bm.bq:cz()
+if bm.cl then
+bm.cl:gs(109,44)
+bm.cl:cz()
 end
 if bm.life<bm.hitpoint
 and bm.id!=4
 and(bm.type==2
 or bm.speed==0) then
-kp=eg(ch[80],117,28,5,{},nil,bu,repair_click)
+kp=eg(cg[80],117,28,5,{},nil,bt,repair_click)
 kp:cz()
 end
 if(bm.id==19
 and bm.fire_cooldown<=0)
 or bm.id==35
 then
-kq=eg(ch[81],109,29,5,{},nil,bu,by)
+kq=eg(cg[81],109,29,5,{},nil,bt,bx)
 kq:cz()
 end
 end
 end
 pal()
 if bm
-and bm.bq
-and(bm.bq.type==4
-and bm.bq.speed==0)
-and bm.bq.life>=100 then
+and bm.cl
+and(bm.cl.type==4
+and bm.cl.speed==0)
+and bm.cl.life>=100 then
 local kr,ks=flr((cursor.cu+cw)/8),flr((cursor.cx+cy)/8)
-local kt,ku,w,h=kr*8-cw,ks*8-cy,bm.bq.fv,bm.bq.fw
+local kt,ku,w,h=kr*8-cw,ks*8-cy,bm.cl.fv,bm.cl.fw
 kv,kw,ei=false,false,false
 for er=-1,w do
 for es=-1,h do
-local ce=cf(kr+er,ks+es)
+local cd=ce(kr+er,ks+es)
 if er==-1 or er==w or es==-1 or es==h then
-if(ce==16 or ce>=58) kv=true
+if(cd==16 or cd>=58) kv=true
 else
-if(ce>=9 and ce<=15) ei=true
-if(n[kr+er..","..ks+es] or ce==0 or ce<8 or ce>16) kw=true
+if(cd>=9 and cd<=15) ei=true
+if(n[kr+er..","..ks+es] or cd==0 or cd<8 or cd>16) kw=true
 end
 end
 end
 if(kw) kv=false
 fillp("0b1110110110110111.1")
 rectfill(kt,ku,
-kt+bm.bq.w,ku+bm.bq.h,kv and 11 or 8)
+kt+bm.cl.w,ku+bm.cl.h,kv and 11 or 8)
 fillp()
 end
 if bp then
@@ -1113,7 +1113,7 @@ end,
 func_onclick=func_onclick
 })
 end
-function bt(fq)
+function bs(fq)
 spr(fq.obj_spr,fq.cu,fq.cx,fq.fv,fq.fw)
 end
 function ht()
@@ -1122,7 +1122,7 @@ if bm then
 cv=true
 le(kp)
 le(kq)
-if(bm.eh and not bp and not ld) le(bm.eh) le(bm.bq)
+if(bm.eh and not bp and not ld) le(bm.eh) le(bm.cl)
 if(bp) foreach(bm.ek,le) foreach(bj,le)
 cv=false
 end
@@ -1136,18 +1136,18 @@ and not bp
 and hi>89 and hi<122
 and hj>90 and hj<123 then
 cw,cy=mid(0,(hi-94)*16,384),mid(-8,(hj-94)*16,384)
-bm=bx
+bm=bw
 elseif he then
-if(bm and bm.type<=2) bz(bm.name)
+if(bm and bm.type<=2) by(bm.name)
 if ld then
-if not bp and bm.cl!=nil then
+if not bp and bm.ck!=nil then
 if(bm.func_onclick) bm:func_onclick()
-bm=bx
+bm=bw
 return
 end
 if(bp and bi.la and bi.func_onclick) bi:func_onclick()
-if(bm.owner==1 and bm.type==1 and bm!=bx and bm.speed>0) sfx"62"
-if(bm.dx!=1 and bx and(bx.type==1 or(bx.id==19 and ca)) and bx.owner==1) bm.flash_count=10 ge(bx,bm) bm=nil
+if(bm.owner==1 and bm.type==1 and bm!=bw and bm.speed>0) sfx"62"
+if(bm.dx!=1 and bw and(bw.type==1 or(bw.id==19 and bz)) and bw.owner==1) bm.flash_count=10 ge(bw,bm) bm=nil
 else
 if bm
 and bm.owner==1
@@ -1159,24 +1159,24 @@ fn(dl)
 end)
 end
 if bm
-and bm.bq
-and bm.bq.life>=100
+and bm.cl
+and bm.cl.life>=100
 and kv then
-cg(bm.bq.fr,
+cf(bm.cl.fr,
 flr((cursor.cu+cw)/8)*8,
 flr((cursor.cx+cy)/8)*8,1)
-gp(bm.bq)
+gp(bm.cl)
 sfx"61"
 end
 end
-ca=false
+bz=false
 elseif hg and not bp then
-bm,ca=nil,false
+bm,bz=nil,false
 end
 end
 function gp(fq)
 fq.life,fq.process,fq.spent,fq.go=0,0,0,false
-if(fq.cl) fq.cl.bs=false
+if(fq.ck) fq.ck.br=false
 end
 function le(fq)
 if(fq==nil) return
@@ -1206,7 +1206,7 @@ end
 end
 function gg(dl,lh)
 lh=lh or r[dl.dx][1]
-dl.ez,lh.bs,dl.gq=7,true,lh
+dl.ez,lh.br,dl.gq=7,true,lh
 if(dl.id!=32 or lh.id==6) dl.fm=lh
 dl.dj=cocreate(function(dl)
 local li=lh.id!=1 and 9 or 0
@@ -1216,20 +1216,20 @@ end)
 end
 lj=0
 function hs()
-if t()>i and t()%i*2==0 then
+if t()*20>i and t()%i==0 then
 local lk=rnd(m)
 if lk.owner==2 and lk.arms>0 and lk.ez==0 then
 ie(lk)
 end
 local ll=rnd(l)
-if ll.owner==2 then
-if ll.bq and ll.bq.fr.type==1 and ll.bq.process!=1 then
+if ll.owner==2 and
+(ll.cl==nil or ll.cl.process!=1) then
 local lm=rnd(ll.ek)
-ll.bq=lm
+if lm and lm.speed>0 then
 lm:func_onclick()
 end
 if ll.life<ll.hitpoint and ll.process!=2 then
-bw(ll,2)
+bv(ll,2)
 end
 end
 if ln and ln.type==2
@@ -1273,21 +1273,21 @@ until lt.dx!=fq.dx
 return lt
 end
 function dw(fq)
-local cu,cx=fq:cd()
+local cu,cx=fq:cc()
 return bg[cu][cx]==16
 end
 function dz(lu)
-local ce=peek(0x3115)
-if(band(ce,128)>0!=lu) ce=bxor(ce,128)
-poke(0x3115,ce)
+local cd=peek(0x3115)
+if(band(cd,128)>0!=lu) cd=bxor(cd,128)
+poke(0x3115,cd)
 end
-function ec(ce)
-local lv,gt="",abs(ce)
+function ec(cd)
+local lv,gt="",abs(cd)
 repeat
 lv=(gt%0x0.000a/0x.0001)..lv
 gt/=10
 until gt==0
-if(ce<0) lv="-"..lv
+if(cd<0) lv="-"..lv
 return lv
 end
 function cn(lw,fh,lx)
@@ -1327,7 +1327,7 @@ mf+=md
 end
 end
 function ej(ml,mm,mn,mo)
-return abs(sqrt(((ml-mn)/1000)^2+((mm-mo)/1000)^2)*1000)
+return sqrt(((ml-mn)>>10)^2+((mm-mo)>>10)^2)<<10
 end
 function is(dl,mp)
 local gu=mp-dl.ex
@@ -1356,7 +1356,7 @@ end
 return mq
 end
 function mr(ms,mt,mu,ja)
-if(ja or not fget(cf(ms,mt),0) and n[ms..","..mt]==nil and ms>=0 and mt>=0 and ms<=63 and mt<=63) add(mu,{cu=ms,cx=mt})
+if(ja or not fget(ce(ms,mt),0) and n[ms..","..mt]==nil and ms>=0 and mt>=0 and ms<=63 and mt<=63) add(mu,{cu=ms,cx=mt})
 end
 function jo(ir,mv)
 return abs(ir.cu-mv.cu)+abs(ir.cx-mv.cx)
@@ -1636,9 +1636,9 @@ __map__
 16160000000000000012121200000012120000000000000000000000000000000000000000000000000000000000121212121200000000000000000000001515161616000000000000000000000000090a0a0d0e0000000000000000000000000000000000000000000000000000000000000000000000000000000000161616
 16000000000000001212000000001212000000000000000000000000000000000000000000000000001212000000001212000000001200120000000000000015161200020508000005050002050803000d0e05000400000000000000000000000000000000000000000000000000000000000000000000000000000000000016
 1212000000000c00001600160030000000000000000000000000000000000000000000000000000000001212121212120000000000001200000203030300000016020503030303030303030303030303030608080000000000000000000000000000000000000000000000000000000000000000000000000000000000000016
-1212120c0a0a0e16341616000c0c001612121200000000001212120000000000000000000000000000000000000012000000120002050803030303030303030000020303030703030303030303070303030000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+1212120c0a0a0e1634161600090c001612121200000000001212120000000000000000000000000000000000000012000000120002050803030303030303030000020303030703030303030303070303030000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 1212160a0a0a0a0e160c0a0c0a0a161212120000000012121200000000000000000000000000000000000000000000000000020503030303030303030303030000000012121212000806000008060800120012000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
-1212000a0a0a0a0a0a0a010a0a0e00121600000000121200000000000000000000000000000000000c0c0c00000000000000020303030703030303030303030000001212121212121200000000000000121212000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+1212000a0a0a0a0a0c0a010a0a0e00121600000000121200000000000000000000000000000000000c0c0c00000000000000020303030703030303030303030000001212121212121200000000000000121212000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 1212160a0a0a0a0a0a0a0a0a0a0d160000000012121200000000000000000000000000000000090a0a0a0a0a0a0c0a0c0000000000000000000003030303030000121212121212000000000000001212121212000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 120000090a0a0a0a0a0a0a0a0a0000000000120012000000000000001200000000000000000c0a0a0a1718190a0a0a0a0a0c000000000000000003030303030012120000000000000000000000121212121200000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 1212090a0a0a0a0a0a0a0a0a0e3300000000001200000203030312120000000000000000000a0a0a171b1b1b190a0a0a0a0a000000000000000000030303030012000000000000000000000000121212120000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000

@@ -8,23 +8,23 @@ __lua__
 cartdata("pn_undune2") 
 
 -- data flags
-p_level,p_faction,p_col1,p_col2,ai_faction,ai_col1,ai_col2,ai_level=dget"0",dget"1",dget"2",dget"3",dget"20",dget"21",dget"22",dget"23"
+-- p_level,p_faction,p_col1,p_col2,ai_faction,ai_col1,ai_col2,ai_level=dget"0",dget"1",dget"2",dget"3",dget"20",dget"21",dget"22",dget"23"
 
-credits={
- shr(dget"6",16), -- player starting credits
- shr(500,16),     -- ai starting credits
- shr(dget"7",16)  -- target credits
-}
+-- credits={
+--  shr(dget"6",16), -- player starting credits
+--  shr(500,16),     -- ai starting credits
+--  shr(dget"7",16)  -- target credits
+-- }
 
 -- DEBUG #####
 -- player
 --p_level,p_faction,p_col1,p_col2=1,1,12,1 -- atreides
 --p_level,p_faction,p_col1,p_col2=1,2,11,3 -- ordos
---p_level,p_faction,p_col1,p_col2=8,3,8,2  -- harkonnen
+p_level,p_faction,p_col1,p_col2=6,3,8,2  -- harkonnen
 --ai
---ai_faction,ai_col1,ai_col2,ai_level=1,12,1,1    -- atreides
+ai_faction,ai_col1,ai_col2,ai_level=1,12,1,2    -- atreides
 --ai_faction,ai_col1,ai_col2,ai_level=3,8,2,1    -- harkonnen
---credits={shr(999,16), shr(999,16), shr(9999,16) }
+credits={shr(999,16), shr(999,16), shr(9999,16) }
 
 
 -- fields
@@ -1852,7 +1852,7 @@ worm_life=0
 -- ai strategy code (attack, build, repair, etc.)
 function update_ai()
  -- depending on ai level...
- if t()>ai_level and t()%ai_level*2==0 then  
+ if t()*20>ai_level and t()%ai_level==0 then  
   
   -- unit attacks
   -- 
