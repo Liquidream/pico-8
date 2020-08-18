@@ -8,23 +8,23 @@ __lua__
 cartdata("pn_undune2") 
 
 -- data flags
-p_level,p_faction,p_col1,p_col2,ai_faction,ai_col1,ai_col2,ai_level=dget"0",dget"1",dget"2",dget"3",dget"20",dget"21",dget"22",dget"23"
+-- p_level,p_faction,p_col1,p_col2,ai_faction,ai_col1,ai_col2,ai_level=dget"0",dget"1",dget"2",dget"3",dget"20",dget"21",dget"22",dget"23"
 
-credits={
- shr(dget"6",16), -- player starting credits
- shr(500,16),     -- ai starting credits
- shr(dget"7",16)  -- target credits
-}
+-- credits={
+--  shr(dget"6",16), -- player starting credits
+--  shr(500,16),     -- ai starting credits
+--  shr(dget"7",16)  -- target credits
+-- }
 
 -- DEBUG #####
 -- player
 --p_level,p_faction,p_col1,p_col2=1,1,12,1 -- atreides
 --p_level,p_faction,p_col1,p_col2=1,2,11,3 -- ordos
---p_level,p_faction,p_col1,p_col2=1,3,8,2  -- harkonnen
+p_level,p_faction,p_col1,p_col2=1,3,8,2  -- harkonnen
 --ai
---ai_faction,ai_col1,ai_col2,ai_level=1,12,1,2    -- atreides
+ai_faction,ai_col1,ai_col2,ai_level=1,12,1,2    -- atreides
 --ai_faction,ai_col1,ai_col2,ai_level=3,8,2,1    -- harkonnen
---credits={shr(999,16), shr(999,16), shr(9999,16) }
+credits={shr(999,16), shr(999,16), shr(9999,16) }
 
 
 -- fields
@@ -246,7 +246,7 @@ function _init()
       
       if objref!=nil then
         local ox,oy=mx,my
-        if (ox>63) oy+=31 ox-=64
+        if (ox>63) oy+=32 ox-=64
         mset(mx,my,0)
         m_map_obj_tree(objref, ox*8,oy*8)
       end
