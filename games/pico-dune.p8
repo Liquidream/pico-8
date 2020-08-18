@@ -364,6 +364,10 @@ function _init()
  shake=0
 end
 
+function wrap_discover_pos(mx,my)
+ if (mx>63) my+=32 mx-=64
+ return mx,my
+end
 
 function m_map_obj_tree(objref, x,y, owner, factory)
   local newobj=m_obj_from_ref(objref, x,y, objref.type, nil, _g[objref.func_init], _g[objref.func_draw], _g[objref.func_update], nil)
