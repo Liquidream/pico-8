@@ -8,7 +8,13 @@ __lua__
 cartdata("pn_undune2") 
 
 -- data flags
-p_level,p_faction,p_col1,p_col2,ai_faction,ai_col1,ai_col2,ai_level=dget"0",dget"1",dget"2",dget"3",dget"20",dget"21",dget"22",dget"23"
+p_level,ai_level=dget"0",dget"23"
+
+bases={
+ {dget"1",dget"2",dget"3",dget"8",dget"9"},    --[1] p_faction, p_col1, p_col2,x,y
+ {dget"20",dget"21",dget"22",dget"27",dget"28"}, --[2] ai_faction, ai_col1, ai_col2,x,y
+ {dget"30",dget"31",dget"32",dget"33",dget"34"} --[3] ai_faction2, ai2_col1, ai2_col2,x,y
+}
 
 credits={
  shr(dget"6",16), -- player starting credits
@@ -107,10 +113,10 @@ function process_click(self, mode)
 end
 
 -- object data
-obj_data=[[id|name|obj_spr|ico_spr|type|w|h|z|trans_col|parent_id|parent2_id|owner|col1|col2|icol1|icol2|ico_w|ico_h|req_id|req_level|req_faction|max|cost|power|arms|hitpoint|speed|range|fire_type|fire_rate|fire_sfx|death_sfx|norotate|altframe|framecount|life|frame|process|spent|fire_cooldown|hit|flash_count|col_cycle_pos|col_cycle_src|col_cycle|description|func_init|func_draw|func_update|func_onclick
+obj_data=[[id|name|obj_spr|ico_spr|type|w|h|z|trans_col|parent_id|parent2_id|owner|col1|col2|icol1|icol2|ico_w|ico_h|req_id|req_level|req_faction|max|cost|power|arms|hitpoint|speed|range|fire_type|fire_rate| |death_sfx|norotate|altframe|framecount|life|frame|process|spent|fire_cooldown|hit|flash_count|col_cycle_pos|col_cycle_src|col_cycle|description|func_init|func_draw|func_update|func_onclick
 1|cONSTRUCTION yARD|64|170|2|2|2|1||nil|||||||2|2|nil|1|||100|0|0|1600|0|||||53||||0|0|0|0|0|0|1|1|||aLL STRUCTURES ARE~BUILT BY THE~CONSTRUCTION YARD.||||factory_click
-2|lARGE cONCRETE sLAB|16|162|2|2|2|1||1|||||7|5|2|2|1|4|||20|0|0|0|0|||||||||0|0|0|0|0|0|1|1|||uSE CONCRETE TO MAKE A~STURDY FOUNDATION FOR~YOUR STRUCTURES.||||
-3|sMALL cONCRETE sLAB|16|162|2|1|1|1||1|||||6|6|2|2|1|1|||5|0|0|0|0|||||||||0|0|0|0|0|0|1|1|||uSE CONCRETE TO MAKE A~STURDY FOUNDATION FOR~YOUR STRUCTURES.||||
+2|lARGE cONCRETE sLAB|15|162|2|2|2|1||1|||||7|5|2|2|1|4|||20|0|0|0|0|||||||||0|0|0|0|0|0|1|1|||uSE CONCRETE TO MAKE A~STURDY FOUNDATION FOR~YOUR STRUCTURES.||||
+3|sMALL cONCRETE sLAB|15|162|2|1|1|1||1|||||6|6|2|2|1|1|||5|0|0|0|0|||||||||0|0|0|0|0|0|1|1|||uSE CONCRETE TO MAKE A~STURDY FOUNDATION FOR~YOUR STRUCTURES.||||
 4|dEFENSIVE wALL|133|164|2|1|1|1||1|||||||2|2|7|4|||50|0|0|200|0|||||53||164||0|0|0|0|0|0|1|1|||tHE wALL IS USED FOR~PASSIVE DEFENSE.||||
 5|wINDTRAP|66|172|2|2|2|1||1|||||||2|2|1|1|||300|-100|0|800|0|||||53|||10|0|0|0|0|0|0|1|1|11|12,12,12,12,13,1,1,1,1,13|tHE WINDTRAP SUPPLIES~POWER TO YOUR BASE.~wITHOUT POWER YOUR~STRUCTURES WILL DECAY.||||
 6|sPICE rEFINERY|68|174|2|3|2|1||1|||||||2|2|5|1|||400|30|0|1800|0|||||53|||15|0|0|0|0|0|0|1|1|11|11,10,8,8|tHE rEFINERY CONVERTS~SPICE INTO CREDITS.||draw_refinery||
@@ -147,13 +153,12 @@ obj_data=[[id|name|obj_spr|ico_spr|type|w|h|z|trans_col|parent_id|parent2_id|own
 37|dEVASTATOR|56|200|1|1|1|1|11|12|||||||2|2|18|8|3||800||240|1600|0.1|7|1|60|58|54||||0|0|0|0|0|0|1|1|||tHE dEVESTATOR IS A~NUCLEAR-POWERED TANK,~WHICH FIRES DUAL PLASMA~CHARGES. mOST POWERFUL~TANK ON dUNE, BUT~POTENTIALLY UNSTABLE~IN COMBAT.||||
 38|dEATH hAND|72||1|1|1|8|11|||0|||||2|2|13|8|3||0||600|280|1|0|20|150|59|54||||0|0|0|0|0|0|1|1|||tHE dEATH hAND IS A~SPECIAL hARKONNEN~pALACE WEAPON. aN~INACCURATE, BUT VERY~DESTRUCTIVE BALLISTIC~MISSILE.||||
 39|rAIDER|51|204|1|1|1|1|11|11|||||12|1|2|2||2|2||150||32|320|0.75|3|1|8|60|54||||0|0|0|0|0|0|1|1|||tHE oRDOS rAIDER IS~SIMILAR TO THE STANDARD~tRIKE, BUT WITH LESS~ARMOUR IN FAVOUR OF~SPEED.||||
-40|dEVIATOR|54|202|1|1|1|1|11|12|||||11|3|2|2|18|7|2||750||50|480|0.3|7|2|500|58|54||||0|0|0|0|0|0|1|1|||tHE oRDOS dEVIATOR IS A~STANDARD mISSILE tANK,~WHICH FIRES UNIQUE~NERVE GAS MISSILES THAT~MAY TEMPORARILY CHANGE~ENEMY LOYALTY.||||
+40|dEVIATOR|54|202|1|1|1|1|11|12|||||11|3|2|2|18|7|2||750||50|480|0.3|7|2|500|59|54||||0|0|0|0|0|0|1|1|||tHE oRDOS dEVIATOR IS A~STANDARD mISSILE tANK,~WHICH FIRES UNIQUE~NERVE GAS MISSILES THAT~MAY TEMPORARILY CHANGE~ENEMY LOYALTY.||||
 41|sANDWORM|88||9|1|1|1|11||||||||2|2||3|||0||1200|4000|0.35|0|30|300|50|||||0|0|0|0|0|0|1|1|||tHE sAND wORMS ARE~INDIGEONOUS TO dUNE.~aTTRACTED BY VIBRATIONS~ALMOST IMPOSSIBLE TO~DESTROY, WILL CONSUME~ANYTHING THAT MOVES.||||
-42|sPICE bLOOM|32||1|1|1|1|11|||0|||||1|1|||||||0|4|0||||||1|||0|0|0|0|0|0|1|1|||||||
-80|rEPAIR|19||5|1|1|1|11||||||||1|1||||||||||||||||||0|0|0|0|0|0|1|1|||||draw_action||action_click
-81|lAUNCH|1||5|1|1|1|11||||||||1|1||||||||||||||||||0|0|0|0|0|0|1|1|||||draw_action||action_click
-99|worker|0||10|1|1|1||||0|||||||||||||0|99|0|||||||||0|0|0|0|0|0|1|1|||||||]]
-
+42|sPICE bLOOM|19||1|1|1|1|11|||0|||||1|1|||||||0|4|0||||||1|||0|0|0|0|0|0|1|1|||||||
+80|rEPAIR|17||5|1|1|1|11||||||||1|1|||||||0|||||||||||0|0|0|0|0|0|1|1|||||draw_action||action_click
+81|lAUNCH|99||5|1|1|1|11||||||||1|1||||||||||||||||||0|0|0|0|0|0|1|1|||||draw_action||action_click
+99|worker|99||10|1|1|1||||0|||||||||||||0|99|0|||||||||0|0|0|0|0|0|1|1|||||||]]
 
 
 -->8
@@ -220,41 +225,27 @@ function _init()
 
  -- discover_objs()
  -- analyse current map & spawn objs
- -- (first pass find the player start pos/const yard)
- -- (second finds everything else)
- for i=1,2 do
   for my=0,31 do
     for mx=0,127 do
       local objref=nil
       local spr_val=mget(mx,my)
-      
-      -- handle player start pos (const yard) as a special case
-      if i==1 and spr_val==1 then
+       -- handle player start pos (const yard) as a special case
        -- found player start position
-       pstartx,pstarty=wrap_discover_obj_pos(mx,my)
-       --pstartx,pstarty=mx*8,my*8        
        -- center camera & create player const yard
-       camx,camy,objref=pstartx-56,pstarty-56,obj_data[1]
-
-      elseif i==2
-       and spr_val>=32 then --don't create "concrete" as objs
+       if (spr_val==1) camx,camy,objref=bases[1][4]-56,bases[1][5]-56,obj_data[1]
        
        -- find object for id
        for _,o in pairs(obj_data) do         
         if (o.obj_spr!=nil and o.obj_spr==spr_val) objref=o break       
        end
-      end
-      
-      if objref!=nil then
-        local ox,oy=wrap_discover_obj_pos(mx,my)
-        --local ox,oy=mx,my
-        --if (ox>63) oy+=32 ox-=64
+      if objref!=nil and (spr_val==1 or spr_val>=32) then --don't create "concrete" as objs
+        local ox,oy=mx,my
+        if (ox>63) oy+=32 ox-=64
         mset(mx,my,0)
-        m_map_obj_tree(objref, ox,oy)
+        m_map_obj_tree(objref, ox*8,oy*8)
       end
     end
-  end  
- end
+  end
 
  -- worker
  worker = m_map_obj_tree(obj_data[99], -8,-8)
@@ -291,6 +282,7 @@ function _init()
       yield()
     end
    end  
+
 
    -- -- structures
    -- reset vars for this pass
@@ -366,25 +358,31 @@ function _init()
  shake=0
 end
 
-function wrap_discover_obj_pos(mx,my)
- if (mx>63) my+=32 mx-=64
- return mx*8,my*8
-end
 
 function m_map_obj_tree(objref, x,y, owner, factory)
   local newobj=m_obj_from_ref(objref, x,y, objref.type, nil, _g[objref.func_init], _g[objref.func_draw], _g[objref.func_update], nil)
   newobj.ico_obj,newobj.life = m_obj_from_ref(objref, 109,0, 3, newobj, nil, nil, _g[objref.func_onclick]), placement_damage and objref.hitpoint/2 or objref.hitpoint -- unless built without concrete
   -- player-controlled or ai?
-  -- todo: this whole thing may not be needed as once we have plr start pos, that might be all we need
-  newobj.owner=newobj.owner or owner or dist(x,y,pstartx,pstarty)<75 and 1 or 2
+  -- todo: this whole thing may not be needed as once we have plr start pos, that might be all we need  
+  -- 0=auto, 1=player, 2=computer/ai
+  newobj.owner=newobj.owner or owner
+  -- closest base?
+  if newobj.owner==nil then
+   local best_dist=9999
+   for i=1,3 do
+    local curr_dist=dist(x,y,bases[i][4],bases[i][5])
+    if (curr_dist<best_dist) newobj.owner=i best_dist=curr_dist
+   end
+  end
+  base,newobj.owner=bases[newobj.owner],min(newobj.owner,2)
   newobj.created_by,newobj.build_objs = owner or newobj.owner, {}
   -- go through all ref's and see if any valid for this building
   for o in all(obj_data) do
    local req_faq=o.req_faction
     if (o.parent_id!=nil and (o.parent_id==newobj.id or o.parent2_id==newobj.id))					
      and (req_faq==nil
-      or (req_faq>0 and req_faq==p_faction)
-      or (req_faq<0 and -p_faction!=req_faq))
+      or (req_faq>0 and req_faq==base[1])
+      or (req_faq<0 and -base[1]!=req_faq))
     then
       add(newobj.build_objs,
         m_obj_from_ref(o, 109,0, 4, newobj, nil, nil, function(self)
@@ -400,12 +398,9 @@ function m_map_obj_tree(objref, x,y, owner, factory)
       )
     end
   end
-
-  -- 0=auto, 1=player, 2=computer/ai
-  if newobj.owner==1 then
-    newobj.faction,newobj.col1,newobj.col2 = p_faction,p_col1,p_col2
-  else
-    newobj.faction,newobj.col1,newobj.col2,newobj.ico_obj.func_onclick = ai_faction,ai_col1,ai_col2,nil --make ai icons un-clickable
+  if (base) newobj.faction,newobj.col1,newobj.col2 = base[1],base[2],base[3]
+  if newobj.owner>1 then
+    newobj.ico_obj.func_onclick=nil --make ai icons un-clickable
     -- palace?
     if (newobj.id==19) ai_palace=newobj
   end
@@ -2300,13 +2295,13 @@ __gff__
 0400040404040404040000000000020000000606060604010101010101010101000101010000000000000101010000010000000000000000000001010101010101010101010102010000010101020201010101010101020101010101010202010101010101010101010101010101010101010101010101010101010101010101
 0101010101010000000001010000000001010101010100000000010100000000000000000000000001010000000000000000000000000000010100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 __map__
-0000000000000000000012121200000000000000000000000203040000020304000d680e85000000000000000000000203040000121212121212121212002f2f0000000000090a0a0b0000000000090a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0c0803060c0a0a0a0a0c000c0a0a0a0a0a2f2f
+0000000000000000000012121200000000000000000000000203040000020304000d680e85000000000000000000000203040000121212121212121212002f2f0000000000090a0a0b0000000000090a0a0a0a0a0a330a0a0a400a0a0a330a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0c0803060c0a0a0a0a0c000c0a0a0a0a0a2f2f
 000000000000000000121212121212000000000000000000080708000008030800000e0e850c0000300000000002030303030304001212121212121200002f2f000000000c0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0d00000d2f2f
 0000000000000203080304000012121200300000000002030307030508030703030400680e400e08000800000003070703070308121212121212120000002f2f00000000090a0a0a0a0a0a0a0a0a0a17190a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0d000d0a0a0a0a0a0a0a0a0a0a0a0a0a0d000d0a0a0a0a0d000000002f2f
 00000000000003030303030304121212120033090c00030307070303070707070703040e0e0e0e850b0000000003030707070703121212121212000000002f2f00000c0a0a0a0a0a0a0a0a0a1718181c1e0a0d0000090a0a0a0a0a0a0a0a0a0a0a0b000000000d0a0a0a0a0a0a0a0a0a0a0d000000090a0a0b00000000002f2f
 000000000000080303030707030012121200000d0a0c080303070707070707030308440e0e858585020303040008030307070703041212121212000000002f2f0a0a0a0b00000d0a0a0a0a0a1d1e1e1f0a0a0000000d0a0a0a0a0a0a0a0a0a0a0a0b0000000000000d0a0a0a0a0a0a0d0000000000090a0a0a00000000002f2f
 12000000000000080303030306121212120203040d0a0c0803030303030303080f0f0e0e0e000000000303030000030707070306001212121212000000002f2f0a0a0a0a0000000002080d0a0a0a0a0a0a0d00000000090a0a0d0000050d0a0a0a0a0c00000000000000000d0d000000000000000c0a0a0a0a00000000002f2f
-120000000c0a0a0a0b0803080012121212030303040d0a856a0e0f620e0e420e0f420e600e003500000803080000030707030800000000121200000000002f2f0a0a0a0b0000000003030303040d0a0a0b00000000000a0a0a00020303040d0a0a0a0a0c0000000000000000000000000000000c0a0a0a0a0a00000000002f2f
+120000000c0a0a0a0b0803080012121212030303040d0a856a0e0f030303420e0f420e600e003500000803080000030707030800000000121200000000002f2f0a0a0a0b0000000003030303040d0a0a0b00000000000a0a0a00020303040d0a0a0a0a0c0000000000000000000000000000000c0a0a0a0a0a00000000002f2f
 0000000c0a0a0a0d02030303001212121203070703040d850e0e0f0e0e0e0e0e0f0e0e0e0e000000000000000000080303060c0c000000000000000000002f2f0a0a0a0a0c0000000303070303040a0a0a0000000000090a0d0003070703040d0a0a0a0a0c000000000000000000000000000c0a0a0a0a0a0b00000000002f2f
 000000090d0203030307030612121212120803030303040000000d85858585850f858585856e0e003400000000000000000c0a0a0c0000000008000000002f2f000d0a0a0a0c0000030707070308090a0a0c000000000d0d00000307030303000d0a0a0a0b0000000000000000000000000c0a0a0a0a0a0a0d00000000002f2f
 0000000000030707070703001212301212120803030308000030000000000000000000000f0e0e8500000000000000000c0a0a0a0a0c00000000000000002f2f0000090a0a0a0c0008030707030c0a0a0a0b00000000000000000803030308000000090a0a0c00000000000000000c0a0a0a0d00000d0d0d0000000000002f2f
