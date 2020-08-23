@@ -9,27 +9,34 @@ cartdata("pn_undune2")
 
 -- data flags
 
-p_level,ai_level,p_col1,p_col2=dget"0",dget"23",dget"2",dget"3"
-bases,credits={
- {dget"1",p_col1,p_col2,dget"8",dget"9"},    --[1] p_faction, p_col1, p_col2,x,y
- {dget"20",dget"21",dget"22",dget"27",dget"28"}, --[2] ai_faction, ai_col1, ai_col2,x,y
- {dget"30",dget"31",dget"32",dget"33",dget"34"} --[3] ai_faction2, ai2_col1, ai2_col2,x,y
-},
-{
- shr(dget"6",16), -- player starting credits
- shr(500,16),     -- ai starting credits
- shr(dget"7",16)  -- target credits
-}
+-- p_level,ai_level,p_col1,p_col2=dget"0",dget"23",dget"2",dget"3"
+-- bases,credits={
+--  {dget"1",p_col1,p_col2,dget"8",dget"9"},    --[1] p_faction, p_col1, p_col2,x,y
+--  {dget"20",dget"21",dget"22",dget"27",dget"28"}, --[2] ai_faction, ai_col1, ai_col2,x,y
+--  {dget"30",dget"31",dget"32",dget"33",dget"34"} --[3] ai_faction2, ai2_col1, ai2_col2,x,y
+-- },
+-- {
+--  shr(dget"6",16), -- player starting credits
+--  shr(500,16),     -- ai starting credits
+--  shr(dget"7",16)  -- target credits
+-- }
 
 -- DEBUG #####
 -- player
+p_level,ai_level,p_col1,p_col2=1,1,8,2
+bases={
+ {3,p_col1,p_col2,22*8,54*8},--[1] p_faction, p_col1, p_col2,x,y
+ {2,11,3,26*8,32*8},         --[2] ai_faction, ai_col1, ai_col2,x,y
+ {1,12,1,37*8,2*8},          --[3] ai_faction2, ai2_col1, ai2_col2,x,y
+ {4,14,2,151,24}           --[3] emperor
+}
 --p_level,p_faction,p_col1,p_col2=1,1,12,1 -- atreides
 --p_level,p_faction,p_col1,p_col2=1,2,11,3 -- ordos
 --p_level,p_faction,p_col1,p_col2=1,3,8,2  -- harkonnen
 --ai
 --ai_faction,ai_col1,ai_col2,ai_level=1,12,1,2    -- atreides
 --ai_faction,ai_col1,ai_col2,ai_level=3,8,2,1    -- harkonnen
---credits={shr(999,16), shr(999,16), shr(9999,16) }
+credits={shr(999,16), shr(999,16), shr(9999,16) }
 
 
 -- fields
@@ -198,7 +205,7 @@ function _init()
  for i=-2,66 do
   fow[i]={}
   for l=-2,66 do
-   fow[i][l]=0 --16
+   fow[i][l]=16--0 --16
   end
  end
 
@@ -368,7 +375,7 @@ function m_map_obj_tree(objref, x,y, owner, factory)
   -- closest base?
   if newobj.owner==nil then
    local best_dist=9999
-   for i=1,3 do
+   for i=1,#bases do
     local curr_dist=dist(x,y,bases[i][4],bases[i][5])
     if (curr_dist<best_dist) newobj.owner=i best_dist=curr_dist
    end
@@ -2300,7 +2307,7 @@ __map__
 0000000000000000000012121200000000000000000000000203040000020304000d680e85000000000000000000000203040000121212121212121212002f2f0000000000090a0a0b0000000000090a0a0a0a0a0a330a0a0a400a0a0a330a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0c0803060c0a0a0a0a0c000c0a0a0a0a0a2f2f
 000000000000000000121212121212000000000000000000080708000008030800000e0e850c0000300000000002030303030304001212121212121200002f2f000000000c0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0d00000d2f2f
 0000000000000203080304000012121200300000000002030307030508030703030400680e400e08000800000003070703070308121212121212120000002f2f00000000090a0a0a0a0a0a0a0a0a0a17190a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0d000d0a0a0a0a0a0a0a0a0a0a0a0a0a0d000d0a0a0a0a0d000000002f2f
-00000000000003030303030304121212120033090c00030307070303070707070703040e0e0e0e850b0000000003030707070703121212121212000000002f2f00000c0a0a0a0a0a0a0a0a0a1718181c1e0a0d0000090a0a0a0a0a0a0a0a0a0a0a0b000000000d0a0a0a0a0a0a0a0a0a0a0d000000090a0a0b00000000002f2f
+00000000000003030303030304121212120033400c00030307070303070707070703040e0e0e0e850b0000000003030707070703121212121212000000002f2f00000c0a0a0a0a0a0a0a0a0a1718181c1e0a0d0000090a0a0a0a0a0a0a0a0a0a0a0b000000000d0a0a0a0a0a0a0a0a0a0a0d000000090a0a0b00000000002f2f
 000000000000080303030707030012121200000d0a0c080303070707070707030308440e0e858585020303040008030307070703041212121212000000002f2f0a0a0a0b00000d0a0a0a0a0a1d1e1e1f0a0a0000000d0a0a0a0a0a0a0a0a0a0a0a0b0000000000000d0a0a0a0a0a0a0d0000000000090a0a0a00000000002f2f
 12000000000000080303030306121212120203040d0a0c0803030303030303080f0f0e0e0e000000000303030000030707070306001212121212000000002f2f0a0a0a0a0000000002080d0a0a0a0a0a0a0d00000000090a0a0d0000050d0a0a0a0a0c00000000000000000d0d000000000000000c0a0a0a0a00000000002f2f
 120000000c0a0a0a0b0803080012121212030303040d0a856a0e0f030303420e0f420e600e003500000803080000030707030800000000121200000000002f2f0a0a0a0b0000000003030303040d0a0a0b00000000000a0a0a00020303040d0a0a0a0a0c0000000000000000000000000000000c0a0a0a0a0a00000000002f2f
