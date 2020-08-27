@@ -8,35 +8,35 @@ __lua__
 cartdata("pn_undune2") 
 
 -- data flags
-
--- p_level,ai_level,p_col1,p_col2=dget"0",dget"23",dget"2",dget"3"
--- bases,credits={
---  {dget"1",p_col1,p_col2,dget"8",dget"9"},    --[1] p_faction, p_col1, p_col2,x,y
---  {dget"20",dget"21",dget"22",dget"27",dget"28"}, --[2] ai_faction, ai_col1, ai_col2,x,y
---  {dget"30",dget"31",dget"32",dget"33",dget"34"} --[3] ai_faction2, ai2_col1, ai2_col2,x,y
--- },
--- {
---  shr(dget"6",16), -- player starting credits
---  shr(500,16),     -- ai starting credits
---  shr(dget"7",16)  -- target credits
--- }
-
--- DEBUG #####
--- player
-p_level,ai_level,p_col1,p_col2=1,1,11,3
-bases={
- {1,p_col1,p_col2,22*8,54*8},--[1] p_faction, p_col1, p_col2,x,y
- {3,8,2,26*8,32*8},         --[2] ai_faction, ai_col1, ai_col2,x,y
- {1,12,1,37*8,2*8},          --[3] ai_faction2, ai2_col1, ai2_col2,x,y
- {4,14,2,151,24}             --[4] emperor
+p_level,ai_level,p_col1,p_col2=dget"0",dget"1",dget"7",dget"8"
+bases,credits={
+ -- {dget"1",p_col1,p_col2,dget"8",dget"9"},       --[1] p_faction, p_col1, p_col2,x,y
+ -- {dget"20",dget"21",dget"22",dget"27",dget"28"},--[2] ai_faction, ai_col1, ai_col2,x,y
+ -- {dget"30",dget"31",dget"32",dget"33",dget"34"} --[3] ai_faction2, ai2_col1, ai2_col2,x,y
+},
+{
+ shr(dget"35",16), -- player starting credits
+ shr(500,16),     -- ai starting credits
+ shr(dget"36",16)  -- target credits
 }
---p_level,p_faction,p_col1,p_col2=1,1,12,1 -- atreides
---p_level,p_faction,p_col1,p_col2=1,2,11,3 -- ordos
---p_level,p_faction,p_col1,p_col2=1,3,8,2  -- harkonnen
---ai
---ai_faction,ai_col1,ai_col2,ai_level=1,12,1,2    -- atreides
---ai_faction,ai_col1,ai_col2,ai_level=3,8,2,1    -- harkonnen
-credits={shr(999,16), shr(999,16), shr(9999,16) }
+
+for i=1,dget"5" do
+ local base={}
+ for j=1,5 do
+  base[j]=dget(i*5+j)
+ end
+ add(bases,base)
+end
+--stop(bases)
+-- DEBUG #####
+-- p_level,ai_level,p_col1,p_col2 = 1,1,11,3
+-- bases={
+--  {1,p_col1,p_col2,22*8,54*8},--[1] p_faction, p_col1, p_col2,x,y
+--  {3,8,2,26*8,32*8},          --[2] ai_faction, ai_col1, ai_col2,x,y
+--  {1,12,1,37*8,2*8},          --[3] ai_faction2, ai2_col1, ai2_col2,x,y
+--  {4,14,2,151,24}             --[4] emperor
+-- }
+-- credits={shr(999,16), shr(999,16), shr(9999,16) }
 
 
 -- fields
@@ -181,9 +181,9 @@ function _init()
  -- enable mouse
  poke(0x5f2d, 1)
 
- -- menuitem(1,"exit to title",function()
- --  load("pico-dune-main")
- -- end)
+ menuitem(1,"exit to title",function()
+  load("pico-dune-main")
+ end)
 
  --  
  -- explode object data
@@ -258,6 +258,7 @@ function _init()
       end
     end
   end
+  
 
  -- worker
  --worker = m_map_obj_tree(obj_data[99], -8,-8)
@@ -346,15 +347,20 @@ function _init()
    if (building_count[1]==0) endstate=3
 
    -- game over?
-   if endstate then 
-    dset(14, endstate)
-    dset(13, t()-start_time)
-    dset(10,strnum)
-    dset(24,getscoretext(credits[2]))
-    dset(11,unit_dest[1])
-    dset(25,unit_dest[2])
-    dset(12,build_dest[1])
-    dset(26,build_dest[2])  
+   if endstate then    
+    local offset=40
+    for data in all{endstate,t()-start_time,strnum,getscoretext(credits[2]),unit_dest[1],unit_dest[2],build_dest[1],build_dest[2]} do
+     dset(offset, data)
+     offset+=1
+    end    
+    -- dset(40, endstate)
+    -- dset(41, t()-start_time)
+    -- dset(42,strnum)
+    -- dset(43,getscoretext(credits[2]))
+    -- dset(44,unit_dest[1])
+    -- dset(45,unit_dest[2])
+    -- dset(46,build_dest[1])
+    -- dset(47,build_dest[2])  
     rectfill(30,54,104,70,0)
     ?"mission "..(endstate<3 and "complete" or "failed"),36,60,p_col1
     flip()
@@ -1485,7 +1491,7 @@ function draw_ui()
 
  -- score
  strnum=getscoretext(credits[1])
- --?sub("000000", #strnum+1)..strnum, 103,2, p_col2
+ ?sub("000000", #strnum+1)..strnum, 103,2, p_col2
 
  -- turn on/off radar
  if hq!=last_hq then
@@ -1725,7 +1731,6 @@ function update_collisions()
   else
     -- do we have a unit selected?
     if selected_obj 
-     --and selected_obj.type==1
      and selected_obj.owner==1 
      and selected_obj.speed>0 
      and selected_obj.state!=7 then     
@@ -2348,7 +2353,7 @@ __map__
 0303030303000000000000000000121212121202030412121212000000330000330000000000000000000000000000000000000a0a0a0a0a0c00000000002f2f000000000000121200000000000d0a0a0a0a0a0a0a0a0a0a0a34000000000000000c150000000000000000050304121212121212121212121212121212122f2f
 0a0a0c030800000000000000000000000000000303030303030400000c0a0a0a0a0a0a0a0c0000000000000000000000000000090a0a0a0a0a00000000002f2f1212121212121212000000000049093a0a0a420a6a0a010e0a0000000000090a0a0a0b0000001212120203030303041212121212120000121212121212122f2f
 0a0a0a0a0c000000000c0a0a0c00000000000008030307070703040c0a0a0a0a0a0a0a0a0a0c0000000000000000000000000c0a0a0a0a0a0d00000000002f2f12121212121212121212120000000d0a0a0a0a0a0a0a0e0e0d300000000000090a0a000000000000000803030707030412121212000000000000000000002f2f
-0a0a0a0a0a0a0a0a0a0a0a0a0b0000000000000002070703030303090a0a0a0a0a0a0a0a0a0a000000000000000000000000090a0a0a0a0d0000000000002f2f1212121212121212121212120000000d0a0a0a0a6c0a0a0a000000000000000d0b00000000000000000807030703030312121212000000000000000000002f2f
+0a0a0a0a0a0a0a0a0a0a0a0a0b0000000000000002070703030303090a0a0a0a0a0a0a0a0a0a000000000000000000000000090a0a0a0a0d0000000000002f2f1212121212121212121212120000000d0a0a420a6c0a0a0a000000000000000d0b00000000000000000807030703030312121212000000000000000000002f2f
 0a0a0a0a0a0a0a0a0a0a0a0a0d00000012120000030707030303080d0a0a0a0a0a0d0000000d0a0a0a0a0a0c0000000000090a0a0d0000000000000000002f2f121212121212121212121200080000000030090a0a0a0a0a34000000000000000000000000000800000203030707070304121212000000000000000012122f2f
 0a0a0a0a0a0a0a0a0a0a0a0a000000121212121203070303080000000d0a0a0a0a0000000000090a0a0a0a0a0a0c000000000d0000000000000000000c0a2f2f121212121212121212120000000000000000090a0a0a0a0d0000000000000000000000000800000c0d0803030707070300121212000000140000001212122f2f
 0a0a0a0a0a0a0a0a0a0a0a0d00000012121212120803030308000000000a0a0a0b00000000000d0a0a0a0a0a0a0b000000000000000000000000000c0a0a2f2f1212121212121212121200000000080000000d0a0a0a0d3000000000000000000000121200000000000003070707030312121212120000000000001212122f2f

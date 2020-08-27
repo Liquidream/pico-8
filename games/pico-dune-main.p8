@@ -57,8 +57,11 @@ endstate = 0
 function _init()
  cartdata("pn_undune2")
 
+ log_cartdata()
+
  load_data()
 end
+
 
 function _draw()
  cls()
@@ -123,7 +126,7 @@ function _update60()
    p_level += 1
    --printh("p_level = "..p_level)
    dset(0, p_level)
-   dset(14, 0) -- clear endstate
+   dset(40, 0) -- clear endstate
    mode = levelselect_mode
    -- play "intro/select" music
    music(6)
@@ -144,20 +147,20 @@ function load_data()
  p_level = max(1, dget(0))
  printh("p_level: = "..tostr(p_level))
 
- endstate = dget(14)  -- (0=none, 1=credit target, 2=enemy defeated, 3=player lost)
+ endstate = dget(40)  -- (0=none, 1=credit target, 2=enemy defeated, 3=player lost)
  printh("endstate = "..tostr(endstate))
  if endstate>0 then
   mode = levelend_mode
   -- get level end data
-  p_score = dget(4)
+  p_score = dget(2)
   p_rank = calc_rank()
-  p_time = flr(dget(13)) -- playing time 
-  p_harvested = dget(10) -- spice harvested by player
-  p_units = dget(11) -- units destroyed by player
-  p_buildings = dget(12) -- buildings destroyed by player
-  ai_harvested = dget(24) -- harvested by ai
-  ai_units = dget(25) -- units destroyed by ai
-  ai_buildings = dget(26) -- buildings destroyed by ai   
+  p_time = flr(dget(41)) -- playing time 
+  p_harvested = dget(42) -- spice harvested by player
+  ai_harvested = dget(43) -- harvested by ai
+  p_units = dget(44) -- units destroyed by player
+  ai_units = dget(45) -- units destroyed by ai
+  p_buildings = dget(46) -- buildings destroyed by player
+  ai_buildings = dget(47) -- buildings destroyed by ai   
   if endstate < 3 then 
    -- play "win" music
    music(10)
@@ -185,39 +188,44 @@ function load_level(num)
  p_fact = 3 -- (1=atreides, 2=ordos, 3-harkonen)
  
  dset(0, num)
- dset(1, p_fact) -- p_faction
- dset(2, faction_cols[p_fact][1]) -- p_col1
- dset(3, faction_cols[p_fact][2]) -- p_col2
+ dset(1, mdata[5]) -- ai level
+  
+ num_bases=3
+ dset(5, num_bases)
 
- dset(6, mdata[2]) -- starting credits
- dset(7, mdata[3]) -- target credits
- dset(10, 0) -- harvested
- dset(11, 0) -- units destroyed
- dset(12, 0) -- buildings destroyed
- dset(13, 0) -- playing time
+ dset(6, p_fact) -- p_faction
+ dset(7, faction_cols[p_fact][1]) -- p_col1
+ dset(8, faction_cols[p_fact][2]) -- p_col2
+ dset(9, 176) -- player base x-pos
+ dset(10, 432) -- player base y-pos
+
 
  ai_fact = 2 --mdata[4]
- dset(20, ai_fact) -- ai_faction
- dset(21, ai_fact and faction_cols[ai_fact][1] or nil) -- ai_col1
- dset(22, ai_fact and faction_cols[ai_fact][2] or nil) -- ai_col2
- 
- dset(23, mdata[5]) -- ai level
- dset(24, 0) -- ai harvested
- dset(25, 0) -- ai units destroyed
- dset(26, 0) -- ai buildings destroyed
+ dset(11, ai_fact) -- ai_faction
+ dset(12, ai_fact and faction_cols[ai_fact][1] or nil) -- ai_col1
+ dset(13, ai_fact and faction_cols[ai_fact][2] or nil) -- ai_col2
+ dset(14, 296)-- ai base x-pos
+ dset(15, 16) -- ai base y-pos 
 
+ ai2_fact = 1 --mdata[4]
+ dset(16, ai2_fact)
+ dset(17, ai2_fact and faction_cols[ai2_fact][1] or nil)
+ dset(18, ai2_fact and faction_cols[ai2_fact][2] or nil)
+ dset(19, 208)-- ai base x-pos
+ dset(20, 256) -- ai base y-pos
 
- -- set ai to atreides
- -- ai_fact = 1
- -- dset(20, ai_fact) -- ai_faction
- -- dset(21, faction_cols[ai_fact][1]) -- ai_col1
- -- dset(22, faction_cols[ai_fact][2]) -- ai_col2
- 
- -- dset(23, 5) -- ai level
- -- dset(24, 0) -- ai harvested
- -- dset(25, 0) -- ai units destroyed
- -- dset(26, 0) -- ai buildings destroyed
- 
+ dset(35, mdata[2]) -- starting credits
+ dset(36, mdata[3]) -- target credits
+
+ dset(41, 0) -- playing time
+ dset(42, 0) -- harvested
+ dset(43, 0) -- ai harvested
+ dset(44, 0) -- units destroyed
+ dset(45, 0) -- ai units destroyed
+ dset(46, 0) -- buildings destroyed
+ dset(47, 0) -- ai buildings destroyed
+
+ log_cartdata()
 
  -- load level map data
  local mapfile = "pico-dune-map"..num..".p8"
@@ -227,6 +235,16 @@ function load_level(num)
 
  load(game_cart)
 end
+
+
+function log_cartdata()
+ printh("--- cart data ---------")
+ for i=0,63 do
+  --dset(i,0)
+  printh("["..i.."] "..tostr(dget(i)))
+ end
+end
+
 
 __gfx__
 00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
