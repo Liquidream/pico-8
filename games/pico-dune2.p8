@@ -9,11 +9,7 @@ cartdata("pn_undune2")
 
 -- data flags
 p_level,ai_level,p_col1,p_col2=dget"0",dget"1",dget"7",dget"8"
-bases,credits={
- -- {dget"1",p_col1,p_col2,dget"8",dget"9"},       --[1] p_faction, p_col1, p_col2,x,y
- -- {dget"20",dget"21",dget"22",dget"27",dget"28"},--[2] ai_faction, ai_col1, ai_col2,x,y
- -- {dget"30",dget"31",dget"32",dget"33",dget"34"} --[3] ai_faction2, ai2_col1, ai2_col2,x,y
-},
+bases,credits={},
 {
  shr(dget"35",16), -- player starting credits
  shr(500,16),     -- ai starting credits
@@ -27,7 +23,7 @@ for i=1,dget"5" do
  end
  add(bases,base)
 end
---stop(bases)
+
 -- DEBUG #####
 -- p_level,ai_level,p_col1,p_col2 = 1,1,11,3
 -- bases={
@@ -241,15 +237,13 @@ function _init()
     for mx=0,127 do
       local objref=nil
       local spr_val=mget(mx,my)
-       -- handle player start pos (const yard) as a special case
-       -- found player start position
-       -- center camera & create player const yard
-       if (spr_val==1) camx,camy,objref=bases[1][4]-56,bases[1][5]-56,obj_data[1]
-       
-       -- find object for id
-       for o in all(obj_data) do         
-        if (o.obj_spr!=nil and o.obj_spr==spr_val) objref=o break       
-       end
+      -- handle player start pos (const yard) as a special case
+      -- center camera & create player const yard
+      if (spr_val==1) camx,camy,objref=bases[1][4]-56,bases[1][5]-56,obj_data[1]      
+      -- find object for id
+      for o in all(obj_data) do         
+       if (o.obj_spr!=nil and o.obj_spr==spr_val) objref=o break       
+      end
       if objref!=nil and (spr_val==1 or spr_val>=18) then --don't create "concrete" as objs
         local ox,oy=mx,my
         if (ox>63) oy+=32 ox-=64
@@ -261,9 +255,7 @@ function _init()
   
 
  -- worker
- --worker = m_map_obj_tree(obj_data[99], -8,-8)
  worker_cor = cocreate(function()
-
   while true do
 
   if _t%30==0 then
@@ -298,11 +290,10 @@ function _init()
     end
    end  
 
-
    -- -- structures
    -- reset vars for this pass
    power_bal,total_storage,has_radar,building_count = 0,0,false,{0,0}
-   has_obj={{},{}} 
+   has_obj={{},{}}
    --if (_t%100==0) has_obj={{},{}} 
 
    for building in all(buildings) do  
@@ -316,14 +307,12 @@ function _init()
      power_bal -= building.power
      if (building.id==7) has_radar=true
      total_storage+=building.storage
-     --if (sub(building.name,1,5)=="sPICE") total_storage+=1000
     end
     -- track counts & objs
     building_count[building.owner]+=1
     has_obj[building.created_by][building.id]=building
    end
-   
-   
+      
    -- units
    for unit in all(units) do
     -- if our unit, or ai not under fog of war
@@ -348,19 +337,12 @@ function _init()
 
    -- game over?
    if endstate then    
+    -- save game data state
     local offset=40
     for data in all{endstate,t()-start_time,strnum,getscoretext(credits[2]),unit_dest[1],unit_dest[2],build_dest[1],build_dest[2]} do
      dset(offset, data)
      offset+=1
-    end    
-    -- dset(40, endstate)
-    -- dset(41, t()-start_time)
-    -- dset(42,strnum)
-    -- dset(43,getscoretext(credits[2]))
-    -- dset(44,unit_dest[1])
-    -- dset(45,unit_dest[2])
-    -- dset(46,build_dest[1])
-    -- dset(47,build_dest[2])  
+    end 
     rectfill(30,54,104,70,0)
     ?"mission "..(endstate<3 and "complete" or "failed"),36,60,p_col1
     flip()
@@ -384,9 +366,7 @@ function m_map_obj_tree(objref, x,y, owner, factory)
   local newobj=m_obj_from_ref(objref, x,y, objref.type, nil, _g[objref.func_init], _g[objref.func_draw], _g[objref.func_update], nil)
   newobj.ico_obj,newobj.life = m_obj_from_ref(objref, 109,0, 3, newobj, nil, nil, _g[objref.func_onclick]), placement_damage and objref.hitpoint/2 or objref.hitpoint -- unless built without concrete
   -- player-controlled or ai?
-  -- todo: this whole thing may not be needed as once we have plr start pos, that might be all we need  
   -- 0=auto, 1=player, 2=computer/ai
-  -- closest base?
   newobj.owner=newobj.owner or owner
   if factory==nil then
    -- unless explicitly stated...
@@ -406,7 +386,6 @@ function m_map_obj_tree(objref, x,y, owner, factory)
    --created by factory
    newobj.base_idx=factory.base_idx
   end
-  --end
   newobj.created_by,newobj.build_objs,base = owner or newobj.owner,{},bases[newobj.base_idx or factory.base_idx]
   new_faction=base[1] newobj.faction,newobj.col1,newobj.col2 = new_faction,base[2],base[3]
   -- go through all ref's and see if any valid for this building
@@ -450,7 +429,7 @@ function m_map_obj_tree(objref, x,y, owner, factory)
   -- building props?        
   if objref.type==2 then
     -- prepare the map?
-    local slabs=(objref.id==2 or objref.id==3)    
+    local slabs=objref.obj_spr==15
     for xx=0,objref.w-1 do
       for yy=0,objref.h-1 do
        -- block map under building (diff tiles for player/ai-owned)
@@ -466,7 +445,7 @@ function m_map_obj_tree(objref, x,y, owner, factory)
      m_map_obj_tree(obj_data[32],ux,uy,newobj.owner,newobj)
     end
   else
-  -- unit props  
+    -- unit props
     if (newobj.norotate!=1) newobj.r=flr(rnd"8")*.125
     if newobj.arms>0 then
      -- combat stuff
@@ -475,19 +454,20 @@ function m_map_obj_tree(objref, x,y, owner, factory)
        self.state,self.bullet_x,self.bullet_y,self.bullet_tx,self.bullet_ty = 4,self.x+4,self.y+4,self.target.x+self.target.w/2,self.target.y+self.target.h/2
        -- normalize dx,dy
        local dx,dy = self.bullet_tx-self.bullet_x,self.bullet_ty-self.bullet_y
-       local d=sqrt(dx * dx + dy * dy)
+       local d=sqrt(dx*dx+dy*dy)
        self.bullet_dx,self.bullet_dy = (dx/d)*2,(dy/d)*2
        ssfx(self.fire_sfx)
        reveal_fow(self)
      end
      -- rocket/cannon turret?
-     if (newobj.id==15 or newobj.id==16) wrap_mset(xpos, ypos, 149)
+     if (newobj.speed==0) wrap_mset(xpos, ypos, 149)
+     --if (newobj.id==15 or newobj.id==16) wrap_mset(xpos, ypos, 149)
     else
      -- harvesters
      if (newobj.id==32) newobj.capacity=0 factory=nil
      -- non-fighting units
      newobj.last_fact=factory --default, for retreating
-    end    
+    end
     add(units,newobj)
     -- default to guard
     do_guard(newobj)
@@ -534,7 +514,6 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
       -- don't draw, as off-screen
       return
      end
-
      pal()
      palt(0,false)
      if (self.trans_col and self.type<=2) palt(self.trans_col,true)     
@@ -1755,7 +1734,6 @@ function update_collisions()
       ssfx"61"
     end
 
-    --if (not show_menu) selected_obj=nil
   end 
   
   target_mode=false
