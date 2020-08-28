@@ -834,7 +834,7 @@ function _update60()
   if (cursy>123) camy+=2
 
   -- lock cam to map
-  camx,camy = mid(camx,384),mid(-8,camy,384)
+  camx,camy = mid(camx,368),mid(-8,camy,368)
    
   -- update all unit coroutines 
   -- (pathfinding, moving, attacking, etc.)
@@ -1460,9 +1460,9 @@ function draw_ui()
  -- 
  -- draw_radar()
  -- 
- rect(90,90,125,125,p_col1)
- rect(91,91,124,124,p_col2)  
- rectfill(92,92,123,123,0)
+ rect(90,90,124,124,p_col1)
+ rect(91,91,123,123,p_col2)  
+ rectfill(92,92,122,122,0)
 
  
  -- update/draw message
@@ -1484,20 +1484,20 @@ function draw_ui()
    radar_frame+=radar_dir
    -- draw radar anim
    clip(
-     max(108-radar_frame,91),
-     max(108-(radar_frame>20 and radar_frame-20 or 0),91),
-     min(radar_frame*2,33),
-     min((radar_frame>20 and radar_frame-20 or 1)*2,33))
+     max(109-radar_frame,91),
+     max(109-(radar_frame>20 and radar_frame-20 or 0),92),
+     min(radar_frame*2,32),
+     min((radar_frame>20 and radar_frame-20 or 1)*2,32))
    for i=1,300 do
-     pset(92+rnd"32",92+rnd"32",5+rnd"3")
+     pset(92+rnd"32",91+rnd"32",5+rnd"3")
    end
    clip()
    return
  end
   
  -- draw radar data
- for xx=0,31 do
-  for yy=0,31 do
+ for xx=0,30 do
+  for yy=0,30 do
    if (radar_data[xx..","..yy]) pset(92+xx,92+yy,radar_data[xx..","..yy])
   end
  end
@@ -1684,7 +1684,7 @@ function update_collisions()
     and cursx>89 and cursx<122
     and cursy>90 and cursy<123 then
       -- clicked radar
-      camx,camy = mid(0,(cursx-94)*16, 384),mid(-8,(cursy-94)*16, 384)
+      camx,camy = mid(0,(cursx-94)*16, 368),mid(-8,(cursy-94)*16, 368)
       selected_obj=last_selected_obj -- always do this, in case an obj under rader will select
  -- clicked something?
  elseif left_button_clicked then
