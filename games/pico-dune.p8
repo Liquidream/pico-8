@@ -605,7 +605,7 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
          -- building?         
          for xx=0,self.spr_w-1 do
            for yy=0,self.spr_h-1 do
-             wrap_mset(self.x/8+xx, self.y/8+yy, 15)
+             wrap_mset(self.x/8+xx, self.y/8+yy, 14)
            end
          end
          del(buildings,self)
@@ -614,7 +614,7 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
          -- unit
          local gx,gy = self:get_tile_pos()
          if (wrap_mget(gx,gy)<9) wrap_mset(gx,gy,20) --scorch sand
-         if (self.id<=17) wrap_mset(gx,gy,15)
+         if (self.id<=17) wrap_mset(gx,gy,14)
          del(units,self)
          -- bloom
          if self.id==42 then
