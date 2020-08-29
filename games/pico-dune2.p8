@@ -1466,7 +1466,7 @@ function draw_ui()
 
  
  -- update/draw message
- --if (msgcount>0) msgcount-=1 print(message, 2,2)
+ if (msgcount>0) msgcount-=1 print(message, 2,2)
 
  -- score
  strnum=getscoretext(credits[1])

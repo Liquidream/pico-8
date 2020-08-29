@@ -8,28 +8,40 @@ __lua__
 cartdata("pn_undune2") 
 
 -- data flags
--- p_level,p_faction,p_col1,p_col2,ai_faction,ai_col1,ai_col2,ai_level=dget"0",dget"1",dget"2",dget"3",dget"20",dget"21",dget"22",dget"23"
-
--- credits={
---  shr(dget"6",16), -- player starting credits
+-- p_level,ai_level,p_col1,p_col2=dget"0",dget"1",dget"7",dget"8"
+-- bases,credits={},
+-- {
+--  shr(dget"35",16), -- player starting credits
 --  shr(500,16),     -- ai starting credits
---  shr(dget"7",16)  -- target credits
+--  shr(dget"36",16)  -- target credits
 -- }
 
+-- for i=1,dget"5" do
+--  local base={}
+--  for j=1,5 do
+--   base[j]=dget(i*5+j)
+--  end
+--  add(bases,base)
+-- end
+
 -- DEBUG #####
--- player
---p_level,p_faction,p_col1,p_col2=1,1,12,1 -- atreides
---p_level,p_faction,p_col1,p_col2=1,2,11,3 -- ordos
-p_level,p_faction,p_col1,p_col2=1,3,8,2  -- harkonnen
---ai
-ai_faction,ai_col1,ai_col2,ai_level=1,12,1,2    -- atreides
---ai_faction,ai_col1,ai_col2,ai_level=3,8,2,1    -- harkonnen
+-- 1) 12, 1  Atreides
+-- 2) 11, 3  Ordos
+-- 3)  8, 2  Harkonnen
+-- 4) 14, 2  Emperor?
+p_level,ai_level,p_col1,p_col2 = 1,1,8,2
+bases={
+ {3,p_col1,p_col2,11*8,9*8},--[1] p_faction, p_col1, p_col2,x,y
+ --{1,12,1,20*8,19*8},          --[2] ai_faction, ai_col1, ai_col2,x,y
+ -- {1,12,1,37*8,2*8},          --[3] ai_faction2, ai2_col1, ai2_col2,x,y
+ -- {4,14,2,151,24}             --[4] emperor
+}
 credits={shr(999,16), shr(999,16), shr(9999,16) }
 
 
 -- fields
-_g,buildings,units,object_tiles,radar_data,spice_tiles,particles,has_obj,start_time,_t,build_dest,unit_dest,keyx,keyy,hq,radar_frame={},{},{},{},{},{},{},{{},{}},t(),0,{0,0},{0,0},0,0,false,0
-last_hq,message,msgcount,fow=hq,"",0,{}
+_g,buildings,units,object_tiles,radar_data,spice_tiles,particles,has_obj,start_time,_t,build_dest,unit_dest,keyx,keyy,hq,radar_frame,message,msgcount,fow={},{},{},{},{},{},{},{{},{}},t(),0,{0,0},{0,0},0,0,false,0,"",0,{}
+last_hq=hq
 
 _g.factory_click=function(self)
   menu_pos,selected_subobj,ui_controls=1,nil,{}
@@ -90,7 +102,6 @@ launch_click=function(self)
   local val=wrap_mget(mx,my)
   if val>=9 and val<=15 then
    last_selected_obj.life=0
-   --del(units,last_selected_obj)
    m_map_obj_tree(obj_data[1],mx*8,my*8,1)
    ssfx"61"
   end
@@ -107,52 +118,56 @@ function process_click(self, mode)
 end
 
 -- object data
-obj_data=[[id|name|obj_spr|ico_spr|type|w|h|z|trans_col|parent_id|parent2_id|owner|col1|col2|icol1|icol2|ico_w|ico_h|req_id|req_level|req_faction|max|cost|power|arms|hitpoint|speed|range|fire_type|fire_rate|fire_sfx|death_sfx|norotate|altframe|framecount|life|frame|process|spent|fire_cooldown|hit|flash_count|col_cycle_pos|col_cycle_src|col_cycle|description|func_init|func_draw|func_update|func_onclick
-1|cONSTRUCTION yARD|64|170|2|2|2|1||nil|||||||2|2|nil|1|||100|0|0|1600|0|||||53||||0|0|0|0|0|0|1|1|||aLL STRUCTURES ARE~BUILT BY THE~CONSTRUCTION YARD.||||factory_click
-2|lARGE cONCRETE sLAB|16|162|2|2|2|1||1|||||7|5|2|2|1|4|||20|0|0|0|0|||||||||0|0|0|0|0|0|1|1|||uSE CONCRETE TO MAKE A~STURDY FOUNDATION FOR~YOUR STRUCTURES.||||
-3|sMALL cONCRETE sLAB|16|162|2|1|1|1||1|||||6|6|2|2|1|1|||5|0|0|0|0|||||||||0|0|0|0|0|0|1|1|||uSE CONCRETE TO MAKE A~STURDY FOUNDATION FOR~YOUR STRUCTURES.||||
-4|dEFENSIVE wALL|133|164|2|1|1|1||1|||||||2|2|7|4|||50|0|0|200|0|||||53||164||0|0|0|0|0|0|1|1|||tHE wALL IS USED FOR~PASSIVE DEFENSE.||||
-5|wINDTRAP|66|172|2|2|2|1||1|||||||2|2|1|1|||300|-100|0|800|0|||||53|||10|0|0|0|0|0|0|1|1|11|12,12,12,12,13,1,1,1,1,13|tHE WINDTRAP SUPPLIES~POWER TO YOUR BASE.~wITHOUT POWER YOUR~STRUCTURES WILL DECAY.||||
-6|sPICE rEFINERY|68|174|2|3|2|1||1|||||||2|2|5|1|||400|30|0|1800|0|||||53|||15|0|0|0|0|0|0|1|1|11|11,10,8,8|tHE rEFINERY CONVERTS~SPICE INTO CREDITS.||draw_refinery||
-7|rADAR oUTPOST|106|136|2|2|2|1||1|||||||2|2|5|2|||400|30|0|2000|0|||||53||||0|0|0|0|0|0|1|1|||tHE oUTPOST PROVIDES~RADAR AND AIDS CONTROL~OF DISTANT VEHICLES.||||
-8|sPICE sTORAGE sILO|104|134|2|2|2|1||1|||||||2|2|6|2|||150|5|0|600|0|||||53||||0|0|0|0|0|0|1|1|||tHE sPICE SILO IS USED ~TO STORE REFINED SPICE.||||
-9|bARRACKS|108|168|2|2|2|1||1|||||11|3|2|2|7|2|-3||300|10|0|1200|0|||||53||||0|0|0|0|0|0|1|1|||tHE bARRACKS IS USED TO~TRAIN YOUR lIGHT ~INFANTRY.||||factory_click
-10|wor tROOPER fACILITY|110|138|2|2|2|1||1|||||||2|2|7|2|3||400|10|0|1600|0|||||53||||0|0|0|0|0|0|1|1|||wor IS USED TO TRAIN~YOUR hEAVY INFANTRY.||||factory_click
-11|lIGHT vEHICLE fACTORY|96|140|2|2|2|1||1|||||||2|2|6|2|||400|20|0|1400|0|||||53||||0|0|0|0|0|0|1|1|||tHE lIGHT fACTORY~PRODUCES LIGHT ATTACK~VEHICLES.||||factory_click
-12|hEAVY vEHICLE fACTORY|98|142|2|3|2|1||1|||||||2|2|6|3|||600|20|0|800|0|||||53||||0|0|0|0|0|0|1|1|||tHE hEAVY fACTORY~PRODUCES HEAVY ATTACK~VEHICLES.||||factory_click
-13|hI-tECH fACTORY|101|166|2|3|2|1||1|||||||2|2|12|5|||500|35|0|1600|0|||||53||||0|0|0|0|0|0|1|1|||tHE hI-tECH fACTORY~PRODUCES FLYING~VEHICLES.||||factory_click
-14|rEPAIR fACILITY|128|230|2|3|2|1||1|||||||2|2|12|5|||700|20|0|800|0|||||53|||4|0|0|0|0|0|0|1|1|8|0|tHE rEPAIR fACILITY~IS USED TO REPAIR YOUR~VEHICLES.||||
-15|cANNON tURRET|71|232|1|1|1|1|11|1|||||||2|2|7|5|||125|10|38|1200|0|4|1|9.5|58|53||||0|0|0|0|0|0|1|1|||tHE cANNON tURRET IS~USED FOR SHORT RANGE~ACTIVE DEFENSE.||||
-16|rOCKET tURRET|87|234|1|1|1|1|11|1|||||||2|2|7|6|||250|20|112|1200|0|9|2|28|60|53||||0|0|0|0|0|0|1|1|||tHE rOCKET TURRET IS~USED FOR MEDIUM RANGE~ACTIVE DEFENSE.||||
-17|sTARPORT|61|228|2|3|3|1||1|||||11|3|2|2|6|6||1|500|50|0|2000|0|||||53|||15|0|0|0|0|0|0|1|1|11|11,10,8,8|tHE sTARPORT IS USED TO~ORDER AND RECEIVED~SHIPMENTS FROM~c.h.o.a.m.||draw_refinery||factory_click
-18|hOUSE OF ix|131|224|2|2|2|1||1|||||||2|2|12|5|||500|40|0|1600|0|||||53||||0|0|0|0|0|0|1|1|||tHE ix rESEARCH~fACILITY ADVANCES YOUR~hOUSE'S TECHNOLOGY.||||
-19|pALACE|58|226|2|3|3|1||1|||||||2|2|17|8||1|999|80|0|4000|0|||1750||53||||0|0|0|0|0|0|1|1|||tHIS IS YOUR pALACE.||||
-20|iNFANTRY sOLDIER|49|236|1|0.5|0.5|1|11|9|||||15|3|2|2||2|-3||60||8|80|0.05|2|1|2|60|57|1|48|10|0|0|0|0|0|0|1|1|||iNFANTRY ARE LIGHTLY~ARMOURED FOOTSOLDIERS,~WITH LIMITED FIRING~RANGE AND SPEED.||||
-21|lIGHT iNFANTRY sQUAD|48|236|1|1|1|1|11|9|||||15|3|2|2||2|-3||100||16|200|0.05|2|1|5|60|57|1|49|10|0|0|0|0|0|0|1|1|||iNFANTRY ARE LIGHTLY~ARMOURED FOOTSOLDIERS,~WITH LIMITED FIRING~RANGE AND SPEED.||||
-22|hEAVY tROOPER|49|194|1|0.5|0.5|1|11|10|||||||2|2||3|-1||100||16|180|0.1|6|2|12|58|57|1|48|10|0|0|0|0|0|0|1|1|||tROOPERS ARE HEAVILY~ARMOURED FOOTSOLDIERS,~WITH IMPROVED FIRING~RANGE AND SPEED.||||
-23|hEAVY tROOPERS|48|194|1|1|1|1|11|10|||||||2|2||3|-1||200||32|440|0.1|6|2|24|58|57|1|49|10|0|0|0|0|0|0|1|1|||tROOPERS ARE HEAVILY~ARMOURED FOOTSOLDIERS,~WITH IMPROVED FIRING~RANGE AND SPEED.||||
-24|fREMEN|48|236|1|1|1|1|11|||0|9|4|9|1|2|2||8|1||0||64|880|0.1|3|1|3|60|57|1|49|10|0|0|0|0|0|0|1|1|||tHE fREMEN ARE NATIVE~TO dUNE. eLITE FIGHTERS~IN ALLIANCE WITH THE~aTREIDES.||||
-25|sABOTEUR|48|236|1|0.5|0.5|1|11|||0|1|0|13|1|2|2||8|2||0||600|160|0.4|0|1|150|60|57|1|49|10|0|0|0|0|0|0|1|1|||tHE sABOTEUR IS A~SPECIAL MILITARY UNIT,~TRAINED AT AN oRDOS~pALACE. cAN DESTROY~ALMOST ANY STRUCTURE OR~VEHICLE.||||
-26|sARDAUKAR|48|236|1|1|1|1|11|||0|14|2|14|2|2|2||4|||0||20|440|0.1|1|2|5|58|57||||0|0|0|0|0|0|1|1|||tHE sARDUKAR ARE THE~eMPEROR'S ELITE TROOPS.~WITH SUPERIOR FIREPOWER~AND ARMOUR.||||
-27|tRIKE|51|204|1|1|1|1|11|11|17||||15|4|2|2||2|||150||32|400|0.6|3|1|5|60|54||||0|0|0|0|0|0|1|1|||tHE tRIKE IS A LIGHTLY-~ARMOURED, 3-WHEELED~VEHICLE, WITH LIMITED~FIRING RANGE, BUT RAPID~SPEED.||||
-28|qUAD|52|206|1|1|1|1|11|11|17||||||2|2||3|||200||40|520|0.5|3|1|5|60|54||||0|0|0|0|0|0|1|1|||tHE qUAD IS A LIGHTLY-~ARMOURED, 4-WHEELED~VEHICLE. sLOWER THAN~THE tRIKE, BUT STRONGER~ARMOUR AND FIREPOWER.||||
-29|cOMBAT tANK|53|196|1|1|1|1|11|12|17||||||2|2|7|4|||300||152|800|0.25|4|1|38|58|54||||0|0|0|0|0|0|1|1|||tHE cOMBAT tANK IS A~MEDIUM ARMOURED TANK,~FIRES HIGH-EXPLOSIVE~ROUNDS.||||
-30|sIEGE tANK|55|198|1|1|1|1|11|12|17||||15|4|2|2|7|6|||600||180|1200|0.2|5|1|45|58|54||||0|0|0|0|0|0|1|1|||tHE mISSILE tANK IS A~MEDIUM ARMOURED TANK,~WHICH FIRES MISSILES.~lONG-RANGE, BUT~INACCURATE.||||
-31|rOCKET lAUNCHER|54|202|1|1|1|1|11|12|17||||15|4|2|2|7|5|||450||448|400|0.3|9|2|112|58|54||||0|0|0|0|0|0|1|1|||tHE sIEGE tANK IS A~HEAVY ARMOURED TANK,~WHICH HAS DUAL CANNONS,~BUT IS SLOW.||||
-32|hARVESTER|50|192|1|1|1|1|11|12|17||||12|12|2|2||2|||300||0|600|0.1|0||0||54||||0|0|0|0|0|0|1|1|||tHE hARVESTER SEPARATES~SPICE FROM THE SAND &~RETURNS RAW SPICE TO~THE rEFINERY FOR~PROCESSING.||||
-33|cARRYALL|73|238|1|1|1|8|11|13|||||11|3|2|2|13|5|||800||0|400|0.75|0||0||54||||0|0|0|0|0|0|1|1|||tHE cARRYALL IS A~LIGHTLY ARMOURED~AIRCRAFT WITH NO~WEAPONS. mAINLY USED~TO LIFT+TRANSPORT~hARVESTERS.||||
-34|oRNITHOPTER|40|160|1|1|1|4|11|13|17||||||2|2|18|7|-3||600||300|20|1|9|2|20||54||41|5|0|0|0|0|0|0|1|1|||tHE oRNITHOPTER IS A~LIGHTLY ARMOURED~AIRCRAFT THAT FIRES~ROCKETS.hIGHLY~MANOUVERABLE + FASTEST~AIRCRAFT ON dUNE.||||
-35|mcv|38|192|1|1|1|1|11|12|17||||0|5|2|2|7|4|||900||0|600|0.1|0||0||54||||0|0|0|0|0|0|1|1|||tHE mcv (mOBILE~cONSTRUCTION vEHICLE)~SCOUT VEHICLE IS USED~TO FIND AND DEPLOY NEW~BASE LOCATIONS.||||
-36|sONIC tANK|57|198|1|1|1|1|11|12|||||12|9|2|2|18|7|1||600||360|440|0.3|8|3|90|52|54||||0|0|0|0|0|0|1|1|||dEVELOPED BY THE~aTREIDES,THIS ENHANCED~TANK FIRES POWERFUL~BLAST WAVES OF SONIC~ENERGY.||||
-37|dEVASTATOR|56|200|1|1|1|1|11|12|||||||2|2|18|8|3||800||240|1600|0.1|7|1|60|58|54||||0|0|0|0|0|0|1|1|||tHE dEVESTATOR IS A~NUCLEAR-POWERED TANK,~WHICH FIRES DUAL PLASMA~CHARGES. mOST POWERFUL~TANK ON dUNE, BUT~POTENTIALLY UNSTABLE~IN COMBAT.||||
-38|dEATH hAND|72||1|1|1|8|11|||0|||||2|2|13|8|3||0||600|280|1|0|20|150|59|54||||0|0|0|0|0|0|1|1|||tHE dEATH hAND IS A~SPECIAL hARKONNEN~pALACE WEAPON. aN~INACCURATE, BUT VERY~DESTRUCTIVE BALLISTIC~MISSILE.||||
-39|rAIDER|51|204|1|1|1|1|11|11|||||12|1|2|2||2|2||150||32|320|0.75|3|1|8|60|54||||0|0|0|0|0|0|1|1|||tHE oRDOS rAIDER IS~SIMILAR TO THE STANDARD~tRIKE, BUT WITH LESS~ARMOUR IN FAVOUR OF~SPEED.||||
-40|dEVIATOR|54|202|1|1|1|1|11|12|||||11|3|2|2|18|7|2||750||50|480|0.3|7|2|500|58|54||||0|0|0|0|0|0|1|1|||tHE oRDOS dEVIATOR IS A~STANDARD mISSILE tANK,~WHICH FIRES UNIQUE~NERVE GAS MISSILES THAT~MAY TEMPORARILY CHANGE~ENEMY LOYALTY.||||
-41|sANDWORM|88||9|1|1|1|11||||||||2|2||3|||0||1200|4000|0.35|0|30|300|50|||||0|0|0|0|0|0|1|1|||tHE sAND wORMS ARE~INDIGEONOUS TO dUNE.~aTTRACTED BY VIBRATIONS~ALMOST IMPOSSIBLE TO~DESTROY, WILL CONSUME~ANYTHING THAT MOVES.||||
-42|sPICE bLOOM|32||1|1|1|1|11|||0|||||1|1|||||||0|4|0||||||1|||0|0|0|0|0|0|1|1|||||||
-80|rEPAIR|19||5|1|1|1|11||||||||1|1||||||||||||||||||0|0|0|0|0|0|1|1|||||draw_action||action_click
-81|lAUNCH|1||5|1|1|1|11||||||||1|1||||||||||||||||||0|0|0|0|0|0|1|1|||||draw_action||action_click
-99|worker|0||10|1|1|1||||0|||||||||||||0|99|0|||||||||0|0|0|0|0|0|1|1|||||||]]
+obj_data=[[id|name|obj_spr|ico_spr|type|w|h|z|trans_col|parent_id|parent2_id|owner|col1|col2|icol1|icol2|ico_w|ico_h|req_id|req_level|req_faction|max|cost|power|arms|hitpoint|speed|range|fire_type|fire_rate| fire_sfx|death_sfx|norotate|altframe|framecount|life|frame|process|spent|fire_cooldown|hit|flash_count|col_cycle_pos|col_cycle_src|storage|col_cycle|description|func_init|func_draw|func_update|func_onclick
+1|cONSTRUCTION yARD|64|170|2|2|2|1||nil|||||||2|2|nil|1|||100|0|0|1600|0|||||53||||0|0|0|0|0|0|1|1||0||aLL STRUCTURES ARE~BUILT BY THE~CONSTRUCTION YARD.||||factory_click
+2|lARGE cONCRETE sLAB|15|162|2|2|2|1||1|||||7|5|2|2|1|4|||20|0|0|0|0|||||||||0|0|0|0|0|0|1|1||0||uSE CONCRETE TO MAKE A~STURDY FOUNDATION FOR~YOUR STRUCTURES.||||
+3|sMALL cONCRETE sLAB|15|162|2|1|1|1||1|||||6|6|2|2|1|1|||5|0|0|0|0|||||||||0|0|0|0|0|0|1|1||0||uSE CONCRETE TO MAKE A~STURDY FOUNDATION FOR~YOUR STRUCTURES.||||
+4|dEFENSIVE wALL|133|164|2|1|1|1||1|||||||2|2|7|4|||50|0|0|200|0|||||53||164||0|0|0|0|0|0|1|1||0||tHE wALL IS USED FOR~PASSIVE DEFENSE.||||
+5|wINDTRAP|66|172|2|2|2|1||1|||||||2|2|1|1|||300|-100|0|800|0|||||53|||10|0|0|0|0|0|0|1|1|11|0|12,12,12,12,13,1,1,1,1,13|tHE WINDTRAP SUPPLIES~POWER TO YOUR BASE.~wITHOUT POWER YOUR~STRUCTURES WILL DECAY.||||
+6|sPICE rEFINERY|68|174|2|3|2|1||1|||||||2|2|5|1|||400|30|0|1800|0|||||53|||15|0|0|0|0|0|0|1|1|11|1000|11,10,8,8|tHE rEFINERY CONVERTS~SPICE INTO CREDITS.||draw_refinery||
+7|rADAR oUTPOST|106|136|2|2|2|1||1|||||||2|2|5|2|||400|30|0|2000|0|||||53||||0|0|0|0|0|0|1|1||0||tHE oUTPOST PROVIDES~RADAR AND AIDS CONTROL~OF DISTANT VEHICLES.||||
+8|sPICE sTORAGE sILO|104|134|2|2|2|1||1|||||||2|2|6|2|||150|5|0|600|0|||||53||||0|0|0|0|0|0|1|1||1000||tHE sPICE SILO IS USED ~TO STORE REFINED SPICE.||||
+9|bARRACKS|108|168|2|2|2|1||1|||||11|3|2|2|7|2|-3||300|10|0|1200|0|||||53||||0|0|0|0|0|0|1|1||0||tHE bARRACKS IS USED TO~TRAIN YOUR lIGHT ~INFANTRY.||||factory_click
+10|wor tROOPER fACILITY|110|138|2|2|2|1||1|||||||2|2|7|2|3||400|10|0|1600|0|||||53||||0|0|0|0|0|0|1|1||0||wor IS USED TO TRAIN~YOUR hEAVY INFANTRY.||||factory_click
+11|lIGHT vEHICLE fACTORY|96|140|2|2|2|1||1|||||||2|2|6|2|||400|20|0|1400|0|||||53||||0|0|0|0|0|0|1|1||0||tHE lIGHT fACTORY~PRODUCES LIGHT ATTACK~VEHICLES.||||factory_click
+12|hEAVY vEHICLE fACTORY|98|142|2|3|2|1||1|||||||2|2|6|3|||600|20|0|800|0|||||53||||0|0|0|0|0|0|1|1||0||tHE hEAVY fACTORY~PRODUCES HEAVY ATTACK~VEHICLES.||||factory_click
+13|hI-tECH fACTORY|101|166|2|3|2|1||1|||||||2|2|12|5|||500|35|0|1600|0|||||53||||0|0|0|0|0|0|1|1||0||tHE hI-tECH fACTORY~PRODUCES FLYING~VEHICLES.||||factory_click
+14|rEPAIR fACILITY|128|230|2|3|2|1||1|||||||2|2|12|5|||700|20|0|800|0|||||53|||4|0|0|0|0|0|0|1|1|8|0|0|tHE rEPAIR fACILITY~IS USED TO REPAIR YOUR~VEHICLES.||||
+15|cANNON tURRET|71|232|1|1|1|1|11|1|||||||2|2|7|5|||125|10|38|1200|0|4|1|9.5|58|53||||0|0|0|0|0|0|1|1||0||tHE cANNON tURRET IS~USED FOR SHORT RANGE~ACTIVE DEFENSE.||||
+16|rOCKET tURRET|87|234|1|1|1|1|11|1|||||||2|2|7|6|||250|20|112|1200|0|9|2|28|60|53||||0|0|0|0|0|0|1|1||0||tHE rOCKET TURRET IS~USED FOR MEDIUM RANGE~ACTIVE DEFENSE.||||
+17|sTARPORT|61|228|2|3|3|1||1|||||11|3|2|2|6|6||1|500|50|0|2000|0|||||53|||15|0|0|0|0|0|0|1|1|11|0|11,10,8,8|tHE sTARPORT IS USED TO~ORDER AND RECEIVED~SHIPMENTS FROM~c.h.o.a.m.||draw_refinery||factory_click
+18|hOUSE OF ix|131|224|2|2|2|1||1|||||||2|2|12|5|||500|40|0|1600|0|||||53||||0|0|0|0|0|0|1|1||0||tHE ix rESEARCH~fACILITY ADVANCES YOUR~hOUSE'S TECHNOLOGY.||||
+19|pALACE|58|226|2|3|3|1||1|||||||2|2|17|8||1|999|80|0|4000|0|||1750||53||||0|0|0|0|0|0|1|1||0||tHIS IS YOUR pALACE.||||
+20|iNFANTRY sOLDIER|49|236|1|0.5|0.5|1|11|9|||||15|3|2|2||2|-3||60||8|80|0.05|2|1|2|60|57|1|48|10|0|0|0|0|0|0|1|1||0||iNFANTRY ARE LIGHTLY~ARMOURED FOOTSOLDIERS,~WITH LIMITED FIRING~RANGE AND SPEED.||||
+21|lIGHT iNFANTRY sQUAD|48|236|1|1|1|1|11|9|||||15|3|2|2||2|-3||100||16|200|0.05|2|1|5|60|57|1|49|10|0|0|0|0|0|0|1|1||0||iNFANTRY ARE LIGHTLY~ARMOURED FOOTSOLDIERS,~WITH LIMITED FIRING~RANGE AND SPEED.||||
+22|hEAVY tROOPER|49|194|1|0.5|0.5|1|11|10|||||||2|2||3|-1||100||16|180|0.1|6|2|12|58|57|1|48|10|0|0|0|0|0|0|1|1||0||tROOPERS ARE HEAVILY~ARMOURED FOOTSOLDIERS,~WITH IMPROVED FIRING~RANGE AND SPEED.||||
+23|hEAVY tROOPERS|48|194|1|1|1|1|11|10|||||||2|2||3|-1||200||32|440|0.1|6|2|24|58|57|1|49|10|0|0|0|0|0|0|1|1||0||tROOPERS ARE HEAVILY~ARMOURED FOOTSOLDIERS,~WITH IMPROVED FIRING~RANGE AND SPEED.||||
+24|fREMEN|48|236|1|1|1|1|11|||0|9|4|9|1|2|2||8|1||0||64|880|0.1|3|1|3|60|57|1|49|10|0|0|0|0|0|0|1|1||0||tHE fREMEN ARE NATIVE~TO dUNE. eLITE FIGHTERS~IN ALLIANCE WITH THE~aTREIDES.||||
+25|sABOTEUR|48|236|1|0.5|0.5|1|11|||0|1|0|13|1|2|2||8|2||0||600|160|0.4|0|1|150|60|57|1|49|10|0|0|0|0|0|0|1|1||0||tHE sABOTEUR IS A~SPECIAL MILITARY UNIT,~TRAINED AT AN oRDOS~pALACE. cAN DESTROY~ALMOST ANY STRUCTURE OR~VEHICLE.||||
+26|sARDAUKAR|48|236|1|1|1|1|11|||0|14|2|14|2|2|2||4|||0||20|440|0.1|1|2|5|58|57||||0|0|0|0|0|0|1|1||0||tHE sARDUKAR ARE THE~eMPEROR'S ELITE TROOPS.~WITH SUPERIOR FIREPOWER~AND ARMOUR.||||
+27|tRIKE|51|204|1|1|1|1|11|11|17||||15|4|2|2||2|||150||32|400|0.6|3|1|5|60|54||||0|0|0|0|0|0|1|1||0||tHE tRIKE IS A LIGHTLY-~ARMOURED, 3-WHEELED~VEHICLE, WITH LIMITED~FIRING RANGE, BUT RAPID~SPEED.||||
+28|qUAD|52|206|1|1|1|1|11|11|17||||||2|2||3|||200||40|520|0.5|3|1|5|60|54||||0|0|0|0|0|0|1|1||0||tHE qUAD IS A LIGHTLY-~ARMOURED, 4-WHEELED~VEHICLE. sLOWER THAN~THE tRIKE, BUT STRONGER~ARMOUR AND FIREPOWER.||||
+29|cOMBAT tANK|53|196|1|1|1|1|11|12|17||||||2|2|7|4|||300||152|800|0.25|4|1|38|58|54||||0|0|0|0|0|0|1|1||0||tHE cOMBAT tANK IS A~MEDIUM ARMOURED TANK,~FIRES HIGH-EXPLOSIVE~ROUNDS.||||
+30|sIEGE tANK|55|198|1|1|1|1|11|12|17||||15|4|2|2|7|6|||600||180|1200|0.2|5|1|45|58|54||||0|0|0|0|0|0|1|1||0||tHE mISSILE tANK IS A~MEDIUM ARMOURED TANK,~WHICH FIRES MISSILES.~lONG-RANGE, BUT~INACCURATE.||||
+31|rOCKET lAUNCHER|54|202|1|1|1|1|11|12|17||||15|4|2|2|7|5|||450||448|400|0.3|9|2|112|58|54||||0|0|0|0|0|0|1|1||0||tHE sIEGE tANK IS A~HEAVY ARMOURED TANK,~WHICH HAS DUAL CANNONS,~BUT IS SLOW.||||
+32|hARVESTER|50|192|1|1|1|1|11|12|17||||12|12|2|2||2|||300||0|600|0.1|0||0||54||||0|0|0|0|0|0|1|1||0||tHE hARVESTER SEPARATES~SPICE FROM THE SAND &~RETURNS RAW SPICE TO~THE rEFINERY FOR~PROCESSING.||||
+33|cARRYALL|73|238|1|1|1|8|11|13|||||11|3|2|2|13|5|||800||0|400|0.75|0||0||54||||0|0|0|0|0|0|1|1||0||tHE cARRYALL IS A~LIGHTLY ARMOURED~AIRCRAFT WITH NO~WEAPONS. mAINLY USED~TO LIFT+TRANSPORT~hARVESTERS.||||
+34|oRNITHOPTER|40|160|1|1|1|4|11|13|17||||||2|2|18|7|-3||600||300|20|1|9|2|20||54||41|5|0|0|0|0|0|0|1|1||0||tHE oRNITHOPTER IS A~LIGHTLY ARMOURED~AIRCRAFT THAT FIRES~ROCKETS.hIGHLY~MANOUVERABLE + FASTEST~AIRCRAFT ON dUNE.||||
+35|mcv|38|192|1|1|1|1|11|12|17||||0|5|2|2|7|4|||900||0|600|0.1|0||0||54||||0|0|0|0|0|0|1|1||0||tHE mcv (mOBILE~cONSTRUCTION vEHICLE)~SCOUT VEHICLE IS USED~TO FIND AND DEPLOY NEW~BASE LOCATIONS.||||
+36|sONIC tANK|57|198|1|1|1|1|11|12|||||12|9|2|2|18|7|1||600||360|440|0.3|8|3|90|52|54||||0|0|0|0|0|0|1|1||0||dEVELOPED BY THE~aTREIDES,THIS ENHANCED~TANK FIRES POWERFUL~BLAST WAVES OF SONIC~ENERGY.||||
+37|dEVASTATOR|56|200|1|1|1|1|11|12|||||||2|2|18|8|3||800||240|1600|0.1|7|1|60|58|54||||0|0|0|0|0|0|1|1||0||tHE dEVESTATOR IS A~NUCLEAR-POWERED TANK,~WHICH FIRES DUAL PLASMA~CHARGES. mOST POWERFUL~TANK ON dUNE, BUT~POTENTIALLY UNSTABLE~IN COMBAT.||||
+38|dEATH hAND|72||1|1|1|8|11|||0|||||2|2|13|8|3||0||600|280|1|0|20|150|59|54||||0|0|0|0|0|0|1|1||0||tHE dEATH hAND IS A~SPECIAL hARKONNEN~pALACE WEAPON. aN~INACCURATE, BUT VERY~DESTRUCTIVE BALLISTIC~MISSILE.||||
+39|rAIDER|51|204|1|1|1|1|11|11|||||12|1|2|2||2|2||150||32|320|0.75|3|1|8|60|54||||0|0|0|0|0|0|1|1||0||tHE oRDOS rAIDER IS~SIMILAR TO THE STANDARD~tRIKE, BUT WITH LESS~ARMOUR IN FAVOUR OF~SPEED.||||
+40|dEVIATOR|54|202|1|1|1|1|11|12|||||11|3|2|2|18|7|2||750||50|480|0.3|7|2|500|59|54||||0|0|0|0|0|0|1|1||0||tHE oRDOS dEVIATOR IS A~STANDARD mISSILE tANK,~WHICH FIRES UNIQUE~NERVE GAS MISSILES THAT~MAY TEMPORARILY CHANGE~ENEMY LOYALTY.||||
+41|sANDWORM|88||9|1|1|1|11||||||||2|2||3|||0||1200|4000|0.35|0|30|300|50|||||0|0|0|0|0|0|1|1||0||tHE sAND wORMS ARE~INDIGEONOUS TO dUNE.~aTTRACTED BY VIBRATIONS~ALMOST IMPOSSIBLE TO~DESTROY, WILL CONSUME~ANYTHING THAT MOVES.||||
+42|sPICE bLOOM|19||1|1|1|1|11|||2|||||1|1|||||||0|4|0||||||1|||0|0|0|0|0|0|1|1||0||||||
+80|rEPAIR|17||5|1|1|1|11||||||||1|1|||||||0|||||||||||0|0|0|0|0|0|1|1||0||||draw_action||action_click
+81|lAUNCH|1||5|1|1|1|11||||||||1|1||||||||||||||||||0|0|0|0|0|0|1|1||0||||draw_action||action_click]]
+
+
+
+
+
 
 
 
@@ -174,14 +189,14 @@ function _init()
  local str_arrays=split2d(obj_data,"|","\n")
  obj_data={}
  -- loop all objects
- for i=2,46 do
+ for i=2,45 do
   local new_obj={}
   -- loop all properties
-  for j=1,50 do
+  for j=1,51 do
    local val=str_arrays[i][j]
    -- convert all but the text columns to numbers
-   if (j!=2 and j<45)val=tonum(val)
-   if j==46 then
+   if (j!=2 and j<46)val=tonum(val)
+   if j==47 then
     --restore new lines
     str_breaks,val=split2d(val,"~"),""
     for line in all(str_breaks) do
@@ -197,7 +212,7 @@ function _init()
  for i=-2,66 do
   fow[i]={}
   for l=-2,66 do
-   fow[i][l]=0 --16
+   fow[i][l]=16--0 --16
   end
  end
 
@@ -220,31 +235,18 @@ function _init()
 
  -- discover_objs()
  -- analyse current map & spawn objs
- -- (first pass find the player start pos/const yard)
- -- (second finds everything else)
- for i=1,2 do
   for my=0,31 do
     for mx=0,127 do
       local objref=nil
       local spr_val=mget(mx,my)
-      
       -- handle player start pos (const yard) as a special case
-      if i==1 and spr_val==1 then
-       -- found player start position
-       pstartx,pstarty=mx*8,my*8        
-       -- center camera & create player const yard
-       camx,camy,objref=pstartx-56,pstarty-56,obj_data[1]
-
-      elseif i==2
-       and spr_val>=32 then --don't create "concrete" as objs
-       
-       -- find object for id
-       for _,o in pairs(obj_data) do         
-        if (o.obj_spr!=nil and o.obj_spr==spr_val) objref=o break       
-       end
+      -- center camera & create player const yard
+      if (spr_val==1) camx,camy,objref=bases[1][4]-56,bases[1][5]-56,obj_data[1]      
+      -- find object for id
+      for o in all(obj_data) do         
+       if (o.obj_spr!=nil and o.obj_spr==spr_val) objref=o break       
       end
-      
-      if objref!=nil then
+      if objref!=nil and (spr_val==1 or spr_val>=18) then --don't create "concrete" as objs
         local ox,oy=mx,my
         if (ox>63) oy+=32 ox-=64
         mset(mx,my,0)
@@ -252,22 +254,22 @@ function _init()
       end
     end
   end
- end
+  
 
  -- worker
- worker = m_map_obj_tree(obj_data[99], -8,-8)
- worker.cor = cocreate(function()
-
+ worker_cor = cocreate(function()
   while true do
 
   if _t%30==0 then
+   -- reset music (will set if more attack)
+    set_loop(false)  --5
    -- 
    -- update_obj_tiles()
    -- 
    -- update positions of pathfinding "blocker" objects 
    object_tiles={}
    -- (The pico-8 map is a 128x32 (or 128x64 using shared space))
-   for k,unit in pairs(units) do  
+   for k,unit in pairs(units) do
     object_tiles[unit:get_tile_pos_index()]=k
    end
 
@@ -281,9 +283,9 @@ function _init()
       for l=0,124,4 do
        -- look at tile spr and if not fow, get col?
        local mx,my = i/2,l/2
-       if(my>=32)mx+=64 my-=32
-       local mspr=mget(mx,my)
-       local col=sget((mspr*8)%128+4, (mspr*8)/16)
+       local mspr_off=wrap_mget(mx,my)*8
+       --if(my>=32)mx+=64 my-=32
+       local col=sget(mspr_off%128+4, mspr_off/16)
        if(fow[i/2][l/2]==16) new_radar_data[(i/2/2)..","..(l/2/2)] = col!=11 and col or 15
       end
       yield()
@@ -293,11 +295,12 @@ function _init()
    -- -- structures
    -- reset vars for this pass
    power_bal,total_storage,has_radar,building_count = 0,0,false,{0,0}
-   if (_t%100==0) has_obj={{},{}} 
+   has_obj={{},{}}
+   --if (_t%100==0) has_obj={{},{}} 
 
-   for _,building in pairs(buildings) do  
+   for building in all(buildings) do  
     -- if our building, or ai not under fog of war
-    if building.owner==1 or (hq and is_visible(building)) then --fow[posx][posy]==16) then
+    if building.owner==1 or (hq and is_visible(building)) then
      new_radar_data[flr(building.x/2/8)..","..flr(building.y/2/8)] = building.col1
     end
     -- track power/radar
@@ -305,16 +308,15 @@ function _init()
      -- player owned
      power_bal -= building.power
      if (building.id==7) has_radar=true
-     if (sub(building.name,1,5)=="sPICE") total_storage+=1000
+     total_storage+=building.storage
     end
     -- track counts & objs
     building_count[building.owner]+=1
     has_obj[building.created_by][building.id]=building
    end
-   
-   
+      
    -- units
-   for _,unit in pairs(units) do
+   for unit in all(units) do
     -- if our unit, or ai not under fog of war
     if hq and (unit.owner==1 or is_visible(unit) and unit.z==1) then
      new_radar_data[flr(unit.x/2/8)..","..flr(unit.y/2/8)] = unit.col1
@@ -324,8 +326,7 @@ function _init()
   
    -- has radar-outpost + enough power?
    hq,music_state,radar_data = (has_radar and power_bal>0),2 ,new_radar_data
-   -- reset music (will set if more attack)
-   set_loop(false)  --5
+   
  
    -- check end states
    --
@@ -337,15 +338,13 @@ function _init()
    if (building_count[1]==0) endstate=3
 
    -- game over?
-   if endstate then 
-    dset(14, endstate)
-    dset(13, t()-start_time)
-    dset(10,strnum)
-    dset(24,getscoretext(credits[2]))
-    dset(11,unit_dest[1])
-    dset(25,unit_dest[2])
-    dset(12,build_dest[1])
-    dset(26,build_dest[2])  
+   if endstate then    
+    -- save game data state
+    local offset=40
+    for data in all{endstate,t()-start_time,strnum,getscoretext(credits[2]),unit_dest[1],unit_dest[2],build_dest[1],build_dest[2]} do
+     dset(offset, data)
+     offset+=1
+    end 
     rectfill(30,54,104,70,0)
     ?"mission "..(endstate<3 and "complete" or "failed"),36,60,p_col1
     flip()
@@ -364,25 +363,40 @@ function _init()
  shake=0
 end
 
-function wrap_discover_pos(mx,my)
- if (mx>63) my+=32 mx-=64
- return mx,my
-end
 
 function m_map_obj_tree(objref, x,y, owner, factory)
   local newobj=m_obj_from_ref(objref, x,y, objref.type, nil, _g[objref.func_init], _g[objref.func_draw], _g[objref.func_update], nil)
   newobj.ico_obj,newobj.life = m_obj_from_ref(objref, 109,0, 3, newobj, nil, nil, _g[objref.func_onclick]), placement_damage and objref.hitpoint/2 or objref.hitpoint -- unless built without concrete
   -- player-controlled or ai?
-  -- todo: this whole thing may not be needed as once we have plr start pos, that might be all we need
-  newobj.owner=newobj.owner or owner or dist(x,y,pstartx,pstarty)<75 and 1 or 2
-  newobj.created_by,newobj.build_objs = owner or newobj.owner, {}
+  -- 0=auto, 1=player, 2=computer/ai
+  newobj.owner=newobj.owner or owner
+  if factory==nil then
+   -- unless explicitly stated...
+   if newobj.owner==nil then
+    --calc closest base/owner
+    local best_dist=9999
+    for i=1,#bases do
+     local curr_dist=dist(x,y,bases[i][4],bases[i][5])
+     if (curr_dist<best_dist) newobj.base_idx,newobj.owner,best_dist=i,min(i,2),curr_dist
+    end
+   else 
+    -- assume player-owned
+    -- (only wrong with blooms, as factory takes priority, but player can still attack)
+    newobj.base_idx,base=1,bases[1]
+   end 
+  else
+   --created by factory
+   newobj.base_idx=factory.base_idx
+  end
+  newobj.created_by,newobj.build_objs,base = owner or newobj.owner,{},bases[newobj.base_idx or factory.base_idx]
+  new_faction=base[1] newobj.faction,newobj.col1,newobj.col2 = new_faction,base[2],base[3]
   -- go through all ref's and see if any valid for this building
   for o in all(obj_data) do
    local req_faq=o.req_faction
     if (o.parent_id!=nil and (o.parent_id==newobj.id or o.parent2_id==newobj.id))					
      and (req_faq==nil
-      or (req_faq>0 and req_faq==p_faction)
-      or (req_faq<0 and -p_faction!=req_faq))
+      or (req_faq>0 and req_faq==new_faction)
+      or (req_faq<0 and -new_faction!=req_faq))
     then
       add(newobj.build_objs,
         m_obj_from_ref(o, 109,0, 4, newobj, nil, nil, function(self)
@@ -398,12 +412,8 @@ function m_map_obj_tree(objref, x,y, owner, factory)
       )
     end
   end
-
-  -- 0=auto, 1=player, 2=computer/ai
-  if newobj.owner==1 then
-    newobj.faction,newobj.col1,newobj.col2 = p_faction,p_col1,p_col2
-  else
-    newobj.faction,newobj.col1,newobj.col2,newobj.ico_obj.func_onclick = ai_faction,ai_col1,ai_col2,nil --make ai icons un-clickable
+  if newobj.owner>1 then
+    newobj.ico_obj.func_onclick=nil --make ai icons un-clickable
     -- palace?
     if (newobj.id==19) ai_palace=newobj
   end
@@ -421,11 +431,11 @@ function m_map_obj_tree(objref, x,y, owner, factory)
   -- building props?        
   if objref.type==2 then
     -- prepare the map?
-    local slabs=(objref.id==2 or objref.id==3)    
+    local slabs=objref.obj_spr==15
     for xx=0,objref.w-1 do
       for yy=0,objref.h-1 do
        -- block map under building (diff tiles for player/ai-owned)
-       wrap_mset(xpos+xx, ypos+yy, slabs and 16 or newobj.owner==1 and 149 or 27)
+       wrap_mset(xpos+xx, ypos+yy, slabs and 15 or newobj.owner==1 and 149 or 27)
       end
     end
     if (not slabs) add(buildings,newobj)
@@ -437,7 +447,7 @@ function m_map_obj_tree(objref, x,y, owner, factory)
      m_map_obj_tree(obj_data[32],ux,uy,newobj.owner,newobj)
     end
   else
-  -- unit props  
+    -- unit props
     if (newobj.norotate!=1) newobj.r=flr(rnd"8")*.125
     if newobj.arms>0 then
      -- combat stuff
@@ -446,19 +456,20 @@ function m_map_obj_tree(objref, x,y, owner, factory)
        self.state,self.bullet_x,self.bullet_y,self.bullet_tx,self.bullet_ty = 4,self.x+4,self.y+4,self.target.x+self.target.w/2,self.target.y+self.target.h/2
        -- normalize dx,dy
        local dx,dy = self.bullet_tx-self.bullet_x,self.bullet_ty-self.bullet_y
-       local d=sqrt(dx * dx + dy * dy)
+       local d=sqrt(dx*dx+dy*dy)
        self.bullet_dx,self.bullet_dy = (dx/d)*2,(dy/d)*2
        ssfx(self.fire_sfx)
        reveal_fow(self)
      end
      -- rocket/cannon turret?
-     if (newobj.id==15 or newobj.id==16) wrap_mset(xpos, ypos, 149)
+     if (newobj.speed==0) wrap_mset(xpos, ypos, 149)
+     --if (newobj.id==15 or newobj.id==16) wrap_mset(xpos, ypos, 149)
     else
      -- harvesters
      if (newobj.id==32) newobj.capacity=0 factory=nil
      -- non-fighting units
      newobj.last_fact=factory --default, for retreating
-    end    
+    end
     add(units,newobj)
     -- default to guard
     do_guard(newobj)
@@ -505,7 +516,6 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
       -- don't draw, as off-screen
       return
      end
-
      pal()
      palt(0,false)
      if (self.trans_col and self.type<=2) palt(self.trans_col,true)     
@@ -692,6 +702,7 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
          and self.parent_id != 1 then
           -- find nearest point to factory
           local ux,uy=nearest_space_to_object(self.parent)
+          -- todo: this really should be parent, in case building close to enemy const. yard
           m_map_obj_tree(self.ref,ux,uy,self.parent.owner,self.parent)
           -- reset build
           reset_build(self)
@@ -825,17 +836,16 @@ function _update60()
   if (cursy>123) camy+=2
 
   -- lock cam to map
-  camx,camy = mid(camx,384),mid(-8,camy,384)
+  camx,camy = mid(camx,368),mid(-8,camy,368)
    
   -- update all unit coroutines 
   -- (pathfinding, moving, attacking, etc.)
-  for _,unit in pairs(units) do
+  for unit in all(units) do
     if unit then
-      if unit.cor and costatus(unit.cor) != "dead" then
-        assert(coresume(unit.cor, unit))
-      else
-        unit.cor = nil
-      end
+        if(unit.cor and costatus(unit.cor) != 'dead') assert(coresume(unit.cor, unit))
+      --else
+      --  unit.cor = nil
+      --end
 
       -- check sandworm collision        
       if worm_segs -- worm present
@@ -864,7 +874,10 @@ function _update60()
   end
     
   -- ai overall decision making (not individual units)
-  update_ai()  
+  update_ai()
+  
+  -- bg work
+  assert(coresume(worker_cor))
  end -- no menu
  
  update_collisions()
@@ -1378,7 +1391,7 @@ function draw_level()
 
 
  -- buildings
- for _,building in pairs(buildings) do 
+ for building in all(buildings) do 
   if not show_menu then 
     building:update()
     if (building.build_obj) building.build_obj:update()
@@ -1392,7 +1405,7 @@ function draw_level()
  
  -- draw units (2-passes, ground & flying)
  for p=1,2 do
-  for _,unit in pairs(units) do
+  for unit in all(units) do
    if (p==1 and unit.z==1) or (p==2 and unit.z>1) then
     if (not show_menu) unit:update()
     if (unit.process!=2 or unit.speed==0) unit:draw()
@@ -1449,9 +1462,9 @@ function draw_ui()
  -- 
  -- draw_radar()
  -- 
- rect(90,90,125,125,p_col1)
- rect(91,91,124,124,p_col2)  
- rectfill(92,92,123,123,0)
+ rect(90,90,124,124,p_col1)
+ rect(91,91,123,123,p_col2)  
+ rectfill(92,92,122,122,0)
 
  
  -- update/draw message
@@ -1473,20 +1486,20 @@ function draw_ui()
    radar_frame+=radar_dir
    -- draw radar anim
    clip(
-     max(108-radar_frame,91),
-     max(108-(radar_frame>20 and radar_frame-20 or 0),91),
-     min(radar_frame*2,33),
-     min((radar_frame>20 and radar_frame-20 or 1)*2,33))
+     max(109-radar_frame,91),
+     max(109-(radar_frame>20 and radar_frame-20 or 0),92),
+     min(radar_frame*2,32),
+     min((radar_frame>20 and radar_frame-20 or 1)*2,32))
    for i=1,300 do
-     pset(92+rnd"32",92+rnd"32",5+rnd"3")
+     pset(92+rnd"32",91+rnd"32",5+rnd"3")
    end
    clip()
    return
  end
   
  -- draw radar data
- for xx=0,31 do
-  for yy=0,31 do
+ for xx=0,30 do
+  for yy=0,30 do
    if (radar_data[xx..","..yy]) pset(92+xx,92+yy,radar_data[xx..","..yy])
   end
  end
@@ -1546,10 +1559,10 @@ function draw_ui()
      local val=wrap_mget(mxpos+xx, mypos+yy)
      if xx==-1 or xx==w or yy==-1 or yy==h then     
       -- check edges
-      if (val==16 or val>=58) placement_pos_ok=true
+      if (val==15 or val>=58) placement_pos_ok=true
      else
       -- check inner      
-      if (val>=9 and val<=15) placement_damage=true
+      if (val>=9 and val<=14) placement_damage=true
       if (object_tiles[mxpos+xx..","..mypos+yy] or val==0 or val<8 or val>16) placement_inner_invalid=true
      end
     end
@@ -1570,7 +1583,7 @@ function draw_ui()
   rectfill(3, 22, 124, 95, p_col2)
   rect(4, 23, 123, 94, p_col1) 
 
-  -- build menu?
+  -- build menu?  
   if selected_obj.build_objs then
     selected_obj.valid_build_objs={}
     rectfill(6,25,27,92,0)
@@ -1609,7 +1622,7 @@ function draw_ui()
   pal() --else green=black
 
   -- ui elements (buttons)?
-  for _,controls in pairs(ui_controls) do
+  for controls in all(ui_controls) do
     controls:draw()
   end
  end  -- if show_menu
@@ -1673,7 +1686,7 @@ function update_collisions()
     and cursx>89 and cursx<122
     and cursy>90 and cursy<123 then
       -- clicked radar
-      camx,camy = mid(0,(cursx-94)*16, 384),mid(-8,(cursy-94)*16, 384)
+      camx,camy = mid(0,(cursx-94)*16, 368),mid(-8,(cursy-94)*16, 368)
       selected_obj=last_selected_obj -- always do this, in case an obj under rader will select
  -- clicked something?
  elseif left_button_clicked then
@@ -1699,7 +1712,6 @@ function update_collisions()
   else
     -- do we have a unit selected?
     if selected_obj 
-     --and selected_obj.type==1
      and selected_obj.owner==1 
      and selected_obj.speed>0 
      and selected_obj.state!=7 then     
@@ -1724,7 +1736,6 @@ function update_collisions()
       ssfx"61"
     end
 
-    --if (not show_menu) selected_obj=nil
   end 
   
   target_mode=false
@@ -1803,7 +1814,7 @@ worm_life=0
 function update_ai()
  -- depending on ai level...
  if t()*20>ai_level and t()%ai_level==0 then  
-  
+
   -- unit attacks
   -- 
   -- find the first ai unit and attack player  
@@ -1822,7 +1833,8 @@ function update_ai()
     (ai_building.build_obj==nil or ai_building.build_obj.process!=1) then    
     -- select a random unit to build
     local u=rnd(ai_building.build_objs)
-    if u and u.speed>0 then
+    if u and u.speed>0 then     
+     --printh("ai build >> "..u.name)
      u:func_onclick()
     end    
 
