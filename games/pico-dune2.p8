@@ -68,28 +68,23 @@ _g.factory_click=function(self)
   show_menu=self
 end
 _g.draw_refinery=function(self)
-  pal()
-  palt(0,false)
-  pal(11,self.col2)
-  pal(10,self.col2)
-  pal(8,self.col2)
-  -- takes up more tokens!!
-  pal(12,self.col1) pal(14,self.col2)
-  
+  pal{
+   [8]=self.col2,
+   [10]=self.col2,
+   [11]=self.col2,
+   [12]=self.col1,
+   [14]=self.col2
+  }  
   if self.incoming then
    pal(self.col_cycle[self.col_cycle_pos], self.col1)
   else
    pal(11,self.col1)
    self.col_cycle_pos=1
   end
-  draw_obj(self)
 end
-draw_action=function(self) 
- palt(11,true)
+draw_action=function(self)
  pal(7,8)
  if (self.id==80 and selected_obj.process==2 and not selected_obj.procpaused) pal(7,11)
- draw_obj(self)
- pal()
 end
 repair_click=function()
   process_click(last_selected_obj, 2)
@@ -165,8 +160,8 @@ obj_data=[[id|name|obj_spr|ico_spr|type|w|h|z|trans_col|parent_id|parent2_id|own
 40|dEVIATOR|54|202|1|1|1|1|11|12|||||11|3|2|2|18|7|2||750||50|480|0.3|7|2|500|59|54||||0|0|0|0|0|0|1|1||0||tHE oRDOS dEVIATOR IS A~STANDARD mISSILE tANK,~WHICH FIRES UNIQUE~NERVE GAS MISSILES THAT~MAY TEMPORARILY CHANGE~ENEMY LOYALTY.||||
 41|sANDWORM|88||9|1|1|1|11||||||||2|2||3|||0||1200|4000|0.35|0|30|300|50|||||0|0|0|0|0|0|1|1||0||tHE sAND wORMS ARE~INDIGEONOUS TO dUNE.~aTTRACTED BY VIBRATIONS~ALMOST IMPOSSIBLE TO~DESTROY, WILL CONSUME~ANYTHING THAT MOVES.||||
 42|sPICE bLOOM|19||1|1|1|1|11|||2|||||1|1|||||||0|4|0||||||1|||0|0|0|0|0|0|1|1||0||||||
-80|rEPAIR|17||5|1|1|1|11||||||||1|1|||||||0|||||||||||0|0|0|0|0|0|1|1||0||||draw_action||action_click
-81|lAUNCH|1||5|1|1|1|11||||||||1|1||||||||||||||||||0|0|0|0|0|0|1|1||0||||draw_action||action_click]]
+80|rEPAIR|17|17|5|1|1|1|11||||||||1|1|||||||0|0||||||||||0|0|0|0|0|0|1|1||0||||draw_action||action_click
+81|lAUNCH|1|1|5|1|1|1|11||||||||1|1|||||||0|0||||||||||0|0|0|0|0|0|1|1||0||||draw_action||action_click]]
 
 
 
@@ -235,29 +230,29 @@ function _init()
    spr((selected_obj and selected_obj.type==1 and selected_obj.owner==1 or target_mode) and 1,
     self.x, self.y)
   end
-  }
+ }
 
  -- discover_objs()
  -- analyse current map & spawn objs
-  for my=0,31 do
-    for mx=0,127 do
-      local objref=nil
-      local spr_val=mget(mx,my)
-      -- handle player start pos (const yard) as a special case
-      -- center camera & create player const yard
-      if (spr_val==1) camx,camy,objref=bases[1][4]-56,bases[1][5]-56,obj_data[1]      
-      -- find object for id
-      for o in all(obj_data) do         
-       if (o.obj_spr!=nil and o.obj_spr==spr_val) objref=o break       
-      end
-      if objref!=nil and (spr_val==1 or spr_val>=18) then --don't create "concrete" as objs
-        local ox,oy=mx,my
-        if (ox>63) oy+=32 ox-=64
-        mset(mx,my,wrap_mget(mx,my+1))
-        m_map_obj_tree(objref, ox*8,oy*8)
-      end
-    end
-  end
+ for my=0,31 do
+   for mx=0,127 do
+     local objref=nil
+     local spr_val=mget(mx,my)
+     -- handle player start pos (const yard) as a special case
+     -- center camera & create player const yard
+     if (spr_val==1) camx,camy,objref=bases[1][4]-56,bases[1][5]-56,obj_data[1]      
+     -- find object for id
+     for o in all(obj_data) do         
+      if (o.obj_spr!=nil and o.obj_spr==spr_val) objref=o break       
+     end
+     if objref!=nil and (spr_val==1 or spr_val>=18) then --don't create "concrete" as objs
+       local ox,oy=mx,my
+       if (ox>63) oy+=32 ox-=64
+       mset(mx,my,wrap_mget(mx,my+1))
+       m_map_obj_tree(objref, ox*8,oy*8)
+     end
+   end
+ end
   
 
  -- worker
@@ -329,7 +324,7 @@ function _init()
    end
   
    -- has radar-outpost + enough power?
-   hq,music_state,radar_data = (has_radar and power_bal>0),2 ,new_radar_data
+   hq,music_state,radar_data = (has_radar and power_bal>0),2,new_radar_data
    
  
    -- check end states
@@ -370,13 +365,13 @@ end
 
 function m_map_obj_tree(objref, x,y, owner, factory)
   local newobj=m_obj_from_ref(objref, x,y, objref.type, nil, _g[objref.func_init], _g[objref.func_draw], _g[objref.func_update], nil)
-  newobj.ico_obj,newobj.life = m_obj_from_ref(objref, 109,0, 3, newobj, nil, nil, _g[objref.func_onclick]), placement_damage and objref.hitpoint/2 or objref.hitpoint -- unless built without concrete
+  newobj.ico_obj,newobj.life=m_obj_from_ref(objref, 109,0, 3, newobj, nil, nil, _g[objref.func_onclick]), placement_damage and objref.hitpoint/2 or objref.hitpoint -- unless built without concrete
   -- player-controlled or ai?
   -- 0=auto, 1=player, 2=computer/ai
   newobj.owner=newobj.owner or owner
-  if factory==nil then
+  if not factory then
    -- unless explicitly stated...
-   if newobj.owner==nil then
+   if not newobj.owner then
     --calc closest base/owner
     local best_dist=9999
     for i=1,#bases do
@@ -393,12 +388,13 @@ function m_map_obj_tree(objref, x,y, owner, factory)
    newobj.base_idx=factory.base_idx
   end
   newobj.created_by,newobj.build_objs,base = owner or newobj.owner,{},bases[newobj.base_idx or factory.base_idx]
-  new_faction=base[1] newobj.faction,newobj.col1,newobj.col2 = new_faction,base[2],base[3]
+  new_faction=base[1]
+  newobj.faction,newobj.col1,newobj.col2 = new_faction,base[2],base[3]
   -- go through all ref's and see if any valid for this building
   for o in all(obj_data) do
    local req_faq=o.req_faction
     if (o.parent_id!=nil and (o.parent_id==newobj.id or o.parent2_id==newobj.id))					
-     and (req_faq==nil
+     and (not req_faq
       or (req_faq>0 and req_faq==new_faction)
       or (req_faq<0 and -new_faction!=req_faq))
     then
@@ -432,7 +428,7 @@ function m_map_obj_tree(objref, x,y, owner, factory)
 
   local xpos,ypos = flr(x/8),flr(y/8)
   
-  -- building props?        
+  -- building props?
   if objref.type==2 then
     -- prepare the map?
     local slabs=objref.obj_spr==15
@@ -445,14 +441,14 @@ function m_map_obj_tree(objref, x,y, owner, factory)
     if (not slabs) add(buildings,newobj)
     -- other building stuff
     -- refinery?
-    if newobj.id==6 and newobj.parent==nil then
+    if newobj.id==6 and not newobj.parent then
      -- auto-create harvester
      local ux,uy=nearest_space_to_object(newobj)
      m_map_obj_tree(obj_data[32],ux,uy,newobj.owner,newobj)
     end
   else
     -- unit props
-    if (newobj.norotate!=1) newobj.r=flr(rnd"8")*.125
+    newobj.r=newobj.norotate!=1 and flr(rnd"8")*.125
     if newobj.arms>0 then
      -- combat stuff
      newobj.fire=function(self)
@@ -466,8 +462,7 @@ function m_map_obj_tree(objref, x,y, owner, factory)
        reveal_fow(self)
      end
      -- rocket/cannon turret?
-     if (newobj.speed==0) wrap_mset(xpos, ypos, 149)
-     --if (newobj.id==15 or newobj.id==16) wrap_mset(xpos, ypos, 149)
+     if (newobj.speed==0) wrap_mset(xpos,ypos,149)
     else
      -- harvesters
      if (newobj.id==32) newobj.capacity=0 factory=nil
@@ -509,78 +504,93 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
      h=(self.type>2 and self.type<5 and 16 or self.h)-1
     }
    end,
-   draw=func_draw or function(self)
+   draw=function(self)
      -- abort if off-screen
-     if self.type<=2
-      and (self.x+self.w<camx
-       or self.x>camx+127
-       or self.y+self.h<camy
-       or self.y>camy+127+self.z)
+     -- if self.type<=2
+     --  and (self.x+self.w<camx
+     --   or self.x>camx+127
+     --   or self.y+self.h<camy
+     --   or self.y>camy+127+self.z)
+     -- then
+     --  -- don't draw, as off-screen
+     --  return
+     -- end
+     if self.type>2
+      or (self.x+self.w>=camx
+       and self.x<=camx+127
+       and self.y+self.h>=camy
+       and self.y<camy+127+self.z)
      then
-      -- don't draw, as off-screen
-      return
-     end
-     -- pal() -- moved to b4 draw() call
-     -- palt(0,false)
-     if (self.trans_col and self.type<=2) palt(self.trans_col,true)     
-     -- faction? (if not IX)
-     if (self.faction and self.id!=18) pal(12,self.col1) pal(14,self.col2)
-     -- colour anim?
-     if self.col_cycle then
-      pal(self.col_cycle_src, self.col_cycle[self.col_cycle_pos])
-     end
-     -- rotating obj?
-     if self.r then
-      if not self.death_time or self.death_time>.025  then
-       -- draw twice (shadow first, then norm)
-       for i=1,2 do
-        if (i==2 or self.speed>0) rspr(self.obj_spr%16*8,flr(self.obj_spr/16)*8, self.x, self.y-(i==2 and self.z or 0), .25-self.r, 1, self.trans_col, i==1 and 5 or flr(self.flash_count)%2==0 and 7 or nil)
-       end
-      end
-     -- norm sprite
-     else      
+       pal()
+       palt(0,false)
+       if (self.trans_col and self.type~=3) palt(self.trans_col,true)     
+       --if (self.trans_col and self.type<=2) palt(self.trans_col,true)     
+       -- faction? (if not IX)
+       if (self.faction and self.id!=18) pal(12,self.col1) pal(14,self.col2)
+       
        -- icon mode
        if self.type>2 and self.type<5 then
          local this = self.type==4 and self or self.parent
-         -- hover
-         rectfill(self.x-1,self.y-1,self.x+16,self.y+19, 0)--(self.hover and #this.build_objs>0) and p_col1 or 0)         
+         -- bg
+         rectfill(self.x-1,self.y-1,self.x+16,self.y+19, 0)
          -- draw health/progress
+         --printh(self.name)
          local hp = this.hitpoint
          local val = self.process==1 and 15*(this.life/100) or 15*(this.life/hp)
          if (this.life>0 and not show_menu) rectfill(self.x,self.y+17,self.x+val,self.y+18, self.process==1 and 12 or this.life<hp*.33 and 8 or this.life<hp*.66 and 10 or 11)
          pal(11,this.icol1) pal(3,this.icol2)
        end
-       -- non-rotational sprite
-       if self.type>2 then
-        -- icon
-        spr(self.ico_spr, self.x, self.y, self.ico_w, self.ico_h)
-       else
-        -- building/non-rotational unit
-        draw_obj(self)
-       end
-     end
 
-     -- bullets/missiles
-     if self.bullet_x then      
-      if self.fire_type==1 then
-       -- shell
-       pset(self.bullet_x,self.bullet_y, rnd"2"<1 and 8 or 9)
-      else
-       -- missile/sonic wave
-       local is_missile = self.fire_type==2
-       add_particle(self.bullet_x, self.bullet_y, 0, 
-        0, 0, 
-        is_missile and .15 or 2,
-        -.01, 
-        is_missile and 20 or 2.5, 
-        self.id==40 and {11} or is_missile and split2d("7,7,10,9,8,2,13,6,7") or {15},
-        rnd"2"<1 and 0xa5a5.8 or 0)
-      end
-     end
-     -- smoking?
-     if (self.life<self.hitpoint*.33 and self.altframe==nil and rnd"10"<1 and self.type<=2) add_particle(self.x+3.5,self.y+3.5, 1, .1,-.02,.05, -.002, 80,split2d("10,8,9,6,5"), rnd"2"<1 and 0xa5a5.8 or 0)
-     -- reset hit flag
-     self.hit=0
+       -- colour anim?
+       if self.col_cycle then
+        pal(self.col_cycle_src, self.col_cycle[self.col_cycle_pos])
+       end
+
+       -- pre-draw override?
+       if (func_draw) func_draw(self)
+
+       -- rotating obj?
+       if self.r then
+        if not self.death_time or self.death_time>.025  then
+         -- draw twice (shadow first, then norm)
+         for i=1,2 do
+          if (i==2 or self.speed>0) rspr(self.obj_spr%16*8,flr(self.obj_spr/16)*8, self.x, self.y-(i==2 and self.z or 0), .25-self.r, 1, self.trans_col, i==1 and 5 or flr(self.flash_count)%2==0 and 7 or nil)
+         end
+        end
+       -- norm sprite
+       else       
+         -- non-rotational sprite
+         if self.type>2 then
+          -- icon
+          spr(self.ico_spr, self.x, self.y, self.ico_w, self.ico_h)
+         else
+          -- building/non-rotational unit
+          draw_obj(self)
+         end
+       end
+
+       -- bullets/missiles
+       if self.bullet_x then      
+        if self.fire_type==1 then
+         -- shell
+         pset(self.bullet_x,self.bullet_y, rnd"2"<1 and 8 or 9)
+        else
+         -- missile/sonic wave
+         local is_missile = self.fire_type==2
+         add_particle(self.bullet_x, self.bullet_y, 0, 
+          0, 0, 
+          is_missile and .15 or 2,
+          -.01, 
+          is_missile and 20 or 2.5, 
+          self.id==40 and {11} or is_missile and split2d("7,7,10,9,8,2,13,6,7") or {15},
+          rnd"2"<1 and 0xa5a5.8 or 0)
+        end
+       end
+       -- smoking?
+       if (self.life<self.hitpoint*.33 and not self.altframe and rnd"10"<1 and self.type<=2) add_particle(self.x+3.5,self.y+3.5, 1, .1,-.02,.05, -.002, 80,split2d("10,8,9,6,5"), rnd"2"<1 and 0xa5a5.8 or 0)
+       -- reset hit flag
+       self.hit=0
+    end --abort if off-screen
    end,
    update=function(self)
      local life=self.life
@@ -601,7 +611,7 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
        if (life<50 and self.state!=7) return_to_fact(self,has_obj[self.created_by][14] or self.last_fact) --TODO: chk last fact being set to facts (unless harvester!)
      end
      -- check for death
-     if (self.type<=2 and life<=0 and self.death_time==nil) self.state=5 self.cor=nil self.death_time=(self.type==2 and 1 or .5) ssfx(self.death_sfx) shake+=((self.type==2 or self.id==38) and 0.25 or 0)
+     if (self.type<=2 and life<=0 and not self.death_time) self.state=5 self.cor=nil self.death_time=(self.type==2 and 1 or .5) ssfx(self.death_sfx) shake+=((self.type==2 or self.id==38) and 0.25 or 0)
      if self.death_time then
       self.death_time-=.025
       if self.death_time<=0 then
@@ -762,7 +772,7 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
 
  -- copy ref properties to object (where empty!)
  for k,v in pairs(ref_obj) do
-  if obj[k]==nil and v!="" then
+  if not obj[k] and v!="" then
    obj[k] = v
   end
  end
@@ -791,7 +801,7 @@ function reveal_fow(object)
  -- > player
  -- > firing ai
  -- 0=idle/guarding, 1=pathfinding, 2=moving, 3=attacking, 4=firing, 5=exploding
- --if(object.owner!=1 and object.state!=4) return
+ if(object.owner!=1 and object.state!=4) return
 
  local size = object.type==2 and 3 or 2
  -- clear group of tiles
@@ -1022,7 +1032,8 @@ function do_guard(unit, start_state)
      -- update spice tile state
      local unit_pos = unit:get_tile_pos_index()
      --harvester should take about 110 secs to fill!
-     spice_tiles[unit_pos],self.capacity,self.name = (spice_tiles[unit_pos] or 1000)-1, (self.capacity or 0)+.5,"hARVESTER ("..flr(self.capacity/1500*100).."% fULL)"
+     self.capacity+=.5
+     spice_tiles[unit_pos],self.name = (spice_tiles[unit_pos] or 1000)-1,"hARVESTER ("..flr(self.capacity/1500*100).."% fULL)"
      -- done current spot?
      if spice_tiles[unit_pos] <= 0 then      
       -- (clear spice tile + depleat surrounding tiles)
@@ -1198,7 +1209,7 @@ end
 
 function is_free_tile(unit,x,y)
  return not fget(wrap_mget(x,y),0)
-   and object_tiles[x..","..y]==nil
+   and not object_tiles[x..","..y]
 end
 
 function move_unit_pos(unit,x,y,dist_to_keep,try_hail,start_state)
@@ -1529,7 +1540,7 @@ function draw_ui()
     and selected_obj.id!=4
     and (selected_obj.type==2
       or selected_obj.speed==0) then
-     repair_obj=m_obj_from_ref(obj_data[80], 117,28, 5, {}, nil,draw_action, repair_click) 
+     repair_obj=m_obj_from_ref(obj_data[80], 117,28, 5, {}, nil,draw_action, repair_click)     
      repair_obj:draw()
    end
    -- fire palace weapon?   
@@ -1594,7 +1605,7 @@ function draw_ui()
     local icount=1
     for i=1,#selected_obj.build_objs do
      local curr_item=selected_obj.build_objs[i]
-     if curr_item.req_id==nil 
+     if not curr_item.req_id
       or has_obj[selected_obj.created_by][curr_item.req_id]      
       and curr_item.req_level<=p_level
      then
@@ -1623,7 +1634,7 @@ function draw_ui()
     end -- for
   end -- has build obs
 
-  pal() --else green=black
+ -- pal() --else green=black
 
   -- ui elements (buttons)?
   for controls in all(ui_controls) do
@@ -1758,7 +1769,7 @@ end
 
 function check_hover_select(obj)
   -- null-check
-  if (obj==nil) return
+  if (not obj) return
   --  collide()
   local hb1,hb2 = cursor:get_hitbox(),obj:get_hitbox()
   obj.hover = hb1.x < hb2.x + hb2.w and
@@ -1803,7 +1814,7 @@ function return_to_fact(unit,fact)
  unit.cor = cocreate(function(unit)
   local init_state=fact.id!=1 and 9 or 0
   move_unit_pos(unit, (fact.x+16)/8, fact.y/8, 0, true, init_state)
-  if (unit.link==nil) do_guard(unit, init_state) 
+  if (not unit.link) do_guard(unit, init_state) 
  end)
 end
 
@@ -1834,7 +1845,7 @@ function update_ai()
   -- if ai owned...
   --  is factory, builds units and is not already building...
   if ai_building.owner==2 and
-    (ai_building.build_obj==nil or ai_building.build_obj.process!=1) then    
+    (not ai_building.build_obj or ai_building.build_obj.process!=1) then    
     -- select a random unit to build
     local u=rnd(ai_building.build_objs)
     if u and u.speed>0 then
@@ -1942,7 +1953,7 @@ end
 
 function split2d(str,d,dd) 
  d=d or ","
- if (dd~=nil) str=split(str,dd) 
+ if (dd) str=split(str,dd) 
  if type(str)=="table" then
   local t={}
   while #str>0 do
@@ -2028,7 +2039,7 @@ function map_neighbors(node,flying)
 end
 
 function maybe_add(nx, ny, ntable, flying)
- if (flying or not fget(wrap_mget(nx,ny),0) and object_tiles[nx..","..ny]==nil and nx>=0 and ny>=0 and nx<=63 and ny<=63) add(ntable, {x=nx, y=ny})
+ if (flying or not fget(wrap_mget(nx,ny),0) and not object_tiles[nx..","..ny] and nx>=0 and ny>=0 and nx<=63 and ny<=63) add(ntable, {x=nx, y=ny})
 end
 
 function manhattan_distance(a, b)
@@ -2086,19 +2097,19 @@ bbbebbbbbbbebbbbb0deed0bbbb0bbbbbb6b6bbbb6eee6bbb6eee6bbb0e66e0b00ccc00bbdeaedbb
 bbb0bbbbbb0b0bbbbbeccebbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb00bbbbbbbbbbbbbbbbbbbd2499a77a0a94942d1542425d44411114555224225ff2225
 d77dd77d67d6fffdddd776dddddddddddddcddddddddddddddddddddbbbbbbbbbbb8bbbbb5e77e5bd1499a77aaa99424d15242f5d55555555555555555f44225
 76667666561ffff1d576db65d5577655d560d55555555555d5555555bbbbbbbbbbb9bbbbbbc77cbbd1299aaaaaa94942d551414fdddddbbdddbbdd5d5fff4445
-76667666565f4441d76dbbb5d576db65d56d155555555555d5bbbbb5bbbddbbbbbdadbbbbbb77bbbd52499aaaa9494245552424fdd55bb5ddddbb5dd5f444445
-d6621662165ffff1d66d11b5d76dbbb5d5110dd5556c0655d5555555bbd66dbbbb666bbbc767767cd5424999994942425551424fd55bbddadad5bb5d5fff4765
-d2221222165f1011d66d01b0d66d11b5d510010dd6ee0dd5d55aaa55bbd66dbbbbb6bbbbc767767cd5542494949424255555114fd5bbd5aadaaddbb55444f66f
-622112211ddf1001d66d0b01d66d01b0d51d055106dd0dd5d5555555bbbddbbbbbb6bbbbbbb77bbbd55142424242421599c9554fdbbddaa5ddaad5bb5414dffd
-6115511151551005d56dd015d66d0b01d55d155556dd15d1d5558555bbb67bbbbbb6bbbbbb5775bbd55f1424242421197a09954fdbd5aadd8d5aaddb544446d4
-66767555d55d5555d5511155d56dd015d556665551ddd101d5588855bbb67bbbbbb7bbbbbb6556bbd5599c9212121119aa09954fd5daa5d888ddaadd55555425
-6d6d65d555d555d5ddddd776ddd111ddd56dcdd551110001ddddddddbbbbbbbbbbbb447bbbbbbbbbd597a099fffffff455555425dddddd88888ddddd55555425
-66d1d555155dc055d55576db65555555d56d0dd55d110c05d5588855bbbbbbbbbbb2557bbb5555bbd59aa094dddddddf5fff2225dddaadd888d5aadd5fff2225
-d555555a5d5ee055d5576dbbb555c055d56d15d1d15160d5d5558555b1b11b1bbb2555dbb507665bdf249492dd929ddf5ffff225dbddaa5d8d5aaddb5ffff225
-15aaa99a5555505dd5566d11b55ee055d51dd10015556d15d5555555bdd66ddbb775f55bb562720bdff2424fd9d2d9df54444445dbbd5aadd5aad5bb54444445
-55aaa55ad5555055d5566d01b0555055d5111005dddd1105d55aaa55b651156b76dfff2bb567275bd1fffff1d99299df5ffffff5d5bbddaadaad5bb55ffffff5
-d5a1199a55d51555d5566d0b01555055d511100111110055d5555555b7b55b7b76d5f564b572765bd4414141111111145ffffff54d5bb5dadad5bb5d5ffffff5
-5544445a15555515d5556dd015555555d551005555555555d5bbbbb5bbb67bbb4422d664bb5055bbd14404455555555454444445d4d5bbdd5ddbbddd54444445
+76667666565f4441d76dbbb5d576db65d56d1555c5555555d5bbbbb5bbbddbbbbbdadbbbbbb77bbbd52499aaaa9494245552424fdd55bb5ddddbb5dd5f444445
+d6621662165ffff1d66d11b5d76dbbb5d5110d560d6c0655d5555555bbd66dbbbb666bbbc767767cd5424999994942425551424fd55bbddadad5bb5d5fff4765
+d2221222165f1011d66d01b0d66d11b5d51001d6d6ee0dd5d55aaa55bbd66dbbbbb6bbbbc767767cd5542494949424255555114fd5bbd5aadaaddbb55444f66f
+622112211ddf1001d66d0b01d66d01b0d515050116dd0dd5d5555555bbbddbbbbbb6bbbbbbb77bbbd55142424242421599c9554fdbbddaa5ddaad5bb5414dffd
+6115511151551005d56dd015d66d0b01d55d155106dd15d5d5558555bbb67bbbbbb6bbbbbb5775bbd55f1424242421197a09954fdbd5aadd8d5aaddb544446d4
+66767555d55d5555d5511155d56dd015d566665551ddd501d5588855bbb67bbbbbb7bbbbbb6556bbd5599c9212121119aa09954fd5daa5d888ddaadd55555425
+6d6d65d555d555d5ddddd776ddd111ddd6ddcdd551110001ddddddddbbbbbbbbbbbb447bbbbbbbbbd597a099fffffff455555425dddddd88888ddddd55555425
+66d1d555155dc055d55576db65555555d6dd0dd55d110001d5588855bbbbbbbbbbb2557bbb5555bbd59aa094dddddddf5fff2225dddaadd888d5aadd5fff2225
+d555555a5d5ee055d5576dbbb555c055d6dd15d1d1510c01d5558555b1b11b1bbb2555dbb507665bdf249492dd929ddf5ffff225dbddaa5d8d5aaddb5ffff225
+15aaa99a5555505dd5566d11b55ee055d1ddd500155560d5d5555555bdd66ddbb775f55bb562720bdff2424fd9d2d9df54444445dbbd5aadd5aad5bb54444445
+55aaa55ad5555055d5566d01b0555055d1111005dddd6d15d55aaa55b651156b76dfff2bb567275bd1fffff1d99299df5ffffff5d5bbddaadaad5bb55ffffff5
+d5a1199a55d51555d5566d0b01555055d111100111111105d5555555b7b55b7b76d5f564b572765bd4414141111111145ffffff54d5bb5dadad5bb5d5ffffff5
+5544445a15555515d5556dd015555555d511005555551015d5bbbbb5bbb67bbb4422d664bb5055bbd14404455555555454444445d4d5bbdd5ddbbddd54444445
 d5151515555d5555d5555111d5555555d555555555555555d5555555bbb67bbbbbbbbd77bbbbbbbbd51111155555555452222225dd4ddbbdddbbdddd55555555
 dddd666666ddddddddd777c066666ddddddddddddddddddddddddddddd4dddddddd66666ddddddddddddddddddddddddddddddddddddddddd199999999999999
 d566ddddd61111106667dee0dddd657667555555d557755555555ddddd4ddd5dd566777665555555d555555555555555d766777755555555d494955949999249
@@ -2324,7 +2335,7 @@ __map__
 0000000c0a0a0a0d02030303001212121203070703040d850e0e0f0e0e0e0e0e0f0e0e0e0e000000000000000000080303060c0c000000000000000000002f2f0a0a0a0a0c000000030307030304370a0a0000000000090a0d0003070703040d0a0a0a0a0c000000000000000036000000000c0a850a0a0a0b00000000000000
 000000090d0203030307030612121212120803030303040000000d85858585850f858585856e0e003400000000000000000c0a0a0c0000000008000000002f2f000d0a0a0a0c0000030707070308090a0a0c000000000d0d00000307030303000d0a0a0a0b0000000000000000000000000c0a0a858585858500360000000000
 0000000000030707070703001212301212120803030308000030000000000000000000000f0e0e8500000000000000000c0a0a0a0a0c00000000000000002f2f0000090a0a0a0c0008030707030c0a0a0a0b00000000000000000803030308000000090a0a0c00000000000000000c0a0a0a0d00000d0a0d0000000000000000
-120000000008030707030612121212121212121235121212000000000000000035000030008585850b0000000000000c0a0a0a0a0a0a0a0a0c0a0a0c00002f2f0000090a0a0a0a0a0c03030303090a0a0a0b000000000000000000030703000000000a0a0a0a0a0a0d000000000009370a0d0000000000000000000000000000
+120000000008030707030612121212121212121235121212000000000000000035000030008585850b0000000000000c0a0a0a0a0a0a0a0a0c0a0a0c00002f2f0000090a0a0a0a0a0c03030303090a0a0a0b000000003333000000030703000000000a0a0a0a0a0a0d000000000009370a0d0000000000000000000000000000
 12000000000003030306121212121212121202030400123312000000000000000000000000000d0d003312120000000d0a0a0a0a0a0a0a0d0a0d0a0a08002f2f00000d0a0a0a0a0a0a0c0303030d0a360a0d000000000000001212080308000000000a0a0a0a0a0a0000000000000d0a0d000000003400000000000000000000
 000000000000080306121212121212120203030303040000000035000000330000000000003500000000121212000000000d0a0a0d0000000000000d00002f2f0000000d0a0a0a0a0a0a080308000d0a0d00000000000000000012121200000000000a0a0a0a0a0d000000000000000d00000000000000000000000000000000
 00000000000000000012121212121212120303030303000000000000000000000000000000000000001212121212000000000d0a000000000000000000002f2f00000000000d0a0a0a0a0c0000000000000000000000000000000000000000000000090a0a0d0503030400000000000000000012121200000012121200000000
@@ -2339,7 +2350,7 @@ __map__
 0a0a0c030800000000000000000000000000000303030303030400000c0a0a0a0a0a0a0a0c0000000000000000000000000000090a0a0a0a0a00000000002f2f1212121212121212000000000000090a0a0a420a420a010e0a0000003000090a340a0b0000001212120203030303041212121212120000121212121212120000
 0a0a0a0a0c000000000c0a0a0c00000000000008030307070703040c0a0a0a0a0a0a0a0a0a0c0000000000000000000000000c0a0a370a0a0d00000000002f2f12121212121212121212120000000d0a0a300a0a0a0a0e0e0d000000000000090a0d000000000000000803030707030412121212000000000000000000000000
 0a0a0a0a0a0a0a0a0a0a0a0a0b0000000000000002070703030303090a0a0a0a0a0a0a0a0a0a000000000000000034000000090a0a0a0a0d0000000000002f2f1212121212121212121212120000000d0a0a0a0a6a0a0a34000000000000000d0b00000000000000000807030703030312121212000000000000000000000000
-0a0a0a0a0a0a0a0a0a0a0a0a0d00000012120000030707030303080d0a0a0a0a0a0d0000000d0a0a0a0a0a0c0000000000090a0a0d0000000000000000002f2f121212121212121212121200080000000000090a0a0a0a0a00000000000000000000000000000800000203030707070304121212000000000000000012120000
+0a0a0a0a0a0a0a0a0a0a0a0a0d00000012120000030707030303080d0a0a0a0a0a0d0000000d0a0a0a0a0a0c0000000000090a0a0d0000000000000000002f2f121212121212121212121200080000000049090a0a0a0a0a00000000000000000000000000000800000203030707070304121212000000000000000012120000
 0a0a0a0a0a0a0a0a0a0a0a0a000000121212121203070303080000000d0a0a0a0a0000000000090a0a0a0a0a0a0c003600000d0000000000000000000c0a2f2f121212121212121212120000000000000000090a0a300a0d0000000000000000000000000800000c0d0803030707070300121212000000000000001212120000
 0a0a0a0a0a0a0a0a0a0a0a0d00000012121212120803030308000000000a0a0a0b00000000000d0a0a0a0a0a0a0b000000000000000000003400000c360a2f2f1212121212121212121200000000080000000d0a0a0a0d0000000000000000000000121200000000000003070707030312121212120000000000001212120000
 0a0a0a0a0a0a0a0a0a0a0d0000000000000000000000000000000000000a0a0a0a0000000000000a0a0a0a0a0a0d0203040000000000360000000c830a0a2f2f12121212121212121212120000000000000000000000000000000000000000000012121212000000000008030707070312121212120000000000121212120000
