@@ -8,35 +8,35 @@ __lua__
 cartdata("pn_undune2") 
 
 -- data flags
-p_level,ai_level,p_col1,p_col2=dget"0",dget"1",dget"7",dget"8"
-bases,credits={},
-{
- shr(dget"35",16), -- player starting credits
- shr(500,16),     -- ai starting credits
- shr(dget"36",16)  -- target credits
-}
+-- p_level,ai_level,p_col1,p_col2=dget"0",dget"1",dget"7",dget"8"
+-- bases,credits={},
+-- {
+--  shr(dget"35",16), -- player starting credits
+--  shr(500,16),     -- ai starting credits
+--  shr(dget"36",16)  -- target credits
+-- }
 
-for i=1,dget"5" do
- local base={}
- for j=1,5 do
-  base[j]=dget(i*5+j)
- end
- add(bases,base)
-end
+-- for i=1,dget"5" do
+--  local base={}
+--  for j=1,5 do
+--   base[j]=dget(i*5+j)
+--  end
+--  add(bases,base)
+-- end
 
 -- DEBUG #####
 -- 1) 12, 1  Atreides
 -- 2) 11, 3  Ordos
 -- 3)  8, 2  Harkonnen
 -- 4) 14, 2  Emperor?
--- p_level,ai_level,p_col1,p_col2 = 1,1,8,2
--- bases={
---  {3,p_col1,p_col2,176,432}, --[1] p_faction, p_col1, p_col2,x,y
---  {1,12,1,208,248},           --[2] ai_faction, ai_col1, ai_col2,x,y
---  {2,11,3,448,256},           --[3] ai_faction2, ai2_col1, ai2_col2,x,y
---  {4,14,2,296,16}            --[4] emperor
--- }
--- credits={shr(999,16), shr(999,16), shr(9999,16) }
+p_level,ai_level,p_col1,p_col2 = 1,1,8,2
+bases={
+ {3,p_col1,p_col2,176,432}, --[1] p_faction, p_col1, p_col2,x,y
+ {1,12,1,208,248},           --[2] ai_faction, ai_col1, ai_col2,x,y
+ {2,11,3,448,256},           --[3] ai_faction2, ai2_col1, ai2_col2,x,y
+ {4,14,2,296,16}            --[4] emperor
+}
+credits={shr(999,16), shr(999,16), shr(9999,16) }
 
 
 -- fields
@@ -977,7 +977,6 @@ function do_guard(unit, start_state)
    -- ornithopter?
    elseif self.id==34 then
      -- select a random target (unit or building)
-     -- (will ignore fow!)
      attack_rnd_enemy(self)
    end
 
@@ -1831,8 +1830,8 @@ worm_life=0
 -- ai strategy code (attack, build, repair, etc.)
 function update_ai()
  -- depending on ai level...
- if t()*20>ai_level and t()%ai_level==0 then  
-
+ if t()>ai_level*20 and t()%ai_level==0 then
+  
   -- unit attacks
   -- 
   -- find the first ai unit and attack player  
@@ -1908,6 +1907,7 @@ end
 
 
 function attack_rnd_enemy(obj)
+ --printh(t()..") attack_rnd_enemy...")
  local p_target=find_rnd_enemy(obj)
  if (p_target and is_visible(p_target)) do_attack(obj, p_target)
 end
