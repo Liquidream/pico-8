@@ -1787,11 +1787,12 @@ function check_hover_select(obj)
     
      -- was our harvester selected before clicking a refinery/repair?
     if selected_obj
-     and (obj.id==6 and selected_obj.id==32 
-      or obj.id==14 and selected_obj.id>26)
-     and obj.owner==1 and selected_obj.owner==1
+     and last_selected_obj
+     and (obj.id==6 and last_selected_obj.id==32 
+      or obj.id==14 and last_selected_obj.id>26)
+     and obj.owner==1 and last_selected_obj.owner==1
     then
-     return_to_fact(selected_obj,obj)
+     return_to_fact(last_selected_obj,obj)
      return -- register "no click"
 
     else 
