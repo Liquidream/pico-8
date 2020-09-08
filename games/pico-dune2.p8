@@ -8,35 +8,35 @@ __lua__
 cartdata("pn_undune2") 
 
 -- data flags
--- p_level,ai_level,p_col1,p_col2=dget"0",dget"1",dget"7",dget"8"
--- bases,credits={},
--- {
---  shr(dget"35",16), -- player starting credits
---  shr(500,16),     -- ai starting credits
---  shr(dget"36",16)  -- target credits
--- }
+p_level,ai_level,p_col1,p_col2=dget"0",dget"1",dget"7",dget"8"
+bases,credits={},
+{
+ shr(dget"35",16), -- player starting credits
+ shr(500,16),     -- ai starting credits
+ shr(dget"36",16)  -- target credits
+}
 
--- for i=1,dget"5" do
---  local base={}
---  for j=1,5 do
---   base[j]=dget(i*5+j)
---  end
---  add(bases,base)
--- end
+for i=1,dget"5" do
+ local base={}
+ for j=1,5 do
+  base[j]=dget(i*5+j)
+ end
+ add(bases,base)
+end
 
 -- DEBUG #####
 -- 1) 12, 1  Atreides
 -- 2) 11, 3  Ordos
 -- 3)  8, 2  Harkonnen
 -- 4) 14, 2  Emperor?
-p_level,ai_level,p_col1,p_col2 = 1,1,8,2
-bases={
- {3,p_col1,p_col2,176,432}, --[1] p_faction, p_col1, p_col2,x,y
- {1,12,1,208,248},           --[2] ai_faction, ai_col1, ai_col2,x,y
- {2,11,3,448,256},           --[3] ai_faction2, ai2_col1, ai2_col2,x,y
- {4,14,2,296,16}            --[4] emperor
-}
-credits={shr(999,16), shr(999,16), shr(9999,16) }
+-- p_level,ai_level,p_col1,p_col2 = 1,1,8,2
+-- bases={
+--  {3,p_col1,p_col2,176,432}, --[1] p_faction, p_col1, p_col2,x,y
+--  {1,12,1,208,248},          --[2] ai_faction, ai_col1, ai_col2,x,y
+--  {2,11,3,448,256},          --[3] ai_faction2, ai2_col1, ai2_col2,x,y
+--  {4,14,2,296,16}            --[4] emperor
+-- }
+-- credits={shr(999,16), shr(999,16), shr(9999,16) }
 
 
 -- fields
@@ -117,7 +117,7 @@ function process_click(self, mode)
 end
 
 -- object data
-obj_data=[[id|name|obj_spr|ico_spr|type|w|h|z|trans_col|parent_id|parent2_id|owner|col1|col2|icol1|icol2|ico_w|ico_h|req_id|req_level|req_faction|max|cost|power|arms|hitpoint|speed|range|fire_type|fire_rate| fire_sfx|death_sfx|norotate|altframe|framecount|life|frame|process|spent|fire_cooldown|hit|flash_count|col_cycle_pos|col_cycle_src|storage|col_cycle|description|func_init|func_draw|func_update|func_onclick
+obj_data=[[id|name|obj_spr|ico_spr|type|w|h|z|trans_col|parent_id|parent2_id|owner|col1|col2|icol1|icol2|ico_w|ico_h|req_id|req_level|req_faction|max|cost|power|arms|hitpoint|speed|range|fire_type|fire_rate|fire_sfx|death_sfx|norotate|altframe|framecount|life|frame|process|spent|fire_cooldown|hit|flash_count|col_cycle_pos|col_cycle_src|storage|col_cycle|description|func_init|func_draw|func_update|func_onclick
 1|cONSTRUCTION yARD|64|170|2|2|2|1||nil|||||||2|2|nil|1|||100|0|0|1600|0|||||53||||0|0|0|0|0|0|1|1||0||aLL STRUCTURES ARE~BUILT BY THE~CONSTRUCTION YARD.||||factory_click
 2|lARGE cONCRETE sLAB|15|162|2|2|2|1||1|||||7|5|2|2|1|4|||20|0|0|0|0|||||||||0|0|0|0|0|0|1|1||0||uSE CONCRETE TO MAKE A~STURDY FOUNDATION FOR~YOUR STRUCTURES.||||
 3|sMALL cONCRETE sLAB|15|162|2|1|1|1||1|||||6|6|2|2|1|1|||5|0|0|0|0|||||||||0|0|0|0|0|0|1|1||0||uSE CONCRETE TO MAKE A~STURDY FOUNDATION FOR~YOUR STRUCTURES.||||
@@ -162,7 +162,6 @@ obj_data=[[id|name|obj_spr|ico_spr|type|w|h|z|trans_col|parent_id|parent2_id|own
 42|sPICE bLOOM|19||1|1|1|1|11|||2|||||1|1|||||||0|4|0||||||1|||0|0|0|0|0|0|1|1||0||||||
 80|rEPAIR|17|17|5|1|1|1|11||||||||1|1|||||||0|0||||||||||0|0|0|0|0|0|1|1||0||||draw_action||action_click
 81|lAUNCH|1|1|5|1|1|1|11||||||||1|1|||||||0|0||||||||||0|0|0|0|0|0|1|1||0||||draw_action||action_click]]
-
 
 
 
@@ -534,7 +533,6 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
          -- bg
          rectfill(self.x-1,self.y-1,self.x+16,self.y+19, 0)
          -- draw health/progress
-         --printh(self.name)
          local hp = this.hitpoint
          local val = self.process==1 and 15*(this.life/100) or 15*(this.life/hp)
          if (this.life>0 and not show_menu) rectfill(self.x,self.y+17,self.x+val,self.y+18, self.process==1 and 12 or this.life<hp*.33 and 8 or this.life<hp*.66 and 10 or 11)
