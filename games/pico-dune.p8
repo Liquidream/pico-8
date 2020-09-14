@@ -32,9 +32,9 @@ cartdata("pn_undune2")
 p_level,ai_level,p_col1,p_col2 = 1,1,8,2
 bases={
  {3,p_col1,p_col2,11*8,9*8},--[1] p_faction, p_col1, p_col2,x,y
+ {1,12,1,3*8,64},          --[3] ai_faction2, ai2_col1, ai2_col2,x,y
+ {1,12,1,20*8,64},           --[4] emperor
  {1,12,1,20*8,19*8},          --[2] ai_faction, ai_col1, ai_col2,x,y
- -- {1,12,1,37*8,2*8},          --[3] ai_faction2, ai2_col1, ai2_col2,x,y
- -- {4,14,2,151,24}             --[4] emperor
 }
 credits={shr(999,16), shr(999,16), shr(9999,16) }
 
@@ -534,7 +534,6 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
          -- bg
          rectfill(self.x-1,self.y-1,self.x+16,self.y+19, 0)
          -- draw health/progress
-         --printh(self.name)
          local hp = this.hitpoint
          local val = self.process==1 and 15*(this.life/100) or 15*(this.life/hp)
          if (this.life>0 and not show_menu) rectfill(self.x,self.y+17,self.x+val,self.y+18, self.process==1 and 12 or this.life<hp*.33 and 8 or this.life<hp*.66 and 10 or 11)
@@ -629,6 +628,8 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
          local gx,gy = self:get_tile_pos()
          if (wrap_mget(gx,gy)<9) wrap_mset(gx,gy,20) --scorch sand
          if (self.id<=17) wrap_mset(gx,gy,14)
+         -- clear incoming?
+         if (self.last_fact) self.last_fact.incoming=false
          del(units,self)
          -- bloom
          if self.id==42 then
@@ -975,7 +976,6 @@ function do_guard(unit, start_state)
    -- ornithopter?
    elseif self.id==34 then
      -- select a random target (unit or building)
-     -- (will ignore fow!)
      attack_rnd_enemy(self)
    end
 
@@ -1829,8 +1829,8 @@ worm_life=0
 -- ai strategy code (attack, build, repair, etc.)
 function update_ai()
  -- depending on ai level...
- if t()*20>ai_level and t()%ai_level==0 then  
-
+ if t()>ai_level*20 and t()%ai_level==0 then
+  
   -- unit attacks
   -- 
   -- find the first ai unit and attack player  
@@ -1906,6 +1906,7 @@ end
 
 
 function attack_rnd_enemy(obj)
+ --printh(t()..") attack_rnd_enemy...")
  local p_target=find_rnd_enemy(obj)
  if (p_target and is_visible(p_target)) do_attack(obj, p_target)
 end
