@@ -30,40 +30,40 @@ title_mode=1
 levelselect_mode=2
 levelend_mode=3
 
--- No.|Starting Credits|Objective Credits|P Faction|P XPos|P YPos|AI Fact 1|AI XPos 1|AI YPos 1|AI Fact 2|AI XPos 2|AI YPos 2|AI Fact 3|AI XPos 3|AI YPos 3|AI Level
+-- No.|Starting Credits|Objective Credits|# Bases|P Faction|P XPos|P YPos|AI Fact 1|AI XPos 1|AI YPos 1|AI Fact 2|AI XPos 2|AI YPos 2|AI Fact 3|AI XPos 3|AI YPos 3|AI Level
 mission_data={
 { -- atredies missions
- {1,999,1000,1,nil,nil,0,nil,nil,nil,nil,nil,nil,nil,nil,nil},
- {2,1200,2700,1,nil,nil,0,nil,nil,nil,nil,nil,nil,nil,nil,8},
- {3,1500,nil,1,nil,nil,0,nil,nil,nil,nil,nil,nil,nil,nil,7},
- {4,1500,nil,1,nil,nil,0,nil,nil,nil,nil,nil,nil,nil,nil,6},
- {5,1500,nil,1,nil,nil,0,nil,nil,nil,nil,nil,nil,nil,nil,5},
- {6,1700,nil,1,nil,nil,0,nil,nil,nil,nil,nil,nil,nil,nil,4},
- {7,2000,nil,1,nil,nil,0,nil,nil,nil,nil,nil,nil,nil,nil,3},
- {8,2000,nil,1,nil,nil,0,nil,nil,nil,nil,nil,nil,nil,nil,2},
- {9,2500,nil,1,nil,nil,0,nil,nil,nil,nil,nil,nil,nil,nil,1},
+ {1,999,1000,1,1,nil,nil,0,nil,nil,nil,nil,nil,nil,nil,nil,nil},
+ {2,1200,2700,1,1,nil,nil,0,nil,nil,nil,nil,nil,nil,nil,nil,8},
+ {3,1500,nil,1,1,nil,nil,0,nil,nil,nil,nil,nil,nil,nil,nil,7},
+ {4,1500,nil,1,1,nil,nil,0,nil,nil,nil,nil,nil,nil,nil,nil,6},
+ {5,1500,nil,1,1,nil,nil,0,nil,nil,nil,nil,nil,nil,nil,nil,5},
+ {6,1700,nil,1,1,nil,nil,0,nil,nil,nil,nil,nil,nil,nil,nil,4},
+ {7,2000,nil,1,1,nil,nil,0,nil,nil,nil,nil,nil,nil,nil,nil,3},
+ {8,2000,nil,1,1,nil,nil,0,nil,nil,nil,nil,nil,nil,nil,nil,2},
+ {9,2500,nil,1,1,nil,nil,0,nil,nil,nil,nil,nil,nil,nil,nil,1},
 },
 { -- ordos missions
- {1,999,1000,2,nil,nil,0,nil,nil,nil,nil,nil,nil,nil,nil,nil},
- {2,1200,2700,2,nil,nil,0,nil,nil,nil,nil,nil,nil,nil,nil,8},
- {3,1500,nil,2,nil,nil,0,nil,nil,nil,nil,nil,nil,nil,nil,7},
- {4,1500,nil,2,nil,nil,0,nil,nil,nil,nil,nil,nil,nil,nil,6},
- {5,1500,nil,2,nil,nil,0,nil,nil,nil,nil,nil,nil,nil,nil,5},
- {6,1700,nil,2,nil,nil,0,nil,nil,nil,nil,nil,nil,nil,nil,4},
- {7,2000,nil,2,nil,nil,0,nil,nil,nil,nil,nil,nil,nil,nil,3},
- {8,2000,nil,2,nil,nil,0,nil,nil,nil,nil,nil,nil,nil,nil,2},
- {9,2500,nil,2,nil,nil,0,nil,nil,nil,nil,nil,nil,nil,nil,1},
+ {1,999,1000,1,2,nil,nil,0,nil,nil,nil,nil,nil,nil,nil,nil,nil},
+ {2,1200,2700,1,2,nil,nil,0,nil,nil,nil,nil,nil,nil,nil,nil,8},
+ {3,1500,nil,1,2,nil,nil,0,nil,nil,nil,nil,nil,nil,nil,nil,7},
+ {4,1500,nil,1,2,nil,nil,0,nil,nil,nil,nil,nil,nil,nil,nil,6},
+ {5,1500,nil,1,2,nil,nil,0,nil,nil,nil,nil,nil,nil,nil,nil,5},
+ {6,1700,nil,1,2,nil,nil,0,nil,nil,nil,nil,nil,nil,nil,nil,4},
+ {7,2000,nil,1,2,nil,nil,0,nil,nil,nil,nil,nil,nil,nil,nil,3},
+ {8,2000,nil,1,2,nil,nil,0,nil,nil,nil,nil,nil,nil,nil,nil,2},
+ {9,2500,nil,1,2,nil,nil,0,nil,nil,nil,nil,nil,nil,nil,nil,1},
 },
 { -- harkonnen missions
- {1,999,1000,3,88,72,1,24,64,1,160,64,1,160,152,nil},
- {2,1200,2700,3,144,200,1,120,96,1,nil,nil,nil,nil,nil,8},
- {3,1500,nil,3,nil,nil,2,nil,nil,nil,nil,nil,nil,nil,nil,7},
- {4,1500,nil,3,nil,nil,2,nil,nil,nil,nil,nil,nil,nil,nil,6},
- {5,1500,nil,3,nil,nil,1,nil,nil,nil,nil,nil,nil,nil,nil,5},
- {6,1700,nil,3,nil,nil,2,nil,nil,nil,nil,nil,nil,nil,nil,4},
- {7,2000,nil,3,nil,nil,1,nil,nil,nil,nil,nil,nil,nil,nil,3},
- {8,2000,nil,3,nil,nil,2,nil,nil,nil,nil,nil,nil,nil,nil,2},
- {9,2500,nil,3,nil,nil,4,nil,nil,nil,nil,nil,nil,nil,nil,1},
+ {1,999,1000,4,3,88,72,1,24,64,1,160,64,1,160,152,nil},
+ {2,1200,2700,2,3,144,200,1,120,96,1,nil,nil,nil,nil,nil,8},
+ {3,1500,nil,1,3,nil,nil,2,nil,nil,nil,nil,nil,nil,nil,nil,7},
+ {4,1500,nil,1,3,nil,nil,2,nil,nil,nil,nil,nil,nil,nil,nil,6},
+ {5,1500,nil,1,3,nil,nil,1,nil,nil,nil,nil,nil,nil,nil,nil,5},
+ {6,1700,nil,1,3,nil,nil,2,nil,nil,nil,nil,nil,nil,nil,nil,4},
+ {7,2000,nil,1,3,nil,nil,1,nil,nil,nil,nil,nil,nil,nil,nil,3},
+ {8,2000,nil,1,3,nil,nil,2,nil,nil,nil,nil,nil,nil,nil,nil,2},
+ {9,2500,nil,1,3,nil,nil,4,nil,nil,nil,nil,nil,nil,nil,nil,1},
 }
 }
 
@@ -220,6 +220,7 @@ function calc_rank()
 end
 
 function load_level(num)
+ num=2
  printh("in load_level("..num..")...")
 
  -- set player to faction
@@ -227,70 +228,53 @@ function load_level(num)
  p_col1 = faction_cols[p_fact][1]
  p_col2 = faction_cols[p_fact][2]
 
- local mdata = mission_data[num]
- ai1_fact = mdata[4]
- ai2_fact = mdata[5]
- ai3_fact = mdata[6]
+ local mdata = mission_data[p_fact][num]
+ ai1_fact = mdata[8]
+ ai2_fact = mdata[11]
+ ai3_fact = mdata[14]
 
- mission_bases_data={
-  { -- mission 1
-   {p_fact3,p_col1,p_col2,11*8,9*8}, -- p_faction, p_col1, p_col2,x,y
-   {1,12,ai1_fact,3*8,64},            -- "other" lone enemy soldiers
-   {1,12,ai2_fact,20*8,64},           --
-   {1,12,ai3_fact,20*8,19*8},         --
-  },
- }
- local mbases = mission_bases_data[num]
+ -- mission_bases_data={
+ --  { -- mission 1
+ --   {p_fact3,p_col1,p_col2,11*8,9*8}, -- p_faction, p_col1, p_col2,x,y
+ --   {1,12,ai1_fact,3*8,64},            -- "other" lone enemy soldiers
+ --   {1,12,ai2_fact,20*8,64},           --
+ --   {1,12,ai3_fact,20*8,19*8},         --
+ --  },
+ -- }
+ --local mbases = mission_data[num]
  
  dset(0, num)
- dset(1, mdata[5]) -- ai level
+ dset(1, mdata[17]) -- ai level
   
- num_bases=#mbases
+ num_bases=mdata[4]
  dset(5, num_bases)
 
  dset(6, p_fact) -- p_faction
  dset(7, p_col1) -- p_col1
  dset(8, p_col2) -- p_col2
- dset(9, mbases[1][4]) -- player base x-pos
- dset(10,mbases[1][5]) -- player base y-pos
+ dset(9, mdata[6]) -- player base x-pos
+ dset(10,mdata[7]) -- player base y-pos
 
- 
+ --ai1_fact = 1
  dset(11, ai1_fact) -- ai_faction
- dset(12, faction_cols[ai1_fact][1]) -- ai_col1
- dset(13, faction_cols[ai1_fact][2]) -- ai_col2
- dset(14, 296)-- ai base x-pos
- dset(15, 16) -- ai base y-pos 
+ dset(12, ai1_fact and faction_cols[ai1_fact][1] or nil)
+ dset(13, ai1_fact and faction_cols[ai1_fact][2] or nil)
+ dset(14, mdata[9])  -- ai1 base x-pos
+ dset(15, mdata[10]) -- ai1 base y-pos 
 
- ai2_fact = 1 --mdata[4]
+ --ai2_fact = 1
  dset(16, ai2_fact)
  dset(17, ai2_fact and faction_cols[ai2_fact][1] or nil)
  dset(18, ai2_fact and faction_cols[ai2_fact][2] or nil)
- dset(19, 208)-- ai base x-pos
- dset(20, 256) -- ai base y-pos
+ dset(19, mdata[12]) -- ai2 base x-pos
+ dset(20, mdata[13]) -- ai2 base y-pos
 
- -- num_bases=3
- -- dset(5, num_bases)
-
- -- dset(6, p_fact) -- p_faction
- -- dset(7, faction_cols[p_fact][1]) -- p_col1
- -- dset(8, faction_cols[p_fact][2]) -- p_col2
- -- dset(9, 176) -- player base x-pos
- -- dset(10, 432) -- player base y-pos
-
- 
- -- dset(11, ai_fact) -- ai_faction
- -- dset(12, ai_fact and faction_cols[ai_fact][1] or nil) -- ai_col1
- -- dset(13, ai_fact and faction_cols[ai_fact][2] or nil) -- ai_col2
- -- dset(14, 296)-- ai base x-pos
- -- dset(15, 16) -- ai base y-pos 
-
- -- ai2_fact = 1 --mdata[4]
- -- dset(16, ai2_fact)
- -- dset(17, ai2_fact and faction_cols[ai2_fact][1] or nil)
- -- dset(18, ai2_fact and faction_cols[ai2_fact][2] or nil)
- -- dset(19, 208)-- ai base x-pos
- -- dset(20, 256) -- ai base y-pos
-
+ --ai3_fact = 1
+ dset(16, ai3_fact)
+ dset(17, ai3_fact and faction_cols[ai3_fact][1] or nil)
+ dset(18, ai3_fact and faction_cols[ai3_fact][2] or nil)
+ dset(19, mdata[15]) -- ai3 base x-pos
+ dset(20, mdata[16]) -- ai3 base y-pos
 
  dset(35, mdata[2]) -- starting credits
  dset(36, mdata[3]) -- target credits
