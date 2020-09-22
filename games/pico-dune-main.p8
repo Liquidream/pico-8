@@ -30,19 +30,59 @@ title_mode=1
 levelselect_mode=2
 levelend_mode=3
 
--- mission data (harkonnen)
+-- No.|Starting Credits|Objective Credits|P Faction|P XPos|P YPos|AI Fact 1|AI XPos 1|AI YPos 1|AI Fact 2|AI XPos 2|AI YPos 2|AI Fact 3|AI XPos 3|AI YPos 3|AI Level
 mission_data={
--- # |	Credits |	Target Cred |	Enemy Fact |	AI Level
- { 1,	999,	 1000,	nil, nil },	-- No enemy, just reach 1000 credits
- { 2,	1200,	2700,	1,   8 },	  -- 2700 credits of spice, OR eliminate Atreides presence
- { 3,	1500,	0,    2,   7	}, -- Eliminate enemy
- { 4,	1500,	0,    2,   6	}, -- Eliminate enemy
- { 5,	1500,	0,    1,   5 }, --	Eliminate enemy
- { 6,	1700,	0,    2,   4 }, --	Eliminate enemy
- { 7,	2000,	0,    1,   3 }, --	Eliminate enemy
- { 8,	2000,	0,    2,   2 }, --	(Should be 1 or 2)
- { 9,	2500,	0,    4,   1 }, --	Eliminate enemy
+{ -- atredies missions
+ {1,999,1000,1,nil,nil,0,nil,nil,nil,nil,nil,nil,nil,nil,nil},
+ {2,1200,2700,1,nil,nil,0,nil,nil,nil,nil,nil,nil,nil,nil,8},
+ {3,1500,nil,1,nil,nil,0,nil,nil,nil,nil,nil,nil,nil,nil,7},
+ {4,1500,nil,1,nil,nil,0,nil,nil,nil,nil,nil,nil,nil,nil,6},
+ {5,1500,nil,1,nil,nil,0,nil,nil,nil,nil,nil,nil,nil,nil,5},
+ {6,1700,nil,1,nil,nil,0,nil,nil,nil,nil,nil,nil,nil,nil,4},
+ {7,2000,nil,1,nil,nil,0,nil,nil,nil,nil,nil,nil,nil,nil,3},
+ {8,2000,nil,1,nil,nil,0,nil,nil,nil,nil,nil,nil,nil,nil,2},
+ {9,2500,nil,1,nil,nil,0,nil,nil,nil,nil,nil,nil,nil,nil,1},
+},
+{ -- ordos missions
+ {1,999,1000,2,nil,nil,0,nil,nil,nil,nil,nil,nil,nil,nil,nil},
+ {2,1200,2700,2,nil,nil,0,nil,nil,nil,nil,nil,nil,nil,nil,8},
+ {3,1500,nil,2,nil,nil,0,nil,nil,nil,nil,nil,nil,nil,nil,7},
+ {4,1500,nil,2,nil,nil,0,nil,nil,nil,nil,nil,nil,nil,nil,6},
+ {5,1500,nil,2,nil,nil,0,nil,nil,nil,nil,nil,nil,nil,nil,5},
+ {6,1700,nil,2,nil,nil,0,nil,nil,nil,nil,nil,nil,nil,nil,4},
+ {7,2000,nil,2,nil,nil,0,nil,nil,nil,nil,nil,nil,nil,nil,3},
+ {8,2000,nil,2,nil,nil,0,nil,nil,nil,nil,nil,nil,nil,nil,2},
+ {9,2500,nil,2,nil,nil,0,nil,nil,nil,nil,nil,nil,nil,nil,1},
+},
+{ -- harkonnen missions
+ {1,999,1000,3,88,72,1,24,64,1,160,64,1,160,152,nil},
+ {2,1200,2700,3,144,200,1,120,96,1,nil,nil,nil,nil,nil,8},
+ {3,1500,nil,3,nil,nil,2,nil,nil,nil,nil,nil,nil,nil,nil,7},
+ {4,1500,nil,3,nil,nil,2,nil,nil,nil,nil,nil,nil,nil,nil,6},
+ {5,1500,nil,3,nil,nil,1,nil,nil,nil,nil,nil,nil,nil,nil,5},
+ {6,1700,nil,3,nil,nil,2,nil,nil,nil,nil,nil,nil,nil,nil,4},
+ {7,2000,nil,3,nil,nil,1,nil,nil,nil,nil,nil,nil,nil,nil,3},
+ {8,2000,nil,3,nil,nil,2,nil,nil,nil,nil,nil,nil,nil,nil,2},
+ {9,2500,nil,3,nil,nil,4,nil,nil,nil,nil,nil,nil,nil,nil,1},
 }
+}
+
+
+-- mission data (harkonnen)
+-- mission_data={
+-- -- # |	Credits |	Target Cred |	Enemy Fact 1,2,3 |	AI Level
+--  { 1,	999,	 1000,	1,1,1,   9 },	-- No enemy, just reach 1000 credits
+--  { 2,	1200,	2700,	1,   8 },	  -- 2700 credits of spice, OR eliminate Atreides presence
+--  { 3,	1500,	0,    2,   7	}, -- Eliminate enemy
+--  { 4,	1500,	0,    2,   6	}, -- Eliminate enemy
+--  { 5,	1500,	0,    1,   5 }, --	Eliminate enemy
+--  { 6,	1700,	0,    2,   4 }, --	Eliminate enemy
+--  { 7,	2000,	0,    1,   3 }, --	Eliminate enemy
+--  { 8,	2000,	0,    2,   2 }, --	(Should be 1 or 2)
+--  { 9,	2500,	0,    4,   1 }, --	Eliminate enemy
+-- }
+
+
 
 -- vars
 mode = title_mode
@@ -182,28 +222,42 @@ end
 function load_level(num)
  printh("in load_level("..num..")...")
 
- local mdata = mission_data[num]
-
  -- set player to faction
  p_fact = 3 -- (1=atreides, 2=ordos, 3-harkonen)
+ p_col1 = faction_cols[p_fact][1]
+ p_col2 = faction_cols[p_fact][2]
+
+ local mdata = mission_data[num]
+ ai1_fact = mdata[4]
+ ai2_fact = mdata[5]
+ ai3_fact = mdata[6]
+
+ mission_bases_data={
+  { -- mission 1
+   {p_fact3,p_col1,p_col2,11*8,9*8}, -- p_faction, p_col1, p_col2,x,y
+   {1,12,ai1_fact,3*8,64},            -- "other" lone enemy soldiers
+   {1,12,ai2_fact,20*8,64},           --
+   {1,12,ai3_fact,20*8,19*8},         --
+  },
+ }
+ local mbases = mission_bases_data[num]
  
  dset(0, num)
  dset(1, mdata[5]) -- ai level
   
- num_bases=3
+ num_bases=#mbases
  dset(5, num_bases)
 
  dset(6, p_fact) -- p_faction
- dset(7, faction_cols[p_fact][1]) -- p_col1
- dset(8, faction_cols[p_fact][2]) -- p_col2
- dset(9, 176) -- player base x-pos
- dset(10, 432) -- player base y-pos
+ dset(7, p_col1) -- p_col1
+ dset(8, p_col2) -- p_col2
+ dset(9, mbases[1][4]) -- player base x-pos
+ dset(10,mbases[1][5]) -- player base y-pos
 
-
- ai_fact = 2 --mdata[4]
- dset(11, ai_fact) -- ai_faction
- dset(12, ai_fact and faction_cols[ai_fact][1] or nil) -- ai_col1
- dset(13, ai_fact and faction_cols[ai_fact][2] or nil) -- ai_col2
+ 
+ dset(11, ai1_fact) -- ai_faction
+ dset(12, faction_cols[ai1_fact][1]) -- ai_col1
+ dset(13, faction_cols[ai1_fact][2]) -- ai_col2
  dset(14, 296)-- ai base x-pos
  dset(15, 16) -- ai base y-pos 
 
@@ -213,6 +267,30 @@ function load_level(num)
  dset(18, ai2_fact and faction_cols[ai2_fact][2] or nil)
  dset(19, 208)-- ai base x-pos
  dset(20, 256) -- ai base y-pos
+
+ -- num_bases=3
+ -- dset(5, num_bases)
+
+ -- dset(6, p_fact) -- p_faction
+ -- dset(7, faction_cols[p_fact][1]) -- p_col1
+ -- dset(8, faction_cols[p_fact][2]) -- p_col2
+ -- dset(9, 176) -- player base x-pos
+ -- dset(10, 432) -- player base y-pos
+
+ 
+ -- dset(11, ai_fact) -- ai_faction
+ -- dset(12, ai_fact and faction_cols[ai_fact][1] or nil) -- ai_col1
+ -- dset(13, ai_fact and faction_cols[ai_fact][2] or nil) -- ai_col2
+ -- dset(14, 296)-- ai base x-pos
+ -- dset(15, 16) -- ai base y-pos 
+
+ -- ai2_fact = 1 --mdata[4]
+ -- dset(16, ai2_fact)
+ -- dset(17, ai2_fact and faction_cols[ai2_fact][1] or nil)
+ -- dset(18, ai2_fact and faction_cols[ai2_fact][2] or nil)
+ -- dset(19, 208)-- ai base x-pos
+ -- dset(20, 256) -- ai base y-pos
+
 
  dset(35, mdata[2]) -- starting credits
  dset(36, mdata[3]) -- target credits
