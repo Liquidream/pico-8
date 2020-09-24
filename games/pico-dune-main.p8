@@ -9,8 +9,8 @@ __lua__
 -- main cart (title menu, level select)
 -- =======================================
 
---game_cart = "pico-dune.p8"
-game_cart = "pico-dune_fmt.p8"
+--game_cart = "pico-dune_fmt.p8"
+game_cart = "pico-dune.p8"
 
 -- music
 -- 00 = title
@@ -56,8 +56,8 @@ mission_data={
 },
 { -- harkonnen missions
  {1,999,1000,4,3,88,72,1,24,64,1,160,64,1,160,152,nil},
- {2,1200,2700,2,3,144,200,1,120,96,1,nil,nil,nil,nil,nil,8},
- {3,1500,nil,1,3,nil,nil,2,nil,nil,nil,nil,nil,nil,nil,nil,7},
+ {2,1200,2700,2,3,144,200,1,120,96,nil,nil,nil,nil,nil,nil,8},
+ {3,1500,nil,2,3,176,112,2,408,440,nil,nil,nil,nil,nil,nil,7},
  {4,1500,nil,1,3,nil,nil,2,nil,nil,nil,nil,nil,nil,nil,nil,6},
  {5,1500,nil,1,3,nil,nil,1,nil,nil,nil,nil,nil,nil,nil,nil,5},
  {6,1700,nil,1,3,nil,nil,2,nil,nil,nil,nil,nil,nil,nil,nil,4},
@@ -220,7 +220,8 @@ function calc_rank()
 end
 
 function load_level(num)
- num=2
+ 
+ num=3
  printh("in load_level("..num..")...")
 
  -- set player to faction
