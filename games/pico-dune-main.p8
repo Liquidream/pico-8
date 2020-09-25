@@ -58,12 +58,12 @@ mission_data={
  {1,999,1000,4,3,88,72,1,24,64,1,160,64,1,160,152,nil},
  {2,1200,2700,2,3,144,200,1,120,96,nil,nil,nil,nil,nil,nil,8},
  {3,1500,nil,2,3,176,112,2,408,440,nil,nil,nil,nil,nil,nil,7},
- {4,1500,nil,1,3,nil,nil,2,nil,nil,nil,nil,nil,nil,nil,nil,6},
+ {4,1500,nil,2,3,176,432,2,296,16,nil,nil,nil,nil,nil,nil,6},
  {5,1500,nil,1,3,nil,nil,1,nil,nil,nil,nil,nil,nil,nil,nil,5},
  {6,1700,nil,1,3,nil,nil,2,nil,nil,nil,nil,nil,nil,nil,nil,4},
  {7,2000,nil,1,3,nil,nil,1,nil,nil,nil,nil,nil,nil,nil,nil,3},
  {8,2000,nil,1,3,nil,nil,2,nil,nil,nil,nil,nil,nil,nil,nil,2},
- {9,2500,nil,1,3,nil,nil,4,nil,nil,nil,nil,nil,nil,nil,nil,1},
+ {9,2500,nil,4,3,232,416,4,360,0,2,112,40,1,408,136,1},
 }
 }
 
@@ -221,7 +221,7 @@ end
 
 function load_level(num)
  
- num=3
+ num=9
  printh("in load_level("..num..")...")
 
  -- set player to faction
@@ -271,11 +271,11 @@ function load_level(num)
  dset(20, mdata[13]) -- ai2 base y-pos
 
  --ai3_fact = 1
- dset(16, ai3_fact)
- dset(17, ai3_fact and faction_cols[ai3_fact][1] or nil)
- dset(18, ai3_fact and faction_cols[ai3_fact][2] or nil)
- dset(19, mdata[15]) -- ai3 base x-pos
- dset(20, mdata[16]) -- ai3 base y-pos
+ dset(21, ai3_fact)
+ dset(22, ai3_fact and faction_cols[ai3_fact][1] or nil)
+ dset(23, ai3_fact and faction_cols[ai3_fact][2] or nil)
+ dset(24, mdata[15]) -- ai3 base x-pos
+ dset(25, mdata[16]) -- ai3 base y-pos
 
  dset(35, mdata[2]) -- starting credits
  dset(36, mdata[3]) -- target credits
