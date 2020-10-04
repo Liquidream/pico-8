@@ -63,7 +63,7 @@ mission_data={
  {6,1700,nil,1,3,nil,nil,2,nil,nil,nil,nil,nil,nil,nil,nil,4},
  {7,2000,nil,1,3,nil,nil,1,nil,nil,nil,nil,nil,nil,nil,nil,3},
  {8,2000,nil,1,3,nil,nil,2,nil,nil,nil,nil,nil,nil,nil,nil,2},
- {9,2500,nil,4,3,232,416,4,360,0,2,112,40,1,408,136,1},
+ {9,2500,nil,4,3,232,416,4,360,40,2,112,40,1,408,136,1},
 }
 }
 
