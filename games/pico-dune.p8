@@ -210,7 +210,7 @@ function _init()
  for i=-2,66 do
   fow[i]={}
   for l=-2,66 do
-   fow[i][l]=0--16--0 --16
+   fow[i][l]=16--0 --16
   end
  end
 
@@ -863,11 +863,10 @@ function _update60()
   -- update all unit coroutines 
   -- (pathfinding, moving, attacking, etc.)
   for unit in all(units) do
-    if unit then
-        if(unit.cor and costatus(unit.cor) != 'dead') assert(coresume(unit.cor, unit))
-      --else
-      --  unit.cor = nil
-      --end
+    if unit then    
+      if (unit.cor) active,ex=coresume(unit.cor, unit)
+      --if(ex) stop(trace(unit.cor, ex))
+      if (not active) unit.cor = nil
 
       -- check sandworm collision        
       if worm_segs -- worm present
@@ -1197,7 +1196,7 @@ end
 -- source = unit doing ping
 function ping(unit,x,y,func,max_dist,skip_yield)
  for t=0,max_dist or 64,.02 do
- 	local xx,yy=flr(x+t*cos(t)),flr(y+t*sin(t))
+ 	local xx,yy=mid(flr(x+t*cos(t)),61),mid(flr(y+t*sin(t)),61)
 		if (func(unit,xx,yy)) return xx,yy
   -- give others a chance!  
   if (not skip_yield) yield()  -- (better perf for unit updates, but causes pauses on start/deploy harvester)  
