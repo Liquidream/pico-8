@@ -119,8 +119,8 @@ end
 -- object data
 obj_data=[[id|name|obj_spr|ico_spr|type|w|h|z|trans_col|parent_id|parent2_id|owner|col1|col2|icol1|icol2|ico_w|ico_h|req_id|req_level|req_faction|max|cost|power|arms|hitpoint|speed|range|fire_type|fire_rate|fire_sfx|death_sfx|norotate|altframe|framecount|life|frame|process|spent|fire_cooldown|hit|flash_count|col_cycle_pos|col_cycle_src|storage|col_cycle|description|func_init|func_draw|func_update|func_onclick
 1|cONSTRUCTION yARD|64|170|2|2|2|1||nil|||||||2|2|nil|1|||100|0|0|1600|0|||||53||||0|0|0|0|0|0|1|1||0||aLL STRUCTURES ARE~BUILT BY THE~CONSTRUCTION YARD.||||factory_click
-2|lARGE cONCRETE sLAB|22|162|2|2|2|1||1|||||7|5|2|2|1|4|||20|0|0|0|0|||||||||0|0|0|0|0|0|1|1||0||uSE CONCRETE TO MAKE A~STURDY FOUNDATION FOR~YOUR STRUCTURES.||||
-3|sMALL cONCRETE sLAB|22|162|2|1|1|1||1|||||6|6|2|2|1|1|||5|0|0|0|0|||||||||0|0|0|0|0|0|1|1||0||uSE CONCRETE TO MAKE A~STURDY FOUNDATION FOR~YOUR STRUCTURES.||||
+2|lARGE cONCRETE sLAB|15|162|2|2|2|1||1|||||7|5|2|2|1|4|||20|0|0|0|0|||||||||0|0|0|0|0|0|1|1||0||uSE CONCRETE TO MAKE A~STURDY FOUNDATION FOR~YOUR STRUCTURES.||||
+3|sMALL cONCRETE sLAB|15|162|2|1|1|1||1|||||6|6|2|2|1|1|||5|0|0|0|0|||||||||0|0|0|0|0|0|1|1||0||uSE CONCRETE TO MAKE A~STURDY FOUNDATION FOR~YOUR STRUCTURES.||||
 4|dEFENSIVE wALL|133|164|2|1|1|1||1|||||||2|2|7|4|||50|0|0|200|0|||||53||164||0|0|0|0|0|0|1|1||0||tHE wALL IS USED FOR~PASSIVE DEFENSE.||||
 5|wINDTRAP|66|172|2|2|2|1||1|||||||2|2|1|1|||300|-100|0|800|0|||||53|||10|0|0|0|0|0|0|1|1|11|0|12,12,12,12,13,1,1,1,1,13|tHE WINDTRAP SUPPLIES~POWER TO YOUR BASE.~wITHOUT POWER YOUR~STRUCTURES WILL DECAY.||||
 6|sPICE rEFINERY|68|174|2|3|2|1||1|||||||2|2|5|1|||400|30|0|1800|0|||||53|||15|0|0|0|0|0|0|1|1|11|1000|11,10,8,8|tHE rEFINERY CONVERTS~SPICE INTO CREDITS.||draw_refinery||
@@ -159,10 +159,9 @@ obj_data=[[id|name|obj_spr|ico_spr|type|w|h|z|trans_col|parent_id|parent2_id|own
 39|rAIDER|51|204|1|1|1|1|11|11|||||12|1|2|2||2|2||150||32|320|0.75|3|1|8|60|54||||0|0|0|0|0|0|1|1||0||tHE oRDOS rAIDER IS~SIMILAR TO THE STANDARD~tRIKE, BUT WITH LESS~ARMOUR IN FAVOUR OF~SPEED.||||
 40|dEVIATOR|54|202|1|1|1|1|11|12|||||11|3|2|2|18|7|2||750||50|480|0.3|7|2|500|59|54||||0|0|0|0|0|0|1|1||0||tHE oRDOS dEVIATOR IS A~STANDARD mISSILE tANK,~WHICH FIRES UNIQUE~NERVE GAS MISSILES THAT~MAY TEMPORARILY CHANGE~ENEMY LOYALTY.||||
 41|sANDWORM|88||9|1|1|1|11||||||||2|2||3|||0||1200|4000|0.35|0|30|300|50|||||0|0|0|0|0|0|1|1||0||tHE sAND wORMS ARE~INDIGEONOUS TO dUNE.~aTTRACTED BY VIBRATIONS~ALMOST IMPOSSIBLE TO~DESTROY, WILL CONSUME~ANYTHING THAT MOVES.||||
-42|sPICE bLOOM|32||1|1|1|1|11|||2|||||1|1|||||||0|4|0||||||1|||0|0|0|0|0|0|1|1||0||||||
+42|sPICE bLOOM|32||1|1|1|1|11|||2|||||1|1|||||||0|4|0|||||53|1|||0|0|0|0|0|0|1|1||0||||||
 80|rEPAIR|3|3|5|1|1|1|11||||||||1|1|||||||0|0||||||||||0|0|0|0|0|0|1|1||0||||draw_action||action_click
 81|lAUNCH|1|1|5|1|1|1|11||||||||1|1|||||||0|0||||||||||0|0|0|0|0|0|1|1||0||||draw_action||action_click]]
-
 
 
 
@@ -175,9 +174,9 @@ function _init()
  -- enable mouse
  poke(0x5f2d, 1)
 
- -- menuitem(1,"exit to title",function()
- --  load("pico-dune-main")
- -- end)
+ menuitem(1,"exit to title",function()
+  load("pico-dune-main")
+ end)
 
  --  
  -- explode object data
@@ -259,7 +258,7 @@ function _init()
 
   if _t%30==0 then
    -- reset music (will set if more attack)
-    set_loop(false)  --5
+    set_loop"false"  --5
    -- 
    -- update_obj_tiles()
    -- 
@@ -603,7 +602,7 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
      -- check for attack
      if self.hit>0 and self.created_by>0 then 
        -- reinstate loop
-       set_loop(true) --5
+       set_loop"true" --5
        -- switch music (if passed the loop point)?
        -- 0=normal, 1=battle, 2=leaving_battle
        if (music_state==0 or stat(24)>5) music_state=1 music"0"
@@ -623,7 +622,7 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
          -- building?         
          for xx=0,self.spr_w-1 do
            for yy=0,self.spr_h-1 do
-             wrap_mset(self.x/8+xx, self.y/8+yy, 14)
+             wrap_mset(self.x/8+xx, self.y/8+yy, 21)
            end
          end
          del(buildings,self)
@@ -631,8 +630,8 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
         else
          -- unit
          local gx,gy = self:get_tile_pos()
-         if (wrap_mget(gx,gy)<9) wrap_mset(gx,gy,20) --scorch sand
-         if (self.id<=17) wrap_mset(gx,gy,14)
+         if (wrap_mget(gx,gy)<9) wrap_mset(gx,gy,33) --scorch sand
+         if (self.id<=16) wrap_mset(gx,gy,21)
          -- clear incoming?
          if (self.last_fact) self.last_fact.incoming=false
          del(units,self)
@@ -640,7 +639,7 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
          if self.id==42 then
           ping(self,gx,gy,
            function (unit,x,y)
-            if (wrap_mget(x,y)==0) wrap_mset(x,y,8)
+            if (wrap_mget(x,y)==0) wrap_mset(x,y,10)
            end,
            4, true)
          end
