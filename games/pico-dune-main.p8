@@ -55,7 +55,7 @@ mission_data={
  {9,2500,nil,1,2,nil,nil,0,nil,nil,nil,nil,nil,nil,nil,nil,1},
 },
 { -- harkonnen missions
- {1,999,1000,4,3,88,72,1,24,64,1,160,64,1,160,152,nil},
+ {1,999,1000,4,3,88,72,1,24,64,1,160,64,1,160,152,20},
  {2,1200,2700,2,3,144,200,1,120,96,nil,nil,nil,nil,nil,nil,8},
  {3,1500,nil,2,3,176,112,2,408,440,nil,nil,nil,nil,nil,nil,7},
  {4,1500,nil,2,3,176,432,2,296,16,nil,nil,nil,nil,nil,nil,6},
@@ -221,7 +221,7 @@ end
 
 function load_level(num)
  
- num=9
+ num=1
  printh("in load_level("..num..")...")
 
  -- set player to faction
