@@ -174,9 +174,9 @@ function _init()
  -- enable mouse
  poke(0x5f2d, 1)
 
- -- menuitem(1,"exit to title",function()
- --  load("pico-dune-main")
- -- end)
+ menuitem(1,"exit to title",function()
+  load("pico-dune-main")
+ end)
 
  --  
  -- explode object data
@@ -966,7 +966,7 @@ function do_guard(unit, start_state)
    end
 
    -- be on look-out
-   if (unit.owner==1 or ai_awake) and rnd(250)<1 and self.arms>0 and self.state!=8 then
+   if rnd(250)<1 and self.arms>0 and self.state!=8 then
     -- is danger tile?
     local gx,gy = self:get_tile_pos()
     ping(self,gx,gy,
@@ -974,7 +974,7 @@ function do_guard(unit, start_state)
       local target=units[object_tiles[x..","..y]]
       if (target!=null and target.created_by!=unit.created_by and fow[x][y]==16 and target.z==1) do_attack(unit,target) return true
      end,
-     5) -- fixes lookout range (was self.range)
+     4) -- fixes lookout range (was self.range)
 
    -- ornithopter?
    elseif self.id==34 then
@@ -1128,7 +1128,7 @@ function add_spice_cloud(x,y,r)
 end
 
 function do_attack(unit, target)
- ai_awake=true
+ --ai_awake=true
  -- normal attack?
  if unit.id != 19 then
    -- 0=idle/guarding, 1=pathfinding, 2=moving, 3=attacking, 5=exploding
@@ -1481,9 +1481,9 @@ function draw_ui()
  -- 
  -- draw_radar()
  -- 
- -- rect(90,90,124,124,p_col1)
- -- rect(91,91,123,123,p_col2)  
- -- rectfill(92,92,122,122,0)
+ rect(90,90,124,124,p_col1)
+ rect(91,91,123,123,p_col2)  
+ rectfill(92,92,122,122,0)
 
  
  -- update/draw message
@@ -1833,7 +1833,7 @@ worm_life=0
 -- ai strategy code (attack, build, repair, etc.)
 function update_ai()
  -- depending on ai level...
- if (t()>ai_level*20 or ai_awake) and t()%ai_level==0 then
+ if t()>ai_level*20 and t()%ai_level==0 then
   -- unit attacks
   -- 
   -- find the first ai unit and attack player  
