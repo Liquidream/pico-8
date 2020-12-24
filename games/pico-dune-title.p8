@@ -162,7 +162,7 @@ local cube_model=prepare_model({
 	})
 
 function make_cam(x0,y0,focal)
-	local yangle,zangle=0,0
+	local yangle,zangle=0.23,0
 	local dyangle,dzangle=0,0
 
 	return {
