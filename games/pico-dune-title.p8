@@ -292,7 +292,7 @@ function _draw()
 	print(cpu,128-#cpu*4,1,2)
 
 	print("mode:"..(mode and "@freds72" or "travels_dog"),2,1,7)
-	print("⬆️⬇️⬅️➡️:rotate/🅾️:switch",8,120,14)
+	--print("⬆️⬇️⬅️➡️:rotate/🅾️:switch",8,120,14)
 end
 
 -->8
