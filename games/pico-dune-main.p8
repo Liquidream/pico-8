@@ -221,7 +221,7 @@ end
 
 function load_level(num)
  
- num=3
+ num=4
  printh("in load_level("..num..")...")
 
  -- set player to faction
