@@ -32,9 +32,9 @@ function _draw()
 	local start⧗=6.5
 	pal()
 --	if t()>start⧗ then
---	 fade(t())
-  pal(10,128,1)
-		print("the demaking of a dynasty",12,61,10)
+	 fade(t()*4)
+  --pal(10,128,1)
+		print("the demaking of a dynasty",12,61,8) --10
 --	end
 end
 
@@ -110,9 +110,9 @@ local fadetable={
 function fade(i)
  for c=0,15 do
   if flr(i+1)>=16 then
-   pal(c,0)
+   pal(c,0,1)
   else
-   pal(c,fadetable[c+1][flr(i+1)])
+   pal(c,fadetable[c+1][flr(i+1)],1)
   end
  end
 end
