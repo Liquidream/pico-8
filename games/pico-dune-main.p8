@@ -33,7 +33,7 @@ levelend_mode=3
 -- No.|Starting Credits|Objective Credits|# Bases|P Faction|P XPos|P YPos|AI Fact 1|AI XPos 1|AI YPos 1|AI Fact 2|AI XPos 2|AI YPos 2|AI Fact 3|AI XPos 3|AI YPos 3|AI Level
 mission_data={
 { -- atredies missions
- {1,999,1000,1,1,nil,nil,0,nil,nil,nil,nil,nil,nil,nil,nil,nil},
+ {1,999,1000,1,1,nil,nil,0,nil,nil,nil,nil,nil,nil,nil,nil,20},
  {2,1200,2700,1,1,nil,nil,0,nil,nil,nil,nil,nil,nil,nil,nil,8},
  {3,1500,nil,1,1,nil,nil,0,nil,nil,nil,nil,nil,nil,nil,nil,7},
  {4,1500,nil,1,1,nil,nil,0,nil,nil,nil,nil,nil,nil,nil,nil,6},
@@ -59,10 +59,10 @@ mission_data={
  {2,1200,2700,2,3,144,200,1,120,96,nil,nil,nil,nil,nil,nil,8},
  {3,1500,nil,2,3,176,112,2,408,440,nil,nil,nil,nil,nil,nil,7},
  {4,1500,nil,2,3,176,432,2,296,16,nil,nil,nil,nil,nil,nil,6},
- {5,1500,nil,1,3,nil,nil,1,nil,nil,nil,nil,nil,nil,nil,nil,5},
- {6,1700,nil,1,3,nil,nil,2,nil,nil,nil,nil,nil,nil,nil,nil,4},
- {7,2000,nil,1,3,nil,nil,1,nil,nil,nil,nil,nil,nil,nil,nil,3},
- {8,2000,nil,1,3,nil,nil,2,nil,nil,nil,nil,nil,nil,nil,nil,2},
+ {5,1500,nil,2,3,88,200,1,448,288,nil,nil,nil,nil,nil,nil,5},
+ {6,1700,nil,2,3,nil,nil,2,nil,nil,nil,nil,nil,nil,nil,nil,4},
+ {7,2000,nil,2,3,nil,nil,1,nil,nil,nil,nil,nil,nil,nil,nil,3},
+ {8,2000,nil,2,3,nil,nil,2,nil,nil,nil,nil,nil,nil,nil,nil,2},
  {9,2500,nil,4,3,232,416,4,360,40,2,112,40,1,408,136,1},
 }
 }
@@ -221,7 +221,7 @@ end
 
 function load_level(num)
  
- num=4
+ num=5
  printh("in load_level("..num..")...")
 
  -- set player to faction
