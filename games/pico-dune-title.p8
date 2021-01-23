@@ -25,7 +25,7 @@ function _draw()
 	-- code distorts slightly)
 	--angle=0
 	if angle~=0 then 
-	 spr3d(8,0,123,19,cy,angle,1)
+	 spr3d(8,0,123,20,cy,angle,1)
 	else
 	 spr(1, 3,38, 15,3)
 	end
