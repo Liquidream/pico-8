@@ -15,6 +15,7 @@ function _update60()
  end
 end
 
+extcmd("rec")
 
 function _draw()
 	cls()
@@ -31,8 +32,16 @@ function _draw()
 	end
 	
 	local start⧗=6.5
+ --local start⧗=0
 	if t()>start⧗ then
-		fadeprint("the demaking of a dynasty",12,61, (t()-start⧗)*8)
+	 local tagline="the demaking of a dynasty"
+		fadeprint(tagline,12,62, (t()-start⧗)*8,3)
+		fadeprint(tagline,12,61, (t()-start⧗)*8)
+		
+
+  fadeprint(" bY pAUL nICHOLAS @liquidream",4,104, (t()-start⧗)*8, 5)
+  fadeprint("♪cHRIS dONNELLY @gruber_music",4,112, (t()-start⧗)*8, 4)
+  fadeprint("(oRIGINAL BY wESTWOOD sTUDIOS)",4,120, (t()-start⧗)*8, 3)
 	end
 end
 
@@ -90,13 +99,10 @@ end
 -- make with #PALETTE_MAKER
 -- https://www.lexaloffle.com/bbs/?pid=68190
 _pal={0,128,130,2,136,8}
--- for i,c in pairs(_pal) do
--- 	pal(i-1,c,1)
--- end
 pal(_pal,1)
 
-function fadeprint(text, x, y, fade)
- local fcol = mid(0,flr(fade),#_pal)
+function fadeprint(text, x, y, fadeamount, maxfade)
+ local fcol = mid(0,flr(fadeamount),maxfade or #_pal)
  print(text, x, y, fcol)
 end
 
