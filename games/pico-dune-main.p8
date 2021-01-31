@@ -60,7 +60,7 @@ mission_data={
  {3,1500,nil,2,3,176,112,2,408,440,nil,nil,nil,nil,nil,nil,7},
  {4,1500,nil,2,3,176,432,2,296,16,nil,nil,nil,nil,nil,nil,6},
  {5,1500,nil,2,3,88,200,1,448,288,nil,nil,nil,nil,nil,nil,5},
- {6,1700,nil,2,3,nil,nil,2,nil,nil,nil,nil,nil,nil,nil,nil,4},
+ {6,1700,nil,3,3,264,312,2,8,24,2,480,136,nil,nil,nil,4},
  {7,2000,nil,2,3,nil,nil,1,nil,nil,nil,nil,nil,nil,nil,nil,3},
  {8,2000,nil,2,3,nil,nil,2,nil,nil,nil,nil,nil,nil,nil,nil,2},
  {9,2500,nil,4,3,232,416,4,360,40,2,112,40,1,408,136,1},
@@ -221,7 +221,7 @@ end
 
 function load_level(num)
  
- num=5
+ num=6
  printh("in load_level("..num..")...")
 
  -- set player to faction
