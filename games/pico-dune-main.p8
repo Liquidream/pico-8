@@ -44,7 +44,7 @@ mission_data={
  {9,2500,nil,1,1,nil,nil,0,nil,nil,nil,nil,nil,nil,nil,nil,1},
 },
 { -- ordos missions
- {1,999,1000,1,2,nil,nil,0,nil,nil,nil,nil,nil,nil,nil,nil,nil},
+ {1,999,1000,1,2,nil,nil,0,nil,nil,nil,nil,nil,nil,nil,nil,20},
  {2,1200,2700,1,2,nil,nil,0,nil,nil,nil,nil,nil,nil,nil,nil,8},
  {3,1500,nil,1,2,nil,nil,0,nil,nil,nil,nil,nil,nil,nil,nil,7},
  {4,1500,nil,1,2,nil,nil,0,nil,nil,nil,nil,nil,nil,nil,nil,6},
@@ -61,9 +61,9 @@ mission_data={
  {4,1500,nil,2,3,176,432,2,296,16,nil,nil,nil,nil,nil,nil,6},
  {5,1500,nil,2,3,88,200,1,448,288,nil,nil,nil,nil,nil,nil,5},
  {6,1700,nil,3,3,264,312,2,8,24,2,480,136,nil,nil,nil,4},
- {7,2000,nil,2,3,200,72,1,280,408,nil,nil,nil,nil,nil,nil,3},
- {8,2000,nil,2,3,nil,nil,2,nil,nil,nil,nil,nil,nil,nil,nil,2},
- {9,2500,nil,4,3,232,416,4,360,40,2,112,40,1,408,136,1},
+ {7,2000,nil,4,3,200,72,1,280,408,nil,nil,nil,nil,nil,nil,3},
+ {8,2000,nil,4,3,192,240,2,328,8,1,248,448,1,424,424,2},
+ {9,2500,nil,4,3,192,416,4,360,40,2,112,40,1,408,136,1},
 }
 }
 
@@ -221,7 +221,7 @@ end
 
 function load_level(num)
  
- num=7
+ num=8
  printh("in load_level("..num..")...")
 
  -- set player to faction
