@@ -302,7 +302,7 @@ function init_levelend()
  pal(3, 137, 1)
  -- debug testing
  p_score=927
- p_time=14000
+ p_time=5000
  local hours = flr(p_time / 3600 )
  p_time = p_time - hours * 3600
  local minutes = flr(p_time / 60)
