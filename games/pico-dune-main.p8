@@ -317,22 +317,24 @@ function init_levelend()
   { 0, ai_buildings, 116, 14, 20, p_buildings }
   }
  curr_stat=1
- stat_delay=0
+ stat_delay=100
 end
 
 function update_levelend()
  -- in stats mode
+ if stat_delay > 0 then
+  -- pausing
+  stat_delay-=1
+  return
+ end
  if curr_stat <= #stats then
   -- scale the stats?
-  if stats[curr_stat][6] > 60 then
-   stats[curr_stat][1] += stats[curr_stat][6]*0.005
-  else
-   stats[curr_stat][1] += .2
-  end
-
+  stats[curr_stat][1] += (stats[curr_stat][6]/stats[curr_stat][5])/3
+  
   if stats[curr_stat][1] >= stats[curr_stat][2] then
   	stats[curr_stat][1] = stats[curr_stat][2]
-   curr_stat+=1  
+   curr_stat+=1
+   stat_delay=50
   end
  end
 end
@@ -407,7 +409,8 @@ function sprint(str,x,y,col,scol)
 end
 
 function draw_bar(x,y,max_w,val,max_val,col)
- local w=mid(0,val/max_val*max_w,max_w)
+ if (val <=0) return 
+ local w=mid(0,val/max_val*max_w,max_w) 
  rectfill(x+1,y+1,x+w+1,y+4,2)
  rectfill(x,y,x+w,y+3,col)
 end
