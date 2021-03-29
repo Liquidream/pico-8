@@ -301,6 +301,12 @@ end
 function init_levelend()
  pal(3, 137, 1)
  -- debug testing
+ p_score=927
+ p_time=14000
+ local hours = flr(p_time / 3600 )
+ p_time = p_time - hours * 3600
+ local minutes = flr(p_time / 60)
+ p_time=hours.."H "..minutes.."M"
  p_harvested=30000
  ai_harvested=25000
  p_units=302
@@ -352,7 +358,7 @@ function draw_levelend()
 
  sprint("sCORE:"..p_score,16,13,7)
  -- todo: round to nearest minute
- sprint("tIME:"..p_time,80,13)
+ sprint("tIME:"..p_time,70,13)
 
  sprint("yOU'VE ATTAINED\n  THE RANK OF",36,30)
  sprint(p_rank,42,43,8)
