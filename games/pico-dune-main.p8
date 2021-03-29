@@ -146,6 +146,7 @@ function _update60()
   end
 
  elseif mode == levelend_mode then
+  update_levelend()
   -- switch to level select
   if btnp(5) then
    p_level += 1
@@ -299,12 +300,48 @@ end
 
 function init_levelend()
  pal(3, 137, 1)
+ -- debug testing
+ p_harvested=30000
+ ai_harvested=25000
+ p_units=302
+ ai_units=75
+ p_buildings=74
+ ai_buildings=13
+
+ stats={
+ 	{ 0, p_harvested, 68, 8, 60, p_harvested },
+ 	{ 0, ai_harvested, 74, 14, 60, p_harvested },
+  { 0, p_units, 89, 8, 40, p_units },
+  { 0, ai_units, 95, 14, 40, p_units },
+  { 0, p_buildings, 110, 8, 20, p_buildings},
+  { 0, ai_buildings, 116, 14, 20, p_buildings }
+  }
+ curr_stat=1
+ stat_delay=0
 end
 
 function update_levelend()
+ -- in stats mode
+ if curr_stat <= #stats then
+  -- scale the stats?
+  if stats[curr_stat][6] > 60 then
+   stats[curr_stat][1] += stats[curr_stat][6]*0.005
+  else
+   stats[curr_stat][1] += .2
+  end
+
+  if stats[curr_stat][1] >= stats[curr_stat][2] then
+  	stats[curr_stat][1] = stats[curr_stat][2]
+   curr_stat+=1  
+  end
+ end
 end
 
 function draw_levelend()
+ -- debug data
+ -- step in original = n*0.003
+ --p_harvested+=(5.5 >> 16)
+-- p_harvested += 100
  local spr_fact=9
  map()
   
@@ -316,31 +353,49 @@ function draw_levelend()
  sprint("tIME:"..p_time,80,13)
 
  sprint("yOU'VE ATTAINED\n  THE RANK OF",36,30)
- sprint(p_rank,42,44,8)
+ sprint(p_rank,42,43,8)
   
 	rect(8,64,120,80,4)
 	line(26,64,100,64,9)
  sprint("SPICE HARVESTED BY",28,61)
  sprint("  YOU:\nENEMY:",11,67)
- sprint(p_harvested.."\n"..ai_harvested,100,67)
- draw_bar(35,68,60,10,10,8)
- draw_bar(35,74,60,5,10,14)
+ sprint(flr(stats[1][1]).."\n"..flr(stats[2][1]),100,67)
+ 
+ --sprint(p_harvested.."\n"..ai_harvested,100,67)
+-- draw_bar(35,68,60,10,10,8)
+-- draw_bar(35,74,60,5,10,14)
  
  rect(8,84,120,101,4)
  line(26,84,100,84,9)
  sprint("UNITS DESTROYED BY",28,81)
  sprint("  YOU:\nENEMY:",11,88)
- sprint(p_units.."\n"..ai_units,100,88)
- draw_bar(35,89,60,5,10,8)
- draw_bar(35,95,60,5,10,14)
+ sprint(flr(stats[3][1]).."\n"..flr(stats[4][1]),100,88)
+ --sprint(p_units.."\n"..ai_units,100,88)
+-- draw_bar(35,89,60,5,10,8)
+-- draw_bar(35,95,60,5,10,14)
 
  rect(8,105,120,122,4)
  line(18,105,108,105,9)
  sprint("BUILDINGS DESTROYED BY",20,102)
  sprint("  YOU:\nENEMY:",11,109)
- sprint(p_buildings.."\n"..ai_buildings,100,109)
- draw_bar(35,110,60,5,10,8)
- draw_bar(35,116,60,5,10,14)
+ sprint(flr(stats[5][1]).."\n"..flr(stats[6][1]),100,109)
+ --sprint(p_buildings.."\n"..ai_buildings,100,109)
+-- draw_bar(35,110,60,5,10,8)
+-- draw_bar(35,116,60,5,10,14)
+ 
+ -- draw bars
+ for i=1,#stats do
+  draw_bar(
+  	35,
+  	stats[i][3],
+  	--60,
+  	--stats[i][2]>1000 and 60 or 20,
+   stats[i][5],
+  	stats[i][1],
+  	--stats[i][2],
+   stats[i][6],
+  	stats[i][4])  
+ end
  
 end
 -->8
@@ -355,6 +410,17 @@ function draw_bar(x,y,max_w,val,max_val,col)
  local w=mid(0,val/max_val*max_w,max_w)
  rectfill(x+1,y+1,x+w+1,y+4,2)
  rectfill(x,y,x+w,y+3,col)
+end
+
+-- https://www.lexaloffle.com/bbs/?pid=22809#p
+function u32_tostr(v)
+ local s=""
+ repeat
+     local t=v>>>1
+     s=(t%0x0.0005<<17)+(v<<16&1)..s
+     v=t/5
+ until v==0
+ return s
 end
 __gfx__
 000000009333999993939393939fffffffffffffffffff39939999993399399999999999993999f93333333339f9993300000000000000000000000000000000
