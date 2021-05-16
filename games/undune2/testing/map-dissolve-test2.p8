@@ -8,12 +8,17 @@ function _init()
  rdata=split2d(spr_data,",","\n")
  
  -- define colour "filters"
- filters={
-  {0,0,0}, -- [1] borderline
+ cols={
+  [0]={0,0,0}, -- [1] borderline
   {8,2,1}, -- [2] harkonnen
   {12,1,5},-- [3] attreides
   {11,10,1}-- [4] ordos
  }
+
+ col_borderline=0
+ col_harkonnen=1
+ col_attreides=2
+ col_ordos=3
 
  -- "paint" blank map
  cls()
@@ -40,28 +45,42 @@ function _init()
  --spr(0,0,0,16,16)
  --rectfill(4,20,123,83,6)
  
+ cleartext()
  print("tHREE hOUSES HAVE\nCOME TO dUNE.",
+   30,102,0)  
+ wait(20)  
+ fizzlemap(0,  cols[col_borderline])
+ wait(20) 
+ cleartext()
+ print("hARKONNEN ARRIVED\nFIRST.",
    30,102,0)
- 
- sx=4
- sy=20
- sw=119
- sh=64
- dx=4
- dy=20
- speed=6
- 
- for i=1,20 do
- flip()
- end 
- 
- fnum=0
- --for i=0,27 do
- ffsspr(sx,sy,sw,sh,dx,dy,dw,dh,speed,rdata,0,filters[1])
- ffsspr(sx,sy,sw,sh,dx,dy,dw,dh,speed,rdata,3,filters[2])
- ffsspr(sx,sy,sw,sh,dx,dy,dw,dh,speed,rdata,14,filters[3])
- ffsspr(sx,sy,sw,sh,dx,dy,dw,dh,speed,rdata,26,filters[4])
- --end
+ fizzlemap(6,  cols[col_harkonnen])
+ fizzlemap(5,  cols[col_harkonnen])
+ fizzlemap(4,  cols[col_harkonnen])
+ fizzlemap(10, cols[col_harkonnen])
+ fizzlemap(3,  cols[col_harkonnen])
+ fizzlemap(9,  cols[col_harkonnen])
+ wait(20) 
+ cleartext()
+ print("tHE WEAK aTREIDES\nWILL BE EASY.",
+   30,102,0)
+ fizzlemap(13, cols[col_attreides])
+ fizzlemap(7,  cols[col_attreides])
+ fizzlemap(20, cols[col_attreides])
+ fizzlemap(14, cols[col_attreides])
+ fizzlemap(21, cols[col_attreides]) 
+ fizzlemap(22, cols[col_attreides])
+ wait(20) 
+ cleartext()
+ print("tHE oRDOS ARE\nGETTING CLOSER.",
+   30,102,0)
+ fizzlemap(19, cols[col_ordos])
+ fizzlemap(27, cols[col_ordos])
+ fizzlemap(26, cols[col_ordos])
+ fizzlemap(25, cols[col_ordos])
+ fizzlemap(24, cols[col_ordos])
+ fizzlemap(23, cols[col_ordos])
+
  
  -- job done
  ::_::
@@ -72,8 +91,8 @@ end
 
 -->8
 --utils
-function explode_data()
- 
+function cleartext()
+ rectfill(27,100,101,115,9)
 end
 
 function split2d(str,d,dd) 
@@ -93,7 +112,14 @@ function split2d(str,d,dd)
 end
 
 -- filtered-fizzlesspr
-function ffsspr(sx, sy, sw, sh, dx, dy, dw, dh, flipframe, fdata, fnum, fcols)
+function fizzlemap(rnum, cols)
+ sx=4
+ sy=20
+ sw=119
+ sh=64
+ dx=4
+ dy=20
+ speed=6
  num=0
  taps=0x3006
  lfsr=0x3fff
@@ -111,15 +137,21 @@ function ffsspr(sx, sy, sw, sh, dx, dy, dw, dh, flipframe, fdata, fnum, fcols)
    if x>=sx and x<=sx+sw
     and y>=sy and y<=sy+sh 
    then
-    if not fnum or fdata[y-sy+1][x-sx+1]==fnum
+    if not rnum or rdata[y-sy+1][x-sx+1]==rnum
     then
      local origcol=sget(x,y)
-     pset(dx-sx+x,dy-sy+y, fcols[origcol])
+     pset(dx-sx+x,dy-sy+y, cols[origcol])
     end
    end
   end
-  if(_x%flipframe==0)flip()
+  if(_x%speed==0)flip()
  end
+end
+
+function wait(num)
+ for i=1,num do
+ flip()
+ end 
 end
 
 -->8
