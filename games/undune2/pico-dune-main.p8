@@ -16,8 +16,10 @@ game_cart = "pico-dune.p8"
 -- 00 = title
 -- 06 = intro/advisor/level lose?
 -- 10 = level win
+-- 12 = map screen
 
 -- constants
+debug=true
 faction_cols = {
  { 12, 1}, -- 1 = Atreides
  { 11, 3}, -- 2 = Ordos
@@ -27,8 +29,9 @@ faction_cols = {
 
 -- cart modes
 title_mode=1
-levelselect_mode=2
+levelintro_mode=2
 levelend_mode=3
+levelselect_mode=4
 
 -- No.|Starting Credits|Objective Credits|# Bases|P Faction|P XPos|P YPos|AI Fact 1|AI XPos 1|AI YPos 1|AI Fact 2|AI XPos 2|AI YPos 2|AI Fact 3|AI XPos 3|AI YPos 3|AI Level
 mission_data={
@@ -56,7 +59,9 @@ mission_data={
 },
 { -- harkonnen missions
  {1,999,1000,4,3,88,72,1,24,64,1,160,64,1,160,152,20},
- {2,1200,2700,2,3,144,200,1,120,96,nil,nil,nil,nil,nil,nil,8},
+ -- debug mission for easy win 
+ {2,1200,nil,2,3,144,200,1,144,152,nil,nil,nil,nil,nil,nil,8},
+ --{2,1200,2700,2,3,144,200,1,120,96,nil,nil,nil,nil,nil,nil,8},
  {3,1500,nil,2,3,176,112,2,408,440,nil,nil,nil,nil,nil,nil,7},
  {4,1500,nil,2,3,176,432,2,296,16,nil,nil,nil,nil,nil,nil,6},
  {5,1500,nil,2,3,88,200,1,448,288,nil,nil,nil,nil,nil,nil,5},
@@ -102,11 +107,10 @@ function _init()
  load_data()
 
  -- debug!!!
- mode = levelselect_mode
+ --mode = levelselect_mode
 
  -- if level end...
- init_levelselect()
- --init_levelend()
+ init_levelend()
 end
 
 
@@ -117,6 +121,10 @@ function _draw()
  if mode == title_mode then
   print("\n(title screen)")
   print("\n< press ❎ to start game >")
+
+ elseif mode == levelintro_mode then
+  print("\n(level intro screen)")
+  print("\n< press ❎ >")
  
  elseif mode == levelselect_mode then
   draw_levelselect()
@@ -128,25 +136,29 @@ function _draw()
  
  end 
 
+ -- debug state
+ if debug then
+  printo("mode="..mode.."\nlevelend_mode="..levelend_mode,2,110,8)
+ end
 end
+
 
 function _update60()
 
- 
  if mode == title_mode then
   -- switch to level select
   if btnp(5) then
-   mode = levelselect_mode
-   -- play "intro/select" music
+   mode = levelintro_mode
+   -- play "intro" music
    music(6)
   end 
  
- elseif mode == levelselect_mode then
+ elseif mode == levelintro_mode then
   -- load and initialise game cart
   if btnp(5) then
    
    --load_level(p_level)
-   load_level(9)
+   load_level(2)
 
   end
 
@@ -159,10 +171,18 @@ function _update60()
    dset(0, p_level)
    dset(40, 0) -- clear endstate
    mode = levelselect_mode
-   -- play "intro/select" music
-   music(6)
+   -- play "select" music
+   music(12)
   end
 
+elseif mode == levelselect_mode then
+  
+  -- switch to level intro
+  if btnp(5) then   
+   -- play "intro/select" music
+   mode = levelintro_mode
+   music(6)
+  end
   
  end
  
@@ -191,7 +211,8 @@ function load_data()
   p_units = dget(44) -- units destroyed by player
   ai_units = dget(45) -- units destroyed by ai
   p_buildings = dget(46) -- buildings destroyed by player
-  ai_buildings = dget(47) -- buildings destroyed by ai   
+  ai_buildings = dget(47) -- buildings destroyed by ai
+  --
   if endstate < 3 then 
    -- play "win" music
    music(10)
@@ -212,7 +233,7 @@ end
 
 function load_level(num)
  
- num=8
+ --num=8
  printh("in load_level("..num..")...")
 
  -- set player to faction
@@ -312,109 +333,17 @@ function draw_title()
 end
 
 -->8
--- level select screen
+-- level intro screen
 
-function init_levelselect()
- palt(0,false) -- show blacks
- pal(3, 137, 1) -- dark green > dark orange
- pal(12, 140, 1) -- light blue > royal blue
- pal(11, 139, 1) -- light green > grass green
- pal(10, 3, 1) -- light green > grass green
- --pal(8, 136, 1) -- red > cherry
- pal(6, 143, 1) -- skin > peach
- pal(13, 134, 1) -- greyblue > beige
+function init_levelintro()
 
- 
- -- debug testing
- p_score=927
- p_time=5000
- local hours = flr(p_time / 3600 )
- p_time = p_time - hours * 3600
- local minutes = flr(p_time / 60)
- p_time=hours.."H "..minutes.."M"
- p_harvested=30000
- ai_harvested=25000
- p_units=302
- ai_units=75
- p_buildings=74
- ai_buildings=13
-
- stats={
- 	{ 0, p_harvested, 62, 8, 60, p_harvested },
- 	{ 0, ai_harvested, 68, 14, 60, p_harvested },
-  { 0, p_units, 85, 8, 40, p_units },
-  { 0, ai_units, 91, 14, 40, p_units },
-  { 0, p_buildings, 107, 8, 20, p_buildings},
-  { 0, ai_buildings, 113, 14, 20, p_buildings }
-  }
- curr_stat=1
- stat_delay=100
 end
 
-function update_levelend()
- -- in stats mode
- if stat_delay > 0 then
-  -- pausing
-  stat_delay-=1
-  return
- end
- if curr_stat <= #stats then
-  -- scale the stats?
-  stats[curr_stat][1] += (stats[curr_stat][6]/stats[curr_stat][5])/3
-  
-  if stats[curr_stat][1] >= stats[curr_stat][2] then
-  	stats[curr_stat][1] = stats[curr_stat][2]
-   curr_stat+=1
-   stat_delay=50
-  end
- end
+function draw_levelintro()
+
+ 
 end
 
-function draw_levelselect()
- -- debug data
- -- step in original = n*0.003
- --p_harvested+=(5.5 >> 16)
--- p_harvested += 100
- local spr_fact=9
- 
- map(32,0,0,0)
-
- local title_text="your next conquest"
- printo(title_text,30,3,8,0)
-
- 
- spr(97,4,12,15,9)
-
- ---spr(spr_fact,1,22,3,3)
- -- spr(spr_fact,103,22,3,3)
-
- --sprint("sCORE:"..p_score,16,7,7)
- -- todo: round to nearest minute
- --sprint("tIME:"..p_time,70,7)
-
- -- sprint("yOU'VE ATTAINED\n  THE RANK OF",36,24)
- -- sprint(p_rank,42,37,8)
-  
-	-- rect(8,56,120,75,4)
-	-- line(26,56,100,56,9)
- -- sprint("SPICE HARVESTED BY",28,53)
- -- sprint("  YOU:\nENEMY:",11,61)
- -- sprint(flr(stats[1][1]).."\n"..flr(stats[2][1]),100,61)
- 
- --rect(8,79,120,98,4)
- --line(26,79,100,79,9)
- -- sprint("UNITS DESTROYED BY",28,76)
- -- sprint("  YOU:\nENEMY:",11,84)
- -- sprint(flr(stats[3][1]).."\n"..flr(stats[4][1]),100,84)
- 
- --rect(8,102,120,120,4)
- --line(18,102,108,102,9)
- -- sprint("BUILDINGS DESTROYED BY",20,99)
- -- sprint("  YOU:\nENEMY:",11,106)
- -- sprint(flr(stats[5][1]).."\n"..flr(stats[6][1]),100,106)
- 
- 
-end
 -->8
 -- level end screen
 
@@ -427,12 +356,12 @@ function init_levelend()
  p_time = p_time - hours * 3600
  local minutes = flr(p_time / 60)
  p_time=hours.."H "..minutes.."M"
- p_harvested=30000
- ai_harvested=25000
- p_units=302
- ai_units=75
- p_buildings=74
- ai_buildings=13
+ -- p_harvested=30000
+ -- ai_harvested=25000
+ -- p_units=302
+ -- ai_units=75
+ -- p_buildings=74
+ -- ai_buildings=13
 
  stats={
  	{ 0, p_harvested, 62, 8, 60, p_harvested },
@@ -514,6 +443,88 @@ function draw_levelend()
  end
  
 end
+
+-->8
+-- level select screen
+
+function init_levelselect()
+ palt(0,false) -- show blacks
+ pal(3, 137, 1) -- dark green > dark orange
+ pal(12, 140, 1) -- light blue > royal blue
+ pal(11, 139, 1) -- light green > grass green
+ pal(10, 3, 1) -- light green > grass green
+ --pal(8, 136, 1) -- red > cherry
+ pal(6, 143, 1) -- skin > peach
+ pal(13, 134, 1) -- greyblue > beige
+
+
+end
+
+function update_levelend()
+ -- in stats mode
+ if stat_delay > 0 then
+  -- pausing
+  stat_delay-=1
+  return
+ end
+ if curr_stat <= #stats then
+  -- scale the stats?
+  stats[curr_stat][1] += (stats[curr_stat][6]/stats[curr_stat][5])/3
+  
+  if stats[curr_stat][1] >= stats[curr_stat][2] then
+  	stats[curr_stat][1] = stats[curr_stat][2]
+   curr_stat+=1
+   stat_delay=50
+  end
+ end
+end
+
+function draw_levelselect()
+ -- debug data
+ -- step in original = n*0.003
+ --p_harvested+=(5.5 >> 16)
+-- p_harvested += 100
+ local spr_fact=9
+ 
+ map(32,0,0,0)
+
+ local title_text="your next conquest"
+ printo(title_text,30,3,8,0)
+
+ 
+ spr(97,4,12,15,9)
+
+ ---spr(spr_fact,1,22,3,3)
+ -- spr(spr_fact,103,22,3,3)
+
+ --sprint("sCORE:"..p_score,16,7,7)
+ -- todo: round to nearest minute
+ --sprint("tIME:"..p_time,70,7)
+
+ -- sprint("yOU'VE ATTAINED\n  THE RANK OF",36,24)
+ -- sprint(p_rank,42,37,8)
+  
+	-- rect(8,56,120,75,4)
+	-- line(26,56,100,56,9)
+ -- sprint("SPICE HARVESTED BY",28,53)
+ -- sprint("  YOU:\nENEMY:",11,61)
+ -- sprint(flr(stats[1][1]).."\n"..flr(stats[2][1]),100,61)
+ 
+ --rect(8,79,120,98,4)
+ --line(26,79,100,79,9)
+ -- sprint("UNITS DESTROYED BY",28,76)
+ -- sprint("  YOU:\nENEMY:",11,84)
+ -- sprint(flr(stats[3][1]).."\n"..flr(stats[4][1]),100,84)
+ 
+ --rect(8,102,120,120,4)
+ --line(18,102,108,102,9)
+ -- sprint("BUILDINGS DESTROYED BY",20,99)
+ -- sprint("  YOU:\nENEMY:",11,106)
+ -- sprint(flr(stats[5][1]).."\n"..flr(stats[6][1]),100,106)
+ 
+ 
+end
+
 -->8
 -- helper funcs
 
