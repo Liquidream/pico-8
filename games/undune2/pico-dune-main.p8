@@ -59,9 +59,7 @@ mission_data={
 },
 { -- harkonnen missions
  {1,999,1000,4,3,88,72,1,24,64,1,160,64,1,160,152,20},
- -- debug mission for easy win 
- {2,1200,nil,2,3,144,200,1,144,152,nil,nil,nil,nil,nil,nil,8},
- --{2,1200,2700,2,3,144,200,1,120,96,nil,nil,nil,nil,nil,nil,8},
+ {2,1200,2700,2,3,144,200,1,120,96,nil,nil,nil,nil,nil,nil,8},
  {3,1500,nil,2,3,176,112,2,408,440,nil,nil,nil,nil,nil,nil,7},
  {4,1500,nil,2,3,176,432,2,296,16,nil,nil,nil,nil,nil,nil,6},
  {5,1500,nil,2,3,88,200,1,448,288,nil,nil,nil,nil,nil,nil,5},
@@ -72,6 +70,10 @@ mission_data={
 }
 }
 
+if debug then
+ -- debug mission for easy win 
+ mission_data[3][2]={2,1200,nil,2,3,144,200,1,144,152,nil,nil,nil,nil,nil,nil,8}
+end
 
 -- mission data (harkonnen)
 -- mission_data={
@@ -91,7 +93,7 @@ mission_data={
 
 -- vars
 mode = title_mode
-
+seq_cor = nil
 
 -- title vars
 
@@ -107,25 +109,39 @@ function _init()
  load_data()
 
  -- debug!!!
- mode = levelselect_mode
+ --mode = levelselect_mode
 
  -- if level end...
  if (mode==levelend_mode) init_levelend()
  if (mode==levelselect_mode) init_levelselect()
+
+ -- debug menu
+ if debug then
+  menuitem(1,"!reset cartdata!",function()
+   for i=0,63 do
+    dset(i,nil)
+   end
+  end)
+ end
+
 end
 
 
 function _draw()
- cls()
- print("-main cart-")
+ --## don't clear here - as coroutines handle own drawing
+ --cls()
+
+ print("-main cart-",0,0,8)
 
  if mode == title_mode then
-  print("\n(title screen)")
-  print("\n< press ❎ to start game >")
+  draw_title()
+  print("\n(title screen)",0,0,8)
+  print("\n< press ❎ to start game >",0,8)
 
  elseif mode == levelintro_mode then
-  print("\n(level intro screen)")
-  print("\n< press ❎ >")
+  draw_levelintro()
+  print("\n(level intro screen)",0,0,8)
+  print("\n< press ❎ >",0,8)
  
  elseif mode == levelselect_mode then
   draw_levelselect()
@@ -139,7 +155,7 @@ function _draw()
 
  -- debug state
  if debug then
-  printo("mode="..mode.."\nlevelend_mode="..levelend_mode,2,110,8)
+  printo("mode="..mode.."\nlevelend_mode="..levelend_mode.."\np_level="..p_level,2,110,8)  
  end
 end
 
@@ -158,8 +174,8 @@ function _update60()
   -- load and initialise game cart
   if btnp(5) then
    
-   --load_level(p_level)
-   load_level(2)
+   load_level(p_level)
+   --load_level(2)
 
   end
 
@@ -168,7 +184,7 @@ function _update60()
   -- switch to level select
   if btnp(5) then
    p_level += 1
-   --printh("p_level = "..p_level)
+   printh("p_level now set to = "..p_level)
    dset(0, p_level)
    dset(40, 0) -- clear endstate
    mode = levelselect_mode
@@ -178,7 +194,7 @@ function _update60()
   end
 
 elseif mode == levelselect_mode then
-  
+  update_levelselect()
   -- switch to level intro
   if btnp(5) then   
    -- play "intro/select" music
@@ -330,7 +346,7 @@ function init_title()
 end
 
 function draw_title()
-
+ cls()
  
 end
 
@@ -338,11 +354,11 @@ end
 -- level intro screen
 
 function init_levelintro()
-
+ 
 end
 
 function draw_levelintro()
-
+ cls()
  
 end
 
@@ -367,11 +383,11 @@ function init_levelend()
 
  stats={
  	{ 0, p_harvested, 62, 8, 60, p_harvested },
- 	{ 0, ai_harvested, 68, 14, 60, p_harvested },
+ 	{ 0, ai_harvested, 68, 6, 60, p_harvested },
   { 0, p_units, 85, 8, 40, p_units },
-  { 0, ai_units, 91, 14, 40, p_units },
+  { 0, ai_units, 91, 6, 40, p_units },
   { 0, p_buildings, 107, 8, 20, p_buildings},
-  { 0, ai_buildings, 113, 14, 20, p_buildings }
+  { 0, ai_buildings, 113, 6, 20, p_buildings }
   }
  curr_stat=1
  stat_delay=100
@@ -397,6 +413,23 @@ function update_levelend()
 end
 
 function draw_levelend()
+ cls()
+
+ --
+ -- init custom screen palette
+ --
+ palt(0,false)   -- show blacks
+ pal(14, 137, 1)  -- bright pink > dark orange
+ pal(12, 140, 1) -- light blue > royal blue
+ pal(11, 139, 1) -- light green > grass green
+ pal(10, 3, 1)   -- yellow > rough green
+ --pal(8, 136, 1) -- red > cherry
+ pal(6, 143, 1)  -- skin > peach
+ pal(13, 134, 1) -- greyblue > beige
+ --pal(7, 142, 1)  -- white > peach2
+ 
+ pal(6, 14, 1)  -- grey > pink (as pink is being used in marble replacement)
+
  -- debug data
  -- step in original = n*0.003
  --p_harvested+=(5.5 >> 16)
@@ -470,90 +503,27 @@ function init_levelselect()
  messagetext2=""
  msg_ypos=0
  _t=0
+
+ -- init anim sequence
+ seq_cor=cocreate(play_sequence)
 end
 
-function update_levelend()
- -- in stats mode
- if stat_delay > 0 then
-  -- pausing
-  stat_delay-=1
-  return
- end
- if curr_stat <= #stats then
-  -- scale the stats?
-  stats[curr_stat][1] += (stats[curr_stat][6]/stats[curr_stat][5])/3
-  
-  if stats[curr_stat][1] >= stats[curr_stat][2] then
-  	stats[curr_stat][1] = stats[curr_stat][2]
-   curr_stat+=1
-   stat_delay=50
-  end
+function update_levelselect()
+ -- in map mode
+
+ -- update coroutine
+ if seq_cor and costatus(seq_cor)~="dead" then
+  assert(coresume(seq_cor,p_level)) 
  end
 end
 
 function draw_levelselect()
  -- debug data
- local spr_fact=9
+ if debug then
+  local spr_fact=9
+ end
  
- 
- 
-  -- "paint" blank map
- cls()
- pal(1,6)
- pal(2,7)
- pal(3,13)
- --spr(0,0,0,16,16) 
- map(32,0,0,0)
- spr(97,4,20,15,8)
- pal()
-
-  --
- -- init custom screen palette
- --
- palt(0,false)   -- show blacks
- pal(14, 137, 1)  -- bright pink > dark orange
- pal(12, 140, 1) -- light blue > royal blue
- pal(11, 139, 1) -- light green > grass green
- pal(10, 3, 1)   -- yellow > rough green
- --pal(8, 136, 1) -- red > cherry
- pal(6, 143, 1)  -- skin > peach
- pal(13, 134, 1) -- greyblue > beige
- pal(7, 142, 1)  -- dark red > peach2
- 
- 
- printo("your next conquest",30,7,8,0)
- 
- cleartext()
- 
- wait(40) 
- 
- show_message("tHREE hOUSES HAVE\nCOME TO dUNE.") 
- show_message("tHE LAND HAS\nBECOME DIVIDED.") 
- fizzlemap(0,  cols[col_borderline])
- cleartext()
- show_message("hARKONNEN ARRIVED\nFIRST.")
- fizzlemap(6,  cols[col_harkonnen])
- fizzlemap(5,  cols[col_harkonnen])
- fizzlemap(4,  cols[col_harkonnen])
- fizzlemap(10, cols[col_harkonnen])
- fizzlemap(3,  cols[col_harkonnen])
- fizzlemap(9,  cols[col_harkonnen])
- cleartext()
- show_message("tHE WEAK aTREIDES\nWILL BE EASY.")
- fizzlemap(13, cols[col_attreides])
- fizzlemap(7,  cols[col_attreides])
- fizzlemap(20, cols[col_attreides])
- fizzlemap(14, cols[col_attreides])
- fizzlemap(21, cols[col_attreides]) 
- fizzlemap(22, cols[col_attreides])
- cleartext()
- show_message("tHE oRDOS ARE\nGETTING CLOSER.")
- fizzlemap(19, cols[col_ordos])
- fizzlemap(27, cols[col_ordos])
- fizzlemap(26, cols[col_ordos])
- fizzlemap(25, cols[col_ordos])
- fizzlemap(24, cols[col_ordos])
- fizzlemap(23, cols[col_ordos])
+ --printo("p_level="..p_level,2,121,8)
 
 end
 
@@ -584,16 +554,77 @@ function draw_bar(x,y,max_w,val,max_val,col)
  rectfill(x,y,x+w,y+3,col)
 end
 
--- https://www.lexaloffle.com/bbs/?pid=22809#p
--- function u32_tostr(v)
---  local s=""
---  repeat
---      local t=v>>>1
---      s=(t%0x0.0005<<17)+(v<<16&1)..s
---      v=t/5
---  until v==0
---  return s
--- end
+function play_sequence(seqnum)
+ printh("seqnum = "..seqnum)
+ -- play scripted animated sequence
+ -- (typically, one for each level) 
+
+ -- "paint" blank map
+ cls()
+ pal()
+ pal(1,6)
+ pal(2,7)
+ pal(3,13)
+ --spr(0,0,0,16,16) 
+ map(32,0,0,0)
+ spr(97,4,20,15,8)
+ pal()
+
+ --
+ -- init custom screen palette
+ --
+ palt(0,false)   -- show blacks
+ pal(14, 137, 1)  -- bright pink > dark orange
+ pal(12, 140, 1) -- light blue > royal blue
+ pal(11, 139, 1) -- light green > grass green
+ pal(10, 3, 1)   -- yellow > rough green
+ --pal(8, 136, 1) -- red > cherry
+ pal(6, 143, 1)  -- skin > peach
+ pal(13, 134, 1) -- greyblue > beige
+ pal(7, 142, 1)  -- dark red > peach2
+ 
+ 
+ printo("your next conquest",30,7,8,0) 
+
+ if seqnum == 1 then
+  -- intro anim?
+
+ elseif seqnum == 2 then
+  -- first map sequence
+  cleartext()  
+  wait(20)    
+  show_message("tHREE hOUSES HAVE\nCOME TO dUNE.") 
+  show_message("tHE LAND HAS\nBECOME DIVIDED.")   
+  fizzlemap(0,  cols[col_borderline])
+  cleartext()
+  show_message("hARKONNEN ARRIVED\nFIRST.")
+  fizzlemap(6,  cols[col_harkonnen])
+  fizzlemap(5,  cols[col_harkonnen])
+  fizzlemap(4,  cols[col_harkonnen])
+  fizzlemap(10, cols[col_harkonnen])
+  fizzlemap(3,  cols[col_harkonnen])
+  fizzlemap(9,  cols[col_harkonnen])
+  cleartext()
+  show_message("tHE WEAK aTREIDES\nWILL BE EASY.")
+  fizzlemap(13, cols[col_attreides])
+  fizzlemap(7,  cols[col_attreides])
+  fizzlemap(20, cols[col_attreides])
+  fizzlemap(14, cols[col_attreides])
+  fizzlemap(21, cols[col_attreides]) 
+  fizzlemap(22, cols[col_attreides])
+  cleartext()
+  show_message("tHE oRDOS ARE\nGETTING CLOSER.")
+  fizzlemap(19, cols[col_ordos])
+  fizzlemap(27, cols[col_ordos])
+  fizzlemap(26, cols[col_ordos])
+  fizzlemap(25, cols[col_ordos])
+  fizzlemap(24, cols[col_ordos])
+  fizzlemap(23, cols[col_ordos]) 
+
+ elseif seqnum == 2 then
+
+ end
+end
 
 function show_message(msg)
  messagetext2=messagetext1
@@ -604,7 +635,7 @@ function show_message(msg)
   cleartext()
   ?messagetext1,30,msg_ypos,0
   ?messagetext2,30,msg_ypos+22,0
-  flip()
+  yield()--flip()
   -- move message
   if (i<46) msg_ypos+=.5
  end
@@ -666,13 +697,13 @@ function fizzlemap(rnum, cols)
     end
    end
   end
-  if(_x%speed==0)flip()
+  if(_x%speed==0)yield()--flip()
  end
 end
 
 function wait(num)
  for i=1,num do
- flip()
+ yield()--flip()
  end 
 end
 
