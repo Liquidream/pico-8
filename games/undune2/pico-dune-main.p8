@@ -489,11 +489,11 @@ function init_levelselect()
  -- define colour "filters"
  cols={
   [-1]={6,7,13},-- orig map
-  [0]={0,0,0}, -- borderline
-  {8,2,1,7,7},     -- harkonnen
-  {12,1,5},    -- attreides
+  [0]={0,0,0},  -- borderline
+  {8,2,1,7,7},  -- harkonnen
+  {12,1,0},     -- attreides
   {11,10,1},    -- ordos
-  {11,10,1}    -- emperor
+  {11,10,1}     -- emperor
  }
 
  col_origmap=-1
@@ -516,7 +516,7 @@ function update_levelselect()
 
  -- update coroutine
  if seq_cor and costatus(seq_cor)~="dead" then
-  assert(coresume(seq_cor,p_level)) 
+  assert(coresume(seq_cor, p_level-1)) 
  end
 end
 
@@ -589,51 +589,68 @@ function play_sequence(seqnum)
  
  printo("your next conquest",30,7,8,0) 
 
- if seqnum == 1 then
-  -- intro anim?
+ -- if seqnum == 0 then
+ --  -- intro anim?
 
--- elseif seqnum == 2 then
+ -- elseif seqnum == 1 then
   -- first map sequence
-  cleartext()  
-  wait(20)    
-  show_message("tHREE hOUSES HAVE\nCOME TO dUNE.") 
-  show_message("tHE LAND HAS\nBECOME DIVIDED.")   
-  fizzlemap(0,  cols[col_borderline])
-  cleartext()
-  show_message("hARKONNEN ARRIVED\nFIRST.")
-  fizzlemap(6,  cols[col_harkonnen])
-  fizzlemap(5,  cols[col_harkonnen])
-  fizzlemap(4,  cols[col_harkonnen])
-  fizzlemap(10, cols[col_harkonnen])
-  fizzlemap(3,  cols[col_harkonnen])
-  fizzlemap(9,  cols[col_harkonnen])
-  cleartext()
-  show_message("tHE WEAK aTREIDES\nWILL BE EASY.")
-  fizzlemap(13, cols[col_attreides])
-  fizzlemap(7,  cols[col_attreides])
-  fizzlemap(20, cols[col_attreides])
-  fizzlemap(14, cols[col_attreides])
-  fizzlemap(21, cols[col_attreides]) 
-  fizzlemap(22, cols[col_attreides])
-  cleartext()
-  show_message("tHE oRDOS ARE\nGETTING CLOSER.")
-  fizzlemap(19, cols[col_ordos])
-  fizzlemap(27, cols[col_ordos])
-  fizzlemap(26, cols[col_ordos])
-  fizzlemap(25, cols[col_ordos])
-  fizzlemap(24, cols[col_ordos])
-  fizzlemap(23, cols[col_ordos])
-  show_message("pRESS ❎ tO sTART")
-  while true do
-   setmap(2, cols[col_harkonnen])
-   wait(20)
-   setmap(2, cols[col_origmap])
-   wait(20)
-  end
+  -- cleartext()  
+  -- wait(20)    
+  -- show_message("tHREE hOUSES HAVE\nCOME TO dUNE.") 
+  -- show_message("tHE LAND HAS\nBECOME DIVIDED.")   
+  -- fizzlemap(0,  cols[col_borderline])
+  -- cleartext()
+  -- show_message("hARKONNEN ARRIVED\nFIRST.")
+  -- fizzlemap(6,  cols[col_harkonnen])
+  -- fizzlemap(5,  cols[col_harkonnen])
+  -- fizzlemap(4,  cols[col_harkonnen])
+  -- fizzlemap(10, cols[col_harkonnen])
+  -- fizzlemap(3,  cols[col_harkonnen])
+  -- fizzlemap(9,  cols[col_harkonnen])
+  -- cleartext()
+  -- show_message("tHE WEAK aTREIDES\nWILL BE EASY.")
+  -- fizzlemap(13, cols[col_attreides])
+  -- fizzlemap(7,  cols[col_attreides])
+  -- fizzlemap(20, cols[col_attreides])
+  -- fizzlemap(14, cols[col_attreides])
+  -- fizzlemap(21, cols[col_attreides]) 
+  -- fizzlemap(22, cols[col_attreides])
+  -- cleartext()
+  -- show_message("tHE oRDOS ARE\nGETTING CLOSER.")
+  -- fizzlemap(19, cols[col_ordos])
+  -- fizzlemap(27, cols[col_ordos])
+  -- fizzlemap(26, cols[col_ordos])
+  -- fizzlemap(25, cols[col_ordos])
+  -- fizzlemap(24, cols[col_ordos])
+  -- fizzlemap(23, cols[col_ordos])
+  -- show_message("pRESS ❎ tO sTART")
+  -- while true do
+  --  setmap(2, cols[col_harkonnen])
+  --  wait(20)
+  --  setmap(2, cols[col_origmap])
+  --  wait(20)
+  -- end
 
- --elseif seqnum == 2 then
+ -- elseif seqnum == 2 then
+     setmap(0, cols[col_borderline])
+     setmap({6,5,4,10,3,9}, cols[col_harkonnen])
+     setmap({13,7,20,14,21,22}, cols[col_attreides])
+     setmap({19,27,26,25,24,23}, cols[col_ordos])
+     show_message("hARKONNEN SPREAD\nOUT STRONG FORCES.")
+     fizzlemap(2,  cols[col_harkonnen])
+     fizzlemap(1,  cols[col_harkonnen])
+     fizzlemap(8,  cols[col_harkonnen])
+     show_message("aTREIDES WENT\nAFTER oRDOS.")
+     fizzlemap(15, cols[col_attreides])
+     fizzlemap(16, cols[col_attreides])
+     fizzlemap(23, cols[col_attreides])
+     show_message("oRDOS STOLE EVEN\nMORE LAND.")
+     fizzlemap(17, cols[col_ordos])
+     fizzlemap(11, cols[col_ordos])
+     fizzlemap(18, cols[col_ordos])
+     fizzlemap(12, cols[col_ordos])
+ -- end
 
- end
 end
 
 function show_message(msg)
@@ -702,7 +719,7 @@ function fizzlemap(rnum, cols)
    then
     if not rnum or rdata[y-sy+1][x-sx+1]==rnum
     then
-     local origcol=sget(x,y+offy)
+     local origcol=sget(x+offx,y+offy)
      pset(dx-sx+x,dy-sy+y, cols[origcol])
     end
    end
@@ -713,7 +730,7 @@ end
 
 -- immediately set a region's colour
 function setmap(rnum, cols)
- sx=4
+ sx=8
  sy=20
  sw=119
  sh=64
@@ -721,15 +738,26 @@ function setmap(rnum, cols)
  dy=20
  offx=0
  offy=28 -- if map sprite not 1:1 with screen draw pos
+ rtable=nil
  
+ -- handle table param
+ if type(rnum)=="table" then
+  rtable={}
+  for k in all(rnum) do
+   rtable[k]=k
+  end
+ end
+
  for x=0,127 do
   for y=0,127 do
    if x>=sx and x<=sx+sw
     and y>=sy and y<=sy+sh 
    then
-    if not rnum or rdata[y-sy+1][x-sx+1]==rnum
+    if not rnum 
+     or (rtable and rtable[rdata[y-sy+1][x-sx+1]])
+     or rdata[y-sy+1][x-sx+1]==rnum
     then     
-     local origcol=sget(x,y+offy)
+     local origcol=sget(x+offx,y+offy)
      pset(dx-sx+x,dy-sy+y, cols[origcol])
     end    
    end
