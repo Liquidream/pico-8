@@ -360,6 +360,8 @@ end
 function draw_levelintro()
  cls()
  
+ -- poss mentat eye code...
+ -- https://twitter.com/p01/status/1414888619211476992
 end
 
 -->8
@@ -493,7 +495,7 @@ function init_levelselect()
   {8,2,1,7,7},  -- harkonnen
   {12,1,0},     -- attreides
   {11,10,1},    -- ordos
-  {11,10,1}     -- emperor
+  {6,2,2}     -- emperor
  }
 
  col_origmap=-1
@@ -501,6 +503,7 @@ function init_levelselect()
  col_harkonnen=1
  col_attreides=2
  col_ordos=3
+ col_emperor=4
 
  messagetext1=""
  messagetext2=""
@@ -516,7 +519,7 @@ function update_levelselect()
 
  -- update coroutine
  if seq_cor and costatus(seq_cor)~="dead" then
-  assert(coresume(seq_cor, p_level-1)) 
+  assert(coresume(seq_cor, p_level)) 
  end
 end
 
@@ -526,6 +529,8 @@ function draw_levelselect()
   local spr_fact=9
  end
  
+ pal(6, 14, 1)  -- grey > pink (as pink is being used in marble replacement)
+
  --printo("p_level="..p_level,2,121,8)
 
 end
@@ -589,10 +594,14 @@ function play_sequence(seqnum)
  
  printo("your next conquest",30,7,8,0) 
 
- -- if seqnum == 0 then
+ --if seqnum > 1 then
+  setmap(0, cols[col_borderline])
+ --end
+
+ -- if seqnum == 1 then
  --  -- intro anim?
 
- -- elseif seqnum == 1 then
+ -- elseif seqnum == 2 then
   -- first map sequence
   -- cleartext()  
   -- wait(20)    
@@ -631,24 +640,135 @@ function play_sequence(seqnum)
   --  wait(20)
   -- end
 
- -- elseif seqnum == 2 then
-     setmap(0, cols[col_borderline])
-     setmap({6,5,4,10,3,9}, cols[col_harkonnen])
-     setmap({13,7,20,14,21,22}, cols[col_attreides])
-     setmap({19,27,26,25,24,23}, cols[col_ordos])
-     show_message("hARKONNEN SPREAD\nOUT STRONG FORCES.")
-     fizzlemap(2,  cols[col_harkonnen])
-     fizzlemap(1,  cols[col_harkonnen])
-     fizzlemap(8,  cols[col_harkonnen])
-     show_message("aTREIDES WENT\nAFTER oRDOS.")
-     fizzlemap(15, cols[col_attreides])
-     fizzlemap(16, cols[col_attreides])
-     fizzlemap(23, cols[col_attreides])
-     show_message("oRDOS STOLE EVEN\nMORE LAND.")
-     fizzlemap(17, cols[col_ordos])
-     fizzlemap(11, cols[col_ordos])
-     fizzlemap(18, cols[col_ordos])
-     fizzlemap(12, cols[col_ordos])
+ -- elseif seqnum == 3 then
+     -- setmap({6,5,4,10,3,9}, cols[col_harkonnen])
+     -- setmap({13,7,20,14,21,22}, cols[col_attreides])
+     -- setmap({19,27,26,25,24,23}, cols[col_ordos])
+     -- show_message("hARKONNEN SPREAD\nOUT STRONG FORCES.")
+     -- fizzlemap(2,  cols[col_harkonnen])
+     -- fizzlemap(1,  cols[col_harkonnen])
+     -- fizzlemap(8,  cols[col_harkonnen])
+     -- show_message("aTREIDES WENT\nAFTER oRDOS.")
+     -- fizzlemap(15, cols[col_attreides])
+     -- fizzlemap(16, cols[col_attreides])
+     -- fizzlemap(23, cols[col_attreides])
+     -- show_message("oRDOS STOLE EVEN\nMORE LAND.")
+     -- fizzlemap(17, cols[col_ordos])
+     -- fizzlemap(11, cols[col_ordos])
+     -- fizzlemap(18, cols[col_ordos])
+     -- fizzlemap(12, cols[col_ordos])
+     -- show_message("pRESS ❎ tO sTART")
+     -- while true do
+     --  setmap(11, cols[col_harkonnen])
+     --  wait(20)
+     --  setmap(11, cols[col_ordos])
+     --  wait(20)
+     -- end
+ 
+ -- elseif seqnum == 4 then
+     -- setmap({6,5,4,10,3,9,2,1,8}, cols[col_harkonnen])
+     -- setmap({13,7,20,14,21,22,15,16,23}, cols[col_attreides])
+     -- setmap({19,27,26,25,24,17,11,18,12}, cols[col_ordos])
+     -- show_message("oRDOS DID NOT\nSTAND A CHANCE.")
+     -- fizzlemap(17,  cols[col_harkonnen])
+     -- fizzlemap(11,  cols[col_harkonnen])
+     -- fizzlemap(12,  cols[col_harkonnen])
+     -- show_message("aTREIDES AND oRDOS\nTRADED LAND.")
+     -- fizzlemap(24, cols[col_attreides])
+     -- fizzlemap(16, cols[col_ordos])     
+     -- show_message("pRESS ❎ tO sTART")
+     -- while true do
+     --  setmap(18, cols[col_harkonnen])
+     --  wait(20)
+     --  setmap(18, cols[col_ordos])
+     --  wait(20)
+     -- end
+
+  -- elseif seqnum == 5 then
+     -- setmap({6,5,4,10,3,9,2,1,8,17,11,12}, cols[col_harkonnen])
+     -- setmap({13,7,20,14,21,22,15,23,24}, cols[col_attreides])
+     -- setmap({19,27,26,25,18,16}, cols[col_ordos])
+     -- fizzlemap(25,  cols[col_harkonnen])
+     -- show_message("aN oRDOS OUTPOST\nWAS SURROUNDED.")
+     -- fizzlemap(18,  cols[col_harkonnen])
+     -- fizzlemap(19,  cols[col_harkonnen])
+     -- show_message("tHE oRDOS BROKE\nTHROUGH aTREIDES.")
+     -- fizzlemap(24, cols[col_ordos])
+     -- show_message("pRESS ❎ tO sTART")
+     -- while true do
+     --  setmap(7, cols[col_harkonnen])
+     --  wait(20)
+     --  setmap(7, cols[col_attreides])
+     --  wait(20)
+     -- end
+
+  -- elseif seqnum == 6 then
+     -- setmap({6,5,4,10,3,9,2,1,8,17,11,12,25,18,19}, cols[col_harkonnen])
+     -- setmap({13,7,20,14,21,22,15,23}, cols[col_attreides])
+     -- setmap({27,26,16,24}, cols[col_ordos])
+     -- show_message("sOON tHE aTREIDES\nWILL BE EXTINCT.")
+     -- fizzlemap(7,  cols[col_harkonnen])
+     -- fizzlemap(14,  cols[col_harkonnen])
+     -- fizzlemap(13,  cols[col_harkonnen])
+     -- fizzlemap(23, cols[col_ordos])
+     -- show_message("pRESS ❎ tO sTART")
+     -- while true do
+     --  setmap(26, cols[col_harkonnen])
+     --  wait(20)
+     --  setmap(26, cols[col_ordos])
+     --  wait(20)
+     -- end
+
+ -- elseif seqnum == 7 then
+     -- setmap({6,5,4,10,3,9,2,1,8,17,11,12,25,18,19,7,14,13}, cols[col_harkonnen])
+     -- setmap({20,21,22,15}, cols[col_attreides])
+     -- setmap({27,26,16,24,23}, cols[col_ordos])
+     -- show_message("hARKONNEN CRUSHED\nMOST OF THE oRDOS.")
+     -- fizzlemap(24,  cols[col_harkonnen])
+     -- fizzlemap(26,  cols[col_harkonnen])
+     -- fizzlemap(27,  cols[col_harkonnen])
+     -- show_message("aTREIDES RECLAIMED\nITS LAND.")
+     -- fizzlemap(23, cols[col_attreides])
+     -- show_message("pRESS ❎ tO sTART")
+     -- while true do
+     --  setmap(21, cols[col_harkonnen])
+     --  wait(20)
+     --  setmap(21, cols[col_attreides])
+     --  wait(20)
+     -- end
+
+-- elseif seqnum == 8 then
+     -- setmap({6,5,4,10,3,9,2,1,8,17,11,12,25,18,19,7,14,13,24,26,27}, cols[col_harkonnen])
+     -- setmap({20,21,22,15,23}, cols[col_attreides])
+     -- setmap({16}, cols[col_ordos])
+     -- show_message("hARKONNEN CRUSHED\nTHE aTREIDES.")
+     -- fizzlemap(20,  cols[col_harkonnen])
+     -- fizzlemap(21,  cols[col_harkonnen])
+     -- fizzlemap(22,  cols[col_harkonnen])     
+     -- show_message("pRESS ❎ tO sTART")
+     -- while true do
+     --  setmap(16, cols[col_harkonnen])
+     --  wait(20)
+     --  setmap(16, cols[col_ordos])
+     --  wait(20)
+     -- end
+
+  -- elseif seqnum == 9 then
+     setmap({6,5,4,10,3,9,2,1,8,17,11,12,25,18,19,7,14,13,24,26,27,20,21,22}, cols[col_harkonnen])
+     setmap({15,23}, cols[col_attreides])
+     setmap({16}, cols[col_ordos])
+     show_message("oNLY THE hARKONNEN\nWILL PREVAIL.")
+     fizzlemap(16,  cols[col_harkonnen])
+     fizzlemap(23,  cols[col_harkonnen])
+     fizzlemap(15,  cols[col_emperor])     
+     show_message("pRESS ❎ tO sTART")
+     while true do
+      setmap(15, cols[col_harkonnen])
+      wait(20)
+      setmap(15, cols[col_emperor])
+      wait(20)
+     end
+
  -- end
 
 end
@@ -658,10 +778,10 @@ function show_message(msg)
  messagetext1=msg
  msg_ypos=80
  clip(27,99,75,18)
- for i=1,150 do
+ for i=1,75 do
   cleartext()
-  ?messagetext1,30,msg_ypos,0
-  ?messagetext2,30,msg_ypos+22,0
+  ?messagetext1,29,msg_ypos,0
+  ?messagetext2,29,msg_ypos+22,0
   yield()--flip()
   -- move message
   if (i<46) msg_ypos+=.5
