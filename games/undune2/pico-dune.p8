@@ -208,7 +208,7 @@ function _init()
  for i=-2,66 do
   fow[i]={}
   for l=-2,66 do
-   fow[i][l]=16 --0
+   fow[i][l]=0-- 16 --0
   end
  end
 
