@@ -401,23 +401,32 @@ end
 -- house selection screen
 
 function init_houseselect()
- 
+ ui_cursor=1
 end
 
 function update_houseselect()
- 
+ if (btnp(0) and ui_cursor>1) ui_cursor-=1
+ if (btnp(1) and ui_cursor<3) ui_cursor+=1
 end
 
 function draw_houseselect()
  cls()
- 
+ pal()
  print("\n(house select screen)",0,0,8)
  print("\n< press ❎ >",0,8)
 
+ rectfill(5,47,35,78,1)
+ rectfill(47,47,78,78,3)
+ rectfill(90,47,121,78,2)
+ 
+ houses={"aTREIDES","oRDOS","hARKONNEN"}
  for i=0,2 do
-  local off=i*30
-  rect(20+off,40,50+off-10,60,6)
- end
+  local off=i*29+(i*5)
+  local gap=i*8
+  rectfill(2+off+gap,86,39+off+gap,92,9)
+  rect(off+gap,84,41+off+gap,94,ui_cursor==i+1 and 7 or 0)
+  ?houses[i+1],4+off+gap,87,0
+  end
 end
 
 
