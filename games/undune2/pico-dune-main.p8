@@ -450,12 +450,10 @@ function draw_houseselect()
   local gap=i*8
   --rectfill(2+off+gap,86,39+off+gap,92,9)
   rect(off+gap,84,41+off+gap,94,ui_cursor==i+1 and 7 or 0)
-  ?houses[i+1],4+off+gap,87,faction_cols[i+1]
+  ?houses[i+1],4+off+gap,87,1--faction_cols[i+1][2]
  end
  local fact_cols=faction_cols[ui_cursor]
  printo("press ❎ to select",30,108,fact_cols[1],1)
-
- line(0,64,127,64,8)
 end
 
 
