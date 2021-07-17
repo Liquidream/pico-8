@@ -19,7 +19,8 @@ game_cart = "pico-dune.p8"
 -- 12 = map screen
 
 -- constants
-debug=true
+debug=false
+
 faction_cols = {
  { 12, 1}, -- 1 = Atreides
  { 11, 3}, -- 2 = Ordos
