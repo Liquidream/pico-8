@@ -8,6 +8,8 @@ __lua__
 -- =======================================
 -- main cart (title menu, level select)
 -- =======================================
+-- constants
+--debug=true
 
 --game_cart = "pico-dune_fmt.p8"
 game_cart = "pico-dune.p8"
@@ -18,8 +20,6 @@ game_cart = "pico-dune.p8"
 -- 10 = level win
 -- 12 = map screen
 
--- constants
-debug=true
 
 faction_cols = {
  { 12, 1}, -- 1 = Atreides
@@ -111,7 +111,7 @@ function _init()
  load_data()
 
  -- debug!!!
- mode = houseselect_mode
+ --mode = houseselect_mode
 
  -- if level end...
  if (mode==title_mode) init_title()
@@ -120,13 +120,13 @@ function _init()
  if (mode==levelselect_mode) init_levelselect()
 
  -- debug menu
- if debug then
+ --if debug then
   menuitem(1,"!reset cartdata!",function()
    for i=0,63 do
     dset(i,nil)
    end
   end)
- end
+ --end
 
 end
 
@@ -201,7 +201,7 @@ function _draw()
   curr_gfx_num = req_gfx_num
  end
 
- print("-main cart-",0,0,8)
+ --print("-main cart-",0,0,8)
 
  if mode == title_mode then
   draw_title()
@@ -432,8 +432,10 @@ function draw_houseselect()
  pal(10,139,1)
  pal(14,140,1)
  pal(15,130,1)
- print("\n(house select screen)",0,0,8)
- print("\n< press ❎ >",0,8)
+ -- print("\n(house select screen)",0,0,8)
+ -- print("\n< press ❎ >",0,8)
+
+ ssprint("select your house",28,28, 9,2,7)
 
  spr(0, 5,47,  4,4)
  spr(4, 47,47, 4,4)
@@ -441,19 +443,19 @@ function draw_houseselect()
  map(48,0, 1,45, 5,7)
  map(48,0, 43,45, 5,7)
  map(48,0, 85,45, 5,7)
- -- rectfill(5,47,36,78,1)
- -- rectfill(47,47,78,78,3)
- -- rectfill(90,47,121,78,2)
  
  houses={"aTREIDES","  oRDOS","hARKONNEN"}
- cols={1,3,2}
  for i=0,2 do
   local off=i*29+(i*5)
   local gap=i*8
   --rectfill(2+off+gap,86,39+off+gap,92,9)
   rect(off+gap,84,41+off+gap,94,ui_cursor==i+1 and 7 or 0)
-  ?houses[i+1],4+off+gap,87,cols[i+1]
-  end
+  ?houses[i+1],4+off+gap,87,faction_cols[i+1]
+ end
+ local fact_cols=faction_cols[ui_cursor]
+ printo("press ❎ to select",30,108,fact_cols[1],1)
+
+ line(0,64,127,64,8)
 end
 
 
@@ -466,7 +468,7 @@ end
 
 function draw_levelintro()
  cls() 
- print("\n(level intro screen)",0,0,8)
+ print("\n(todo: level intro screen)",0,0,8)
  print("\n< press ❎ >",0,8)
  
  -- poss mentat eye code...
@@ -729,9 +731,18 @@ function printo(str,startx,
  print(str,startx,starty,col)
 end
 
+--shadow print
 function sprint(str,x,y,col,scol)
  print(str, x, y+1, scol or 2)
  print(str, x, y,    col or 7)
+end
+
+--shiny shadow print
+function ssprint(str,x,y,col,scol,hcol)
+ sprint(str,x,y,col,scol)
+ clip(x,y+1,#str*4,3)
+ print(str,x,y,hcol)
+ clip()
 end
 
 function draw_bar(x,y,max_w,val,max_val,col)
