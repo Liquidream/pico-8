@@ -77,22 +77,6 @@ if debug then
  mission_data[3][2]={2,1200,nil,2,3,144,200,1,144,152,nil,nil,nil,nil,nil,nil,8}
 end
 
--- mission data (harkonnen)
--- mission_data={
--- -- # |	Credits |	Target Cred |	Enemy Fact 1,2,3 |	AI Level
---  { 1,	999,	 1000,	1,1,1,   9 },	-- No enemy, just reach 1000 credits
---  { 2,	1200,	2700,	1,   8 },	  -- 2700 credits of spice, OR eliminate Atreides presence
---  { 3,	1500,	0,    2,   7	}, -- Eliminate enemy
---  { 4,	1500,	0,    2,   6	}, -- Eliminate enemy
---  { 5,	1500,	0,    1,   5 }, --	Eliminate enemy
---  { 6,	1700,	0,    2,   4 }, --	Eliminate enemy
---  { 7,	2000,	0,    1,   3 }, --	Eliminate enemy
---  { 8,	2000,	0,    2,   2 }, --	(Should be 1 or 2)
---  { 9,	2500,	0,    4,   1 }, --	Eliminate enemy
--- }
-
-
-
 -- vars
 mode = title_mode
 seq_cor = nil
@@ -136,18 +120,22 @@ function _update60()
  if mode == title_mode then
   update_title()
   -- switch to house select
-  if btnp(5) then
-   mode = houseselect_mode
-   init_houseselect()
+  if btnp(5) then   
+   if p_fact == 0 then
+    -- starting new game
+    init_houseselect()
+   else
+    -- continuing existing game
+    init_levelintro()
+   end
   end 
  
  elseif mode == houseselect_mode then
   update_houseselect()
   -- switch to level intro
   if btnp(5) then
-   mode = levelintro_mode
-   -- play "intro" music
-   music(6)
+   p_fact = ui_cursor
+   init_levelintro()
   end
 
  elseif mode == levelintro_mode then
@@ -164,19 +152,14 @@ function _update60()
    printh("p_level now set to = "..p_level)
    dset(0, p_level)
    dset(40, 0) -- clear endstate
-   mode = levelselect_mode
-   init_levelselect()
-   -- play "select" music
-   music(12)
+   init_levelselect()   
   end
 
 elseif mode == levelselect_mode then
   update_levelselect()
   -- switch to level intro
   if btnp(5) then   
-   -- play "intro/select" music
-   mode = levelintro_mode
-   music(6)
+   init_levelintro()
   end
   
  end
@@ -234,6 +217,7 @@ end
 function load_data()
  -- load saved data to determine current "state"
 
+ p_fact = dget(6)
  p_level = max(1, dget(0))
  printh("p_level: = "..tostr(p_level))
 
@@ -272,28 +256,20 @@ end
 
 function load_level(num)
  
- --num=8
+ -- debug
+ num=9
+ 
  printh("in load_level("..num..")...")
+ printh("p_fact = "..p_fact)
 
  -- set player to faction
  p_fact = 3 -- (1=atreides, 2=ordos, 3-harkonen)
  p_col1 = faction_cols[p_fact][1]
  p_col2 = faction_cols[p_fact][2]
-
- local mdata = mission_data[p_fact][num]
+ mdata = mission_data[p_fact][num]
  ai1_fact = mdata[8]
  ai2_fact = mdata[11]
  ai3_fact = mdata[14]
-
- -- mission_bases_data={
- --  { -- mission 1
- --   {p_fact3,p_col1,p_col2,11*8,9*8}, -- p_faction, p_col1, p_col2,x,y
- --   {1,12,ai1_fact,3*8,64},            -- "other" lone enemy soldiers
- --   {1,12,ai2_fact,20*8,64},           --
- --   {1,12,ai3_fact,20*8,19*8},         --
- --  },
- -- }
- --local mbases = mission_data[num]
  
  dset(0, num)
  dset(1, mdata[17]) -- ai level
@@ -404,7 +380,8 @@ function draw_title()
 	end
 
  if t()>start⧗+1 then
-  if(t()\1%2==0)printo("press ❎ to start",30,78,7,3)
+  local msg = "press ❎ to "..(p_fact>0 and "continue" or "start")
+  if(t()\1%2==0)printo(msg,60-(#msg*4)/2,78,7,3)
  end
 
  -- intro anim (crisp hd)
@@ -417,6 +394,7 @@ end
 -- house selection screen
 
 function init_houseselect()
+ mode = houseselect_mode
  load_gfx_page(1)
  ui_cursor=1
 end
@@ -461,7 +439,9 @@ end
 -- level intro screen
 
 function init_levelintro()
- 
+ mode = levelintro_mode
+ -- play "intro" music
+ music(6)
 end
 
 function draw_levelintro()
@@ -598,8 +578,11 @@ end
 -- level select screen
 
 function init_levelselect()
+ mode = levelselect_mode
  load_gfx_page(0)
-  -- init map region data
+ -- play "select" music
+ music(12)
+ -- init map region data
  rdata=split2d(spr_data,",","\n")
  
  -- define colour "filters"
