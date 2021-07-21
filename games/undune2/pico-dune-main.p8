@@ -38,26 +38,26 @@ levelselect_mode=5
 -- No.|Starting Credits|Objective Credits|# Bases|P Faction|P XPos|P YPos|AI Fact 1|AI XPos 1|AI YPos 1|AI Fact 2|AI XPos 2|AI YPos 2|AI Fact 3|AI XPos 3|AI YPos 3|AI Level
 mission_data={
 { -- atredies missions
- {1,999,1000,1,1,nil,nil,0,nil,nil,nil,nil,nil,nil,nil,nil,20},
- {2,1200,2700,1,1,nil,nil,0,nil,nil,nil,nil,nil,nil,nil,nil,8},
- {3,1500,nil,1,1,nil,nil,0,nil,nil,nil,nil,nil,nil,nil,nil,7},
- {4,1500,nil,1,1,nil,nil,0,nil,nil,nil,nil,nil,nil,nil,nil,6},
- {5,1500,nil,1,1,nil,nil,0,nil,nil,nil,nil,nil,nil,nil,nil,5},
- {6,1700,nil,1,1,nil,nil,0,nil,nil,nil,nil,nil,nil,nil,nil,4},
- {7,2000,nil,1,1,nil,nil,0,nil,nil,nil,nil,nil,nil,nil,nil,3},
- {8,2000,nil,1,1,nil,nil,0,nil,nil,nil,nil,nil,nil,nil,nil,2},
- {9,2500,nil,1,1,nil,nil,0,nil,nil,nil,nil,nil,nil,nil,nil,1},
+ {1,999,1000,4,1,88,72,2,24,64,2,160,64,2,160,152,20},
+ {2,1200,2700,2,1,144,200,2,120,96,nil,nil,nil,nil,nil,nil,8},
+ {3,1500,nil,2,1,176,112,3,408,440,nil,nil,nil,nil,nil,nil,7},
+ {4,1500,nil,2,1,176,432,3,296,16,nil,nil,nil,nil,nil,nil,6},
+ {5,1500,nil,2,1,88,200,2,448,288,nil,nil,nil,nil,nil,nil,5},
+ {6,1700,nil,3,1,264,312,3,8,24,3,480,136,nil,nil,nil,4},
+ {7,2000,nil,4,1,200,72,2,280,408,nil,nil,nil,nil,nil,nil,3},
+ {8,2000,nil,4,1,192,240,3,328,8,2,248,448,2,424,424,2},
+ {9,2500,nil,4,1,232,416,4,360,40,3,112,40,2,408,136,1},
 },
 { -- ordos missions
- {1,999,1000,1,2,nil,nil,0,nil,nil,nil,nil,nil,nil,nil,nil,20},
- {2,1200,2700,1,2,nil,nil,0,nil,nil,nil,nil,nil,nil,nil,nil,8},
- {3,1500,nil,1,2,nil,nil,0,nil,nil,nil,nil,nil,nil,nil,nil,7},
- {4,1500,nil,1,2,nil,nil,0,nil,nil,nil,nil,nil,nil,nil,nil,6},
- {5,1500,nil,1,2,nil,nil,0,nil,nil,nil,nil,nil,nil,nil,nil,5},
- {6,1700,nil,1,2,nil,nil,0,nil,nil,nil,nil,nil,nil,nil,nil,4},
- {7,2000,nil,1,2,nil,nil,0,nil,nil,nil,nil,nil,nil,nil,nil,3},
- {8,2000,nil,1,2,nil,nil,0,nil,nil,nil,nil,nil,nil,nil,nil,2},
- {9,2500,nil,1,2,nil,nil,0,nil,nil,nil,nil,nil,nil,nil,nil,1},
+ {1,999,1000,4,2,88,72,3,24,64,3,160,64,3,160,152,20},
+ {2,1200,2700,2,2,144,200,3,120,96,nil,nil,nil,nil,nil,nil,8},
+ {3,1500,nil,2,2,176,112,1,408,440,nil,nil,nil,nil,nil,nil,7},
+ {4,1500,nil,2,2,176,432,1,296,16,nil,nil,nil,nil,nil,nil,6},
+ {5,1500,nil,2,2,88,200,3,448,288,nil,nil,nil,nil,nil,nil,5},
+ {6,1700,nil,3,2,264,312,1,8,24,1,480,136,nil,nil,nil,4},
+ {7,2000,nil,4,2,200,72,3,280,408,nil,nil,nil,nil,nil,nil,3},
+ {8,2000,nil,4,2,192,240,1,328,8,3,248,448,3,424,424,2},
+ {9,2500,nil,4,2,232,416,4,360,40,1,112,40,3,408,136,1},
 },
 { -- harkonnen missions
  {1,999,1000,4,3,88,72,1,24,64,1,160,64,1,160,152,20},
@@ -71,6 +71,7 @@ mission_data={
  {9,2500,nil,4,3,232,416,4,360,40,2,112,40,1,408,136,1},
 }
 }
+
 
 if debug then
  -- debug mission for easy win 
@@ -126,7 +127,7 @@ function _update60()
     init_houseselect()
    else
     -- continuing existing game
-    init_levelintro()
+    init_levelintro()  
    end
   end 
  
@@ -134,7 +135,8 @@ function _update60()
   update_houseselect()
   -- switch to level intro
   if btnp(5) then
-   p_fact = ui_cursor
+   -- set player faction 
+   p_fact = ui_cursor -- (1=atreides, 2=ordos, 3-harkonen)
    init_levelintro()
   end
 
@@ -257,13 +259,13 @@ end
 function load_level(num)
  
  -- debug
- num=9
+ --num=9
  
  printh("in load_level("..num..")...")
  printh("p_fact = "..p_fact)
 
- -- set player to faction
- p_fact = 3 -- (1=atreides, 2=ordos, 3-harkonen)
+ --debug
+ --p_fact = 3 -- (1=atreides, 2=ordos, 3-harkonen)
  p_col1 = faction_cols[p_fact][1]
  p_col2 = faction_cols[p_fact][2]
  mdata = mission_data[p_fact][num]
@@ -733,10 +735,13 @@ function draw_bar(x,y,max_w,val,max_val,col)
  rectfill(x,y,x+w,y+3,col)
 end
 
-function play_sequence(seqnum)
- printh("seqnum = "..seqnum)
  -- play scripted animated sequence
  -- (typically, one for each level) 
+function play_sequence(seqnum)
+ printh("seqnum = "..seqnum)
+
+ local nextreg_num
+ local nextreg_currcol -- ref to next region's orig col b4 start flashing player fact
 
  -- "paint" blank map
  cls()
@@ -803,13 +808,8 @@ function play_sequence(seqnum)
   fizzlemap(25, cols[col_ordos])
   fizzlemap(24, cols[col_ordos])
   fizzlemap(23, cols[col_ordos])
-  show_message("pRESS ❎ tO sTART")
-  while true do
-   setmap(2, cols[col_harkonnen])
-   wait(20)
-   setmap(2, cols[col_origmap])
-   wait(20)
-  end
+  nextreg_num = 2
+  nextreg_currcol = cols[col_origmap]
 
  elseif seqnum == 3 then
   setmap({6,5,4,10,3,9}, cols[col_harkonnen])
@@ -828,13 +828,8 @@ function play_sequence(seqnum)
   fizzlemap(11, cols[col_ordos])
   fizzlemap(18, cols[col_ordos])
   fizzlemap(12, cols[col_ordos])
-  show_message("pRESS ❎ tO sTART")
-  while true do
-   setmap(11, cols[col_harkonnen])
-   wait(20)
-   setmap(11, cols[col_ordos])
-   wait(20)
-  end
+  nextreg_num = 11
+  nextreg_currcol = cols[col_ordos]
  
  elseif seqnum == 4 then
    setmap({6,5,4,10,3,9,2,1,8}, cols[col_harkonnen])
@@ -846,14 +841,9 @@ function play_sequence(seqnum)
    fizzlemap(12,  cols[col_harkonnen])
    show_message("aTREIDES AND oRDOS\nTRADED LAND.")
    fizzlemap(24, cols[col_attreides])
-   fizzlemap(16, cols[col_ordos])     
-   show_message("pRESS ❎ tO sTART")
-   while true do
-    setmap(18, cols[col_harkonnen])
-    wait(20)
-    setmap(18, cols[col_ordos])
-    wait(20)
-   end
+   fizzlemap(16, cols[col_ordos])
+   nextreg_num = 18
+   nextreg_currcol = cols[col_ordos]
 
  elseif seqnum == 5 then
   setmap({6,5,4,10,3,9,2,1,8,17,11,12}, cols[col_harkonnen])
@@ -865,13 +855,8 @@ function play_sequence(seqnum)
   fizzlemap(19,  cols[col_harkonnen])
   show_message("tHE oRDOS BROKE\nTHROUGH aTREIDES.")
   fizzlemap(24, cols[col_ordos])
-  show_message("pRESS ❎ tO sTART")
-  while true do
-   setmap(7, cols[col_harkonnen])
-   wait(20)
-   setmap(7, cols[col_attreides])
-   wait(20)
-  end
+  nextreg_num = 7
+  nextreg_currcol = cols[col_attreides]
 
  elseif seqnum == 6 then
   setmap({6,5,4,10,3,9,2,1,8,17,11,12,25,18,19}, cols[col_harkonnen])
@@ -882,13 +867,8 @@ function play_sequence(seqnum)
   fizzlemap(14,  cols[col_harkonnen])
   fizzlemap(13,  cols[col_harkonnen])
   fizzlemap(23, cols[col_ordos])
-  show_message("pRESS ❎ tO sTART")
-  while true do
-   setmap(26, cols[col_harkonnen])
-   wait(20)
-   setmap(26, cols[col_ordos])
-   wait(20)
-  end
+  nextreg_num = 26
+  nextreg_currcol = cols[col_ordos]
 
  elseif seqnum == 7 then
   setmap({6,5,4,10,3,9,2,1,8,17,11,12,25,18,19,7,14,13}, cols[col_harkonnen])
@@ -900,13 +880,8 @@ function play_sequence(seqnum)
   fizzlemap(27,  cols[col_harkonnen])
   show_message("aTREIDES RECLAIMED\nITS LAND.")
   fizzlemap(23, cols[col_attreides])
-  show_message("pRESS ❎ tO sTART")
-  while true do
-   setmap(21, cols[col_harkonnen])
-   wait(20)
-   setmap(21, cols[col_attreides])
-   wait(20)
-  end
+  nextreg_num = 21
+  nextreg_currcol = cols[col_attreides]
 
  elseif seqnum == 8 then
   setmap({6,5,4,10,3,9,2,1,8,17,11,12,25,18,19,7,14,13,24,26,27}, cols[col_harkonnen])
@@ -915,14 +890,9 @@ function play_sequence(seqnum)
   show_message("hARKONNEN CRUSHED\nTHE aTREIDES.")
   fizzlemap(20,  cols[col_harkonnen])
   fizzlemap(21,  cols[col_harkonnen])
-  fizzlemap(22,  cols[col_harkonnen])     
-  show_message("pRESS ❎ tO sTART")
-  while true do
-   setmap(16, cols[col_harkonnen])
-   wait(20)
-   setmap(16, cols[col_ordos])
-   wait(20)
-  end
+  fizzlemap(22,  cols[col_harkonnen])
+  nextreg_num = 16
+  nextreg_currcol = cols[col_ordos]
 
  elseif seqnum == 9 then
   setmap({6,5,4,10,3,9,2,1,8,17,11,12,25,18,19,7,14,13,24,26,27,20,21,22}, cols[col_harkonnen])
@@ -931,16 +901,20 @@ function play_sequence(seqnum)
   show_message("oNLY THE hARKONNEN\nWILL PREVAIL.")
   fizzlemap(16,  cols[col_harkonnen])
   fizzlemap(23,  cols[col_harkonnen])
-  fizzlemap(15,  cols[col_emperor])     
-  show_message("pRESS ❎ tO sTART")
-  while true do
-   setmap(15, cols[col_harkonnen])
-   wait(20)
-   setmap(15, cols[col_emperor])
-   wait(20)
-  end
+  fizzlemap(15,  cols[col_emperor])
+  nextreg_num = 15
+  nextreg_currcol = cols[col_emperor]
 
  end
+
+ -- flash next region until player "starts"
+ show_message("pRESS ❎ tO sTART")
+  while true do
+   setmap(nextreg_num, cols[col_harkonnen])
+   wait(20)
+   setmap(nextreg_num, nextreg_currcol)
+   wait(20)
+  end
 end
 
 function show_message(msg)
