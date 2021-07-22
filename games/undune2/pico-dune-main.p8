@@ -96,13 +96,13 @@ function _init()
  load_data()
 
  -- debug!!!
- --mode = houseselect_mode
+ mode = levelselect_mode
 
  -- if level end...
  if (mode==title_mode) init_title()
  if (mode==houseselect_mode) init_houseselect()
  if (mode==levelend_mode) init_levelend()
- if (mode==levelselect_mode) init_levelselect()
+ if (mode==levelselect_mode) p_faction=2 p_level=3 init_levelselect() 
 
  -- debug menu
  --if debug then
@@ -184,6 +184,8 @@ function _draw()
   memcpy(0x0000,0x6000,0x2000)  
   -- save value
   curr_gfx_num = req_gfx_num
+  -- tidy up
+  cls()
  end
 
  --print("-main cart-",0,0,8)
@@ -591,18 +593,29 @@ function init_levelselect()
  cols={
   [-1]={6,7,13},-- orig map
   [0]={0,0,0},  -- borderline
-  {8,2,1,7,7},  -- harkonnen
   {12,1,0},     -- attreides
   {11,10,1},    -- ordos
+  {8,2,1,7,7},  -- harkonnen
   {5,2,0}     -- emperor
  }
 
  col_origmap=-1
  col_borderline=0
- col_harkonnen=1
- col_attreides=2
- col_ordos=3
  col_emperor=4
+ -- switch map fact cols, depending on player faction
+ if p_faction == 1 then
+  col_fact_north=1
+  col_fact_west=2
+  col_fact_east=3
+ elseif p_faction == 2 then
+  col_fact_north=2
+  col_fact_west=3
+  col_fact_east=1
+ elseif p_faction == 3 then  
+  col_fact_north=3
+  col_fact_west=1
+  col_fact_east=2
+ end
 
  messagetext1=""
  messagetext2=""
@@ -739,7 +752,11 @@ end
  -- (typically, one for each level) 
 function play_sequence(seqnum)
  printh("seqnum = "..seqnum)
-
+ 
+ -- dummy pause in to allow gfx unpack to happen before map() call below
+ -- (not necessary in final game - only when *starting* on level select)
+ yield()
+ 
  local nextreg_num
  local nextreg_currcol -- ref to next region's orig col b4 start flashing player fact
 
@@ -749,7 +766,6 @@ function play_sequence(seqnum)
  pal(1,6)
  pal(2,7)
  pal(3,13)
- --spr(0,0,0,16,16) 
  map(32,0,0,0)
  spr(97,4,20,15,8)
  pal()
@@ -770,6 +786,7 @@ function play_sequence(seqnum)
  
  printo("your next conquest",30,7,8,0) 
 
+
  if seqnum > 2 then
   setmap(0, cols[col_borderline])
  end
@@ -786,121 +803,121 @@ function play_sequence(seqnum)
   fizzlemap(0,  cols[col_borderline])
   cleartext()
   show_message("hARKONNEN ARRIVED\nFIRST.")
-  fizzlemap(6,  cols[col_harkonnen])
-  fizzlemap(5,  cols[col_harkonnen])
-  fizzlemap(4,  cols[col_harkonnen])
-  fizzlemap(10, cols[col_harkonnen])
-  fizzlemap(3,  cols[col_harkonnen])
-  fizzlemap(9,  cols[col_harkonnen])
+  fizzlemap(6,  cols[col_fact_north])
+  fizzlemap(5,  cols[col_fact_north])
+  fizzlemap(4,  cols[col_fact_north])
+  fizzlemap(10, cols[col_fact_north])
+  fizzlemap(3,  cols[col_fact_north])
+  fizzlemap(9,  cols[col_fact_north])
   cleartext()
   show_message("tHE WEAK aTREIDES\nWILL BE EASY.")
-  fizzlemap(13, cols[col_attreides])
-  fizzlemap(7,  cols[col_attreides])
-  fizzlemap(20, cols[col_attreides])
-  fizzlemap(14, cols[col_attreides])
-  fizzlemap(21, cols[col_attreides]) 
-  fizzlemap(22, cols[col_attreides])
+  fizzlemap(13, cols[col_fact_west])
+  fizzlemap(7,  cols[col_fact_west])
+  fizzlemap(20, cols[col_fact_west])
+  fizzlemap(14, cols[col_fact_west])
+  fizzlemap(21, cols[col_fact_west]) 
+  fizzlemap(22, cols[col_fact_west])
   cleartext()
   show_message("tHE oRDOS ARE\nGETTING CLOSER.")
-  fizzlemap(19, cols[col_ordos])
-  fizzlemap(27, cols[col_ordos])
-  fizzlemap(26, cols[col_ordos])
-  fizzlemap(25, cols[col_ordos])
-  fizzlemap(24, cols[col_ordos])
-  fizzlemap(23, cols[col_ordos])
+  fizzlemap(19, cols[col_fact_east])
+  fizzlemap(27, cols[col_fact_east])
+  fizzlemap(26, cols[col_fact_east])
+  fizzlemap(25, cols[col_fact_east])
+  fizzlemap(24, cols[col_fact_east])
+  fizzlemap(23, cols[col_fact_east])
   nextreg_num = 2
   nextreg_currcol = cols[col_origmap]
 
  elseif seqnum == 3 then
-  setmap({6,5,4,10,3,9}, cols[col_harkonnen])
-  setmap({13,7,20,14,21,22}, cols[col_attreides])
-  setmap({19,27,26,25,24,23}, cols[col_ordos])
+  setmap({6,5,4,10,3,9}, cols[col_fact_north])
+  setmap({13,7,20,14,21,22}, cols[col_fact_west])
+  setmap({19,27,26,25,24,23}, cols[col_fact_east])
   show_message("hARKONNEN SPREAD\nOUT STRONG FORCES.")
-  fizzlemap(2,  cols[col_harkonnen])
-  fizzlemap(1,  cols[col_harkonnen])
-  fizzlemap(8,  cols[col_harkonnen])
+  fizzlemap(2,  cols[col_fact_north])
+  fizzlemap(1,  cols[col_fact_north])
+  fizzlemap(8,  cols[col_fact_north])
   show_message("aTREIDES WENT\nAFTER oRDOS.")
-  fizzlemap(15, cols[col_attreides])
-  fizzlemap(16, cols[col_attreides])
-  fizzlemap(23, cols[col_attreides])
+  fizzlemap(15, cols[col_fact_west])
+  fizzlemap(16, cols[col_fact_west])
+  fizzlemap(23, cols[col_fact_west])
   show_message("oRDOS STOLE EVEN\nMORE LAND.")
-  fizzlemap(17, cols[col_ordos])
-  fizzlemap(11, cols[col_ordos])
-  fizzlemap(18, cols[col_ordos])
-  fizzlemap(12, cols[col_ordos])
+  fizzlemap(17, cols[col_fact_east])
+  fizzlemap(11, cols[col_fact_east])
+  fizzlemap(18, cols[col_fact_east])
+  fizzlemap(12, cols[col_fact_east])
   nextreg_num = 11
-  nextreg_currcol = cols[col_ordos]
+  nextreg_currcol = cols[col_fact_east]
  
  elseif seqnum == 4 then
-   setmap({6,5,4,10,3,9,2,1,8}, cols[col_harkonnen])
-   setmap({13,7,20,14,21,22,15,16,23}, cols[col_attreides])
-   setmap({19,27,26,25,24,17,11,18,12}, cols[col_ordos])
+   setmap({6,5,4,10,3,9,2,1,8}, cols[col_fact_north])
+   setmap({13,7,20,14,21,22,15,16,23}, cols[col_fact_west])
+   setmap({19,27,26,25,24,17,11,18,12}, cols[col_fact_east])
    show_message("oRDOS DID NOT\nSTAND A CHANCE.")
-   fizzlemap(17,  cols[col_harkonnen])
-   fizzlemap(11,  cols[col_harkonnen])
-   fizzlemap(12,  cols[col_harkonnen])
+   fizzlemap(17,  cols[col_fact_north])
+   fizzlemap(11,  cols[col_fact_north])
+   fizzlemap(12,  cols[col_fact_north])
    show_message("aTREIDES AND oRDOS\nTRADED LAND.")
-   fizzlemap(24, cols[col_attreides])
-   fizzlemap(16, cols[col_ordos])
+   fizzlemap(24, cols[col_fact_west])
+   fizzlemap(16, cols[col_fact_east])
    nextreg_num = 18
-   nextreg_currcol = cols[col_ordos]
+   nextreg_currcol = cols[col_fact_east]
 
  elseif seqnum == 5 then
-  setmap({6,5,4,10,3,9,2,1,8,17,11,12}, cols[col_harkonnen])
-  setmap({13,7,20,14,21,22,15,23,24}, cols[col_attreides])
-  setmap({19,27,26,25,18,16}, cols[col_ordos])
-  fizzlemap(25,  cols[col_harkonnen])
+  setmap({6,5,4,10,3,9,2,1,8,17,11,12}, cols[col_fact_north])
+  setmap({13,7,20,14,21,22,15,23,24}, cols[col_fact_west])
+  setmap({19,27,26,25,18,16}, cols[col_fact_east])
+  fizzlemap(25,  cols[col_fact_north])
   show_message("aN oRDOS OUTPOST\nWAS SURROUNDED.")
-  fizzlemap(18,  cols[col_harkonnen])
-  fizzlemap(19,  cols[col_harkonnen])
+  fizzlemap(18,  cols[col_fact_north])
+  fizzlemap(19,  cols[col_fact_north])
   show_message("tHE oRDOS BROKE\nTHROUGH aTREIDES.")
-  fizzlemap(24, cols[col_ordos])
+  fizzlemap(24, cols[col_fact_east])
   nextreg_num = 7
-  nextreg_currcol = cols[col_attreides]
+  nextreg_currcol = cols[col_fact_west]
 
  elseif seqnum == 6 then
-  setmap({6,5,4,10,3,9,2,1,8,17,11,12,25,18,19}, cols[col_harkonnen])
-  setmap({13,7,20,14,21,22,15,23}, cols[col_attreides])
-  setmap({27,26,16,24}, cols[col_ordos])
+  setmap({6,5,4,10,3,9,2,1,8,17,11,12,25,18,19}, cols[col_fact_north])
+  setmap({13,7,20,14,21,22,15,23}, cols[col_fact_west])
+  setmap({27,26,16,24}, cols[col_fact_east])
   show_message("sOON tHE aTREIDES\nWILL BE EXTINCT.")
-  fizzlemap(7,  cols[col_harkonnen])
-  fizzlemap(14,  cols[col_harkonnen])
-  fizzlemap(13,  cols[col_harkonnen])
-  fizzlemap(23, cols[col_ordos])
+  fizzlemap(7,  cols[col_fact_north])
+  fizzlemap(14,  cols[col_fact_north])
+  fizzlemap(13,  cols[col_fact_north])
+  fizzlemap(23, cols[col_fact_east])
   nextreg_num = 26
-  nextreg_currcol = cols[col_ordos]
+  nextreg_currcol = cols[col_fact_east]
 
  elseif seqnum == 7 then
-  setmap({6,5,4,10,3,9,2,1,8,17,11,12,25,18,19,7,14,13}, cols[col_harkonnen])
-  setmap({20,21,22,15}, cols[col_attreides])
-  setmap({27,26,16,24,23}, cols[col_ordos])
+  setmap({6,5,4,10,3,9,2,1,8,17,11,12,25,18,19,7,14,13}, cols[col_fact_north])
+  setmap({20,21,22,15}, cols[col_fact_west])
+  setmap({27,26,16,24,23}, cols[col_fact_east])
   show_message("hARKONNEN CRUSHED\nMOST OF THE oRDOS.")
-  fizzlemap(24,  cols[col_harkonnen])
-  fizzlemap(26,  cols[col_harkonnen])
-  fizzlemap(27,  cols[col_harkonnen])
+  fizzlemap(24,  cols[col_fact_north])
+  fizzlemap(26,  cols[col_fact_north])
+  fizzlemap(27,  cols[col_fact_north])
   show_message("aTREIDES RECLAIMED\nITS LAND.")
-  fizzlemap(23, cols[col_attreides])
+  fizzlemap(23, cols[col_fact_west])
   nextreg_num = 21
-  nextreg_currcol = cols[col_attreides]
+  nextreg_currcol = cols[col_fact_west]
 
  elseif seqnum == 8 then
-  setmap({6,5,4,10,3,9,2,1,8,17,11,12,25,18,19,7,14,13,24,26,27}, cols[col_harkonnen])
-  setmap({20,21,22,15,23}, cols[col_attreides])
-  setmap({16}, cols[col_ordos])
+  setmap({6,5,4,10,3,9,2,1,8,17,11,12,25,18,19,7,14,13,24,26,27}, cols[col_fact_north])
+  setmap({20,21,22,15,23}, cols[col_fact_west])
+  setmap({16}, cols[col_fact_east])
   show_message("hARKONNEN CRUSHED\nTHE aTREIDES.")
-  fizzlemap(20,  cols[col_harkonnen])
-  fizzlemap(21,  cols[col_harkonnen])
-  fizzlemap(22,  cols[col_harkonnen])
+  fizzlemap(20,  cols[col_fact_north])
+  fizzlemap(21,  cols[col_fact_north])
+  fizzlemap(22,  cols[col_fact_north])
   nextreg_num = 16
-  nextreg_currcol = cols[col_ordos]
+  nextreg_currcol = cols[col_fact_east]
 
  elseif seqnum == 9 then
-  setmap({6,5,4,10,3,9,2,1,8,17,11,12,25,18,19,7,14,13,24,26,27,20,21,22}, cols[col_harkonnen])
-  setmap({15,23}, cols[col_attreides])
-  setmap({16}, cols[col_ordos])
+  setmap({6,5,4,10,3,9,2,1,8,17,11,12,25,18,19,7,14,13,24,26,27,20,21,22}, cols[col_fact_north])
+  setmap({15,23}, cols[col_fact_west])
+  setmap({16}, cols[col_fact_east])
   show_message("oNLY THE hARKONNEN\nWILL PREVAIL.")
-  fizzlemap(16,  cols[col_harkonnen])
-  fizzlemap(23,  cols[col_harkonnen])
+  fizzlemap(16,  cols[col_fact_north])
+  fizzlemap(23,  cols[col_fact_north])
   fizzlemap(15,  cols[col_emperor])
   nextreg_num = 15
   nextreg_currcol = cols[col_emperor]
@@ -910,7 +927,7 @@ function play_sequence(seqnum)
  -- flash next region until player "starts"
  show_message("pRESS ❎ tO sTART")
   while true do
-   setmap(nextreg_num, cols[col_harkonnen])
+   setmap(nextreg_num, cols[col_fact_north])
    wait(20)
    setmap(nextreg_num, nextreg_currcol)
    wait(20)
@@ -1110,8 +1127,8 @@ spr_data=[[
 req_gfx_num = -1
 curr_gfx_num = -1
 
-function load_gfx_page(gfx_num)
-   req_gfx_num = gfx_num
+function load_gfx_page(gfx_num) 
+ req_gfx_num = gfx_num
 end
 
 -- skip through compressed data
