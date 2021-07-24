@@ -102,7 +102,7 @@ function _init()
  if (mode==title_mode) init_title()
  if (mode==houseselect_mode) init_houseselect()
  if (mode==levelend_mode) init_levelend()
- if (mode==levelselect_mode) p_faction=1 p_level=2 init_levelselect() 
+ if (mode==levelselect_mode) p_faction=1 p_level=9 init_levelselect() 
 
  -- debug menu
  --if debug then
@@ -597,76 +597,21 @@ function init_levelselect()
   {11,10,1},    -- ordos
   {8,2,1,7,7},  -- harkonnen
   {5,2,0}     -- emperor
- }
+ } 
+
  col_origmap=-1
  col_borderline=0
+ col_attreides=1
+ col_ordos=2
+ col_harkonnen=3
  col_emperor=4
- -- switch map fact cols, depending on player faction
- if p_faction == 1 then
-  col_fact_north=1
-  col_fact_west=2
-  col_fact_east=3
- elseif p_faction == 2 then
-  col_fact_north=2
-  col_fact_west=3
-  col_fact_east=1
- elseif p_faction == 3 then  
-  col_fact_north=3
-  col_fact_west=1
-  col_fact_east=2
- end
-
- -- define message texts, per faction
- map_messages={
-  -- atreides
-  {"tHREE hOUSES HAVE\nCOME TO dUNE.",
-   "tHE LAND HAS\nBECOME DIVIDED.",
-   "aTREIDES CLAIMED\nSTRATEGIC REGIONS",
-   "oRDOS MOVED IN\nFROM THE WEST.",
-   "hARKONNEN INVADED\nFROM THE EAST.",
-   "",
-   "",
-   "",
-   "",
-   "",
-   "",
-   "",
-   "",
-   "",
-   ""
-  },
-  -- ordos
-  {"tHREE hOUSES HAVE\nCOME TO dUNE.",
-   "tHE LAND HAS\nBECOME DIVIDED.",
-   "",
-   "",
-   "",
-   "",
-   "",
-   "",
-   "",
-   "",
-   "",
-   "",
-   "",
-   ""  
-  },
-  -- harkonnen
-  {"tHREE hOUSES HAVE\nCOME TO dUNE.",
-   "tHE LAND HAS\nBECOME DIVIDED.",
-   "hARKONNEN ARRIVED\nFIRST.",
-   "tHE WEAK aTREIDES\nWILL BE EASY.",
-   "tHE oRDOS ARE\nGETTING CLOSER."
-  }
- }
-
  messagetext1=""
  messagetext2=""
  msg_ypos=0
  _t=0
 
- -- init anim sequence
- seq_cor=cocreate(play_sequence)
+ -- init map anim sequence
+ seq_cor=cocreate(play_map_sequence)
 end
 
 function update_levelselect()
@@ -689,6 +634,393 @@ function draw_levelselect()
  --printo("p_level="..p_level,2,121,8)
 
 end
+
+
+ -- play scripted animated sequence
+ -- (typically, one for each level) 
+function play_map_sequence(seqnum)
+ printh("seqnum = "..seqnum)
+ 
+ -- dummy pause in to allow gfx unpack to happen before map() call below
+ -- (not necessary in final game - only when *starting* on level select)
+ yield()
+ 
+ local nextreg_num
+ local nextreg_currcol -- ref to next region's orig col b4 start flashing player fact
+
+ -- "paint" blank map
+ cls()
+ pal()
+ pal(1,6)
+ pal(2,7)
+ pal(3,13)
+ map(32,0,0,0)
+ spr(97,4,20,15,8)
+ pal()
+
+ --
+ -- init custom screen palette
+ --
+ palt(0,false)   -- show blacks
+ pal(14, 137, 1)  -- bright pink > dark orange
+ pal(12, 140, 1) -- light blue > royal blue
+ pal(11, 139, 1) -- light green > grass green
+ pal(10, 3, 1)   -- yellow > rough green
+ --pal(8, 136, 1) -- red > cherry
+ pal(6, 143, 1)  -- skin > peach
+ pal(13, 134, 1) -- greyblue > beige
+ pal(7, 142, 1)  -- dark red > peach2
+ 
+ 
+ printo("your next conquest",30,7,8,0) 
+ 
+ if seqnum > 2 then
+  setmap(0, map_cols[col_borderline])
+ end
+
+ --local fact_map_msgs=map_messages[p_faction]
+ if p_faction == 1 then
+  -- =========================================================
+  -- atreides
+  -- =========================================================
+  if seqnum == 1 then
+   -- intro anim?
+  elseif seqnum == 2 then
+   -- first map sequence
+   cleartext()  
+   wait(20)    
+   show_message("tHREE hOUSES HAVE\nCOME TO dUNE.") 
+   show_message("tHE LAND HAS\nBECOME DIVIDED.")   
+   fizzlemap(0,  map_cols[col_borderline])
+   cleartext()
+   show_message("aTREIDES CLAIMED\nSTRATEGIC REGIONS")
+   fizzlemap({13,7,20,14,21,22}, map_cols[col_attreides])
+   cleartext()
+   show_message("oRDOS MOVED IN\nFROM THE EAST.")
+   fizzlemap({19,27,26,25,24,23}, map_cols[col_ordos])
+   cleartext()
+   show_message("hARKONNEN INVADED\nFROM THE NORTH.")
+   fizzlemap({6,5,4,10,3,9}, map_cols[col_harkonnen])
+   nextreg_num = 23
+   nextreg_currcol = map_cols[col_ordos]
+
+  elseif seqnum == 3 then
+   setmap({13,7,20,14,21,22}, map_cols[col_attreides])
+   setmap({19,27,26,25,24,23}, map_cols[col_ordos])
+   setmap({6,5,4,10,3,9}, map_cols[col_harkonnen])
+   show_message("aTREIDES CAPTURED\nMORE TERRITORY...")
+   fizzlemap({8,15},  map_cols[col_attreides])
+   show_message("...AND DROVE THE\noRDOS OUT.")   
+   fizzlemap({23}, map_cols[col_attreides])
+   show_message("oRDOS HEADED\nFOR hARKONNEN.")   
+   fizzlemap({12,18,16,17}, map_cols[col_ordos])
+   show_message("hARKONNEN EXPANDED\nTHEIR BORDERS.")
+   fizzlemap({1,2,11}, map_cols[col_harkonnen])
+   nextreg_num = 2
+   nextreg_currcol = map_cols[col_harkonnen]
+  
+  elseif seqnum == 4 then
+   setmap({13,7,20,14,21,22,8,15,23}, map_cols[col_attreides])
+   setmap({19,27,26,25,24,12,18,16,17}, map_cols[col_ordos])
+   setmap({6,5,4,10,3,9,1,2,11}, map_cols[col_harkonnen])
+   show_message("hARKONEN BORDERS\nWERE WEAK...")
+   fizzlemap({1,2,3}, map_cols[col_attreides])
+   fizzlemap({11}, map_cols[col_ordos])
+   show_message("...EXCEPT FOR\nONE OUTPOST.")
+   fizzlemap({16}, map_cols[col_harkonnen])
+   nextreg_num = 9
+   nextreg_currcol = map_cols[col_harkonnen]
+ 
+  elseif seqnum == 5 then
+   setmap({13,7,20,14,21,22,8,15,23,1,2,3}, map_cols[col_attreides])
+   setmap({19,27,26,25,24,12,18,17,11}, map_cols[col_ordos])
+   setmap({6,5,4,10,9,16}, map_cols[col_harkonnen])
+   show_message("hARKONEN CONTINUED\nTO RETREAT.")
+   fizzlemap({4,9,16}, map_cols[col_attreides])
+   show_message("...INTO TERRITORY\nOF THE oRDOS.")
+   fizzlemap({11}, map_cols[col_harkonnen])
+			nextreg_num = 25
+   nextreg_currcol = map_cols[col_ordos]
+
+  elseif seqnum == 6 then
+   setmap({13,7,20,14,21,22,8,15,23,1,2,3,4,9,16}, map_cols[col_attreides])
+   setmap({19,27,26,25,24,12,18,17}, map_cols[col_ordos])
+   setmap({6,5,10,11}, map_cols[col_harkonnen])
+   show_message("aLL FORCES WERE\nAIMED AT oRDOS.")
+   fizzlemap({17,25,24}, map_cols[col_attreides])
+   fizzlemap({18}, map_cols[col_harkonnen])
+			nextreg_num = 11
+   nextreg_currcol = map_cols[col_harkonnen]
+
+  elseif seqnum == 7 then
+   setmap({13,7,20,14,21,22,8,15,23,1,2,3,4,9,16,17,25,24}, map_cols[col_attreides])
+   setmap({19,27,26,12}, map_cols[col_ordos])
+   setmap({6,5,10,11,18}, map_cols[col_harkonnen])
+   show_message("aTREIDES PUSHED\nhARKONNEN BACK.")
+   fizzlemap({10,11,18}, map_cols[col_attreides])
+			nextreg_num = 26   
+   nextreg_currcol = map_cols[col_ordos]
+
+ elseif seqnum == 8 then
+   setmap({13,7,20,14,21,22,8,15,23,1,2,3,4,9,16,17,25,24,10,11,18}, map_cols[col_attreides])
+   setmap({19,27,26,12}, map_cols[col_ordos])
+   setmap({6,5}, map_cols[col_harkonnen])
+   show_message("oRDOS WERE NEARLY\nWIPED OUT.")
+   fizzlemap({26,27,19}, map_cols[col_attreides])
+			nextreg_num = 5   
+   nextreg_currcol = map_cols[col_harkonnen]
+
+  elseif seqnum == 9 then
+   setmap({13,7,20,14,21,22,8,15,23,1,2,3,4,9,16,17,25,24,10,11,18,26,27,19}, map_cols[col_attreides])
+   setmap({12}, map_cols[col_ordos])
+   setmap({6,5}, map_cols[col_harkonnen])
+   show_message("oNLY THE eMPEROR'S\nFORCES REMAIN.")
+   fizzlemap({5,12}, map_cols[col_attreides])
+   fizzlemap({6}, map_cols[col_emperor])
+			nextreg_num = 6
+   nextreg_currcol = map_cols[col_emperor]
+
+  end
+
+ elseif p_faction == 2 then
+  -- =========================================================
+  -- ordos
+  -- =========================================================
+
+ elseif p_faction == 3 then
+  -- =========================================================
+  -- harkonnen
+  -- =========================================================
+  if seqnum == 1 then
+   -- intro anim?
+  elseif seqnum == 2 then
+   -- first map sequence
+   cleartext()  
+   wait(20)    
+   show_message("tHREE hOUSES HAVE\nCOME TO dUNE.") 
+   show_message("tHE LAND HAS\nBECOME DIVIDED.")   
+   fizzlemap(0,  map_cols[col_borderline])
+   cleartext()
+   show_message("hARKONNEN ARRIVED\nFIRST.")
+   fizzlemap({6,5,4,10,3,9}, map_cols[col_harkonnen])
+   cleartext()
+   show_message("tHE WEAK aTREIDES\nWILL BE EASY.")
+   fizzlemap({13,7,20,14,21,22}, map_cols[col_attreides])
+   cleartext()
+   show_message("tHE oRDOS ARE\nGETTING CLOSER.")
+   fizzlemap({19,27,26,25,24,23}, map_cols[col_ordos])
+   nextreg_num = 2
+   nextreg_currcol = map_cols[col_origmap]
+
+  elseif seqnum == 3 then
+   setmap({6,5,4,10,3,9}, map_cols[col_harkonnen])
+   setmap({13,7,20,14,21,22}, map_cols[col_attreides])
+   setmap({19,27,26,25,24,23}, map_cols[col_ordos])
+   show_message("hARKONNEN SPREAD\nOUT STRONG FORCES.")
+   fizzlemap({2,1,8},  map_cols[col_harkonnen])
+   show_message("aTREIDES WENT\nAFTER oRDOS.")
+   fizzlemap({15,16,23}, map_cols[col_attreides])
+   show_message("oRDOS STOLE EVEN\nMORE LAND.")
+   fizzlemap({17,11,18,12}, map_cols[col_ordos])
+   nextreg_num = 11
+   nextreg_currcol = map_cols[col_ordos]
+  
+  elseif seqnum == 4 then
+    setmap({6,5,4,10,3,9,2,1,8}, map_cols[col_harkonnen])
+    setmap({13,7,20,14,21,22,15,16,23}, map_cols[col_attreides])
+    setmap({19,27,26,25,24,17,11,18,12}, map_cols[col_ordos])
+    show_message("oRDOS DID NOT\nSTAND A CHANCE.")
+    fizzlemap({17,11,12}, map_cols[col_harkonnen])
+    show_message("aTREIDES AND oRDOS\nTRADED LAND.")
+    fizzlemap({24,16}, map_cols[col_ordos])
+    nextreg_num = 18
+    nextreg_currcol = map_cols[col_ordos]
+
+  elseif seqnum == 5 then
+   setmap({6,5,4,10,3,9,2,1,8,17,11,12}, map_cols[col_harkonnen])
+   setmap({13,7,20,14,21,22,15,23,24}, map_cols[col_attreides])
+   setmap({19,27,26,25,18,16}, map_cols[col_ordos])
+   fizzlemap(25,  map_cols[col_harkonnen])
+   show_message("aN oRDOS OUTPOST\nWAS SURROUNDED.")
+   fizzlemap({18,19},  map_cols[col_harkonnen])
+   show_message("tHE oRDOS BROKE\nTHROUGH aTREIDES.")
+   fizzlemap(24, map_cols[col_ordos])
+   nextreg_num = 7
+   nextreg_currcol = map_cols[col_attreides]
+
+  elseif seqnum == 6 then
+   setmap({6,5,4,10,3,9,2,1,8,17,11,12,25,18,19}, map_cols[col_harkonnen])
+   setmap({13,7,20,14,21,22,15,23}, map_cols[col_attreides])
+   setmap({27,26,16,24}, map_cols[col_ordos])
+   show_message("sOON tHE aTREIDES\nWILL BE EXTINCT.")
+   fizzlemap({7,14,13,23}, map_cols[col_ordos])
+   nextreg_num = 26
+   nextreg_currcol = map_cols[col_ordos]
+
+  elseif seqnum == 7 then
+   setmap({6,5,4,10,3,9,2,1,8,17,11,12,25,18,19,7,14,13}, map_cols[col_harkonnen])
+   setmap({20,21,22,15}, map_cols[col_attreides])
+   setmap({27,26,16,24,23}, map_cols[col_ordos])
+   show_message("hARKONNEN CRUSHED\nMOST OF THE oRDOS.")
+   fizzlemap({24,26,27},  map_cols[col_harkonnen])
+   show_message("aTREIDES RECLAIMED\nITS LAND.")
+   fizzlemap(23, map_cols[col_attreides])
+   nextreg_num = 21
+   nextreg_currcol = map_cols[col_attreides]
+
+  elseif seqnum == 8 then
+   setmap({6,5,4,10,3,9,2,1,8,17,11,12,25,18,19,7,14,13,24,26,27}, map_cols[col_harkonnen])
+   setmap({20,21,22,15,23}, map_cols[col_attreides])
+   setmap({16}, map_cols[col_ordos])
+   show_message("hARKONNEN CRUSHED\nTHE aTREIDES.")
+   fizzlemap({20,21,22},  map_cols[col_harkonnen])
+   nextreg_num = 16
+   nextreg_currcol = map_cols[col_ordos]
+
+  elseif seqnum == 9 then
+   setmap({6,5,4,10,3,9,2,1,8,17,11,12,25,18,19,7,14,13,24,26,27,20,21,22}, map_cols[col_harkonnen])
+   setmap({15,23}, map_cols[col_attreides])
+   setmap({16}, map_cols[col_ordos])
+   show_message("oNLY THE hARKONNEN\nWILL PREVAIL.")
+   fizzlemap({16,23,15},  map_cols[col_emperor])
+   nextreg_num = 15
+   nextreg_currcol = map_cols[col_emperor]
+
+  end
+
+ end -- factions
+
+ -- flash next region until player "starts"
+ show_message("pRESS ❎ tO sTART")
+ while true do
+  setmap(nextreg_num, map_cols[p_faction])
+  wait(20)
+  setmap(nextreg_num, nextreg_currcol)
+  wait(20)
+ end
+end
+
+function show_message(msg)
+ messagetext2=messagetext1
+ messagetext1=msg
+ msg_ypos=80
+ clip(27,99,75,18)
+ for i=1,85 do
+  cleartext()
+  ?messagetext1,29,msg_ypos,0
+  ?messagetext2,29,msg_ypos+22,0
+  yield()--flip()
+  -- move message
+  if (i<46) msg_ypos+=.5
+ end
+ clip()
+end
+
+function cleartext()
+ rectfill(27,99,101,118,9)
+end
+
+function split2d(str,d,dd) 
+ d=d or ","
+ if (dd) str=split(str,dd) 
+ if type(str)=="table" then
+  local t={}
+  while #str>0 do
+   local s=str[1]   
+   add(t,split(s,d))
+   del(str,s)
+  end
+  return t
+ else
+  return split(str,d)
+ end 
+end
+
+-- filtered-fizzlesspr
+function fizzlemap(rnum, cols)
+ sx=8
+ sy=20
+ sw=119
+ sh=64
+ dx=4 
+ dy=20
+ offx=0
+ offy=28 -- if map sprite not 1:1 with screen draw pos
+ speed=3
+ num=0
+ taps=0x3006
+ lfsr=0x3fff
+
+ -- handle table param
+ if type(rnum)=="table" then
+  rtable=rnum
+ else
+  rtable={rnum}
+ end
+
+ for rnum in all(rtable) do
+  for _x=0,127 do
+   for _y=0,127 do
+    num+=1
+    if (num==0x4000) then
+     num=0
+     x,y = 0,0
+    end
+    x,y = band(lfsr,0x7f),flr(lshr(lfsr,7))
+    lfsr = bxor(flr(lshr(lfsr,1)),band(-band(lfsr,1),taps))
+    -- within draw region?   
+    if x>=sx and x<=sx+sw
+     and y>=sy and y<=sy+sh 
+    then
+     if not rnum or rdata[y-sy+1][x-sx+1]==rnum
+     then
+      local origcol=sget(x+offx,y+offy)
+      pset(dx-sx+x,dy-sy+y, cols[origcol])
+     end
+    end
+   end
+   if(_x%speed==0)yield()--flip()
+  end
+ end
+end
+
+-- immediately set a region's colour
+function setmap(rnum, cols)
+ sx=8
+ sy=20
+ sw=119
+ sh=64
+ dx=4
+ dy=20
+ offx=0
+ offy=28 -- if map sprite not 1:1 with screen draw pos
+ rtable=nil
+ 
+ -- handle table param
+ if type(rnum)=="table" then
+  rtable={}
+  for k in all(rnum) do
+   rtable[k]=k
+  end
+ end
+
+ for x=0,127 do
+  for y=0,127 do
+   if x>=sx and x<=sx+sw
+    and y>=sy and y<=sy+sh 
+   then
+    if not rnum 
+     or (rtable and rtable[rdata[y-sy+1][x-sx+1]])
+     or rdata[y-sy+1][x-sx+1]==rnum
+    then     
+     local origcol=sget(x+offx,y+offy)
+     pset(dx-sx+x,dy-sy+y, cols[origcol])
+    end    
+   end
+  end
+ end
+end
+
 
 -->8
 -- 3d funcs
@@ -791,304 +1123,6 @@ function draw_bar(x,y,max_w,val,max_val,col)
  rectfill(x,y,x+w,y+3,col)
 end
 
- -- play scripted animated sequence
- -- (typically, one for each level) 
-function play_sequence(seqnum)
- printh("seqnum = "..seqnum)
- 
- -- dummy pause in to allow gfx unpack to happen before map() call below
- -- (not necessary in final game - only when *starting* on level select)
- yield()
- 
- local nextreg_num
- local nextreg_currcol -- ref to next region's orig col b4 start flashing player fact
-
- -- "paint" blank map
- cls()
- pal()
- pal(1,6)
- pal(2,7)
- pal(3,13)
- map(32,0,0,0)
- spr(97,4,20,15,8)
- pal()
-
- --
- -- init custom screen palette
- --
- palt(0,false)   -- show blacks
- pal(14, 137, 1)  -- bright pink > dark orange
- pal(12, 140, 1) -- light blue > royal blue
- pal(11, 139, 1) -- light green > grass green
- pal(10, 3, 1)   -- yellow > rough green
- --pal(8, 136, 1) -- red > cherry
- pal(6, 143, 1)  -- skin > peach
- pal(13, 134, 1) -- greyblue > beige
- pal(7, 142, 1)  -- dark red > peach2
- 
- 
- printo("your next conquest",30,7,8,0) 
-
- local fact_map_msgs=map_messages[p_faction]
-
- if seqnum > 2 then
-  setmap(0, map_cols[col_borderline])
- end
-
- if seqnum == 1 then
-  -- intro anim?
-
- elseif seqnum == 2 then
-  -- first map sequence
-  cleartext()  
-  wait(20)    
-  show_message(fact_map_msgs[1]) 
-  show_message(fact_map_msgs[2])   
-  fizzlemap(0,  map_cols[col_borderline])
-  cleartext()
-  show_message(fact_map_msgs[3])
-  fizzlemap(6,  map_cols[col_fact_north])
-  fizzlemap(5,  map_cols[col_fact_north])
-  fizzlemap(4,  map_cols[col_fact_north])
-  fizzlemap(10, map_cols[col_fact_north])
-  fizzlemap(3,  map_cols[col_fact_north])
-  fizzlemap(9,  map_cols[col_fact_north])
-  cleartext()
-  show_message(fact_map_msgs[4])
-  fizzlemap(13, map_cols[col_fact_west])
-  fizzlemap(7,  map_cols[col_fact_west])
-  fizzlemap(20, map_cols[col_fact_west])
-  fizzlemap(14, map_cols[col_fact_west])
-  fizzlemap(21, map_cols[col_fact_west]) 
-  fizzlemap(22, map_cols[col_fact_west])
-  cleartext()
-  show_message(fact_map_msgs[5])
-  fizzlemap(19, map_cols[col_fact_east])
-  fizzlemap(27, map_cols[col_fact_east])
-  fizzlemap(26, map_cols[col_fact_east])
-  fizzlemap(25, map_cols[col_fact_east])
-  fizzlemap(24, map_cols[col_fact_east])
-  fizzlemap(23, map_cols[col_fact_east])
-  nextreg_num = 2
-  nextreg_currcol = map_cols[col_origmap]
-
- elseif seqnum == 3 then
-  setmap({6,5,4,10,3,9}, map_cols[col_fact_north])
-  setmap({13,7,20,14,21,22}, map_cols[col_fact_west])
-  setmap({19,27,26,25,24,23}, map_cols[col_fact_east])
-  show_message("hARKONNEN SPREAD\nOUT STRONG FORCES.")
-  fizzlemap(2,  map_cols[col_fact_north])
-  fizzlemap(1,  map_cols[col_fact_north])
-  fizzlemap(8,  map_cols[col_fact_north])
-  show_message("aTREIDES WENT\nAFTER oRDOS.")
-  fizzlemap(15, map_cols[col_fact_west])
-  fizzlemap(16, map_cols[col_fact_west])
-  fizzlemap(23, map_cols[col_fact_west])
-  show_message("oRDOS STOLE EVEN\nMORE LAND.")
-  fizzlemap(17, map_cols[col_fact_east])
-  fizzlemap(11, map_cols[col_fact_east])
-  fizzlemap(18, map_cols[col_fact_east])
-  fizzlemap(12, map_cols[col_fact_east])
-  nextreg_num = 11
-  nextreg_currcol = map_cols[col_fact_east]
- 
- elseif seqnum == 4 then
-   setmap({6,5,4,10,3,9,2,1,8}, map_cols[col_fact_north])
-   setmap({13,7,20,14,21,22,15,16,23}, map_cols[col_fact_west])
-   setmap({19,27,26,25,24,17,11,18,12}, map_cols[col_fact_east])
-   show_message("oRDOS DID NOT\nSTAND A CHANCE.")
-   fizzlemap(17,  map_cols[col_fact_north])
-   fizzlemap(11,  map_cols[col_fact_north])
-   fizzlemap(12,  map_cols[col_fact_north])
-   show_message("aTREIDES AND oRDOS\nTRADED LAND.")
-   fizzlemap(24, map_cols[col_fact_west])
-   fizzlemap(16, map_cols[col_fact_east])
-   nextreg_num = 18
-   nextreg_currcol = map_cols[col_fact_east]
-
- elseif seqnum == 5 then
-  setmap({6,5,4,10,3,9,2,1,8,17,11,12}, map_cols[col_fact_north])
-  setmap({13,7,20,14,21,22,15,23,24}, map_cols[col_fact_west])
-  setmap({19,27,26,25,18,16}, map_cols[col_fact_east])
-  fizzlemap(25,  map_cols[col_fact_north])
-  show_message("aN oRDOS OUTPOST\nWAS SURROUNDED.")
-  fizzlemap(18,  map_cols[col_fact_north])
-  fizzlemap(19,  map_cols[col_fact_north])
-  show_message("tHE oRDOS BROKE\nTHROUGH aTREIDES.")
-  fizzlemap(24, map_cols[col_fact_east])
-  nextreg_num = 7
-  nextreg_currcol = map_cols[col_fact_west]
-
- elseif seqnum == 6 then
-  setmap({6,5,4,10,3,9,2,1,8,17,11,12,25,18,19}, map_cols[col_fact_north])
-  setmap({13,7,20,14,21,22,15,23}, map_cols[col_fact_west])
-  setmap({27,26,16,24}, map_cols[col_fact_east])
-  show_message("sOON tHE aTREIDES\nWILL BE EXTINCT.")
-  fizzlemap(7,  map_cols[col_fact_north])
-  fizzlemap(14,  map_cols[col_fact_north])
-  fizzlemap(13,  map_cols[col_fact_north])
-  fizzlemap(23, map_cols[col_fact_east])
-  nextreg_num = 26
-  nextreg_currcol = map_cols[col_fact_east]
-
- elseif seqnum == 7 then
-  setmap({6,5,4,10,3,9,2,1,8,17,11,12,25,18,19,7,14,13}, map_cols[col_fact_north])
-  setmap({20,21,22,15}, map_cols[col_fact_west])
-  setmap({27,26,16,24,23}, map_cols[col_fact_east])
-  show_message("hARKONNEN CRUSHED\nMOST OF THE oRDOS.")
-  fizzlemap(24,  map_cols[col_fact_north])
-  fizzlemap(26,  map_cols[col_fact_north])
-  fizzlemap(27,  map_cols[col_fact_north])
-  show_message("aTREIDES RECLAIMED\nITS LAND.")
-  fizzlemap(23, map_cols[col_fact_west])
-  nextreg_num = 21
-  nextreg_currcol = map_cols[col_fact_west]
-
- elseif seqnum == 8 then
-  setmap({6,5,4,10,3,9,2,1,8,17,11,12,25,18,19,7,14,13,24,26,27}, map_cols[col_fact_north])
-  setmap({20,21,22,15,23}, map_cols[col_fact_west])
-  setmap({16}, map_cols[col_fact_east])
-  show_message("hARKONNEN CRUSHED\nTHE aTREIDES.")
-  fizzlemap(20,  map_cols[col_fact_north])
-  fizzlemap(21,  map_cols[col_fact_north])
-  fizzlemap(22,  map_cols[col_fact_north])
-  nextreg_num = 16
-  nextreg_currcol = map_cols[col_fact_east]
-
- elseif seqnum == 9 then
-  setmap({6,5,4,10,3,9,2,1,8,17,11,12,25,18,19,7,14,13,24,26,27,20,21,22}, map_cols[col_fact_north])
-  setmap({15,23}, map_cols[col_fact_west])
-  setmap({16}, map_cols[col_fact_east])
-  show_message("oNLY THE hARKONNEN\nWILL PREVAIL.")
-  fizzlemap(16,  map_cols[col_fact_north])
-  fizzlemap(23,  map_cols[col_fact_north])
-  fizzlemap(15,  map_cols[col_emperor])
-  nextreg_num = 15
-  nextreg_currcol = map_cols[col_emperor]
-
- end
-
- -- flash next region until player "starts"
- show_message("pRESS ❎ tO sTART")
-  while true do
-   setmap(nextreg_num, map_cols[col_fact_north])
-   wait(20)
-   setmap(nextreg_num, nextreg_currcol)
-   wait(20)
-  end
-end
-
-function show_message(msg)
- messagetext2=messagetext1
- messagetext1=msg
- msg_ypos=80
- clip(27,99,75,18)
- for i=1,75 do
-  cleartext()
-  ?messagetext1,29,msg_ypos,0
-  ?messagetext2,29,msg_ypos+22,0
-  yield()--flip()
-  -- move message
-  if (i<46) msg_ypos+=.5
- end
- clip()
-end
-
-function cleartext()
- rectfill(27,99,101,118,9)
-end
-
-function split2d(str,d,dd) 
- d=d or ","
- if (dd) str=split(str,dd) 
- if type(str)=="table" then
-  local t={}
-  while #str>0 do
-   local s=str[1]   
-   add(t,split(s,d))
-   del(str,s)
-  end
-  return t
- else
-  return split(str,d)
- end 
-end
-
--- filtered-fizzlesspr
-function fizzlemap(rnum, cols)
- sx=8
- sy=20
- sw=119
- sh=64
- dx=4 
- dy=20
- offx=0
- offy=28 -- if map sprite not 1:1 with screen draw pos
- speed=3
- num=0
- taps=0x3006
- lfsr=0x3fff
-
- for _x=0,127 do
-  for _y=0,127 do
-   num+=1
-   if (num==0x4000) then
-    num=0
-    x,y = 0,0
-   end
-   x,y = band(lfsr,0x7f),flr(lshr(lfsr,7))
-   lfsr = bxor(flr(lshr(lfsr,1)),band(-band(lfsr,1),taps))
-   -- within draw region?   
-   if x>=sx and x<=sx+sw
-    and y>=sy and y<=sy+sh 
-   then
-    if not rnum or rdata[y-sy+1][x-sx+1]==rnum
-    then
-     local origcol=sget(x+offx,y+offy)
-     pset(dx-sx+x,dy-sy+y, cols[origcol])
-    end
-   end
-  end
-  if(_x%speed==0)yield()--flip()
- end
-end
-
--- immediately set a region's colour
-function setmap(rnum, cols)
- sx=8
- sy=20
- sw=119
- sh=64
- dx=4
- dy=20
- offx=0
- offy=28 -- if map sprite not 1:1 with screen draw pos
- rtable=nil
- 
- -- handle table param
- if type(rnum)=="table" then
-  rtable={}
-  for k in all(rnum) do
-   rtable[k]=k
-  end
- end
-
- for x=0,127 do
-  for y=0,127 do
-   if x>=sx and x<=sx+sw
-    and y>=sy and y<=sy+sh 
-   then
-    if not rnum 
-     or (rtable and rtable[rdata[y-sy+1][x-sx+1]])
-     or rdata[y-sy+1][x-sx+1]==rnum
-    then     
-     local origcol=sget(x+offx,y+offy)
-     pset(dx-sx+x,dy-sy+y, cols[origcol])
-    end    
-   end
-  end
- end
-end
 
 function wait(num)
  for i=1,num do
