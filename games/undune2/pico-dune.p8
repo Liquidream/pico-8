@@ -175,9 +175,9 @@ function _init()
  -- menuitem(1,"exit to title",function()
  --  load("pico-dune-main")
  -- end)
- menuitem(1,"! win level !",function()
-  endstate=2
- end)
+ -- menuitem(1,"! win level !",function()
+ --  endstate=2
+ -- end)
 
  --  
  -- explode object data
@@ -208,7 +208,7 @@ function _init()
  for i=-2,66 do
   fow[i]={}
   for l=-2,66 do
-   fow[i][l]=0-- 16 --0
+   fow[i][l]=0 --16 --0
   end
  end
 
@@ -440,7 +440,7 @@ function m_map_obj_tree(objref, x,y, owner, factory)
     for xx=0,objref.w-1 do
       for yy=0,objref.h-1 do
        -- block map under building (diff tiles for player/ai-owned)
-       wrap_mset(xpos+xx, ypos+yy, slabs and 22 or newobj.owner==1 and 149 or 27)
+       wrap_mset(xpos+xx, ypos+yy, slabs and 22 or newobj.owner==1 and 149 or 2)
       end
     end
     if (not slabs) add(buildings,newobj)
@@ -1406,8 +1406,8 @@ function draw_level()
  -- don't trans black
  palt(0,false) 
   
- map(0,0, 0,0, 64,32)
- map(64,0, 0,256, 64,32)
+ map(0,0, 0,0, 64,32,    127)
+ map(64,0, 0,256, 64,32, 127)
 
 
  -- buildings
@@ -1438,11 +1438,6 @@ function draw_level()
  -- particles
  --draw_particles()
  for k,p in pairs(particles) do
-  -- patterns
-  -- filled = 0x0/0xff
-  -- check1 = 0XA5A5
-  -- check2 = 0XA0A0
-  -- check3 = 0X8020
   if (p.pattern) fillp(p.pattern)
   circfill(p.x,p.y,p.r,p.cols[ flr((#p.cols/p.life_orig)*p.life)+1 ]) --col
   fillp()
@@ -1941,7 +1936,7 @@ end
 -- for specified pattern
 function set_loop(enabled)
  local val=peek(0x3115)
- if (band(val, 128) > 0 != enabled) val=bxor(val,128)
+ if (val & 128 > 0 != enabled) val=val^^128
  poke(0x3115, val)  
 end
 
@@ -1987,7 +1982,7 @@ function rspr(sx,sy,x,y,a,w,trans,single_col)
 	for ix=0,w do
 		local srcx,srcy=dx0,dy0
 		for iy=0,w do
-			if band(bor(srcx,srcy),mask)==0 then
+			if ((srcx|srcy) & mask)==0 then
 				local c=sget(sx+srcx,sy+srcy)
 				if (c!=trans) pset(x+ix,y+iy, single_col or c)
 			end
@@ -2045,7 +2040,7 @@ function map_neighbors(node,flying)
 end
 
 function maybe_add(nx, ny, ntable, flying)
- if (flying or not fget(wrap_mget(nx,ny),0) and not object_tiles[nx..","..ny] and nx>=0 and ny>=0 and nx<=63 and ny<=63) add(ntable, {x=nx, y=ny})
+ if (flying or not fget(wrap_mget(nx,ny),0) and not fget(wrap_mget(nx,ny),7) and not object_tiles[nx..","..ny] and nx>=0 and ny>=0 and nx<=63 and ny<=63) add(ntable, {x=nx, y=ny})
 end
 
 function manhattan_distance(a, b)
@@ -2328,7 +2323,7 @@ f000000ffffffffffffffffffffffffffffffffffffffffffffffffffffcff17ffffffffffffffff
 00000000000000000fffffff7fffffffff5555ffffffffffffffffff000000000000000000000000000000000000000000000000100000000000000000000000
 
 __gff__
-0400000004040404040404060000000000000000000200010101010101010101060606010400000000000000000000010000000000000000000001010101010101010001000102010000010101020201010101000001020101010101010202010101010101010101010101010101010101010101010101010101010101010101
+0400800004040404040404060808080808080808080208010101010101010101060606010400000000000000000000010000000000000000000001010101010101010001000102010000010101020201010101000001020101010101010202010101010101010101010101010101010101010101010101010101010101010101
 0101010101010000000001010000000001010101010100000000010100000000000000000000000001010000000000000000000000000000010100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 __map__
 05050505064400006800680042000d0d140405050506131014040505061344000068004200000000008565000000000000000011120000000040000d0d0d2f2f0000000405050505090909090500000000000000000a00000000000000000000000000000000000000110d0d14070600000000000000000a0505050508000000
