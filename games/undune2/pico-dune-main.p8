@@ -102,7 +102,7 @@ function _init()
  if (mode==title_mode) init_title()
  if (mode==houseselect_mode) init_houseselect()
  if (mode==levelend_mode) init_levelend()
- if (mode==levelselect_mode) p_faction=1 p_level=9 init_levelselect() 
+ if (mode==levelselect_mode) p_faction=2 p_level=9 init_levelselect() 
 
  -- debug menu
  --if debug then
@@ -786,6 +786,99 @@ function play_map_sequence(seqnum)
   -- =========================================================
   -- ordos
   -- =========================================================
+  if seqnum == 1 then
+   -- intro anim?
+  elseif seqnum == 2 then
+   -- first map sequence
+   cleartext()  
+   wait(20)    
+   show_message("tHREE hOUSES HAVE\nCOME TO dUNE.") 
+   show_message("tHE LAND HAS\nBECOME DIVIDED.")   
+   fizzlemap(0,  map_cols[col_borderline])
+   cleartext()
+   show_message("oRDOS TOOK THE\nBEST LAND")
+   fizzlemap({19,27,26,25,24,23}, map_cols[col_ordos])
+   cleartext()
+   show_message("hARKONNEN ARE\nA THREAT.")
+   fizzlemap({6,5,4,10,3,9}, map_cols[col_harkonnen])
+   cleartext()
+   show_message("hOUSE aTREIDES\nIS NEARBY.")
+   fizzlemap({13,7,20,14,21,22}, map_cols[col_attreides])
+   nextreg_num = 16
+   nextreg_currcol = map_cols[col_origmap]
+
+  elseif seqnum == 3 then
+   setmap({19,27,26,25,24,23}, map_cols[col_ordos])
+   setmap({6,5,4,10,3,9}, map_cols[col_harkonnen])
+   setmap({13,7,20,14,21,22}, map_cols[col_attreides])
+   show_message("oRDOS ADVANCED\nWITHOUT CHALLENGE.")
+   fizzlemap({15,16,17},  map_cols[col_ordos])
+   show_message("tHE hARKONNEN\nDREW CLOSER.")
+   fizzlemap({11,12,18}, map_cols[col_harkonnen])
+   show_message("tHE aTREIDES\nSPREAD TOO THIN.")   
+   fizzlemap({1,2,8}, map_cols[col_attreides])
+   nextreg_num = 14
+   nextreg_currcol = map_cols[col_attreides]
+
+  elseif seqnum == 4 then
+   setmap({19,27,26,25,24,23,15,16,17}, map_cols[col_ordos])
+   setmap({6,5,4,10,3,9,11,12,18}, map_cols[col_harkonnen])
+   setmap({13,7,20,14,21,22,1,2,8}, map_cols[col_attreides])
+   show_message("aLL ATTACKS WERE\nAIMED AT aTREIDES.")
+   fizzlemap({8,14,22}, map_cols[col_ordos])
+   fizzlemap({2}, map_cols[col_harkonnen])   
+   nextreg_num = 13
+   nextreg_currcol = map_cols[col_attreides]
+
+  elseif seqnum == 5 then
+   setmap({19,27,26,25,24,23,15,16,17,8,14,22}, map_cols[col_ordos])
+   setmap({6,5,4,10,3,9,11,12,18,2}, map_cols[col_harkonnen])
+   setmap({13,7,20,21,1}, map_cols[col_attreides])
+   show_message("oRDOS OVERPOWERED\nTHE aTREIDES...")
+   fizzlemap({21,20,13}, map_cols[col_ordos])
+   show_message("...WHILE THEY WERE\nFIGHTING hARKONNEN")
+   fizzlemap({2,3}, map_cols[col_attreides])   
+   nextreg_num = 18
+   nextreg_currcol = map_cols[col_harkonnen]
+
+  elseif seqnum == 6 then
+   setmap({19,27,26,25,24,23,15,16,17,8,14,22,21,20,13}, map_cols[col_ordos])
+   setmap({6,5,4,10,9,11,12,18}, map_cols[col_harkonnen])
+   setmap({7,1,2,3}, map_cols[col_attreides])
+   show_message("hARKONNEN HAD TO\nBE TURNED BACK.")
+   fizzlemap({18,11,12}, map_cols[col_ordos])
+   nextreg_num = 2
+   nextreg_currcol = map_cols[col_attreides]
+
+  elseif seqnum == 7 then
+   setmap({19,27,26,25,24,23,15,16,17,8,14,22,21,20,13,18,11,12}, map_cols[col_ordos])
+   setmap({6,5,4,10,9}, map_cols[col_harkonnen])
+   setmap({7,1,2,3}, map_cols[col_attreides])
+   show_message("oRDOS KILLED OFF\nMOST OF aTREIDES")
+   fizzlemap({7,1,2}, map_cols[col_ordos])
+   nextreg_num = 6
+   nextreg_currcol = map_cols[col_harkonnen]
+
+  elseif seqnum == 8 then
+   setmap({19,27,26,25,24,23,15,16,17,8,14,22,21,20,13,18,11,12,7,1,2}, map_cols[col_ordos])
+   setmap({6,5,4,10,9}, map_cols[col_harkonnen])
+   setmap({3}, map_cols[col_attreides])
+   show_message("oRDOS GAINED MORE\nhARKONNEN LAND.")
+   fizzlemap({6,5,10}, map_cols[col_ordos])
+   nextreg_num = 3
+   nextreg_currcol = map_cols[col_attreides]
+
+  elseif seqnum == 9 then
+   setmap({19,27,26,25,24,23,15,16,17,8,14,22,21,20,13,18,11,12,7,1,2,6,5,10}, map_cols[col_ordos])
+   setmap({4,9}, map_cols[col_harkonnen])
+   setmap({3}, map_cols[col_attreides])
+   show_message("sOON oRDOS WILL\nRULE ALL OF dUNE.")
+   fizzlemap({3,9}, map_cols[col_ordos])
+   fizzlemap({4}, map_cols[col_emperor])
+   nextreg_num = 4
+   nextreg_currcol = map_cols[col_emperor]
+
+  end
 
  elseif p_faction == 3 then
   -- =========================================================
