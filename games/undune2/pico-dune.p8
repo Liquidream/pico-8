@@ -11,9 +11,9 @@ cartdata("pn_undune2")
 p_level,ai_level,p_col1,p_col2=dget"0",dget"1",dget"7",dget"8"
 bases,credits={},
 {
- shr(dget"35",16), -- player starting credits
- shr(500,16),     -- ai starting credits
- shr(dget"36",16)  -- target credits
+ dget"35">>16, -- player starting credits
+ 500>>16,     -- ai starting credits
+ dget"36">>16  -- target credits
 }
 
 for i=1,dget"5" do
@@ -175,6 +175,7 @@ function _init()
  -- menuitem(1,"exit to title",function()
  --  load("pico-dune-main")
  -- end)
+ 
  -- menuitem(1,"! win level !",function()
  --  endstate=2
  -- end)
@@ -792,7 +793,7 @@ end
 
 function transact(diff, obj)
  if (getscoretext(credits[obj.owner])+diff<0) return false
- credits[obj.owner]+=sgn(diff)*shr(abs(diff),16)
+ credits[obj.owner]+=sgn(diff)*(abs(diff)>>16)
  if (obj.owner==1) sfx"63"
  return true
 end
@@ -1257,7 +1258,7 @@ function move_unit_pos(unit,x,y,dist_to_keep,try_hail,start_state)
   -- by @casualeffects
   -- http://graphicscodex.com
   unit.path = nil
-  local start, goal, node_to_id = { x = flr(unit.x/8), y = flr(unit.y/8)}, {x = unit.tx, y = unit.ty}, function (node) return shl(node.y, 8) + node.x end
+  local start, goal, node_to_id = { x = flr(unit.x/8), y = flr(unit.y/8)}, {x = unit.tx, y = unit.ty}, function (node) return (node.y<<8) + node.x end
   local shortest, 
   best_table = {
    last = start,
@@ -1974,7 +1975,7 @@ end
 -- https://www.lexaloffle.com/bbs/?pid=52525#p52541
 function rspr(sx,sy,x,y,a,w,trans,single_col)
 	local ca,sa=cos(a),sin(a)	
-	local ddx0,ddy0,mask = ca,sa,shl(0xfff8,w-1)
+	local ddx0,ddy0,mask = ca,sa,0xfff8<<w-1
 	w*=4
 	ca*=w-0.5
 	sa*=w-0.5
