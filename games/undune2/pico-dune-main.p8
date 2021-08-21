@@ -96,13 +96,14 @@ function _init()
  load_data()
 
  -- debug!!!
- mode = levelselect_mode
+ --mode = levelselect_mode
 
  -- if level end...
  if (mode==title_mode) init_title()
  if (mode==houseselect_mode) init_houseselect()
  if (mode==levelend_mode) init_levelend()
- if (mode==levelselect_mode) p_faction=2 p_level=9 init_levelselect() 
+ --if (mode==levelselect_mode) p_fact=3 p_level=2 init_levelselect() 
+ if (mode==levelselect_mode) p_fact=3 p_level=9 init_levelselect() 
 
  -- debug menu
  --if debug then
@@ -281,7 +282,7 @@ function load_level(num)
  num_bases=mdata[4]
  dset(5, num_bases)
 
- dset(6, p_fact) -- p_faction
+ dset(6, p_fact) -- p_fact
  dset(7, p_col1) -- p_col1
  dset(8, p_col2) -- p_col2
  dset(9, mdata[6]) -- player base x-pos
@@ -640,6 +641,8 @@ end
  -- (typically, one for each level) 
 function play_map_sequence(seqnum)
  printh("seqnum = "..seqnum)
+
+ --::demo::
  
  -- dummy pause in to allow gfx unpack to happen before map() call below
  -- (not necessary in final game - only when *starting* on level select)
@@ -678,8 +681,7 @@ function play_map_sequence(seqnum)
   setmap(0, map_cols[col_borderline])
  end
 
- --local fact_map_msgs=map_messages[p_faction]
- if p_faction == 1 then
+ if p_fact == 1 then
   -- =========================================================
   -- atreides
   -- =========================================================
@@ -782,7 +784,7 @@ function play_map_sequence(seqnum)
 
   end
 
- elseif p_faction == 2 then
+ elseif p_fact == 2 then
   -- =========================================================
   -- ordos
   -- =========================================================
@@ -880,7 +882,7 @@ function play_map_sequence(seqnum)
 
   end
 
- elseif p_faction == 3 then
+ elseif p_fact == 3 then 
   -- =========================================================
   -- harkonnen
   -- =========================================================
@@ -925,7 +927,8 @@ function play_map_sequence(seqnum)
     show_message("oRDOS DID NOT\nSTAND A CHANCE.")
     fizzlemap({17,11,12}, map_cols[col_harkonnen])
     show_message("aTREIDES AND oRDOS\nTRADED LAND.")
-    fizzlemap({24,16}, map_cols[col_ordos])
+    fizzlemap({24}, map_cols[col_attreides])
+    fizzlemap({16}, map_cols[col_ordos])
     nextreg_num = 18
     nextreg_currcol = map_cols[col_ordos]
 
@@ -946,7 +949,8 @@ function play_map_sequence(seqnum)
    setmap({13,7,20,14,21,22,15,23}, map_cols[col_attreides])
    setmap({27,26,16,24}, map_cols[col_ordos])
    show_message("sOON tHE aTREIDES\nWILL BE EXTINCT.")
-   fizzlemap({7,14,13,23}, map_cols[col_ordos])
+   fizzlemap({7,14,13}, map_cols[col_harkonnen])
+   fizzlemap({23}, map_cols[col_ordos])
    nextreg_num = 26
    nextreg_currcol = map_cols[col_ordos]
 
@@ -975,7 +979,8 @@ function play_map_sequence(seqnum)
    setmap({15,23}, map_cols[col_attreides])
    setmap({16}, map_cols[col_ordos])
    show_message("oNLY THE hARKONNEN\nWILL PREVAIL.")
-   fizzlemap({16,23,15},  map_cols[col_emperor])
+   fizzlemap({16,23},  map_cols[col_harkonnen])
+   fizzlemap({15},  map_cols[col_emperor])
    nextreg_num = 15
    nextreg_currcol = map_cols[col_emperor]
 
@@ -986,11 +991,15 @@ function play_map_sequence(seqnum)
  -- flash next region until player "starts"
  show_message("pRESS ❎ tO sTART")
  while true do
-  setmap(nextreg_num, map_cols[p_faction])
+  setmap(nextreg_num, map_cols[p_fact])
   wait(20)
-  setmap(nextreg_num, nextreg_currcol)
+  setmap(nextreg_num, nextreg_currcol)   
   wait(20)
+
+  --seqnum+=1
+  --goto demo   
  end
+
 end
 
 function show_message(msg)
@@ -1010,7 +1019,7 @@ function show_message(msg)
 end
 
 function cleartext()
- rectfill(27,99,101,118,9)
+ rectfill(27,99,101,116,9)
 end
 
 function split2d(str,d,dd) 
