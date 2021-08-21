@@ -169,8 +169,8 @@ obj_data=[[id|name|obj_spr|ico_spr|type|w|h|z|trans_col|parent_id|parent2_id|own
 --
 
 function _init()
- -- enable mouse
- poke(0x5f2d, 1)
+ -- Enable "locked" mouse pointer
+ poke(0x5f2d, 0x5)
 
  -- menuitem(1,"exit to title",function()
  --  load("pico-dune-main")
@@ -197,7 +197,7 @@ function _init()
     --restore new lines
     str_breaks,val=split2d(val,"~"),""
     for line in all(str_breaks) do
-      val=val.."\n"..line
+      val..="\n"..line
     end
    end
    new_obj[str_arrays[1][j]]=val
@@ -244,7 +244,6 @@ function _init()
       if (o.obj_spr!=nil and o.obj_spr==spr_val) objref=o break       
      end
      if objref!=nil and (spr_val==1 or spr_val>=32) then --don't create "concrete" as objs
-       --printh(spr_val.." found at "..mx..","..my)
        local ox,oy=mx,my
        if (ox>63) oy+=32 ox-=64
        mset(mx,my,wrap_mget(mx,my+1))
@@ -282,7 +281,6 @@ function _init()
        -- look at tile spr and if not fow, get col?
        local mx,my = i/2,l/2
        local mspr_off=wrap_mget(mx,my)*8
-       --if(my>=32)mx+=64 my-=32
        local col=sget(mspr_off%128+4, mspr_off/16)
        if(fow[i/2][l/2]==16) new_radar_data[(i/2/2)..","..(l/2/2)] = col!=11 and col or 15
       end
@@ -294,7 +292,6 @@ function _init()
    -- reset vars for this pass
    power_bal,total_storage,has_radar,building_count = 0,0,false,{0,0}
    has_obj={{},{}}
-   --if (_t%100==0) has_obj={{},{}} 
 
    for building in all(buildings) do  
     -- if our building, or ai not under fog of war
@@ -337,7 +334,6 @@ function _init()
 
    -- game over?
    if endstate then
-    --stop(endstate)
     -- save game data state
     local offset=40
     for data in all{endstate,t()-start_time,strnum,getscoretext(credits[2]),unit_dest[1],unit_dest[2],build_dest[1],build_dest[2]} do
@@ -374,11 +370,8 @@ function m_map_obj_tree(objref, x,y, owner, factory)
    if not newobj.owner then
     --calc closest base/owner
     local best_dist=9999
-    --printh(objref.name.." x,y:"..x..","..y)
     for i=1,#bases do
-     --printh("base xy:"..i..":"..bases[i][4]..","..bases[i][5])
      local curr_dist=dist(x,y,bases[i][4],bases[i][5])
-     --printh("dist xy:"..i..":"..curr_dist)
      if (curr_dist<best_dist) newobj.base_idx,newobj.owner,best_dist=i,min(i,2),curr_dist
     end
    else 
@@ -391,8 +384,6 @@ function m_map_obj_tree(objref, x,y, owner, factory)
    newobj.base_idx=factory.base_idx
   end
   
-  --printh(objref.name.."-"..newobj.owner)
-
   newobj.created_by,newobj.build_objs,base = owner or newobj.owner,{},bases[newobj.base_idx or factory.base_idx]
   new_faction=base[1]
   newobj.faction,newobj.col1,newobj.col2 = new_faction,base[2],base[3]
@@ -511,26 +502,18 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
     }
    end,
    draw=function(self)
-     -- abort if off-screen
-     -- if self.type<=2
-     --  and (self.x+self.w<camx
-     --   or self.x>camx+127
-     --   or self.y+self.h<camy
-     --   or self.y>camy+127+self.z)
-     -- then
-     --  -- don't draw, as off-screen
-     --  return
-     -- end
+     local x=self.x
+     local y=self.y
+     -- skips if off-screen
      if self.type>2
-      or (self.x+self.w>=camx
-       and self.x<=camx+127
-       and self.y+self.h>=camy
-       and self.y<camy+127+self.z)
+      or (x+self.w>=camx
+       and x<=camx+127
+       and y+self.h>=camy
+       and y<camy+127+self.z)
      then
        pal()
        palt(0,false)
-       if (self.trans_col and self.type~=3) palt(self.trans_col,true)     
-       --if (self.trans_col and self.type<=2) palt(self.trans_col,true)     
+       if (self.trans_col and self.type~=3) palt(self.trans_col,true)   
        -- faction? (if not IX)
        if (self.faction and self.id!=18) pal(12,self.col1) pal(14,self.col2)
        
@@ -538,11 +521,11 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
        if self.type>2 and self.type<5 then
          local this = self.type==4 and self or self.parent
          -- bg
-         rectfill(self.x-1,self.y-1,self.x+16,self.y+19, 0)
+         rectfill(x-1,y-1,x+16,y+19, 0)
          -- draw health/progress
          local hp = this.hitpoint
          local val = self.process==1 and 15*(this.life/100) or 15*(this.life/hp)
-         if (this.life>0 and not show_menu) rectfill(self.x,self.y+17,self.x+val,self.y+18, self.process==1 and 12 or this.life<hp*.33 and 8 or this.life<hp*.66 and 10 or 11)
+         if (this.life>0 and not show_menu) rectfill(x,y+17,x+val,y+18, self.process==1 and 12 or this.life<hp*.33 and 8 or this.life<hp*.66 and 10 or 11)
          pal(11,this.icol1) pal(3,this.icol2)
        end
 
@@ -559,7 +542,7 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
         if not self.death_time or self.death_time>.025  then
          -- draw twice (shadow first, then norm)
          for i=1,2 do
-          if (i==2 or self.speed>0) rspr(self.obj_spr%16*8,flr(self.obj_spr/16)*8, self.x, self.y-(i==2 and self.z or 0), .25-self.r, 1, self.trans_col, i==1 and 5 or flr(self.flash_count)%2==0 and 7 or nil)
+          if (i==2 or self.speed>0) rspr(self.obj_spr%16*8,flr(self.obj_spr/16)*8, x, y-(i==2 and self.z or 0), .25-self.r, 1, self.trans_col, i==1 and 5 or flr(self.flash_count)%2==0 and 7 or nil)
          end
         end
        -- norm sprite
@@ -567,7 +550,7 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
          -- non-rotational sprite
          if self.type>2 then
           -- icon
-          spr(self.ico_spr, self.x, self.y, self.ico_w, self.ico_h)
+          spr(self.ico_spr, x, y, self.ico_w, self.ico_h)
          else
           -- building/non-rotational unit
           draw_obj(self)
@@ -592,7 +575,7 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
         end
        end
        -- smoking?
-       if (self.life<self.hitpoint*.33 and not self.altframe and rnd"10"<1 and self.type<=2) add_particle(self.x+3.5,self.y+3.5, 1, .1,-.02,.05, -.002, 80,split2d("10,8,9,6,5"), rnd"2"<1 and 0xa5a5.8 or 0)
+       if (self.life<self.hitpoint*.33 and not self.altframe and rnd"10"<1 and self.type<=2) add_particle(self.x+3.5,y+3.5, 1, .1,-.02,.05, -.002, 80,split2d("10,8,9,6,5"), rnd"2"<1 and 0xa5a5.8 or 0)
        -- reset hit flag
        self.hit=0
     end --abort if off-screen
