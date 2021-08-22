@@ -1576,10 +1576,10 @@ function draw_ui()
     local icount=1
     for i=1,#selected_obj.build_objs do
      local curr_item=selected_obj.build_objs[i]
-     --if not curr_item.req_id
-   --   or has_obj[selected_obj.created_by][curr_item.req_id]      
-     -- and curr_item.req_level<=p_level
-     --then
+     if not curr_item.req_id
+      or has_obj[selected_obj.created_by][curr_item.req_id]      
+      and curr_item.req_level<=p_level
+     then
       selected_obj.valid_build_objs[icount]=curr_item
       if icount>=menu_pos and icount<=menu_pos+2 then
         curr_item:set_pos(9,28+(icount-menu_pos)*19)
@@ -1601,7 +1601,7 @@ function draw_ui()
         ?selected_subobj.description,30,34,6
       end
       icount+=1
-     --end -- unlocked
+     end -- unlocked
     end -- for
   end -- has build obs
 
