@@ -418,7 +418,7 @@ function m_map_obj_tree(objref, x,y, owner, factory)
     for xx=0,objref.w-1 do
       for yy=0,objref.h-1 do
        -- block map under building (diff tiles for player/ai-owned)
-       wrap_mset(xpos+xx, ypos+yy, slabs and 22 or newobj.owner==1 and 149 or 2)
+       wrap_mset(xpos+xx, ypos+yy, slabs and 22 or newobj.owner==1 and 149 or 27)
       end
     end
     if (not slabs) add(buildings,newobj)
@@ -448,7 +448,7 @@ function m_map_obj_tree(objref, x,y, owner, factory)
      if (newobj.speed==0) wrap_mset(xpos,ypos,149)
     else
      -- harvesters
-     if (newobj.id==32) newobj.capacity=0 factory=nil
+     if (newobj.id==32) newobj.capacity=0-- factory=nil
      -- non-fighting units
      newobj.last_fact=factory --default, for retreating
     end
