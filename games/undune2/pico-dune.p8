@@ -24,20 +24,6 @@ for i=1,dget"5" do
  add(bases,base)
 end
 
--- DEBUG #####
--- 1) 12, 1  Atreides
--- 2) 11, 3  Ordos
--- 3)  8, 2  Harkonnen
--- 4) 14, 2  Emperor?
--- p_level,ai_level,p_col1,p_col2 = 1,1,8,2
--- bases={
---  {3,p_col1,p_col2,11*8,9*8},--[1] p_faction, p_col1, p_col2,x,y
---  {1,12,1,3*8,64},          --[3] ai_faction2, ai2_col1, ai2_col2,x,y
---  {1,12,1,20*8,64},           --[4] emperor
---  {1,12,1,20*8,19*8},          --[2] ai_faction, ai_col1, ai_col2,x,y
--- }
--- credits={shr(999,16), shr(999,16), shr(9999,16) }
-
 
 -- fields
 _g,buildings,units,object_tiles,radar_data,spice_tiles,particles,has_obj,start_time,_t,build_dest,unit_dest,keyx,keyy,hq,radar_frame,message,msgcount,fow={},{},{},{},{},{},{},{{},{}},t(),0,{0,0},{0,0},0,0,false,0,"",0,{}
@@ -209,7 +195,7 @@ function _init()
  for i=-2,66 do
   fow[i]={}
   for l=-2,66 do
-   fow[i][l]=0 --16 --0
+   fow[i][l]=16 --0
   end
  end
 
@@ -513,7 +499,7 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
      then
        pal()
        palt(0,false)
-       if (self.trans_col and self.type~=3) palt(self.trans_col,true)   
+       if (self.trans_col and self.type<=2 or self.type>=5) palt(self.trans_col,true)   
        -- faction? (if not IX)
        if (self.faction and self.id!=18) pal(12,self.col1) pal(14,self.col2)
        
@@ -1030,7 +1016,7 @@ function do_guard(unit, start_state)
        for xx=-1,1 do
         val=wrap_mget(xpos+xx,ypos+yy)        
         wrap_mset(xpos+xx,ypos+yy,
-        (xx==0 and yy==0) and 0 or ((val>1 and val<8) and 8 or val)
+        (xx==0 and yy==0) and 0 or ((val>1 and val<8) and 10 or val)
        )
        end
       end
@@ -1113,7 +1099,8 @@ function add_spice_cloud(x,y,r)
 end
 
 function do_attack(unit, target)
- --ai_awake=true
+ --printh(target.id)
+ ai_awake=true
  -- normal attack?
  if unit.id != 19 then
    -- 0=idle/guarding, 1=pathfinding, 2=moving, 3=attacking, 5=exploding
@@ -1405,7 +1392,7 @@ function draw_level()
   if (building == selected_obj) rect(selected_obj.x, selected_obj.y, selected_obj.x+selected_obj.w-1, selected_obj.y+selected_obj.h-1, 7)  
  end
 
- pal()
+ pal() 
  
  -- draw units (2-passes, ground & flying)
  for p=1,2 do
@@ -1589,10 +1576,10 @@ function draw_ui()
     local icount=1
     for i=1,#selected_obj.build_objs do
      local curr_item=selected_obj.build_objs[i]
-     if not curr_item.req_id
-      or has_obj[selected_obj.created_by][curr_item.req_id]      
-      and curr_item.req_level<=p_level
-     then
+     --if not curr_item.req_id
+   --   or has_obj[selected_obj.created_by][curr_item.req_id]      
+     -- and curr_item.req_level<=p_level
+     --then
       selected_obj.valid_build_objs[icount]=curr_item
       if icount>=menu_pos and icount<=menu_pos+2 then
         curr_item:set_pos(9,28+(icount-menu_pos)*19)
@@ -1614,7 +1601,7 @@ function draw_ui()
         ?selected_subobj.description,30,34,6
       end
       icount+=1
-     end -- unlocked
+     --end -- unlocked
     end -- for
   end -- has build obs
 
@@ -1813,7 +1800,7 @@ worm_life=0
 -- ai strategy code (attack, build, repair, etc.)
 function update_ai()
  -- depending on ai level...
- if t()>ai_level*20 and t()%ai_level==0 then
+ if ai_awake and t()>ai_level*20 and t()%ai_level==0 then
   -- unit attacks
   -- 
   -- find the first ai unit and attack player  
@@ -1889,7 +1876,7 @@ end
 
 
 function attack_rnd_enemy(obj)
- --printh(t()..") attack_rnd_enemy...")
+ printh(t())--..") attack_rnd_enemy...")
  local p_target=find_rnd_enemy(obj)
  if (p_target and is_visible(p_target)) do_attack(obj, p_target)
 end
@@ -2332,7 +2319,7 @@ __map__
 0e04050905050506000000000000001314000000000000000000000000001357570e000000000000000000000000040506000c161600000000000c8585852f2f0005090505060000000c0d0d1200000000000c0d0d0d0d0d0f0f0f300d0d0d0d0e000000000a05050509051112000000000000000000000000000a0505090000
 0e05090905050505000000000000000000000000000000000000000000000057570e00000000000000000000000a050505001642000000000000131057372f2f0005050905050000000c0d0d0d00000020000c0d0d0d0d0d0d0d0d0d0d01220d360000000000000a0505080c0e00000000000000000000000000110e05090000
 0e0a05050505050800000000000000000000000000000000000000000000110d0d140000000000000000000505050509050057000012000000150000000d2f2f0005090909050000000c0d0d0d12000000110d0d0d0d0d0d0d0d360d0d22220d0e000000000000000000000c0d12000000000000000000000000000405050000
-0d0f0f120a000000000000000000000004050600000000000000000000110d0d14000000000000110f0d0f120509050505001657440000160e00000000132f2f0005090909050000000c0d0d0d0d0f0f0f0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d37000000000000000000000c0d0d0f1200000000000000000000000a05080000
+0d0f0f120a000000000000000000000004050600000000000000000000110d0d14000000000000110f0d0f120509050505001657440000160e00000000132f2f0005090909050000000c0d0d0d0d0f0f0f0d0d0d0d0d0d0d0d0d0d0d0d620d0d37000000000000000000000c0d0d0f1200000000000000000000000a05080000
 0d0d0d0e00000000000000000000040505050500000000000a00110f0f0d0d14000000000000000c0d0d0d0e0509090905001316000000160000000000002f2f0a05050505080000000c0d0d0d0d0d0d0d0d1400130d0d0d0d0d0d340d0d0d0d0e0000000000000000000013100d0d0d12000000000000000000000000000000
 1010101400000000000000000405050909090500000000000000130d10101400000000000000000c0d0d1014050509050800000c140000000000000000002f2f0000000000000000000c0d0d0d0d0d1014000000000c0d0d0d0d100d100d380d0e000000000000000000000000130d0d0e000000000000000000000000000000
 0000000000000000000000000509090905050506000000070000000000000000000000000000000c0d1400040505050800000000000000000000000000002f2f0000000000000000000c0d0d0d0d14000000000000130d0d0d14000000130d0d0e00000000000000000000000406130d0e000000000000000000000000000000
