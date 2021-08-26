@@ -294,7 +294,8 @@ function _init()
     end
     -- track counts & objs
     building_count[building.owner]+=1
-    has_obj[building.created_by][building.id]=building
+    add_with_init(has_obj[building.created_by] ,building.id, building)
+    --has_obj[building.created_by][building.id]=building
    end
       
    -- units
@@ -303,7 +304,8 @@ function _init()
     if hq and (unit.owner==1 or is_visible(unit) and unit.z==1) then
      new_radar_data[(unit.x\2\8)..","..unit.y\2\8] = unit.col1
     end
-    if (unit.created_by>0) has_obj[unit.created_by][unit.id]=unit
+    if (unit.created_by>0) add_with_init(has_obj[unit.created_by], unit.id, unit)
+    --if (unit.created_by>0) has_obj[unit.created_by][unit.id]=unit
    end
   
    -- has radar-outpost + enough power?
@@ -583,7 +585,7 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
        -- lose soldiers
        if (self.obj_spr<=49 and life<100) self.spr_w,self.spr_h=0.5,0.5
        -- req repair pickup
-       if (life<50 and self.state!=7) return_to_fact(self,has_obj[self.created_by][14] or self.last_fact) --TODO: chk last fact being set to facts (unless harvester!)
+       if (life<50 and self.state!=7) return_to_fact(self,safe_rnd(has_obj[self.created_by][14]) or self.last_fact) --TODO: chk last fact being set to facts (unless harvester!)
      end
      -- check for death
      if (self.type<=2 and life<=0 and not self.death_time) self.state=5 self.cor=nil self.death_time=(self.type==2 and 1 or .5) ssfx(self.death_sfx) shake+=((self.type==2 or self.id==38) and 0.25 or 0)
@@ -924,6 +926,8 @@ end
 function do_guard(unit, start_state)
  -- 0=idle/guarding, 1=pathfinding, 2=moving, 3=attacking, 4=firing, 5=exploding, 
  --(6=harvesting, 7=returning, 9=ready-to-unload/repair, 8=unloading/repairing)
+ --printh("reset link 1")
+ --unit.state = start_state or 0
  unit.state,unit.link = start_state or 0,nil
  unit.cor = cocreate(function(self)
   while true do
@@ -982,7 +986,7 @@ function do_guard(unit, start_state)
       end
       -- found spice?
       if sx and sy then
-        move_unit_pos(unit,sx,sy,0,true) -- now uses carryall if poss
+        move_unit_pos(unit,sx,sy)
         -- landed on spice tile?
         -- switch to harvesting        
         if (is_spice_tile(unit:get_tile_pos())) unit.state=6
@@ -995,7 +999,7 @@ function do_guard(unit, start_state)
      and self.state!=7 then
       -- return to refinery when full
       self.sx,self.sy=self:get_tile_pos() -- remember where we were!
-      return_to_fact(self,last_fact or has_obj[unit.created_by][6])
+      return_to_fact(self,last_fact or safe_rnd(has_obj[unit.created_by][6]))
 
      -- harvesting spice
     elseif self.state==6 then
@@ -1192,10 +1196,15 @@ function move_unit_pos(unit,x,y,dist_to_keep,try_hail,start_state)
   local flying = unit.z>1
   -- before moving, can carryall take us?  
   if try_hail then
-    local carryall=has_obj and has_obj[unit.created_by][33] or false   
+   --printh("try_hail")
+   local carryall=has_obj and safe_rnd(has_obj[unit.created_by][33]) or false   
    if carryall and not carryall.link then
+     --printh("carryall faction ="..tostr(carryall.faction))
+     --printh("re-linking - link="..tostr(carryall.link))
      carryall.link,unit.link = unit,carryall     
+     --printh("linking - link="..tostr(carryall.link))
      carryall.cor=cocreate(function(unit_c)
+      --printh("arriving...")
       move_unit_pos(unit_c,unit.x\8,unit.y\8)
       if(selected_obj==unit) selected_obj=nil
       if unit.life>0 then
@@ -1203,8 +1212,11 @@ function move_unit_pos(unit,x,y,dist_to_keep,try_hail,start_state)
        move_unit_pos(carryall,x,y)
        unit:set_pos(carryall.x,carryall.y)
        add(units, unit)
+       --printh("rest link 1")
+       --unit.link=nil
        do_guard(unit, start_state)
       end
+      --carryall.link=nil
       do_guard(carryall)
      end)
     return
@@ -1783,7 +1795,7 @@ end
  -- send harvester/unit to refinery/repair facility
 function return_to_fact(unit,fact)
  -- ensure that we always have a value (even for discovered objs)
- fact = fact or has_obj[unit.created_by][1] or unit
+ fact = fact or safe_rnd(has_obj[unit.created_by][1]) or unit
  -- update last factory (in case changed)     
  unit.state,fact.incoming,unit.return_to = 7,true,fact
  if (unit.id!=32 or fact.id==6) unit.last_fact=fact
@@ -1880,7 +1892,7 @@ end
 
 
 function attack_rnd_enemy(obj)
- printh(t())--..") attack_rnd_enemy...")
+ --printh(t())--..") attack_rnd_enemy...")
  local p_target=find_rnd_enemy(obj)
  if (p_target and is_visible(p_target)) do_attack(obj, p_target)
 end
@@ -1943,6 +1955,17 @@ function split2d(str,d,dd)
  end 
 end
 
+
+
+function add_with_init(table,index,object)
+ if (not table[index]) table[index]={}
+ add(table[index],object)
+end
+
+function safe_rnd(table)
+ --z=table stop()
+ if(table) return rnd(table)
+end
 
 -- rotate sprite (modified to allow for trans cols)
 -- by freds72
