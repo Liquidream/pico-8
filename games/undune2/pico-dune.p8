@@ -283,7 +283,7 @@ function _init()
    for building in all(buildings) do  
     -- if our building, or ai not under fog of war
     if building.owner==1 or (hq and is_visible(building)) then
-     new_radar_data[flr(building.x/2/8)..","..flr(building.y/2/8)] = building.col1
+     new_radar_data[(building.x\2\8)..","..building.y\2\8] = building.col1
     end
     -- track power/radar
     if building.owner==1 then
@@ -301,7 +301,7 @@ function _init()
    for unit in all(units) do
     -- if our unit, or ai not under fog of war
     if hq and (unit.owner==1 or is_visible(unit) and unit.z==1) then
-     new_radar_data[flr(unit.x/2/8)..","..flr(unit.y/2/8)] = unit.col1
+     new_radar_data[(unit.x\2\8)..","..unit.y\2\8] = unit.col1
     end
     if (unit.created_by>0) has_obj[unit.created_by][unit.id]=unit
    end
@@ -410,7 +410,7 @@ function m_map_obj_tree(objref, x,y, owner, factory)
   -- (flying objs are automomous & don't reveal map)
   if (newobj.z>1) newobj.owner=0
 
-  local xpos,ypos = flr(x/8),flr(y/8)
+  local xpos,ypos = x\8,y\8
   
   -- building props?
   if objref.type==2 then
@@ -529,7 +529,7 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
         if not self.death_time or self.death_time>.025  then
          -- draw twice (shadow first, then norm)
          for i=1,2 do
-          if (i==2 or self.speed>0) rspr(self.obj_spr%16*8,flr(self.obj_spr/16)*8, x, y-(i==2 and self.z or 0), .25-self.r, 1, self.trans_col, i==1 and 5 or flr(self.flash_count)%2==0 and 7 or nil)
+          if (i==2 or self.speed>0) rspr(self.obj_spr%16*8,self.obj_spr\16*8, x, y-(i==2 and self.z or 0), .25-self.r, 1, self.trans_col, i==1 and 5 or flr(self.flash_count)%2==0 and 7 or nil)
          end
         end
        -- norm sprite
@@ -743,7 +743,7 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
     return x..","..y
    end,
    get_tile_pos=function(self)
-    return flr(self.x/8),flr(self.y/8)
+    return self.x\8,self.y\8
    end
   }
 
@@ -785,7 +785,7 @@ function reveal_fow(object)
  for xx=-size,size do
   for yy=-size,size do
    -- clear tile
-   local posx,posy = flr(object.x/8)+xx,flr(object.y/8)+yy
+   local posx,posy = object.x\8+xx,object.y\8+yy
    fow[posx][posy]=16 
    test_tile(posx,posy)
    -- update neighborhood
@@ -1011,7 +1011,7 @@ function do_guard(unit, start_state)
      -- done current spot?
      if spice_tiles[unit_pos] <= 0 then      
       -- (clear spice tile + depleat surrounding tiles)
-      local xpos,ypos=self:get_tile_pos()--flr(self.x/8),flr(self.y/8)
+      local xpos,ypos=self:get_tile_pos()
       for yy=-1,1 do
        for xx=-1,1 do
         val=wrap_mget(xpos+xx,ypos+yy)        
@@ -1089,7 +1089,7 @@ end
 
 -- always skip yield (as called directly)
 function nearest_space_to_object(target)
- local ux,uy = ping(target,flr((target.x+8)/8), flr((target.y+8)/8), is_free_tile, nil, true)
+ local ux,uy = ping(target,(target.x+8)\8, (target.y+8)\8, is_free_tile, nil, true)
  return ux*8, uy*8
 end
 
@@ -1111,7 +1111,7 @@ function do_attack(unit, target)
      if targdist > unit.range*5
       and unit.speed>0 then
       -- move to within firing range of target
-      move_unit_pos(unit,flr(target.x/8),flr(target.y/8),unit.range*5)
+      move_unit_pos(unit,target.x\8,target.y\8,unit.range*5)
 
       -- saboteur or death hand?
       if unit.id==25 or unit.id==38 then
@@ -1196,7 +1196,7 @@ function move_unit_pos(unit,x,y,dist_to_keep,try_hail,start_state)
    if carryall and not carryall.link then
      carryall.link,unit.link = unit,carryall     
      carryall.cor=cocreate(function(unit_c)
-      move_unit_pos(unit_c,flr(unit.x/8),flr(unit.y/8))
+      move_unit_pos(unit_c,unit.x\8,unit.y\8)
       if(selected_obj==unit) selected_obj=nil
       if unit.life>0 then
        del(units, unit)
@@ -1228,7 +1228,7 @@ function move_unit_pos(unit,x,y,dist_to_keep,try_hail,start_state)
   -- by @casualeffects
   -- http://graphicscodex.com
   unit.path = nil
-  local start, goal, node_to_id = { x = flr(unit.x/8), y = flr(unit.y/8)}, {x = unit.tx, y = unit.ty}, function (node) return (node.y<<8) + node.x end
+  local start, goal, node_to_id = { x = unit.x\8, y = unit.y\8}, {x = unit.tx, y = unit.ty}, function (node) return (node.y<<8) + node.x end
   local shortest, 
   best_table = {
    last = start,
@@ -1415,7 +1415,7 @@ function draw_level()
  end
 
  -- draw fog-of-war
- local mapx,mapy=flr(camx/8),flr(camy/8) 
+ local mapx,mapy=camx\8,camy\8 
  palt(0,false)
  palt(11,true)
  for xx=mapx-1,mapx+16 do
@@ -1536,7 +1536,7 @@ function draw_ui()
   and selected_obj.build_obj.life>=100 then
   -- draw placement
   -- todo: improve this code!
-  local mxpos,mypos = flr((cursor.x+camx)/8), flr((cursor.y+camy)/8)
+  local mxpos,mypos = (cursor.x+camx)\8, (cursor.y+camy)\8
   local sxpos,sypos,w,h = mxpos*8-camx,mypos*8-camy,selected_obj.build_obj.spr_w,selected_obj.build_obj.spr_h
   -- check ok to place
   placement_pos_ok,placement_inner_invalid,placement_damage = false,false,false
@@ -1702,7 +1702,7 @@ function update_collisions()
      and selected_obj.speed>0 
      and selected_obj.state!=7 then     
      selected_obj.cor = cocreate(function(unit)
-       move_unit_pos(unit, flr((camx+cursx)/8), flr((camy+cursy)/8))
+       move_unit_pos(unit, (camx+cursx)\8, (camy+cursy)\8)
        do_guard(unit)
       end)
 
@@ -1715,8 +1715,8 @@ function update_collisions()
      and placement_pos_ok then
       -- place object
       m_map_obj_tree(selected_obj.build_obj.ref,
-       flr((cursor.x+camx)/8) *8,
-       flr((cursor.y+camy)/8) *8, 1)      
+       (cursor.x+camx)\8 *8,
+       (cursor.y+camy)\8 *8, 1)      
       -- reset build
       reset_build(selected_obj.build_obj)
       ssfx"61"
@@ -1754,7 +1754,7 @@ function check_hover_select(obj)
    else
     -- is object hidden by fow?
     -- or clicking a harvester unloading or unit repairing?
-    if (obj.type<=2 and fow[flr((cursor.x+camx)/8)][flr((cursor.y+camy)/8)]!=16 or obj.state==8) return
+    if (obj.type<=2 and fow[(cursor.x+camx)\8][(cursor.y+camy)\8]!=16 or obj.state==8) return
     
      -- was our harvester selected before clicking a refinery/repair?
     if selected_obj
@@ -2317,9 +2317,9 @@ __map__
 0d0d10100e000000000000000000000c0d0d1400000000000000000000130d160d120000000000000000200000000000000016400049000037000c166e002f2f00000000000000000000110f0000000000000c0d0d0d120000000000000000110f0e000005050509090905050500000000000000000000000000050909090000
 0d14040505062100000000000000000c0d140000000000000000000000000c160d0e0000000000000000000000000000000016000000000000000c1600002f2f000405050600000000110d0d0000000000000c0d0d0d0d12000000110f380f370d14000405050909050505050800000000000000002000000000050909090000
 0e04050905050506000000000000001314000000000000000000000000001357570e000000000000000000000000040506000c161600000000000c8585852f2f0005090505060000000c0d0d1200000000000c0d0d0d0d0d0f0f0f300d0d0d0d0e000000000a05050509051112000000000000000000000000000a0505090000
-0e05090905050505000000000000000000000000000000000000000000000057570e00000000000000000000000a050505001642000000000000131057372f2f0005050905050000000c0d0d0d00000020000c0d0d0d0d0d0d0d0d0d0d01220d360000000000000a0505080c0e00000000000000000000000000110e05090000
+0e05090905050505000000000000000000000000000000000000000000000057570e00000000000000000000000a050505001642000000000000131057372f2f0005050905050000000c0d0d0d00000020000c0d0d0d0d0d0d0d0d6a0d01220d360000000000000a0505080c0e00000000000000000000000000110e05090000
 0e0a05050505050800000000000000000000000000000000000000000000110d0d140000000000000000000505050509050057000012000000150000000d2f2f0005090909050000000c0d0d0d12000000110d0d0d0d0d0d0d0d360d0d22220d0e000000000000000000000c0d12000000000000000000000000000405050000
-0d0f0f120a000000000000000000000004050600000000000000000000110d0d14000000000000110f0d0f120509050505001657440000160e00000000132f2f0005090909050000000c0d0d0d0d0f0f0f0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d37000000000000000000000c0d0d0f1200000000000000000000000a05080000
+0d0f0f120a000000000000000000000004050600000000000000000000110d0d14000000000000110f0d0f120509050505001657440000160e00000000132f2f0005090909050000000c0d0d0d0d0f0f0f0d0d0d0d0d0d0d0d0d0d0d0d420d0d37000000000000000000000c0d0d0f1200000000000000000000000a05080000
 0d0d0d0e00000000000000000000040505050500000000000a00110f0f0d0d14000000000000000c0d0d0d0e0509090905001316000000160000000000002f2f0a05050505080000000c0d0d0d0d0d0d0d0d1400130d0d0d0d0d0d340d0d0d0d0e0000000000000000000013100d0d0d12000000000000000000000000000000
 1010101400000000000000000405050909090500000000000000130d10101400000000000000000c0d0d1014050509050800000c140000000000000000002f2f0000000000000000000c0d0d0d0d0d1014000000000c0d0d0d0d100d100d380d0e000000000000000000000000130d0d0e000000000000000000000000000000
 0000000000000000000000000509090905050506000000070000000000000000000000000000000c0d1400040505050800000000000000000000000000002f2f0000000000000000000c0d0d0d0d14000000000000130d0d0d14000000130d0d0e00000000000000000000000406130d0e000000000000000000000000000000
