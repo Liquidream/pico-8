@@ -926,8 +926,6 @@ end
 function do_guard(unit, start_state)
  -- 0=idle/guarding, 1=pathfinding, 2=moving, 3=attacking, 4=firing, 5=exploding, 
  --(6=harvesting, 7=returning, 9=ready-to-unload/repair, 8=unloading/repairing)
- --printh("reset link 1")
- --unit.state = start_state or 0
  unit.state,unit.link = start_state or 0,nil
  unit.cor = cocreate(function(self)
   while true do
@@ -946,10 +944,9 @@ function do_guard(unit, start_state)
     ping(self,gx,gy,
      function (unit,x,y)
       local target=object_tiles[x..","..y]
-      --printh(x..","..y.." > "..unit.x..","..unit.y.." > "..(target and target.x..","..target.y or "<nil>"))
       if (target!=null and target.created_by!=unit.created_by and fow[x][y]==16 and target.z==1) do_attack(unit,target) return true
      end,
-     4) -- fixes lookout range (was self.range)
+     max(4,self.range)) -- fixes lookout range (was self.range)
 
    -- ornithopter?
    elseif self.id==34 then
@@ -1068,6 +1065,7 @@ function do_guard(unit, start_state)
        end --while unloading
        -- go back to guard (search for spice) mode      
        self.capacity,last_fact.occupied,self.state = 0,false,0
+       self.x,self.y=nearest_space_to_object(self)
        if (self.sx) move_unit_pos(self, self.sx, self.sy, 0, true)      
       else
        -- must be a repairable unit
@@ -1196,15 +1194,11 @@ function move_unit_pos(unit,x,y,dist_to_keep,try_hail,start_state)
   local flying = unit.z>1
   -- before moving, can carryall take us?  
   if try_hail then
-   --printh("try_hail")
    local carryall=has_obj and safe_rnd(has_obj[unit.created_by][33]) or false   
    if carryall and not carryall.link then
-     --printh("carryall faction ="..tostr(carryall.faction))
-     --printh("re-linking - link="..tostr(carryall.link))
-     carryall.link,unit.link = unit,carryall     
-     --printh("linking - link="..tostr(carryall.link))
+     -- link them and set unit to "moving" to wait for pickup
+     carryall.link,unit.link,unit.state = unit,carryall,2   
      carryall.cor=cocreate(function(unit_c)
-      --printh("arriving...")
       move_unit_pos(unit_c,unit.x\8,unit.y\8)
       if(selected_obj==unit) selected_obj=nil
       if unit.life>0 then
@@ -1212,11 +1206,8 @@ function move_unit_pos(unit,x,y,dist_to_keep,try_hail,start_state)
        move_unit_pos(carryall,x,y)
        unit:set_pos(carryall.x,carryall.y)
        add(units, unit)
-       --printh("rest link 1")
-       --unit.link=nil
        do_guard(unit, start_state)
       end
-      --carryall.link=nil
       do_guard(carryall)
      end)
     return
@@ -1892,7 +1883,7 @@ end
 
 
 function attack_rnd_enemy(obj)
- --printh(t())--..") attack_rnd_enemy...")
+ --printh(t()..") attack_rnd_enemy...")
  local p_target=find_rnd_enemy(obj)
  if (p_target and is_visible(p_target)) do_attack(obj, p_target)
 end
@@ -2326,7 +2317,7 @@ __gff__
 __map__
 05050505064400006800680042000d0d140405050506131014040505061344000068004200000000008565000000000000000011120049000040000d0d0d2f2f0000000405050505090909090500000000000000000a00000000000000000000000000000000000000110d0d14070600000000000000000a0505050508000000
 050505050a0000000000000000000405050505080505050505050505050600000000000000000000001600000012000000000042004200420000001404052f2f0000000505050509090909050500000000000000000000000000000000000000000000000000000000130d140000000000000000000000000000000000000000
-05050506858542004200650000000a050508110f120a050909050505050557858516858557000000001662000016000000001100000000000085850405052f2f12000405090505050909090505050600000000000a00000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+05050506858542004200650000000a050508110f120a050909050505050557858585858557000000001662000016000000001100000000000085850405052f2f12000405090505050909090505050600000000000a00000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 0505050613850000000000000085000a081116161612050509090505050585853a00008585120000001600000016000000005785858585858585040505052f2f140005090905050909050509090905000000000000000a0000110f0d0f12000000110f0d0f1200000000000000000000000000000b0b0b000000000000000000
 05050505068585858585858585851249113a00001616120a05050505050585160000001685160000008585858585000000161610101010101404050505052f2f00000a05050a0505050505090905050600000000000000110f0d0d0d0d0d0000110d0d0d0d0d0f1200000000000000000000000b0b0b0b0b0000000000000000
 0a210505050613570d0d101016164000160000006200001205050505050885850000008585166e00161616161616161616160004050505050505050505052f2f00000000000000000000050509090505000000000000000d0d0d0d0d0d1400000c0d0d0d0d0d0d0d0f0f12000000000000000405060b0b0b0000000000000000
