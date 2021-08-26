@@ -923,7 +923,7 @@ end
 
 function do_guard(unit, start_state)
  -- 0=idle/guarding, 1=pathfinding, 2=moving, 3=attacking, 4=firing, 5=exploding, 
- --(6=harvesting, 7=returning, 9=ready-to-unload/repair, 8=offloading/repairing)
+ --(6=harvesting, 7=returning, 9=ready-to-unload/repair, 8=unloading/repairing)
  unit.state,unit.link = start_state or 0,nil
  unit.cor = cocreate(function(self)
   while true do
@@ -982,7 +982,7 @@ function do_guard(unit, start_state)
       end
       -- found spice?
       if sx and sy then
-        move_unit_pos(unit,sx,sy)
+        move_unit_pos(unit,sx,sy,0,true) -- now uses carryall if poss
         -- landed on spice tile?
         -- switch to harvesting        
         if (is_spice_tile(unit:get_tile_pos())) unit.state=6
@@ -991,7 +991,7 @@ function do_guard(unit, start_state)
      end -- check factory busy
 
     -- are we full?
-    elseif self.capacity >= 1500 
+    elseif self.capacity >= 150--1500 
      and self.state!=7 then
       -- return to refinery when full
       self.sx,self.sy=self:get_tile_pos() -- remember where we were!
@@ -1062,9 +1062,9 @@ function do_guard(unit, start_state)
         end
         yield()       
        end --while unloading
-       -- go back to guard (search for spice) mode
+       -- go back to guard (search for spice) mode      
        self.capacity,last_fact.occupied,self.state = 0,false,0
-       if (self.sx) move_unit_pos(self, self.sx, self.sy, 0, true)
+       if (self.sx) move_unit_pos(self, self.sx, self.sy, 0, true)      
       else
        -- must be a repairable unit
        -- spark flash while repairing       
@@ -1190,9 +1190,9 @@ end
 
 function move_unit_pos(unit,x,y,dist_to_keep,try_hail,start_state)
   local flying = unit.z>1
-  -- before moving, can carryall take us?
+  -- before moving, can carryall take us?  
   if try_hail then
-   local carryall=has_obj and has_obj[unit.created_by][33] or false   
+    local carryall=has_obj and has_obj[unit.created_by][33] or false   
    if carryall and not carryall.link then
      carryall.link,unit.link = unit,carryall     
      carryall.cor=cocreate(function(unit_c)
@@ -1334,7 +1334,7 @@ function move_unit_pos(unit,x,y,dist_to_keep,try_hail,start_state)
       -- are we close enough?
       if (dist(unit.x,unit.y,unit.tx*8,unit.ty*8) <= (dist_to_keep or 0)) break -- stop now
     end
-
+  
   end -- path nil (can happen if unit is "pinned in")
 
   -- arrived?
@@ -1616,6 +1616,10 @@ function draw_ui()
  -- cursor
  palt(11,true)
  cursor:draw()
+
+--  local carryall=has_obj and has_obj[2][33] or false   
+--  ?"carryall.link="..tostr(carryall.link),10,40,8
+--  if (carryall.link) print("carryall.link.faction="..carryall.link.faction,10,50,8)
 end
 
 function m_button(x,text,func_onclick,_w)
@@ -2317,7 +2321,7 @@ __map__
 0d0d10100e000000000000000000000c0d0d1400000000000000000000130d160d120000000000000000200000000000000016400049000037000c166e002f2f00000000000000000000110f0000000000000c0d0d0d120000000000000000110f0e000005050509090905050500000000000000000000000000050909090000
 0d14040505062100000000000000000c0d140000000000000000000000000c160d0e0000000000000000000000000000000016000000000000000c1600002f2f000405050600000000110d0d0000000000000c0d0d0d0d12000000110f380f370d14000405050909050505050800000000000000002000000000050909090000
 0e04050905050506000000000000001314000000000000000000000000001357570e000000000000000000000000040506000c161600000000000c8585852f2f0005090505060000000c0d0d1200000000000c0d0d0d0d0d0f0f0f300d0d0d0d0e000000000a05050509051112000000000000000000000000000a0505090000
-0e05090905050505000000000000000000000000000000000000000000000057570e00000000000000000000000a050505001642000000000000131057372f2f0005050905050000000c0d0d0d00000020000c0d0d0d0d0d0d0d0d6a0d01220d360000000000000a0505080c0e00000000000000000000000000110e05090000
+0e05090905050505000000000000000000000000000000000000000000000057570e00000000000000000000000a050505001642000000000000131057372f2f0005050905050000000c0d0d0d00000020000c0d0d0d0d0d0d0d0d0d0d01220d360000000000000a0505080c0e00000000000000000000000000110e05090000
 0e0a05050505050800000000000000000000000000000000000000000000110d0d140000000000000000000505050509050057000012000000150000000d2f2f0005090909050000000c0d0d0d12000000110d0d0d0d0d0d0d0d360d0d22220d0e000000000000000000000c0d12000000000000000000000000000405050000
 0d0f0f120a000000000000000000000004050600000000000000000000110d0d14000000000000110f0d0f120509050505001657440000160e00000000132f2f0005090909050000000c0d0d0d0d0f0f0f0d0d0d0d0d0d0d0d0d0d0d0d420d0d37000000000000000000000c0d0d0f1200000000000000000000000a05080000
 0d0d0d0e00000000000000000000040505050500000000000a00110f0f0d0d14000000000000000c0d0d0d0e0509090905001316000000160000000000002f2f0a05050505080000000c0d0d0d0d0d0d0d0d1400130d0d0d0d0d0d340d0d0d0d0e0000000000000000000013100d0d0d12000000000000000000000000000000
