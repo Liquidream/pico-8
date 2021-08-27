@@ -96,7 +96,7 @@ function _init()
  load_data()
 
  -- debug!!!
- --mode = levelselect_mode
+ mode = levelselect_mode
 
  -- if level end...
  if (mode==title_mode) init_title()
