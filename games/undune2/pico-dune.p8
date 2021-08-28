@@ -54,10 +54,11 @@ _g.factory_click=function(self)
   show_menu=self
 end
 _g.draw_refinery=function(self)
+  local col2=self.col2
   pal{
-   [8]=self.col2,
-   [10]=self.col2,
-   [11]=self.col2,
+   [8]=col2,
+   [10]=col2,
+   [11]=col2,
    [12]=self.col1,
    [14]=self.col2
   }  
@@ -262,14 +263,12 @@ function _init()
    -- 
    new_radar_data={}
    -- landscape/fow
-   if hq then  
-    for i=0,124,4 do
-      for l=0,124,4 do
+   if hq then    
+    for i=0,62,2 do
+      for l=0,62,2 do
        -- look at tile spr and if not fow, get col?
-       local mx,my = i/2,l/2
-       local mspr_off=wrap_mget(mx,my)*8
-       local col=sget(mspr_off%128+4, mspr_off/16)
-       if(fow[i/2][l/2]==16) new_radar_data[(i/2/2)..","..(l/2/2)] = col!=11 and col or 15
+       local mspr_off=wrap_mget(i,l)*8
+       if(fow[i][l]==16) new_radar_data[(i/2)..","..(l/2)] = sget(mspr_off%128+4, mspr_off/16) or 15
       end
       yield()
     end
@@ -295,7 +294,6 @@ function _init()
     -- track counts & objs
     building_count[building.owner]+=1
     add_with_init(has_obj[building.created_by] ,building.id, building)
-    --has_obj[building.created_by][building.id]=building
    end
       
    -- units
@@ -305,7 +303,6 @@ function _init()
      new_radar_data[(unit.x\2\8)..","..unit.y\2\8] = unit.col1
     end
     if (unit.created_by>0) add_with_init(has_obj[unit.created_by], unit.id, unit)
-    --if (unit.created_by>0) has_obj[unit.created_by][unit.id]=unit
    end
   
    -- has radar-outpost + enough power?
@@ -345,6 +342,7 @@ function _init()
 
  music"7"
  shake=0
+
 end
 
 
@@ -398,6 +396,7 @@ function m_map_obj_tree(objref, x,y, owner, factory)
       )
     end
   end
+  
   if newobj.owner>1 then
     newobj.ico_obj.func_onclick=nil --make ai icons un-clickable
   end
@@ -492,8 +491,9 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
    draw=function(self)
      local x=self.x
      local y=self.y
+     local ty=self.type
      -- skips if off-screen
-     if self.type>2
+     if ty>2
       or (x+self.w>=camx
        and x<=camx+127
        and y+self.h>=camy
@@ -501,13 +501,13 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
      then
        pal()
        palt(0,false)
-       if (self.trans_col and self.type<=2 or self.type>=5) palt(self.trans_col,true)   
+       if (self.trans_col and ty<=2 or ty>=5) palt(self.trans_col,true)   
        -- faction? (if not IX)
        if (self.faction and self.id!=18) pal(12,self.col1) pal(14,self.col2)
        
        -- icon mode
-       if self.type>2 and self.type<5 then
-         local this = self.type==4 and self or self.parent
+       if ty>2 and ty<5 then
+         local this = ty==4 and self or self.parent
          -- bg
          rectfill(x-1,y-1,x+16,y+19, 0)
          -- draw health/progress
@@ -536,7 +536,7 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
        -- norm sprite
        else       
          -- non-rotational sprite
-         if self.type>2 then
+         if ty>2 then
           -- icon
           spr(self.ico_spr, x, y, self.ico_w, self.ico_h)
          else
@@ -563,13 +563,14 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
         end
        end
        -- smoking?
-       if (self.life<self.hitpoint*.33 and not self.altframe and rnd"10"<1 and self.type<=2) add_particle(self.x+3.5,y+3.5, 1, .1,-.02,.05, -.002, 80,split2d("10,8,9,6,5"), rnd"2"<1 and 0xa5a5.8 or 0)
+       if (self.life<self.hitpoint*.33 and not self.altframe and rnd"10"<1 and ty<=2) add_particle(self.x+3.5,y+3.5, 1, .1,-.02,.05, -.002, 80,split2d("10,8,9,6,5"), rnd"2"<1 and 0xa5a5.8 or 0)
        -- reset hit flag
        self.hit=0
     end --abort if off-screen
    end,
    update=function(self)
      local life=self.life
+     local ty=self.type
      -- update targeting flash
      self.flash_count=max(self.flash_count-.4,1)
      -- check for attack
@@ -587,11 +588,11 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
        if (life<50 and self.state!=7) return_to_fact(self,safe_rnd(has_obj[self.created_by][14]) or self.last_fact) --TODO: chk last fact being set to facts (unless harvester!)
      end
      -- check for death
-     if (self.type<=2 and life<=0 and not self.death_time) self.state=5 self.cor=nil self.death_time=(self.type==2 and 1 or .5) ssfx(self.death_sfx) shake+=((self.type==2 or self.id==38) and 0.25 or 0)
+     if (ty<=2 and life<=0 and not self.death_time) self.state=5 self.cor=nil self.death_time=(ty==2 and 1 or .5) ssfx(self.death_sfx) shake+=((ty==2 or self.id==38) and 0.25 or 0)
      if self.death_time then
       self.death_time-=.025
       if self.death_time<=0 then
-        if self.type==2 then         
+        if ty==2 then         
          -- building?         
          for xx=0,self.spr_w-1 do
            for yy=0,self.spr_h-1 do
@@ -621,7 +622,7 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
         if(selected_obj==self) selected_obj=nil
       else
         -- dying
-        if (rnd(self.type==2 and 2 or 8)<1) make_explosion(self.x+rnd(self.w),self.y+rnd(self.h))
+        if (rnd(ty==2 and 2 or 8)<1) make_explosion(self.x+rnd(self.w),self.y+rnd(self.h))
       end
      end
 
@@ -703,7 +704,7 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
         -- repair complete
         self.process=0
         -- move unit to safe place?
-        if self.type==1 and self.speed>0 then
+        if ty==1 and self.speed>0 then
          -- stop flashing while repairing
          self.return_to.col_cycle={0}
          -- go back to guard
@@ -852,7 +853,7 @@ function _update60()
   end
    
   --update_particles()
-  for k,p in pairs(particles) do
+  for p in all(particles) do
     -- acceleration
    p.dy += p.ddy
    -- advance state
@@ -956,7 +957,10 @@ function do_guard(unit, start_state)
     ping(self,gx,gy,
      function (unit,x,y)
       local target=object_tiles[x..","..y]
-      if (target!=null and target.created_by!=unit.created_by and fow[x][y]==16 and target.z==1) do_attack(unit,target) return true
+      if target!=null and target.created_by!=unit.created_by and fow[x][y]==16 and target.z==1 then
+       do_attack(unit,target) 
+       return true
+      end
      end,
      max(4,self.range)) -- fixes lookout range (was self.range)
 
@@ -985,7 +989,7 @@ function do_guard(unit, start_state)
         -- look for nearest spice
         ping(self,tx,ty,
           function(unit,x,y)
-            if is_spice_tile(x,y) and rnd"10"<1 then
+            if is_spice_tile(x,y) then-- and rnd"10"<1 then
             --found spice
             sx,sy=x,y
             return true
@@ -1033,7 +1037,7 @@ function do_guard(unit, start_state)
        )
        end
       end
-      -- go back to guard (look for more to harvest)
+      -- go back to guard (look for more spice to harvest)
       self.state=0
      end
      -- move around the spice?
@@ -1048,7 +1052,6 @@ function do_guard(unit, start_state)
     -- or been sent to repair facility
     -- todo: if route impossible, use carryall to move unit
     if self.state==9 then
-     
      -- check last factory is not destroyed or already busy
      -- (and that we are still alive!)
      if last_fact.life>0 and not last_fact.occupied and self.life>0 then      
@@ -1082,7 +1085,7 @@ function do_guard(unit, start_state)
       else
        -- must be a repairable unit
        -- spark flash while repairing       
-       self.process,self.procstep,last_fact.col_cycle_src,last_fact.col_cycle = 2,0,8, split2d("7,10,0,0,7,0,0")
+       self.process,self.procstep,last_fact.col_cycle_src,last_fact.col_cycle = 2,0,8,split2d("7,10,0,0,7,0,0")
       end -- capacity check
      
      end -- if unloading/repairing
@@ -1104,7 +1107,7 @@ end
 -- always skip yield (as called directly)
 function nearest_space_to_object(target)
  local ux,uy = ping(target,(target.x+8)\8, (target.y+8)\8, is_free_tile, nil, true)
- return ux*8, uy*8
+ return ux*8,uy*8
 end
 
 function add_spice_cloud(x,y,r)
@@ -1117,8 +1120,7 @@ function do_attack(unit, target)
  -- normal attack?
  if unit.id != 19 then
    -- 0=idle/guarding, 1=pathfinding, 2=moving, 3=attacking, 5=exploding
-   unit.state,unit.target = 3,target
-   unit.cor = cocreate(function(self)
+   unit.state,unit.target,unit.cor = 3,target, cocreate(function(self)
     while target.life>0 do
      local targdist=dist(unit.x,unit.y,target.x,target.y)
      --  1) move to within firing range of target
@@ -1148,7 +1150,7 @@ function do_attack(unit, target)
      end
      -- 3) commence firing
      if targdist<=unit.range*5 then
-      if (unit.fire_cooldown<=0 and not unit.bullet_x) unit.fire(unit) unit.fire_cooldown=unit.fire_rate --unit.arms/4
+      if (unit.fire_cooldown<=0 and not unit.bullet_x) unit.fire(unit) unit.fire_cooldown=unit.fire_rate
      elseif unit.speed==0 then
       -- turrets default to guard if out of range
       do_guard(unit)
@@ -1206,19 +1208,18 @@ function move_unit_pos(unit,x,y,dist_to_keep,try_hail,start_state)
   local flying = unit.z>1
   -- before moving, can a carryall take us?  
   if try_hail then
-   local carryall=has_obj and safe_rnd(has_obj[unit.created_by][33]) or false   
+   local carryall=has_obj and safe_rnd(has_obj[unit.created_by][33])
    if carryall and not carryall.link and carryall.faction==unit.faction then
      -- link them and set unit to "moving" to wait for pickup
-     carryall.link,unit.link,unit.state = unit,carryall,2   
-     carryall.cor=cocreate(function(unit_c)
+     carryall.link,unit.link,unit.state, carryall.cor = unit,carryall,2, cocreate(function(unit_c)     
       move_unit_pos(unit_c,unit.x\8,unit.y\8)
       if(selected_obj==unit) selected_obj=nil
       if unit.life>0 then
-       del(units, unit)
+       del(units,unit)
        move_unit_pos(carryall,x,y)
        unit:set_pos(carryall.x,carryall.y)
        add(units, unit)
-       do_guard(unit, start_state)
+       do_guard(unit,start_state)
       end
       do_guard(carryall)
      end)
@@ -1235,14 +1236,12 @@ function move_unit_pos(unit,x,y,dist_to_keep,try_hail,start_state)
     x,y=ping(unit,x,y,is_free_tile)
   end
 
-  -- use co-routine to find path
-  -- 0=idle/guarding, 1=pathfinding, 2=moving, 3=attacking, 4=firing, 5=exploding
-  unit.tx,unit.ty,unit.prev_state,unit.state = x,y,unit.state,1
+  -- use coroutine to find path
+  unit.tx,unit.ty,unit.prev_state,unit.state,unit.path = x,y,unit.state,1,nil
    
   -- (pn-minified/modified) "pathfinder"
   -- by @casualeffects
-  -- http://graphicscodex.com
-  unit.path = nil
+  -- http://graphicscodex.com  
   local start, goal, node_to_id = { x = unit.x\8, y = unit.y\8}, {x = unit.tx, y = unit.ty}, function (node) return (node.y<<8) + node.x end
   local shortest, 
   best_table = {
@@ -1392,7 +1391,7 @@ function draw_level()
  -- don't trans black
  palt(0,false) 
   
- map(0,0, 0,0, 64,32,    127)
+ map(0,0,  0,0,   64,32, 127)
  map(64,0, 0,256, 64,32, 127)
 
 
@@ -1423,22 +1422,23 @@ function draw_level()
 
  -- particles
  --draw_particles()
- for k,p in pairs(particles) do
+ for p in all(particles) do
   if (p.pattern) fillp(p.pattern)
   circfill(p.x,p.y,p.r,p.cols[ flr((#p.cols/p.life_orig)*p.life)+1 ]) --col
   fillp()
  end
 
  -- draw fog-of-war
- local mapx,mapy=camx\8,camy\8 
+ local mapx,mapy=camx\8,camy\8
  palt(0,false)
  palt(11,true)
  for xx=mapx-1,mapx+16 do
   for yy=mapy-1,mapy+16 do
+    local gx,gy=xx*8,yy*8
     if fow[xx][yy]!=0 and fow[xx][yy]!=16 then
-     spr(fow[xx][yy]+31,xx*8,yy*8)
+     spr(fow[xx][yy]+31,gx,gy)
     elseif fow[xx][yy]<16 then
-     rectfill(xx*8, yy*8, xx*8+7, yy*8+7, 0)
+     rectfill(gx, gy, gx+7, gy+7, 0)
     end
   end
  end
@@ -1499,9 +1499,11 @@ function draw_ui()
  end
   
  -- draw radar data
+ pal(11,15)
  for xx=0,30 do
   for yy=0,30 do
-   if (radar_data[xx..","..yy]) pset(92+xx,92+yy,radar_data[xx..","..yy])
+   local k=xx..","..yy
+   if (radar_data[k]) pset(92+xx,92+yy,radar_data[k])
   end
  end
  
@@ -2327,8 +2329,8 @@ __gff__
 0400800004040404040404060808080808080808080208010101010101010101060606010400000000000000000000010000000000000000000001010101010101010001000102010000010101020201010101000001020101010101010202010101010101010101010101010101010101010101010101010101010101010101
 0101010101010000000001010000000001010101010100000000010100000000000000000000000001010000000000000000000000000000010100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 __map__
-05050505064400006800680042000d0d140405050506131014040505061344000068004200000000008565000000000000000011120000004940000d0d0d2f2f0000000405050505090909090500000000000000000a00000000000000000000000000000900000000110d0d14070600000000000000000a0505050508000000
-050505050a0000000000000000000405050505080505050505050505050600000000000000000000001600000012000000000042004200420000001404052f2f0000000505050509090909050500000000000000000000000000000000000000440000000000000000130d140000000000000000000000000000000000000000
+05050505064400006800680042000d0d140405050506131014040505061344000068004200000000008565000000000000000011120000004940000d0d0d2f2f0000000405050505090909090500000000000000000a00000000000000000000000000000000000000110d0d14070600000000000000000a0505050508000000
+050505050a0000000000000000000405050505080505050505050505050600000000000000000000001600000012000000000042004200420000001404052f2f0000000505050509090909050500000000000000000000000000000000000000000000000000000000130d140000000000000000000000000000000000000000
 05050506858542004200650000000a050508110f120a050909050505050557858585858557000000001662000016000000001100000000000085850405052f2f12000405090505050909090505050600000000000a00000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 0505050613850000000000000085000a081116161612050509090505050585853a00008585120000001600000016000000005785858585858585040505052f2f140005090905050909050509090905000000000000000a0000110f0d0f12000000110f0d0f1200000000000000000000000000000b0b0b000000000000000000
 05050505068585858585858585851249113a00001616120a05050505050585160000001685160000008585858585000000161610101010101404050505052f2f00000a05050a0505050505090905050600000000000000110f0d0d0d0d0d0000110d0d0d0d0d0f1200000000000000000000000b0b0b0b0b0000000000000000
@@ -2349,7 +2351,7 @@ __map__
 0e04050905050506000000000000001314000000000000000000000000001357570e000000000000000000000000040506000c161600000000000c8585852f2f0005090505060000000c0d0d1200000000000c0d0d0d0d0d0f0f0f300d0d0d0d0e000000000a05050509051112000000000000000000000000000a0505090000
 0e05090905050505000000000000000000000000000000000000000000000057570e00000000000000000000000a050505001642000000000000131057372f2f0005050905050000000c0d0d0d00000020000c0d0d0d0d0d0d0d0d0d0d01220d360000000000000a0505080c0e00000000000000000000000000110e05090000
 0e0a05050505050800000000000000000000000000000000000000000000110d0d140000000000000000000505050509050057000012000000150000000d2f2f0005090909050000000c0d0d0d12000000110d0d0d0d0d0d0d0d360d0d22220d0e000000000000000000000c0d12000000000000000000000000000405050000
-0d0f0f120a000000000000000000000004050600000000000000000000110d0d14000000000000110f0d0f120509050505001657440000160e00000000132f2f0005090909050000000c0d0d0d0d0f0f0f0d0d0d0d0d0d0d0d0d0d0d0d680d0d37000000000000000000000c0d0d0f1200000000000000000000000a05080000
+0d0f0f120a000000000000000000000004050600000000000000000000110d0d14000000000000110f0d0f120509050505001657440000160e00000000132f2f0005090909050000000c0d0d0d0d0f0f0f0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d37000000000000000000000c0d0d0f1200000000000000000000000a05080000
 0d0d0d0e00000000000000000000040505050500000000000a00110f0f0d0d14000000000000000c0d0d0d0e0509090905001316000000160000000000002f2f0a05050505080000000c0d0d0d0d0d0d0d0d1400130d0d0d0d0d0d340d0d0d0d0e0000000000000000000013100d0d0d12000000000000000000000000000000
 1010101400000000000000000405050909090500000000000000130d10101400000000000000000c0d0d1014050509050800000c140000000000000000002f2f0000000000000000000c0d0d0d0d0d1014000000000c0d0d0d0d100d100d380d0e000000000000000000000000130d0d0e000000000000000000000000000000
 0000000000000000000000000509090905050506000000070000000000000000000000000000000c0d1400040505050800000000000000000000000000002f2f0000000000000000000c0d0d0d0d14000000000000130d0d0d14000000130d0d0e00000000000000000000000406130d0e000000000000000000000000000000
