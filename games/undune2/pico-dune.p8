@@ -11,7 +11,7 @@ cartdata("pn_undune2")
 p_level,ai_level,p_col1,p_col2=dget"0",dget"1",dget"7",dget"8"
 bases,credits={},
 {
- dget"35">>16, -- player starting credits
+ 0>>16,--dget"35">>16, -- player starting credits
  500>>16,     -- ai starting credits
  dget"36">>16  -- target credits
 }
@@ -780,7 +780,7 @@ function reveal_fow(object)
  -- > firing ai
  -- 0=idle/guarding, 1=pathfinding, 2=moving, 3=attacking, 4=firing, 5=exploding
  
- --if(object.owner<=0 and object.state!=4) return -- show all bases!
+ --if(object.owner<=0 and object.state!=4) return -- show all bases for demo!
  if(object.owner!=1 and object.state!=4) return
 
  local size = object.type==2 and 3 or 2
@@ -1593,7 +1593,7 @@ function draw_ui()
 
 
  if show_menu then  
-  fillp(0xA5A5.8)
+  fillp(▒)
   rectfill(0,0,127,127,0)
   fillp()  
   rectfill(3, 22, 124, 95, p_col2)
@@ -1647,16 +1647,13 @@ function draw_ui()
  palt(11,true)
  cursor:draw()
 
---  local carryall=has_obj and has_obj[2][33] or false   
---  ?"carryall.link="..tostr(carryall.link),10,40,8
---  if (carryall.link) print("carryall.link.faction="..carryall.link.faction,10,50,8)
 end
 
 function m_button(x,text,func_onclick,_w)
  add(ui_controls,{
   x=x,
-  y=83, --y=y,
-  w=_w or #text*4+2,
+  y=83,
+  w=_w or 22,
   h=8,
   text=text,
   get_hitbox=function(self)
@@ -1726,7 +1723,7 @@ function update_collisions()
     -- clicked own unit, first time?
     if (selected_obj.owner==1 and selected_obj.type==1 and selected_obj!=last_selected_obj and selected_obj.speed>0) ssfx"62"    
     -- clicked enemy object, last clicked ours (unit or palace)?... attack!
-    if (selected_obj.created_by!=1 and last_selected_obj and (last_selected_obj.type==1 or (last_selected_obj.id==19 and target_mode)) and last_selected_obj.owner==1) selected_obj.flash_count=10 do_attack(last_selected_obj, selected_obj) selected_obj=nil -- periodically reset the list of built obj's (done here as bug if done in radar code, as delay in populating)   
+    if (selected_obj.created_by!=1 and last_selected_obj and (last_selected_obj.type==1 or (last_selected_obj.id==19 and target_mode)) and last_selected_obj.owner==1) selected_obj.flash_count=10 do_attack(last_selected_obj, selected_obj) selected_obj=nil
 
   -- deselect?
   else
@@ -1743,16 +1740,16 @@ function update_collisions()
     end
     
     -- placement?
-    if selected_obj 
-     and selected_obj.build_obj 
-     and selected_obj.build_obj.life>=100
+    local sel_build_obj = selected_obj and selected_obj.build_obj 
+    if sel_build_obj
+     and sel_build_obj.life>=100
      and placement_pos_ok then
       -- place object
-      m_map_obj_tree(selected_obj.build_obj.ref,
+      m_map_obj_tree(sel_build_obj.ref,
        (cursor.x+camx)\8 *8,
        (cursor.y+camy)\8 *8, 1)      
       -- reset build
-      reset_build(selected_obj.build_obj)
+      reset_build(sel_build_obj)
       ssfx"61"
     end
 
@@ -1834,7 +1831,9 @@ worm_life=0
 -- ai strategy code (attack, build, repair, etc.)
 function update_ai()
  -- depending on ai level...
- if ai_awake and t()>ai_level*20 and t()%ai_level==0 then
+ if ai_awake and t()%ai_level==0 then
+ --if ai_awake and t()>ai_level*20 and t()%ai_level==0 then
+  --
   -- unit attacks
   -- 
   -- find the first ai unit and attack player  
@@ -1868,7 +1867,7 @@ function update_ai()
   -- 
   local ai_palace = safe_rnd(has_obj[2][19])
   if ai_palace and ai_palace.fire_cooldown<=0
-   and p_target and p_target.type==2 then -- any enemy building
+   and p_target and p_target.type==2 then -- any player building
     do_attack(ai_palace, p_target)
   end
 
@@ -1884,7 +1883,7 @@ function update_ai()
    worm_segs=nil
   else
    -- show worm
-   worm_segs,worm_dir,worm_turn,worm_cols,worm_frame={{rnd"500",rnd"500"}},rnd"1",0,{15,9,4},0
+   worm_segs,worm_dir,worm_turn,worm_cols,worm_frame={{rnd"500",rnd"500"}},rnd"1",0,split2d("15,9,4"),0
   end
   worm_life_start=rnd"5000"
   worm_life=worm_life_start
@@ -1911,18 +1910,13 @@ end
 
 
 function attack_rnd_enemy(obj) 
- p_target=find_rnd_enemy(obj) --note: leave global for palace attacks
- if (p_target and is_visible(p_target)) do_attack(obj, p_target)
-end
-
--- find rnd enemy unit (or building) to attack
-function find_rnd_enemy(obj)
- local enemy_obj
+ -- find rnd enemy unit (or building) to attack
+ -- note: leave p_target global for palace attacks
  repeat
   -- favour attacking units (as they can attack you more!)
-  enemy_obj=(rnd"4"<1)and rnd(units) or rnd(buildings)
- until enemy_obj.created_by!=obj.created_by
- return enemy_obj
+  p_target=(rnd"4"<1)and rnd(units) or rnd(buildings)
+ until p_target.created_by!=obj.created_by
+ if (p_target and is_visible(p_target)) do_attack(obj, p_target)
 end
 
 function is_visible(obj)
@@ -1953,7 +1947,8 @@ function getscoretext(val)
      s = (v % 0x0.000a / 0x.0001)..s
      v /= 10
  until v==0
- if (val<0) s = "-"..s
+ -- (pn) disabled -ve score as should not be possible
+ --if (val<0) s = "-"..s
  return s
 end
 
@@ -2365,10 +2360,10 @@ __map__
 0d0d10100e000000000000000000000c0d0d1400000000000000000000130d160d120000000000000000200000000000000016400049000037000c166e002f2f00000000000000000000110f0000000000000c0d0d0d120000000000000000110f0e000005050509090905050500000000000000000000000000050909090000
 0d14040505062100000000000000000c0d140000000000000000000000000c160d0e0000000000000000000000000000000016000000000000000c1600002f2f000405050600000000110d0d0000000000000c0d0d0d0d12000000110f380f370d14000405050909050505050800000000000000002000000000050909090000
 0e04050905050506000000000000001314000000000000000000000000001357570e000000000000000000000000040506000c161600000000000c8585852f2f0005090505060000000c0d0d1200000000000c0d0d0d0d0d0f0f0f300d0d0d0d0e000000000a05050509051112000000000000000000000000000a0505090000
-0e05090905050505000000000000000000000000000000000000000000000057570e00000000000000000000000a050505001642000000000000131057372f2f0005050905050000000c0d0d0d00000020000c0d0d0d0d0d0d0d0d0d0d01220d360000000000000a0505080c0e00000000000000000000000000110e05090000
-0e0a05050505050800000000000000000000000000000000000000000000110d0d140000000000000000000505050509050057000012000000150000000d2f2f0005090909050000000c0d0d0d12000000110d0d0d0d0d440d0d360d0d22220d0e000000000000000000000c0d12000000000000000000000000000405050000
-0d0f0f120a000000000000000000000004050600000000000000000000110d0d14000000000000110f0d0f120509050505001657440000160e00000000132f2f0005090909050000000c0d0d0d0d0f0f0f0d0d0d0d0d0d0d0d0d0d0d490d0d0d37000000000000000000000c0d0d0f1200000000000000000000000a05080000
-0d0d0d0e00000000000000000000040505050500000000000a00110f0f0d0d14000000000000000c0d0d0d0e0509090905001316000000160000000000002f2f0a05050505080000000c0d0d0d0d0d0d0d0d1400130d0d0d0d0d0d340d0d0d0d0e0000000000000000000013100d0d0d12000000000000000000000000000000
+0e05090905050505000000000000000000000000000000000000000000000057570e00000000000000000000000a050505001642000000000000131057372f2f0005050905050000000c0d0d0d00000020000c0d0d0d0d0d0d0d0d0d1601220d360000000000000a0505080c0e00000000000000000000000000110e05090000
+0e0a05050505050800000000000000000000000000000000000000000000110d0d140000000000000000000505050509050057000012000000150000000d2f2f0005090909050000000c0d0d0d12000000110d0d0d0d0d440d0d36161622220d0e000000000000000000000c0d12000000000000000000000000000405050000
+0d0f0f120a000000000000000000000004050600000000000000000000110d0d14000000000000110f0d0f120509050505001657440000160e00000000132f2f0005090909050000000c0d0d0d0d0f0f0f0d0d0d0d0d0d0d0d0d16164916160d37000000000000000000000c0d0d0f1200000000000000000000000a05080000
+0d0d0d0e00000000000000000000040505050500000000000a00110f0f0d0d14000000000000000c0d0d0d0e0509090905001316000000160000000000002f2f0a05050505080000000c0d0d0d0d0d0d0d0d1400130d0d6a0d420d340d0d0d0d0e0000000000000000000013100d0d0d12000000000000000000000000000000
 1010101400000000000000000405050909090500000000000000130d10101400000000000000000c0d0d1014050509050800000c140000000000000000002f2f0000000000000000000c0d0d0d0d0d1014000000000c0d0d0d0d100d100d380d0e000000000000000000000000130d0d0e000000000000000000000000000000
 0000000000000000000000000509090905050506000000070000000000000000000000000000000c0d1400040505050800000000000000000000000000002f2f0000000000000000000c0d0d0d0d14000000000000130d0d0d14000000130d0d0e00000000000000000000000406130d0e000000000000000000000000000000
 0000000000000000000000000a05090905080b0b000000050000000000000000000000000000110d140000000a050800000000000a0000040506000000002f2f000000000000000000130d0d0d1400000000000000000c0d140000000000130d14000000000000110e040505050506130d0f1200000000000000000000000000
