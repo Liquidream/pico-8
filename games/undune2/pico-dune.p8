@@ -526,10 +526,11 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
        -- rotating obj?
        if self.r then
         if not self.death_time or self.death_time>.025  then
-         -- draw twice (shadow first, then norm)
-         for i=1,2 do
-          if (i==2 or self.speed>0) rspr(self.obj_spr%16*8,self.obj_spr\16*8, x, y-(i==2 and self.z or 0), .25-self.r, 1, self.trans_col, i==1 and 5 or flr(self.flash_count)%2==0 and 7 or nil)
-         end
+         rsspr(self.obj_spr%16*8,self.obj_spr\16*8, x, y, .25-self.r, 1, self.trans_col, self.z, flr(self.flash_count)%2==0 and 7 or nil)
+         -- draw twice (shadow first, then norm)         
+         -- for i=1,2 do
+         --  if (i==2 or self.speed>0) rspr(self.obj_spr%16*8,self.obj_spr\16*8, x, y-(i==2 and self.z or 0), .25-self.r, 1, self.trans_col, i==1 and 5 or flr(self.flash_count)%2==0 and 7 or nil)
+         -- end
         end
        -- norm sprite
        else       
@@ -1970,10 +1971,10 @@ function safe_rnd(table)
  if(table) return rnd(table)
 end
 
--- rotate sprite (modified to allow for trans cols)
--- by freds72
+-- rotate sprite (modified to allow for trans cols, shadow + solid col)
+-- orig by freds72
 -- https://www.lexaloffle.com/bbs/?pid=52525#p52541
-function rspr(sx,sy,x,y,a,w,trans,single_col)
+function rsspr(sx,sy,x,y,a,w,trans,shad_dist,single_col)
 	local ca,sa=cos(a),sin(a)	
 	local ddx0,ddy0,mask = ca,sa,0xfff8<<w-1
 	w*=4
@@ -1985,10 +1986,13 @@ function rspr(sx,sy,x,y,a,w,trans,single_col)
 		for iy=0,w do
 			if ((srcx|srcy) & mask)==0 then
 				local c=sget(sx+srcx,sy+srcy)
-				if (c!=trans) pset(x+ix,y+iy, single_col or c)
+				if c!=trans then
+				 if (shad_dist) pset(x+ix,y+iy, 5)
+				 pset(x+ix,y+iy-shad_dist, single_col or c)
+				end				 
 			end
 			srcx-=ddy0
-			srcy+=ddx0
+			srcy+=ddx0			
 		end
 		dx0+=ddx0
 		dy0+=ddy0
