@@ -198,7 +198,7 @@ function _init()
  for i=-2,66 do
   fow[i]={}
   for l=-2,66 do
-   fow[i][l]=16 --0
+   fow[i][l]=0--16 --0
   end
  end
 
@@ -779,6 +779,8 @@ function reveal_fow(object)
  -- > player
  -- > firing ai
  -- 0=idle/guarding, 1=pathfinding, 2=moving, 3=attacking, 4=firing, 5=exploding
+ 
+ --if(object.owner<=0 and object.state!=4) return -- show all bases!
  if(object.owner!=1 and object.state!=4) return
 
  local size = object.type==2 and 3 or 2
@@ -1236,12 +1238,12 @@ function move_unit_pos(unit,x,y,dist_to_keep,try_hail,start_state)
   end
 
   -- use coroutine to find path
-  unit.tx,unit.ty,unit.prev_state,unit.state,unit.path = x,y,unit.state,1,nil
+  unit.tx,unit.ty,unit.prev_state,unit.state,unit.path = x*8,y*8,unit.state,1,nil
    
   -- (pn-minified/modified) "pathfinder"
   -- by @casualeffects
   -- http://graphicscodex.com  
-  local start, goal, node_to_id = { x = unit.x\8, y = unit.y\8}, {x = unit.tx, y = unit.ty}, function (node) return (node.y<<8) + node.x end
+  local start, goal, node_to_id = { x = unit.x\8, y = unit.y\8}, {x = x, y = y}, function (node) return (node.y<<8) + node.x end
   local shortest, 
   best_table = {
    last = start,
@@ -1336,6 +1338,10 @@ function move_unit_pos(unit,x,y,dist_to_keep,try_hail,start_state)
         object_tiles[node.x..","..node.y]=unit
         unit.x+=step_x
         unit.y+=step_y
+        -- carry-all height
+        if flying and unit.link then
+         unit.z = mid(3,dist(unit.x,unit.y,unit.tx,unit.ty),8)
+        end
         yield()
       end
       -- update tile blocking
@@ -1345,7 +1351,7 @@ function move_unit_pos(unit,x,y,dist_to_keep,try_hail,start_state)
       reveal_fow(unit)
 
       -- are we close enough?
-      if (dist(unit.x,unit.y,unit.tx*8,unit.ty*8) <= (dist_to_keep or 0)) break -- stop now
+      if (dist(unit.x,unit.y,unit.tx,unit.ty) <= (dist_to_keep or 0)) break -- stop now
     end
   
   end -- path nil (can happen if unit is "pinned in")
@@ -1423,7 +1429,7 @@ function draw_level()
  --draw_particles()
  for p in all(particles) do
   if (p.pattern) fillp(p.pattern)
-  circfill(p.x,p.y,p.r,p.cols[ flr((#p.cols/p.life_orig)*p.life)+1 ]) --col
+  circfill(p.x,p.y,p.r,p.cols[ flr((#p.cols/p.life_orig)*p.life)+1 ])
   fillp()
  end
 
@@ -1510,6 +1516,8 @@ function draw_ui()
  local cx,cy=92+camx/16,93+camy/16
  rect(cx,cy, cx+7,cy+6, 7)
 
+ local sel_build_obj = selected_obj and selected_obj.build_obj 
+
  -- object menu icon/buttons? 
  if selected_obj and selected_obj.ico_spr then
   selected_obj.ico_obj:set_pos(109,20)
@@ -1518,9 +1526,9 @@ function draw_ui()
   repair_obj,launch_obj=nil,nil
   if selected_obj.owner==1 then   
    -- build
-   if selected_obj.build_obj then
-    selected_obj.build_obj:set_pos(109,44)
-    selected_obj.build_obj:draw()    
+   if sel_build_obj then
+    sel_build_obj:set_pos(109,44)
+    sel_build_obj:draw()    
    end
    -- repair? 
    if selected_obj.life<selected_obj.hitpoint   
@@ -1545,15 +1553,14 @@ function draw_ui()
  pal()
 
  -- placement?
- if selected_obj 
-  and selected_obj.build_obj 
-  and (selected_obj.build_obj.type==4
-   and selected_obj.build_obj.speed==0)
-  and selected_obj.build_obj.life>=100 then
+ if sel_build_obj 
+  and (sel_build_obj.type==4
+   and sel_build_obj.speed==0)
+  and sel_build_obj.life>=100 then
   -- draw placement
   -- todo: improve this code!
   local mxpos,mypos = (cursor.x+camx)\8, (cursor.y+camy)\8
-  local sxpos,sypos,w,h = mxpos*8-camx,mypos*8-camy,selected_obj.build_obj.spr_w,selected_obj.build_obj.spr_h
+  local sxpos,sypos,w,h = mxpos*8-camx,mypos*8-camy,sel_build_obj.spr_w,sel_build_obj.spr_h
   -- check ok to place
   placement_pos_ok,placement_inner_invalid,placement_damage = false,false,false
   for xx=-1,w do
@@ -1573,7 +1580,7 @@ function draw_ui()
 
   fillp("0b1110110110110111.1")
   rectfill(sxpos, sypos,
-           sxpos+selected_obj.build_obj.w, sypos+selected_obj.build_obj.h, placement_pos_ok and 11 or 8)
+           sxpos+sel_build_obj.w, sypos+sel_build_obj.h, placement_pos_ok and 11 or 8)
   fillp()
  end
 
@@ -2353,7 +2360,7 @@ __map__
 0e04050905050506000000000000001314000000000000000000000000001357570e000000000000000000000000040506000c161600000000000c8585852f2f0005090505060000000c0d0d1200000000000c0d0d0d0d0d0f0f0f300d0d0d0d0e000000000a05050509051112000000000000000000000000000a0505090000
 0e05090905050505000000000000000000000000000000000000000000000057570e00000000000000000000000a050505001642000000000000131057372f2f0005050905050000000c0d0d0d00000020000c0d0d0d0d0d0d0d0d0d0d01220d360000000000000a0505080c0e00000000000000000000000000110e05090000
 0e0a05050505050800000000000000000000000000000000000000000000110d0d140000000000000000000505050509050057000012000000150000000d2f2f0005090909050000000c0d0d0d12000000110d0d0d0d0d0d0d0d360d0d22220d0e000000000000000000000c0d12000000000000000000000000000405050000
-0d0f0f120a000000000000000000000004050600000000000000000000110d0d14000000000000110f0d0f120509050505001657440000160e00000000132f2f0005090909050000000c0d0d0d0d0f0f0f0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d37000000000000000000000c0d0d0f1200000000000000000000000a05080000
+0d0f0f120a000000000000000000000004050600000000000000000000110d0d14000000000000110f0d0f120509050505001657440000160e00000000132f2f0005090909050000000c0d0d0d0d0f0f0f0d0d0d0d0d0d0d0d0d0d0d0d490d0d37000000000000000000000c0d0d0f1200000000000000000000000a05080000
 0d0d0d0e00000000000000000000040505050500000000000a00110f0f0d0d14000000000000000c0d0d0d0e0509090905001316000000160000000000002f2f0a05050505080000000c0d0d0d0d0d0d0d0d1400130d0d0d0d0d0d340d0d0d0d0e0000000000000000000013100d0d0d12000000000000000000000000000000
 1010101400000000000000000405050909090500000000000000130d10101400000000000000000c0d0d1014050509050800000c140000000000000000002f2f0000000000000000000c0d0d0d0d0d1014000000000c0d0d0d0d100d100d380d0e000000000000000000000000130d0d0e000000000000000000000000000000
 0000000000000000000000000509090905050506000000070000000000000000000000000000000c0d1400040505050800000000000000000000000000002f2f0000000000000000000c0d0d0d0d14000000000000130d0d0d14000000130d0d0e00000000000000000000000406130d0e000000000000000000000000000000
