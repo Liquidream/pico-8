@@ -1081,7 +1081,6 @@ function do_guard(unit, start_state)
        end --while unloading
        -- go back to guard (search for spice) mode      
        self.capacity,last_fact.occupied,self.state = 0,false,0
-       self.x,self.y=nearest_space_to_object(self)
        if (self.sx) move_unit_pos(self, self.sx, self.sy, 0, true)      
       else
        -- must be a repairable unit
@@ -1206,6 +1205,9 @@ function is_free_tile(unit,x,y)
 end
 
 function move_unit_pos(unit,x,y,dist_to_keep,try_hail,start_state)
+  
+  ::retry_hail::  
+  
   local flying = unit.z>1
   -- before moving, can a carryall take us?  
   if try_hail then
@@ -1362,6 +1364,11 @@ function move_unit_pos(unit,x,y,dist_to_keep,try_hail,start_state)
       -- are we close enough?
       if (dist(unit.x,unit.y,unit.tx,unit.ty) <= (dist_to_keep or 0)) break -- stop now
     end
+
+  elseif try_hail then 
+   -- if unit can hail and is blocked to reach target path
+   -- then retry from start (as poss carryall was busy)
+   goto retry_hail
   
   end -- path nil (can happen if unit is "pinned in")
 
