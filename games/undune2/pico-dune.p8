@@ -159,12 +159,11 @@ obj_data=[[id|name|obj_spr|ico_spr|type|w|h|z|trans_col|parent_id|parent2_id|own
 
 function _init()
  -- Enable "locked" mouse pointer
- poke(0x5f2d, 1) --0x5)
+ poke(0x5f2d, 0x5)
 
- -- menuitem(1,"exit to title",function()
- --  load("pico-dune-main")
- -- end)
- 
+ menuitem(1,"exit to title",function()
+  load"pico-dune-main"
+ end) 
  -- menuitem(1,"! win level !",function()
  --  endstate=2
  -- end)
@@ -173,6 +172,7 @@ function _init()
  -- explode object data
  -- 
  local str_arrays=split2d(obj_data,"|","\n")
+ -- keep separate to init globally
  obj_data={}
  -- loop all objects
  for i=2,45 do
@@ -198,7 +198,7 @@ function _init()
  for i=-2,66 do
   fow[i]={}
   for l=-2,66 do
-   fow[i][l]=0--16 --0
+   fow[i][l]=0 --16 --(16 to show all)
   end
  end
 
@@ -236,10 +236,11 @@ function _init()
        local ox,oy=mx,my
        if (ox>63) oy+=32 ox-=64
        mset(mx,my,wrap_mget(mx,my+1))
-       m_map_obj_tree(objref, ox*8,oy*8)
+       m_map_obj_tree(objref, ox*8, oy*8)
      end
    end
  end
+ 
   
 
  -- worker
@@ -248,7 +249,7 @@ function _init()
 
   if t_%30==0 then
    -- reset music (will set if more attack)
-    set_loop"false"  --5
+    set_loop"false"
    -- 
    -- update_obj_tiles()
    -- 
@@ -276,8 +277,7 @@ function _init()
 
    -- -- structures
    -- reset vars for this pass
-   power_bal,total_storage,has_radar,building_count = 0,0,false,{0,0}
-   has_obj={{},{}}
+   power_bal,total_storage,has_radar,building_count,has_obj = 0,0,false,{0,0},{{},{}}
 
    for building in all(buildings) do  
     -- if our building, or ai not under fog of war
@@ -293,7 +293,7 @@ function _init()
     end
     -- track counts & objs
     building_count[building.owner]+=1
-    add_with_init(has_obj[building.created_by] ,building.id, building)
+    add_with_init(has_obj[building.created_by], building.id, building)
    end
       
    -- units
@@ -418,7 +418,7 @@ function m_map_obj_tree(objref, x,y, owner, factory)
     for xx=0,objref.w-1 do
       for yy=0,objref.h-1 do
        -- block map under building (diff tiles for player/ai-owned)
-       wrap_mset(xpos+xx, ypos+yy, slabs and 22 or newobj.owner==1 and 80 or 103)
+       wrap_mset(xpos+xx, ypos+yy, slabs and 22 or newobj.owner==1 and 81 or 103)
       end
     end
     if (not slabs) add(buildings,newobj)
@@ -1009,7 +1009,7 @@ function do_guard(unit, start_state)
      end -- check factory busy
 
     -- are we full?
-    elseif self.capacity >= 150--1500 
+    elseif self.capacity >= 1500 
      and self.state!=7 then
       -- return to refinery when full
       self.sx,self.sy=self:get_tile_pos() -- remember where we were!
