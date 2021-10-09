@@ -73,10 +73,10 @@ mission_data={
 }
 
 
-if debug then
- -- debug mission for easy win 
- mission_data[3][2]={2,1200,nil,2,3,144,200,1,144,152,nil,nil,nil,nil,nil,nil,8}
-end
+-- if debug then
+--  -- debug mission for easy win 
+--  mission_data[3][2]={2,1200,nil,2,3,144,200,1,144,152,nil,nil,nil,nil,nil,nil,8}
+-- end
 
 -- vars
 mode = title_mode
