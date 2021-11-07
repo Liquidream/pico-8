@@ -107,8 +107,10 @@ function compress_cart_data(target_cart)
   printh("compressing "..c.cart.."...")
   -- import all spritesheet data
   reload(0, 0, 0x2000, c.cart)
+  
   -- compress entire spritesheet gfx (to screen working area)
-  add_gfx(0,0,128,128)
+  --add_gfx(0,0,128,128)-- full spritesheet
+  add_gfx(0,0,128,88)-- not quite full sheet
  end
 
 
