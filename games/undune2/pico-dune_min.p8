@@ -1,17 +1,13 @@
 pico-8 cartridge // http://www.pico-8.com
 version 32
 __lua__
-
 cartdata("pn_undune2") 
-
-
 _a,_b,_c,_d=dget"0",dget"1",dget"7",dget"8" 
 _e,_f={},{
  dget"35" >>16, 
  500>>16,     
  dget"36" >>16  
 }
-
 for i=1,dget"5"  do
  local _g={}
  for j=1,5 do
@@ -19,15 +15,10 @@ for i=1,dget"5"  do
  end
  add(_e,_g)
 end
-
-
-
 g_,_h,_i,_j,_k,_l,_m,_n,_o,t_,_p,_q,_r,_s,hq,_t,_u,_v,_w={},{},{},{},{},{},{},{{},{}},t(),0,{0,0},{0,0},0,0,false,0,"",0,{}
 _x=hq
-
 g_.factory_click=function(self)
   _y,_z,_0=1,nil,{}
-  
   _eu(6,"⬆️",function()
    _1=mid(1,_1-1,#_a7._et)
    _z=_a7._et[_1]
@@ -46,7 +37,6 @@ g_.factory_click=function(self)
   _eu(96,"close",function()
    _3=nil
   end)
-  
   _3=self
 end
 g_.draw_refinery=function(self)
@@ -69,13 +59,10 @@ repair_click=function()
   _8(_aa, 2)
 end
 _5=function(self)
- 
  if _aa.id!=35 then
-  
   _eb"pick target" 
   _6=true
  else
-  
   local mx,my=_aa:_b6()
   local _7=_di(mx,my)
   if _7>=12 and _7<=22 then
@@ -86,16 +73,11 @@ _5=function(self)
   _aa=nil
  end
 end
-
-
 function _8(self, _9)
-  
   self._b3,self.last_process,self.process=0,self.process,_9
   if(self.life>0 and self.last_process>0) self._ab=not self._ab  
   if(_9==1) self._bj._ac=true self._bj._ad=self
 end
-
-
 _ae=[[id|name|obj_spr|ico_spr|type|w|h|z|trans_col|parent_id|parent2_id|owner|col1|col2|icol1|icol2|ico_w|ico_h|req_id|req_level|req_faction|max|cost|power|arms|hitpoint|speed|range|fire_type|fire_rate|fire_sfx|death_sfx|norotate|altframe|framecount|life|frame|process|spent|fire_cooldown|hit|flash_count|col_cycle_pos|col_cycle_src|storage|col_cycle|description|func_init|func_draw|func_update|func_onclick
 1|cONSTRUCTION yARD|64|170|2|2|2|1||nil|||||||2|2|nil|1|||100|0|0|1600|0|||||53||||0|0|0|0|0|0|1|1||0||aLL STRUCTURES ARE~BUILT BY THE~CONSTRUCTION YARD.||||factory_click
 2|lARGE cONCRETE sLAB|22|162|2|2|2|1||1|||||7|5|2|2|1|4|||20|0|0|0|0|||||||||0|0|0|0|0|0|1|1||0||uSE CONCRETE TO MAKE A~STURDY FOUNDATION FOR~YOUR STRUCTURES.||||
@@ -141,39 +123,16 @@ _ae=[[id|name|obj_spr|ico_spr|type|w|h|z|trans_col|parent_id|parent2_id|owner|co
 42|sPICE bLOOM|32||1|1|1|1|11|||2|||||1|1|||||||0|4|0|||||53|1|||0|0|0|0|0|0|1|1||0||||||
 80|rEPAIR|3|3|5|1|1|1|11||||||||1|1|||||||0|0||||||||||0|0|0|0|0|0|1|1||0||||_4||action_click
 81|lAUNCH|1|1|5|1|1|1|11||||||||1|1|||||||0|0||||||||||0|0|0|0|0|0|1|1||0||||_4||action_click]]
-
-
-
-
-
-
 function _init()
- 
  poke(0x5f2d, 1) 
-
- 
- 
- 
- 
- 
- 
- 
-
- 
- 
- 
  local _af=_ft(_ae,"|","\n")
  _ae={}
- 
  for i=2,45 do
   local _ag={}
-  
   for j=1,51 do
    local _7=_af[i][j]
-   
    if(j!=2 and j<46)_7=tonum(_7)
    if j==47 then
-    
     _ah,_7=_ft(_7,"~"),"" 
     for line in all(_ah) do
       _7..="\n" ..line
@@ -183,15 +142,12 @@ function _init()
   end
   _ae[tonum(_af[i][1])]=_ag
  end
-
- 
  for i=-2,66 do
   _w[i]={}
   for l=-2,66 do
    _w[i][l]=16 
   end
  end
-
  cursor={
   w=8,  h=8,  _ai=function(self)
    return {
@@ -201,17 +157,11 @@ function _init()
    spr((_a7 and _a7.type==1 and _a7.owner==1 or _6) and 1,    self.x, self.y)
   end
  }
-
- 
- 
  for my=0,31 do
    for mx=0,127 do
      local _ak=nil
      local _al=mget(mx,my)
-     
-     
      if(_al==1) _am,_an,_ak=_e[1][4]-56,_e[1][5]-56,_ae[1]      
-     
      for o in all(_ae) do         
       if(o.obj_spr!=nil and o.obj_spr==_al) _ak=o break       
      end
@@ -223,87 +173,49 @@ function _init()
      end
    end
  end
-  
-
- 
  _ao=cocreate(function()
   while true do
-
   if t_%30==0 then
-   
     _fq"false"   
-   
-   
-   
-   
    _j={}
    for _bx in all(_i) do
     _j[_bx:_b5()]=_bx
    end
-
-   
-   
-   
    _ap={}
-   
    if hq then    
     for i=0,62,2 do
       for l=0,62,2 do
-       
        local _aq=_di(i,l)*8
        if(_w[i][l]==16) _ap[(i/2).."," ..(l/2)]=sget(_aq%128+4, _aq/16) or 15
       end
       yield()
     end
    end  
-
-   
-   
    _ar,_as,_at,_au=0,0,false,{0,0}
    _n={{},{}}
-
    for building in all(_h) do  
-    
     if building.owner==1 or (hq and _fn(building)) then
      _ap[(building.x\2\8).."," ..building.y\2\8]=building.col1
     end
-    
     if building.owner==1 then
-     
      _ar -=building.power
      if(building.id==7) _at=true
      _as+=building.storage
     end
-    
     _au[building.owner]+=1
     _fv(_n[building.created_by] ,building.id, building)
    end
-      
-   
    for _bx in all(_i) do
-    
     if hq and (_bx.owner==1 or _fn(_bx) and _bx.z==1) then
      _ap[(_bx.x\2\8).."," .._bx.y\2\8]=_bx.col1
     end
     if(_bx.created_by>0) _fv(_n[_bx.created_by], _bx.id, _bx)
    end
-  
-   
    hq,_av,_k=(_at and _ar>0),2,_ap
-   
- 
-   
-   
-   
    if(_f[3]>0 and _f[1]>_f[3]) _aw=1
-   
    if(_au[2]==0 and _a>1) _aw=2
-   
    if(_au[1]==0) _aw=3
-
-   
    if _aw then
-    
     local _ax=40
     for data in all{_aw,t()-_o,_eg,_fs(_f[2]),_q[1],_q[2],_p[1],_p[2]} do
      dset(_ax, data)
@@ -315,49 +227,32 @@ function _init()
     load("pico-dune-main")
    end  
   end 
-
   yield()
-
   end 
-
  end) 
-
-
  music"7" 
  _a0=0
-
 end
-
-
 function _ay(_ak, x,y, owner, _az) 
   local _a1=_bg(_ak, x,y, _ak.type, nil, g_[_ak.func_init], g_[_ak.func_draw], g_[_ak.func_update], nil)
   _a1.ico_obj,_a1.life=_bg(_ak, 109,0, 3, _a1, nil, nil, g_[_ak.func_onclick]), _eq and _ak.hitpoint/2 or _ak.hitpoint 
-  
-  
   _a1.owner=_a1.owner or owner
   if not _az then
-   
    if not _a1.owner then
-    
     local _a2=9999
     for i=1,#_e do
      local _a3=_f8(x,y,_e[i][4],_e[i][5])
      if(_a3<_a2) _a1._a5,_a1.owner,_a2=i,min(i,2),_a3
     end
    else 
-    
-    
     _a1._a5,_g=1,_e[1]
    end 
   else
-   
    _a1._a5=_az._a5
   end
-  
   _a1.created_by,_a1.build_objs,_g=owner or _a1.owner,{},_e[_a1._a5 or _az._a5]
   _a4=_g[1]
   _a1._dc,_a1.col1,_a1.col2=_a4,_g[2],_g[3]
-  
   for o in all(_ae) do
    local _a6=o.req_faction
     if(o.parent_id!=nil and (o.parent_id==_a1.id or o.parent2_id==_a1.id))					
@@ -366,81 +261,56 @@ function _ay(_ak, x,y, owner, _az)
       or (_a6<0 and -_a4!=_a6))
     then
       add(_a1.build_objs,        _bg(o, 109,0, 4, _a1, nil, nil, function(self)
-          
           if _3 then
-            
             _a7=self
           else
-            
             _8(self, 1)
           end
         end)
       )
     end
   end
-  
   if _a1.owner>1 then
     _a1.ico_obj.func_onclick=nil 
   end
-
-  
   if _ak.col1 then
    _a1.col1,_a1.col2=_ak.col1,_ak.col2
   end
-  
-  
   if(_a1.z>1) _a1.owner=0
-
   local _a8,_a9=x\8,y\8
-  
-  
   if _ak.type==2 then
-    
     local _ba=_ak.obj_spr==22
     for xx=0,_ak.w-1 do
       for yy=0,_ak.h-1 do
-       
        _dj(_a8+xx, _a9+yy, _ba and 22 or _a1.owner==1 and 149 or 27)
       end
     end
     if(not _ba) add(_h,_a1)
-    
-    
     if _a1.id==6 and not _a1._bj then
-     
      _ct(_a1)
     end
   else
-    
     _a1.r=_a1.norotate!=1 and flr(rnd"8")*.125
     if _a1.arms>0 then
-     
      _a1._bb=function(self)
-       
        self._bu,self._b1,self.bullet_y,self.bullet_tx,self._bc=4,self.x+4,self.y+4,self._by.x+self._by.w/2,self._by.y+self._by.h/2
-       
        local dx,dy=self.bullet_tx-self._b1,self._bc-self.bullet_y
        local d=sqrt(dx*dx+dy*dy)
        self.bullet_dx,self._bd=(dx/d)*2,(dy/d)*2
        _fo(self.fire_sfx)
        _cb(self)
      end
-     
      if(_a1.speed==0) _dj(_a8,_a9,149)
     else
-     
      if(_a1.id==32) _a1._be=0
-     
      _a1._bf=_az 
     end
     add(_i,_a1)
-    
     _c0(_a1)
   end
   _cb(_a1)
   return _a1
 end
-
 function _bg(_bh, x,y, _bi, _bj, func_init, func_draw, func_onclick)
  local _bk={  
   _bl=_bh,  id=_bh.id,  hitpoint=_bh.hitpoint,  x=x,  y=y,  z=_bh.z, 
@@ -455,7 +325,6 @@ function _bg(_bh, x,y, _bi, _bj, func_init, func_draw, func_onclick)
      local x=self.x
      local y=self.y
      local ty=self.type
-     
      if ty>2
       or (x+self.w>=_am
        and x<=_am+127
@@ -465,56 +334,36 @@ function _bg(_bh, x,y, _bi, _bj, func_init, func_draw, func_onclick)
        pal()
        palt(0,false)
        if(self.trans_col and ty<=2 or ty>=5) palt(self.trans_col,true)   
-       
        if(self._dc and self.id!=18) pal(12,self.col1) pal(14,self.col2)
-       
-       
        if ty>2 and ty<5 then
          local _br=ty==4 and self or self._bj
-         
          rectfill(x-1,y-1,x+16,y+19, 0)
-         
          local hp=_br.hitpoint
          local _7=self.process==1 and 15*(_br.life/100) or 15*(_br.life/hp)
          if(_br.life>0 and not _3) rectfill(x,y+17,x+_7,y+18, self.process==1 and 12 or _br.life<hp*.33 and 8 or _br.life<hp*.66 and 10 or 11)
          pal(11,_br.icol1) pal(3,_br.icol2)
        end
-
-       
        if self.col_cycle then
         pal(self.col_cycle_src, self.col_cycle[self.col_cycle_pos])
        end
-
-       
        if(func_draw) func_draw(self)
-
-       
        if self.r then
         if not self._bw or self._bw>.025  then
-         
          for i=1,2 do
           if(i==2 or self.speed>0) _fz(self.obj_spr%16*8,self.obj_spr\16*8, x, y-(i==2 and self.z or 0), .25-self.r, 1, self.trans_col, i==1 and 5 or flr(self.flash_count)%2==0 and 7 or nil)
          end
         end
-       
        else       
-         
          if ty>2 then
-          
           spr(self.ico_spr, x, y, self.ico_w, self.ico_h)
          else
-          
           _ew(self)
          end
        end
-
-       
        if self._b1 then      
         if self.fire_type==1 then
-         
          pset(self._b1,self.bullet_y, rnd"2" <1 and 8 or 9)
         else
-         
          local _bs=self.fire_type==2
          _gg(self._b1, self.bullet_y, 0, 
           0, 0, 
@@ -523,37 +372,25 @@ function _bg(_bh, x,y, _bi, _bj, func_init, func_draw, func_onclick)
           self.id==40 and {11} or _bs and _ft("7,7,10,9,8,2,13,6,7") or {15},          rnd"2" <1 and 0xa5a5.8 or 0)
         end
        end
-       
        if(self.life<self.hitpoint*.33 and not self.altframe and rnd"10" <1 and ty<=2) _gg(self.x+3.5,y+3.5, 1, .1,-.02,.05, -.002, 80,_ft("10,8,9,6,5"), rnd"2" <1 and 0xa5a5.8 or 0)
-       
        self.hit=0
     end 
    end,   _bt=function(self)
      local life=self.life
      local ty=self.type
-     
      self.flash_count=max(self.flash_count-.4,1)
-     
      if self.hit>0 and self.created_by>0 then 
-       
        _fq"true"  
-       
-       
        if(_av==0 or stat(24)>5) _av=1 music"0" 
-       
        if(self.arms>0 and self._bu==0) _c9(self, self._bz)
-       
        if(self.obj_spr<=49 and life<100) self._bp,self._bq=0.5,0.5
-       
        if(life<50 and self._bu!=7) _e5(self,_fy(_n[self.created_by][14]) or self._bf) 
      end
-     
      if(ty<=2 and life<=0 and not self._bw) self._bu=5 self._bv=nil self._bw=(ty==2 and 1 or .5) _fo(self.death_sfx) _a0+=((ty==2 or self.id==38) and 0.25 or 0)
      if self._bw then
       self._bw-=.025
       if self._bw<=0 then
         if ty==2 then         
-         
          for xx=0,self._bp-1 do
            for yy=0,self._bq-1 do
              _dj(self.x/8+xx, self.y/8+yy, 21)
@@ -562,14 +399,11 @@ function _bg(_bh, x,y, _bi, _bj, func_init, func_draw, func_onclick)
          del(_h,self)
          _p[self._bz.created_by]+=1
         else
-         
          local gx,gy=self:_b6()
          if(_di(gx,gy)<9) _dj(gx,gy,33) 
          if(self.id<=16) _dj(gx,gy,21)
-         
          if(self._bf) self._bf._ac=false
          _cq(self)
-         
          if self.id==42 then
           _de(self,gx,gy,           function (_bx,x,y)
             if(_di(x,y)==0) _dj(x,y,10)
@@ -579,17 +413,13 @@ function _bg(_bh, x,y, _bi, _bj, func_init, func_draw, func_onclick)
         end      
         if(_a7==self) _a7=nil
       else
-        
         if(rnd(ty==2 and 2 or 8)<1) _b9(self.x+rnd(self.w),self.y+rnd(self.h))
       end
      end
-
-     
      if self.framecount!=nil then
       self.frame+=1
       if self.frame > self.framecount then
        self.frame=0
-       
        if self.altframe
         and self._bu==2 then
          self.obj_spr=self._bo+(self.altframe-self.obj_spr)
@@ -600,98 +430,63 @@ function _bg(_bh, x,y, _bi, _bj, func_init, func_draw, func_onclick)
        end
       end
      end
-
-     
      if self._b1 then
       self._b1+=self.bullet_dx
       self.bullet_y+=self._bd
-      
       if _f8(
        self._b1,self.bullet_y,       self.bullet_tx,self._bc) < 2 
       then
-       
        _b9(self._b1, self.bullet_y, self.fire_type)
-       
        local _by=self._by
        if _f8(
         self._b1,self.bullet_y,        _by.x+_by.w/2,        _by.y+_by.h/2) < 4 
        then
         _by.life-=self.arms
-        
         _by.hit,_by._bz=self.fire_type,self
-
-        
         if self.id==40 and _by.speed!=nil then
          _by.owner,_by._dc,_by.col1,_by.col2=self.owner,self._dc,self.col1,self.col2
          _c0(self) 
         elseif _by._b0 then
-         
          _by._dc,_by.col1,_by.col2,_by._b0=_by._b0,_by.old_col1,_by.old_col2,nil
          _c0(_by)
         end
-
        end
-       
        self._b1=nil
       end
      end
-
-     
      if self.process>0 
       and not self._ab 
       and not self._b2 then
-
       if self.process==1 and self.spent>self.cost then
-        
         self._b2=true
         if(self._bj.owner==1) _fo"56"  _eb("cONSTRUCTION cOMPLETE")
-        
         if self._bl.type==1
          and self.parent_id !=1 then
-          
           local ux,uy=_c7(self._bj)
-          
           _ay(self._bl,ux,uy,self._bj.owner,self._bj)
-          
           _e0(self)
         end
       elseif self.process==2 and life>self.hitpoint then
-        
         self.process=0
-        
         if ty==1 and self.speed>0 then
-         
          self._c3.col_cycle={0}
-         
          self._bu=0        
-         
          self.x,self.y=_c7(self)
         end
       else
-        
-        
         if self._b3>(self.process==1 and 3 or 100) then
-         
-         
          if(_b7(-1,self.process==1 and self._bj or self)) self._b3=0 self.spent+=1
         else
-         
          self._b3+=1
          self.life=(self.process==1 and (self.spent/self.cost)*100 or life+.5)
         end
       end
      end
-
-     
      if self.fire_cooldown>0 then 
       self.fire_cooldown-=.1
      end
-
-     
-     
      if(self.id==5) self.name="wINDTRAP (pOWER:" .._ar..")" 
-   end,
-   _b4=function(self,x,y)
+   end,   _b4=function(self,x,y)
     self.x,self.y=x,y
    end,   _b5=function(self)
     local x,y=self:_b6()
@@ -700,49 +495,32 @@ function _bg(_bh, x,y, _bi, _bj, func_init, func_draw, func_onclick)
     return self.x\8,self.y\8
    end
   }
-
- 
  for k,v in pairs(_bh) do
   if not _bk[k] and v!=""  then
    _bk[k]=v
   end
  end
-
- 
  if(func_init) func_init(_bk)
-
  return _bk
 end
-
-
 function _b7(_b8, _bk)
  if(_fs(_f[_bk.owner])+_b8<0) return false
  _f[_bk.owner]+=sgn(_b8)*(abs(_b8)>>16)
  if(_bk.owner==1) sfx"63" 
  return true
 end
-
 function _b9(x,y,_ca)
  _gg(x, y, 2, 
          0,0,.1,0, _ca==1 and 5 or 30, _ft("5,7,10,8,9,2"), rnd"2" <1 and 0xa5a5.8 or 0)
 end
-
 function _cb(_cc)
- 
- 
- 
- 
  if(_cc.owner!=1 and _cc._bu!=4) return
-
  local _cd=_cc.type==2 and 3 or 2
- 
  for xx=-_cd,_cd do
   for yy=-_cd,_cd do
-   
    local _ce,_cf=_cc.x\8+xx,_cc.y\8+yy
    _w[_ce][_cf]=16 
    _cx(_ce,_cf)
-   
    for dy=-1,1 do
     for dx=-1,1 do
      _cx(_ce+dx,_cf+dy)
@@ -751,47 +529,25 @@ function _cb(_cc)
   end
  end
 end
-
-
 function _update60()
-
- 
- 
   _cg,_ch,_ci=stat"32",stat"33",stat"34" 
   _cj,_ck,_cl=(_ci==1 and _cr !=_ci) or btnp"4", (_ci>0) or btn"4", (_ci==2 and _cr !=_ci) or btnp"5" 
-  
   for k=0,1 do
    if(btn(k)) _r+=k*2-1
    if(btn(k+2)) _s+=k*2-1
-   
   end
-
- 
  _cm,_cn=mid(0,_cg+_r,127),mid(0,_ch+_s,127)
  cursor.x,cursor.y=_cm,_cn
-
- 
- 
- 
  if not _3 then 
-  
   if(_cm<4) _am-=2
   if(_cm>123) _am+=2
   if(_cn<4) _an-=2
   if(_cn>123) _an+=2
-
-  
   _am,_an=mid(_am,368),mid(-8,_an,368)
-   
-  
-  
   for _bx in all(_i) do
     if _bx then    
       if(_bx._bv) _co,ex=coresume(_bx._bv, _bx)
-      
       if(not _co) _bx._bv=nil
-
-      
       if _fc 
        and fget(_di(_bx:_b6()),2)  
        and _f8(_fh,_fi,_bx.x,_bx.y) < 1
@@ -803,104 +559,61 @@ function _update60()
       end
     end
   end
-   
-  
   for p in all(_m) do
-    
    p.dy +=p._gh
-   
    p.x +=p.dx
    p.y +=p.dy
    p.r +=p.dr
    p.life +=1
-   
    if(p.life>=p._gl) del(_m,p)
   end
-    
-  
   _e8()
-  
-  
   assert(coresume(_ao))
  end 
- 
  _ex()
-
  _cr,_aa,_cs=_ci,_a7,_z 
  t_+=1
 end
-
 function _cq(_bx)
  del(_i,_bx)
  if _bx.id==32 and #_n[_bx.created_by][32]<=1 then
-  
   _cv=_fy(_n[_bx.created_by][6])
   if(_cv) _ct(_cv)
  end
 end
-
 function _ct(_cu)
  local ux,uy=_c7(_cu)
  local _cw=_ay(_ae[32],ux,uy,_cu.owner,_cu)
 end
-
 function _draw()
- 
  _ea()
- 
  _ed()
 end
-
-
-
-
 function _cx(x,y) 
- 
  if(x<0 or x>#_w or y<0 or y>#_w) return
-	
- 
  local _cy=0
-
 	if _w[x][y]!=0 then  
-    
 		if(_w[x][y-1]>0) _cy+=1
-    
 		if(_w[x-1][y]>0) _cy+=2
-    
 		if(_w[x+1][y]>0) _cy+=4
-    
 		if(_w[x][y+1]>0) _cy+=8
-		
   _w[x][y]=1 + _cy
 	end
-
 end
-
-
-
-
 function _cz(x,y)
   local _7=_di(x,y)
   return _7>=4 and _7<=10
 end
-
 function _c0(_bx, _c1)
- 
- 
  _bx._bu,_bx._c2=_c1 or 0,nil
  _bx._bv=cocreate(function(self)
   while true do
-   
    if self.z>1 then
-    
     _dm(self, 
      mid(flr(self._bm+rnd"32")-16,64), 
      mid(flr(self._bn+rnd"32")-16,64))
    end
-
-   
    if rnd(250)<1 and self.arms>0 and self._bu!=8 then
-    
     local gx,gy=self:_b6()
     _de(self,gx,gy,     function (_bx,x,y)
       local _by=_j[x.."," ..y]
@@ -909,69 +622,43 @@ function _c0(_bx, _c1)
        return true
       end
      end,     max(4,self.range)) 
-
-   
    elseif self.id==34 then
-     
      _fj(self)
    end
-
-
    local _bf=self._c3 or self._bf
-   
-   
    if self.id==32 then   
     if self._bu==0 or self._bu==9 then
-    
      if self._be<=1500 
       and self._bu!=7 and self._bu!=9 then
-      
       self._c3=nil
       local sx,sy
       local tx,ty=self:_b6()
       if _cz(tx,ty) and not self._c4 then
         sx,sy=tx,ty
       else
-        
         _de(self,tx,ty,          function(_bx,x,y)
             if _cz(x,y) then
-            
             sx,sy=x,y
             return true
             end
           end,        10)
       end
-      
       if sx and sy then
         _dm(_bx,sx,sy)
-        
-        
         if(_cz(_bx:_b6())) _bx._bu=6
       end
-
      end 
-
-    
     elseif self._be >=150
      and self._bu!=7 then
-      
       self.sx,self.sy=self:_b6() 
       _e5(self,_bf or _fy(_n[_bx.created_by][6]))
-
-     
     elseif self._bu==6 then
      self._c4=false
-     
      _c8(_bx.x, _bx.y, _bx.r+.75+rnd".2" -.1)
-
-     
      local _c5=_bx:_b5()
-     
      self._be+=.5
      _l[_c5],self.name=(_l[_c5] or 1000)-1,"hARVESTER (" ..flr(self._be/1500*100).."% fULL)" 
-     
      if _l[_c5] <=0 then      
-      
       local _a8,_a9=self:_b6()
       for yy=-1,1 do
        for xx=-1,1 do
@@ -980,38 +667,20 @@ function _c0(_bx, _c1)
        )
        end
       end
-      
       self._bu=0
      end
-     
      if(self._be%300==0) self._c4=true self._bu=0
-
     end 
    end  
-
-   
    if self.id>26 then    
-    
-    
-    
     if self._bu==9 then
-     
-     
      if _bf.life>0 and not _bf._c6 and self.life>0 then      
-      
-      
       _bf._ac,self._bu,self.r,self.x,self.y=false,8,.25,_bf.x+16,_bf.y+4
-
-      
       if(_a7==self) _a7=nil
-      
-      
       if self._be and _bf.id==6 then 
        _bf._c6=true       
-       
        while self._be>0 do
         self._be-=1        
-        
         if flr(self._be)%4==0 then
          if tonum(_eg)<_as then
           _b7(2,self)
@@ -1021,137 +690,92 @@ function _c0(_bx, _c1)
         end
         yield()
        end 
-       
        self._be,_bf._c6,self._bu=0,false,0
        self.x,self.y=_c7(self)
        if(self.sx) _dm(self, self.sx, self.sy, 0, true)      
       else
-       
-       
        self.process,self._b3,_bf.col_cycle_src,_bf.col_cycle=2,0,8,_ft("7,10,0,0,7,0,0")
       end 
-     
      end 
-
     end 
-    
    end 
-
-   
-   
    ::skip_end_guard::
    yield()
-  
   end 
-
  end) 
 end
-
-
 function _c7(_by)
  local ux,uy=_de(_by,(_by.x+8)\8, (_by.y+8)\8, _dl, nil, true)
  return ux*8,uy*8
 end
-
 function _c8(x,y,r)
- 
  if(rnd"5" <1) _gg(x+ sin(r)*5.5 +3.5,y+ -cos(r)*5.5 +3.5, rnd"2", .15,0,.1, -.01, 25,_ft("2,4,9,15"), 0xa5a5.8)
 end
-
 function _c9(_bx, _by)
  _da=true
- 
  if _bx.id !=19 then
-   
    _bx._bu,_bx._by,_bx._bv=3,_by, cocreate(function(self)
     while _by.life>0 do
      local _db=_f8(_bx.x,_bx.y,_by.x,_by.y)
-     
      if _db > _bx.range*5
       and _bx.speed>0 then
-      
       _dm(_bx,_by.x\8,_by.y\8,_bx.range*5)
-
-      
       if _bx.id==25 or _bx.id==38 then
        _bx.life=0
         for i=1,_bx.id/3 do
          _b9(_bx.x+rnd"32" -16,_bx.y+rnd"32" -16, 2)
         end
-       
        _by.life-=(400+rnd"200")
        _by._bz=_bx
        return
       end
      end
-     
      if not _bx.norotate then
       local a=atan2(_bx.x-_by.x, _bx.y-_by.y)   
       while (_bx.r !=a) do
         _f9(_bx, a)
       end
      end
-     
      if _db<=_bx.range*5 then
       if(_bx.fire_cooldown<=0 and not _bx._b1) _bx._bb(_bx) _bx.fire_cooldown=_bx.fire_rate
      elseif _bx.speed==0 then
-      
       _c0(_bx)
      end
      yield()
-     
-     
      if(_bx.id==40 or _bx.id==34 or _by._dc==_bx._dc or _by._c2) break
     end 
-
-    
     _c0(self)
    end)
-  
  else
-  
-  
-  
-  
   local _dd={24,25,38,38}
   _c9(_ay(_ae[_dd[_bx._dc]], _bx.x,_bx.y, _bx.owner), _by)      
   _bx.fire_cooldown=1750 
  end
 end
-
-
 function _de(_bx,x,y,_df,_dg,_dh)
  for t=0,_dg or 4,.04 do
- 
  	local xx,yy=mid(flr(x+t*cos(t)),61),mid(flr(y+t*sin(t)),61)
 		if(_df(_bx,xx,yy)) return xx,yy
-  
   if(not _dh) yield()  
  end
 end
-
 function _di(mx,my)
  if(my>31)mx+=64 my-=32
  return mget(mx,my)
 end
-
 function _dj(mx,my,_dk)
  if(my>31)mx+=64 my-=32
  mset(mx,my,_dk)
 end
-
 function _dl(_bx,x,y)
  return not fget(_di(x,y),0)
    and not _j[x.."," ..y]
 end
-
 function _dm(_bx,x,y,_dn,_do,_c1)
   local _dp=_bx.z>1
-  
   if _do then
    local _dq=_n and _fy(_n[_bx.created_by][33])
    if _dq and not _dq._c2 and _dq._dc==_bx._dc then
-     
      _dq._c2,_bx._c2,_bx._bu, _dq._bv=_bx,_dq,2, cocreate(function(unit_c)     
       _dm(unit_c,_bx.x\8,_bx.y\8)
       if(_a7==_bx) _a7=nil
@@ -1167,22 +791,11 @@ function _dm(_bx,x,y,_dn,_do,_c1)
     return
    end
   end
-  
   ::restart_move_unit::
-
-  
   if not _dp and not _dl(nil,x,y) then   
-    
-    
     x,y=_de(_bx,x,y,_dl)
   end
-
-  
   _bx.tx,_bx.ty,_bx.prev_state,_bx._bu,_bx._dr=x,y,_bx._bu,1,nil
-   
-  
-  
-  
   local start, goal, _dt={ x=_bx.x\8, y=_bx.y\8}, {x=_bx.tx, y=_bx.ty}, function (_ds) return (_ds.y<<8) + _ds.x end
   local _d0, 
   _du={
@@ -1191,7 +804,6 @@ function _dm(_bx,x,y,_dn,_do,_c1)
   _du[_dt(start)]=_d0
   local frontier, frontier_len, goal_id, max_number, count={_d0}, 1, _dt(goal), 32767.99, 0
   while frontier_len > 0 do
-   
    local cost, _dy=max_number
    for i=1, frontier_len do
     local _dz=frontier[i]._dw + frontier[i]._dx
@@ -1214,7 +826,6 @@ function _dm(_bx,x,y,_dn,_do,_c1)
     local id=_dt(n)
     local _d1=not _dp and fget(_di(n.x, n.y), 1) and 4 or 1
     if(p.x !=n.x and p.y !=n.y) _d1+=.2
-
     local _d3, _d2=
      _du[id],     _d0._dw + _d1    
     if not _d3 then     
@@ -1231,24 +842,15 @@ function _dm(_bx,x,y,_dn,_do,_c1)
    count+=1
    if count%4==0 then
     yield()
-    
     if(count>3000 or stat(0)/2048>.8) goto end_pathfinding
    end
   end
-
   ::end_pathfinding::
-
-  
   _bx.prev_state,_bx._bu=_bx._bu,2
-
-  
   if _bx._dr!=nil then
-
     for i=#_bx._dr-1,1,-1 do
       local _ds=_bx._dr[i]
-
       if not _bx.norotate then
-        
         local a=atan2(
          _bx.x-(_ds.x*8),  
          _bx.y-(_ds.y*8) ) 
@@ -1256,57 +858,26 @@ function _dm(_bx,x,y,_dn,_do,_c1)
           _f9(_bx, a)
         end
       end
-      
-      
-      
       if(not _dp and not _dl(nil,_ds.x,_ds.y)) goto restart_move_unit
-      
-      
       local _d6,_d7=_bx.speed or .5, sqrt((_ds.x*8-_bx.x)^2+(_ds.y*8-_bx.y)^2)
-      
-      
-      
       local _d8,_d9=_d6 * (_ds.x*8 - _bx.x) / _d7, _d6 * (_ds.y*8 - _bx.y) / _d7
-      
       for i=0, _d7/_d6-1 do
-        
         _j[_ds.x.."," .._ds.y]=_bx
         _bx.x+=_d8
         _bx.y+=_d9
         yield()
       end
-      
       _bx.x,_bx.y,_j[_ds.x.."," .._ds.y]=_ds.x*8, _ds.y*8,_bx
-      
-      
       _cb(_bx)
-
-      
       if(_f8(_bx.x,_bx.y,_bx.tx*8,_bx.ty*8) <=(_dn or 0)) break 
     end
-  
   end 
-
-  
   _bx._bu=0 
 end
-
-
-
-
 function _ea()
- 
 	cls"15" 
- 
- 
  camera(_am+(16-rnd"32")*_a0, _an+(16-rnd"32")*_a0)
- 
- 
  _a0=(_a0>0.05) and _a0*0.95 or 0
- 
- 
-
- 
  if _fc then
   for i=1,#_fc do
    if(i%2==1) fillp(0xa5a5.8)
@@ -1314,53 +885,35 @@ function _ea()
     _fc[i][1]+4,    _fc[i][2]+4,4,    _ff[i%#_ff+1])
    fillp()
   end
-  
   if(_cp>0) spr(88+_cp, _fh, _fi)
  end
-
  palt(11,true)
-
- 
  palt(0,false) 
-  
  map(0,0,  0,0,   64,32, 127)
  map(64,0, 0,256, 64,32, 127)
-
-
- 
  for building in all(_h) do 
   if not _3 then 
     building:_bt()
     if(building._ad) building._ad:_bt()
   end
   building:_aj()
-  
   if(building==_a7) rect(_a7.x, _a7.y, _a7.x+_a7.w-1, _a7.y+_a7.h-1, 7)  
  end
-
  pal() 
- 
- 
  for p=1,2 do
   for _bx in all(_i) do
    if(p==1 and _bx.z==1) or (p==2 and _bx.z>1) then
     if(not _3) _bx:_bt()
     if(_bx.process!=2 or _bx.speed==0) _bx:_aj()
-    
     if(_bx==_a7) spr(2, _a7.x, _a7.y)
    end
   end
  end
-
- 
- 
  for p in all(_m) do
   if(p._gj) fillp(p._gj)
   circfill(p.x,p.y,p.r,p._gi[ flr((#p._gi/p._gl)*p.life)+1 ]) 
   fillp()
  end
-
- 
  local _ee,_ef=_am\8,_an\8
  palt(0,false)
  palt(11,true)
@@ -1374,50 +927,29 @@ function _ea()
     end
   end
  end
-
 end
-
-
 function _eb(_ec)
   _u,_v=_ec,500
 end
-
 function _ed()
- 
  camera(0,0)
  pal()
- 
  palt(0,false)
- 
- 
  rectfill(0,0,127,8,9) 
-
- 
- 
- 
  rect(90,90,124,124,_c)
  rect(91,91,123,123,_d)  
  rectfill(92,92,122,122,0)
-
- 
- 
  if(_v>0) _v-=1 print(_u, 2,2)
-
- 
  _eg=_fs(_f[1])
  ?sub("000000", #_eg+1).._eg, 103,2, _d
-
- 
  if hq!=_x then
   _t,_eh=hq and 1 or 59, hq and 1 or -1
   if(_eh<1) _eb("pOWER LOW.bUILD wINDTRAP")
   _fo"55" 
  end  
  _x=hq
-
  if _t>0 and _t<60 then
    _t+=_eh
-   
    clip(
      max(109-_t,91),     max(109-(_t>20 and _t-20 or 0),92),     min(_t*2,32),     min((_t>20 and _t-20 or 1)*2,32))
    for i=1,300 do
@@ -1426,8 +958,6 @@ function _ed()
    clip()
    return
  end
-  
- 
  pal(11,15)
  for xx=0,30 do
   for yy=0,30 do
@@ -1435,24 +965,17 @@ function _ed()
    if(_k[k]) pset(92+xx,92+yy,_k[k])
   end
  end
- 
- 
  local cx,cy=92+_am/16,93+_an/16
  rect(cx,cy, cx+7,cy+6, 7)
-
- 
  if _a7 and _a7.ico_spr then
   _a7.ico_obj:_b4(109,20)
   _a7.ico_obj:_aj()  
-  
   _ei,_ej=nil,nil
   if _a7.owner==1 then   
-   
    if _a7._ad then
     _a7._ad:_b4(109,44)
     _a7._ad:_aj()    
    end
-   
    if _a7.life<_a7.hitpoint   
     and _a7.id!=4
     and (_a7.type==2
@@ -1460,7 +983,6 @@ function _ed()
      _ei=_bg(_ae[80], 117,28, 5, {}, nil,_4, repair_click)     
      _ei:_aj()
    end
-   
    if(_a7.id==19 
     and _a7.fire_cooldown<=0)
      or _a7.id==35
@@ -1468,53 +990,39 @@ function _ed()
      _ej=_bg(_ae[81], 109,29, 5, {}, nil,_4, _5) 
      _ej:_aj()  
    end
-
   end
  end
-
  pal()
-
- 
  if _a7 
   and _a7._ad 
   and (_a7._ad.type==4
    and _a7._ad.speed==0)
   and _a7._ad.life>=100 then
-  
-  
   local _ek,_el=(cursor.x+_am)\8, (cursor.y+_an)\8
   local _em,_en,w,h=_ek*8-_am,_el*8-_an,_a7._ad._bp,_a7._ad._bq
-  
   _eo,_ep,_eq=false,false,false
   for xx=-1,w do
     for yy=-1,h do
      local _7=_di(_ek+xx, _el+yy)
      if xx==-1 or xx==w or yy==-1 or yy==h then     
-      
       if(_7==22 or _7>=58) _eo=true
      else
-      
       if(_7>=12 and _7<=21) _eq=true
       if(_j[_ek+xx.."," .._el+yy] or _7==0 or _7<=12 or _7>=23) _ep=true
      end
     end
   end
   if(_ep)_eo=false
-
   fillp("0b1110110110110111.1")
   rectfill(_em, _en,           _em+_a7._ad.w, _en+_a7._ad.h, _eo and 11 or 8)
   fillp()
  end
-
-
  if _3 then  
   fillp(0xA5A5.8)
   rectfill(0,0,127,127,0)
   fillp()  
   rectfill(3, 22, 124, 95, _d)
   rect(4, 23, 123, 94, _c) 
-
-  
   if _a7.build_objs then
     _a7._et={}
     rectfill(6,25,27,92,0)
@@ -1530,12 +1038,9 @@ function _ed()
         _es:_b4(9,28+(_er-_y)*19)
         _es:_aj()
       else
-        
         _es:_b4(-16,16)
       end
-      
       _z=_z or _a7._et[1]
-      
       if _z==_es then 
         _1=_er
         rect(_es.x-2, _es.y-2, 
@@ -1549,22 +1054,13 @@ function _ed()
      end 
     end 
   end 
-
- 
-
-  
   for controls in all(_0) do
     controls:_aj()
   end
  end  
-
- 
  palt(11,true)
  cursor:_aj()
-
-
 end
-
 function _eu(x,_ev,func_onclick,_w)
  add(_0,{
   x=x,  y=83, 
@@ -1576,19 +1072,11 @@ function _eu(x,_ev,func_onclick,_w)
   end,  func_onclick=func_onclick
  })
 end
-
 function _ew(_bk)
  spr(_bk.obj_spr, _bk.x, _bk.y, _bk._bp, _bk._bq)
 end
-
-
-
-
-
-
 function _ex()
  _ey=false 
- 
  if _a7 then
    _ez=true
    _e1(_ei)
@@ -1597,46 +1085,29 @@ function _ex()
    if(_3) foreach(_a7.build_objs, _e1) foreach(_0, _e1)
    _ez=false
  end
- 
  if not _3 
   and not _ey then  
-  
   foreach(_i, _e1)
-  
   foreach(_h, _e1)
  end
-  
- 
  if _ck
     and not _3 
     and _cm>89 and _cm<122
     and _cn>90 and _cn<123 then
-      
       _am,_an=mid(0,(_cm-94)*16, 368),mid(-8,(_cn-94)*16, 368)
       _a7=_aa 
- 
  elseif _cj then
-  
-  
   if(_a7 and _a7.type<=2) _eb(_a7.name)
- 
   if _ey then   
-    
     if not _3 and _a7._bj!=nil then 
      if(_a7.func_onclick) _a7:func_onclick()
      _a7=_aa
      return
     end
-    
     if(_3 and _z._ev and _z.func_onclick) _z:func_onclick()
-    
     if(_a7.owner==1 and _a7.type==1 and _a7!=_aa and _a7.speed>0) _fo"62"     
-    
     if(_a7.created_by!=1 and _aa and (_aa.type==1 or (_aa.id==19 and _6)) and _aa.owner==1) _a7.flash_count=10 _c9(_aa, _a7) _a7=nil 
-
-  
   else
-    
     if _a7 
      and _a7.owner==1 
      and _a7.speed>0 
@@ -1645,56 +1116,37 @@ function _ex()
        _dm(_bx, (_am+_cm)\8, (_an+_cn)\8)
        _c0(_bx)
       end)
-
     end
-    
-    
     if _a7 
      and _a7._ad 
      and _a7._ad.life>=100
      and _eo then
-      
       _ay(_a7._ad._bl,       (cursor.x+_am)\8 *8,       (cursor.y+_an)\8 *8, 1)      
-      
       _e0(_a7._ad)
       _fo"61" 
     end
-
   end 
-  
   _6=false
-  
  elseif _cl and not _3 then
-  
   _a7,_6=nil,false
  end 
 end
-
 function _e0(_bk)
  _bk.life,_bk.process,_bk.spent,_bk._b2=0,0,0,false
  if(_bk._bj) _bk._bj._ac=false
 end
-
-
 function _e1(_bk)
-  
   if(not _bk) return
-  
   local _e2,_e3=cursor:_ai(),_bk:_ai()
   _bk._e4=_e2.x < _e3.x + _e3.w and
    _e2.x + _e2.w > _e3.x and
    _e2.y < _e3.y + _e3.h and
    _e2.y + _e2.h >_e3.y
-
   if _cj and _bk._e4 then
    if _3 then
     _z=_bk
    else
-    
-    
     if(_bk.type<=2 and _w[(cursor.x+_am)\8][(cursor.y+_an)\8]!=16 or _bk._bu==8) return
-    
-     
     if _a7
      and _aa
      and (_bk.id==6 and _aa.id==32 
@@ -1703,22 +1155,15 @@ function _e1(_bk)
     then
      _e5(_aa,_bk)
      return 
-
     else 
-     
      _a7=_bk
     end    
    end
    _ey=true
   end
-
 end
-
- 
 function _e5(_bx,_cu)
- 
  _cu=_cu or _fy(_n[_bx.created_by][1]) or _bx
- 
  _bx._bu,_cu._ac,_bx._c3=7,true,_cu
  if(_bx.id!=32 or _cu.id==6) _bx._bf=_cu
  _bx._bv=cocreate(function(_bx)
@@ -1727,78 +1172,44 @@ function _e5(_bx,_cu)
   if(not _bx._c2) _c0(_bx, _e6) 
  end)
 end
-
-
-
-
-
 _e7=0
-
-
 function _e8()
- 
  if _da and t()>_b*20 and t()%_b==0 then
-  
-  
-  
   local _e9=rnd(_i)
   if _e9.owner==2 and _e9.arms>0 and _e9._bu==0 then
-   
    _fj(_e9)
   end
-  
-  
-  
   local _fa=rnd(_h) 
-  
-  
   if _fa.owner==2 and
     (not _fa._ad or _fa._ad.process!=1) then    
-    
     local u=rnd(_fa.build_objs)
     if u and u.speed>0 then
      u:func_onclick()
     end    
-
-    
     if _fa.life<_fa.hitpoint and _fa.process!=2 then
-     
      _8(_fa, 2)
     end
   end
-
-  
-  
   local _fb=_fy(_n[2][19])
   if _fb and _fb.fire_cooldown<=0
    and _fk and _fk.type==2 then 
     _c9(_fb, _fk)
   end
-
  end
-
- 
- 
  _e7-=1
- 
  if _e7<0 then
   if _fc then
-   
    _fc=nil
   else
-   
    _fc,_fd,_fe,_ff,_cp={{rnd"500",rnd"500" }},rnd"1",0,{15,9,4},0
   end
   _fg=rnd"5000" 
   _e7=_fg
  end
-
  if _fc then
-  
   if(t_%6<1 or #_fc<30) and _cp==0 then
    while #_fc<31 do
     if(rnd"9" <.5) _fe=rnd".04" -.02
-    
     _fh,_fi=_fc[#_fc][1],_fc[#_fc][2]
     add(_fc,{_fh+sin(_fd),_fi-cos(_fd)})
     _fd+=_fe
@@ -1807,46 +1218,31 @@ function _e8()
   if(#_fc>30) del(_fc,_fc[1])
   if(_cp>0) _cp+=.01 _c8(_fh,_fi,rnd"1")
   if(_cp>2) _cp=0
-  
  end
-
 end
-
-
 function _fj(_bk) 
  _fk=_fl(_bk) 
  if(_fk and _fn(_fk)) _c9(_bk, _fk)
 end
-
-
 function _fl(_bk)
  local _fm
  repeat
-  
   _fm=(rnd"4" <1)and rnd(_i) or rnd(_h)
  until _fm.created_by!=_bk.created_by
  return _fm
 end
-
 function _fn(_bk)
  local x,y=_bk:_b6()
  return _w[x][y]==16
 end
-
-
-
 function _fo(_fp)
  sfx(_fp,3)
 end
-
-
 function _fq(_fr)
  local _7=peek(0x3115)
  if(_7 & 128 > 0 !=_fr) _7=_7^^128
  poke(0x3115, _7)  
 end
-
-
 function _fs(_7)
  local s,v="",abs(_7)
  repeat
@@ -1856,7 +1252,6 @@ function _fs(_7)
  if(_7<0) s="-" ..s
  return s
 end
-
 function _ft(_fu,d,dd) 
  d=d or "," 
  if(dd) _fu=split(_fu,dd) 
@@ -1872,20 +1267,13 @@ function _ft(_fu,d,dd)
   return split(_fu,d)
  end 
 end
-
-
-
 function _fv(_fw,_fx,_cc)
  if(not _fw[_fx]) _fw[_fx]={}
  add(_fw[_fx],_cc)
 end
-
 function _fy(_fw)
- 
  if(_fw) return rnd(_fw)
 end
-
-
 function _fz(sx,sy,x,y,a,w,_f0,_f1)
 	local ca,sa=cos(a),sin(a)	
 	local _f2,_f3,_cy=ca,sa,0xfff8<<w-1
@@ -1907,20 +1295,12 @@ function _fz(sx,sy,x,y,a,w,_f0,_f1)
 		_f5+=_f3
 	end
 end
-
-
 function _f8(x1,y1,x2,y2)
  return sqrt(((x1-x2)>>10)^2+((y1-y2)>>10)^2)<<10
 end
-
-
-
-
 function _f9(_bx, _ga)  
   local _b8=_ga-_bx.r  
-  
   if(_bx.z>1) _bx.r=_ga
-  
   if _b8 > 0.5 then
    _b8 -=1
   elseif _b8 < -0.5 then
@@ -1931,13 +1311,10 @@ function _f9(_bx, _ga)
   elseif _b8 < -0.0087 then
    _bx.r -=0.0087
   else
-  
    _bx.r=_ga
   end  
   yield()
 end
-
-
 function _gb(_ds,_dp)
  local _ge={}
  for xx=-1, 1 do
@@ -1947,24 +1324,18 @@ function _gb(_ds,_dp)
  end
  return _ge
 end
-
 function _gc(nx, ny, _gd, _dp)
  if(_dp or not fget(_di(nx,ny),0) and not fget(_di(nx,ny),7) and not _j[nx.."," ..ny] and nx>=0 and ny>=0 and nx<=63 and ny<=63) add(_gd, {x=nx, y=ny})
 end
-
 function _gf(a, b)
  return abs(a.x - b.x) + abs(a.y - b.y)
 end
-
-
 function _gg(x, y, r, dx, dy, dr, _gh, life, _gi, _gj)
   local p={
     x=x,y=y,r=r,dx=dx,dy=dy,dr=dr,    life=0,_gh=_gh,    _gi=_gi, _gj=_gj,    _gk=y, _gl=life
   }
   add(_m, p, 1)
 end
-
-
 __gfx__
 bbbbbbbbbb171bbbb7bbbb7bbbbbbbbbbbbbbbbb99b9bb99bbbbbbbbbbbbbbbb9b9b99b99bb9999bb99bbbbbbbbb9bbbbb95555555d555155d155dbbbbbbbbbb
 bb11bbbbb17771bb77bbbb77bbbbbbbbbbbb9bbb9b9999b9bbb9bbbbbbbbbbbbb9999b99b99999b9bbbbbb99bb99bbbbbbbd5515555515515555d59bbb9d5d9b

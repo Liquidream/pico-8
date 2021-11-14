@@ -1,91 +1,94 @@
 pico-8 cartridge // http://www.pico-8.com
-version 8
+version 32
 __lua__
+-- undune ii
+-- by paul nicholas
 cartdata("pn_undune2")
 a,b,c,d=dget"0",dget"1",dget"7",dget"8"
 e,f={},
 {
-shr(dget"35",16),
-shr(500,16),
-shr(dget"36",16)
+dget"35">>16,
+500>>16,
+dget"36">>16
 }
 for g=1,dget"5"do
-local i={}
-for j=1,5 do
-i[j]=dget(g*5+j)
+local h={}
+for i=1,5 do
+h[i]=dget(g*5+i)
 end
-add(e,i)
+add(e,h)
 end
-k,l,m,n,o,p,q,r,s,u,v,x,y,ba,bb,bc,bd,be,bf={},{},{},{},{},{},{},{{},{}},t(),0,{0,0},{0,0},0,0,false,0,"",0,{}
-bg=bb
-k.factory_click=function(self)
-bh,bi,bj=1,nil,{}
-bk(6,84,"⬆️",function()
-bl=mid(1,bl-1,#bm.bn)
-bi=bm.bn[bl]
-if(bl<bh) bh-=1
+j,k,l,m,n,o,p,q,r,s,u,v,w,x,y,z,ba,bb,bc={},{},{},{},{},{},{},{{},{}},t(),0,{0,0},{0,0},0,0,false,0,"",0,{}
+bd=y
+j.factory_click=function(self)
+be,bf,bg=1,nil,{}
+bh(6,"⬆️",function()
+bi=mid(1,bi-1,#bj.bk)
+bf=bj.bk[bi]
+if(bi<be) be-=1
 end,10)
-bk(17,84,"⬇️",function()
-local bo=#bm.bn
-if(bl<bo) bl=mid(1,bl+1,bo)
-bi=bm.bn[bl]
-if(bl>bh+2) bh=min(bh+1,bo-2)
+bh(17,"⬇️",function()
+local bl=#bj.bk
+if(bi<bl) bi=mid(1,bi+1,bl)
+bf=bj.bk[bi]
+if(bi>be+2) be=min(be+1,bl-2)
 end,10)
-bk(32,83,"build",function()
-bp=nil
-bq:func_onclick()
+bh(32,"build",function()
+bm=nil
+bn:func_onclick()
 end)
-bk(96,83,"close",function()
-bp=nil
+bh(96,"close",function()
+bm=nil
 end)
-bp=self
+bm=self
 end
-k.draw_refinery=function(self)
+j.draw_refinery=function(self)
+local col2=self.col2
 pal{
-[8]=self.col2,
-[10]=self.col2,
-[11]=self.col2,
+[8]=col2,
+[10]=col2,
+[11]=col2,
 [12]=self.col1,
 [14]=self.col2
 }
-if self.br then
+if self.bo then
 pal(self.col_cycle[self.col_cycle_pos],self.col1)
 else
 pal(11,self.col1)
 self.col_cycle_pos=1
 end
 end
-bs=function(self)
+draw_action=function(self)
 pal(7,8)
-if(self.id==80 and bm.process==2 and not bm.bt) pal(7,11)
+if(self.id==80 and bj.process==2 and not bj.bp) pal(7,11)
 end
 repair_click=function()
-bu(bv,2)
+bq(br,2)
 end
-bw=function(self)
-if bv.id!=35 then
-bx"pick target"
-by=true
+bs=function(self)
+if br.id!=35 then
+bt"pick target"
+bu=true
 else
-local bz,ca=bv:cb()
-local cc=cd(bz,ca)
-if cc>=9 and cc<=15 then
-bv.life=0
-ce(cf[1],bz*8,ca*8,1)
-cg"61"
+local bv,bw=br:bx()
+local by=bz(bv,bw)
+if by>=12 and by<=22 then
+br.life=0
+ca(cb[1],bv*8,bw*8,1)
+cc"61"
 end
-bv=nil
+br=nil
 end
 end
-function bu(self,ch)
-self.ci,self.cj,self.process=0,self.process,ch
-if(self.life>0 and self.cj>0) self.bt=not self.bt
-if(ch==1) self.ck.br=true self.ck.cl=self
+function bq(self,cd)
+self.ce,self.cf,self.process=0,self.process,cd
+if(self.life>0 and self.cf>0) self.bp=not self.bp
+if(cd==1) self.cg.bo=true self.cg.ch=self
 end
-cf=[[id|name|obj_spr|ico_spr|type|w|h|z|trans_col|parent_id|parent2_id|owner|col1|col2|icol1|icol2|ico_w|ico_h|req_id|req_level|req_faction|max|cost|power|arms|hitpoint|speed|range|fire_type|fire_rate|fire_sfx|death_sfx|norotate|altframe|framecount|life|frame|process|spent|fire_cooldown|hit|flash_count|col_cycle_pos|col_cycle_src|storage|col_cycle|description|func_init|func_draw|func_update|func_onclick
+cb=[[id|name|obj_spr|ico_spr|type|w|h|z|trans_col|parent_id|parent2_id|owner|col1|col2|icol1|icol2|ico_w|ico_h|req_id|req_level|req_faction|max|cost|power|arms|hitpoint|speed|range|fire_type|fire_rate|fire_sfx|death_sfx|norotate|altframe|framecount|life|frame|process|spent|fire_cooldown|hit|flash_count|col_cycle_pos|col_cycle_src|storage|col_cycle|description|func_init|func_draw|func_update|func_onclick
 1|cONSTRUCTION yARD|64|170|2|2|2|1||nil|||||||2|2|nil|1|||100|0|0|1600|0|||||53||||0|0|0|0|0|0|1|1||0||aLL STRUCTURES ARE~BUILT BY THE~CONSTRUCTION YARD.||||factory_click
-2|lARGE cONCRETE sLAB|15|162|2|2|2|1||1|||||7|5|2|2|1|4|||20|0|0|0|0|||||||||0|0|0|0|0|0|1|1||0||uSE CONCRETE TO MAKE A~STURDY FOUNDATION FOR~YOUR STRUCTURES.||||
-3|sMALL cONCRETE sLAB|15|162|2|1|1|1||1|||||6|6|2|2|1|1|||5|0|0|0|0|||||||||0|0|0|0|0|0|1|1||0||uSE CONCRETE TO MAKE A~STURDY FOUNDATION FOR~YOUR STRUCTURES.||||
+2|lARGE cONCRETE sLAB|22|162|2|2|2|1||1|||||7|5|2|2|1|4|||20|0|0|0|0|||||||||0|0|0|0|0|0|1|1||0||uSE CONCRETE TO MAKE A~STURDY FOUNDATION FOR~YOUR STRUCTURES.||||
+3|sMALL cONCRETE sLAB|22|162|2|1|1|1||1|||||6|6|2|2|1|1|||5|0|0|0|0|||||||||0|0|0|0|0|0|1|1||0||uSE CONCRETE TO MAKE A~STURDY FOUNDATION FOR~YOUR STRUCTURES.||||
 4|dEFENSIVE wALL|133|164|2|1|1|1||1|||||||2|2|7|4|||50|0|0|200|0|||||53||164||0|0|0|0|0|0|1|1||0||tHE wALL IS USED FOR~PASSIVE DEFENSE.||||
 5|wINDTRAP|66|172|2|2|2|1||1|||||||2|2|1|1|||300|-100|0|800|0|||||53|||10|0|0|0|0|0|0|1|1|11|0|12,12,12,12,13,1,1,1,1,13|tHE WINDTRAP SUPPLIES~POWER TO YOUR BASE.~wITHOUT POWER YOUR~STRUCTURES WILL DECAY.||||
 6|sPICE rEFINERY|68|174|2|3|2|1||1|||||||2|2|5|1|||400|30|0|1800|0|||||53|||15|0|0|0|0|0|0|1|1|11|1000|11,10,8,8|tHE rEFINERY CONVERTS~SPICE INTO CREDITS.||draw_refinery||
@@ -124,121 +127,117 @@ cf=[[id|name|obj_spr|ico_spr|type|w|h|z|trans_col|parent_id|parent2_id|owner|col
 39|rAIDER|51|204|1|1|1|1|11|11|||||12|1|2|2||2|2||150||32|320|0.75|3|1|8|60|54||||0|0|0|0|0|0|1|1||0||tHE oRDOS rAIDER IS~SIMILAR TO THE STANDARD~tRIKE, BUT WITH LESS~ARMOUR IN FAVOUR OF~SPEED.||||
 40|dEVIATOR|54|202|1|1|1|1|11|12|||||11|3|2|2|18|7|2||750||50|480|0.3|7|2|500|59|54||||0|0|0|0|0|0|1|1||0||tHE oRDOS dEVIATOR IS A~STANDARD mISSILE tANK,~WHICH FIRES UNIQUE~NERVE GAS MISSILES THAT~MAY TEMPORARILY CHANGE~ENEMY LOYALTY.||||
 41|sANDWORM|88||9|1|1|1|11||||||||2|2||3|||0||1200|4000|0.35|0|30|300|50|||||0|0|0|0|0|0|1|1||0||tHE sAND wORMS ARE~INDIGEONOUS TO dUNE.~aTTRACTED BY VIBRATIONS~ALMOST IMPOSSIBLE TO~DESTROY, WILL CONSUME~ANYTHING THAT MOVES.||||
-42|sPICE bLOOM|19||1|1|1|1|11|||2|||||1|1|||||||0|4|0||||||1|||0|0|0|0|0|0|1|1||0||||||
-80|rEPAIR|17|17|5|1|1|1|11||||||||1|1|||||||0|0||||||||||0|0|0|0|0|0|1|1||0||||draw_action||action_click
+42|sPICE bLOOM|32||1|1|1|1|11|||2|||||1|1|||||||0|4|0|||||53|1|||0|0|0|0|0|0|1|1||0||||||
+80|rEPAIR|3|3|5|1|1|1|11||||||||1|1|||||||0|0||||||||||0|0|0|0|0|0|1|1||0||||draw_action||action_click
 81|lAUNCH|1|1|5|1|1|1|11||||||||1|1|||||||0|0||||||||||0|0|0|0|0|0|1|1||0||||draw_action||action_click]]
 function _init()
-poke(0x5f2d,1)
+poke(0x5f2d,0x5)
 menuitem(1,"exit to title",function()
-load("pico-dune-main")
+load"pico-dune-main"
 end)
-local cm=cn(cf,"|","\n")
-cf={}
+local ci=cj(cb,"|","\n")
+cb={}
 for g=2,45 do
-local co={}
-for j=1,51 do
-local cc=cm[g][j]
-if(j!=2 and j<46) cc=tonum(cc)
-if j==47 then
-cp,cc=cn(cc,"~"),""
-for line in all(cp) do
-cc=cc.."\n"..line
+local ck={}
+for i=1,51 do
+local by=ci[g][i]
+if(i!=2 and i<46) by=tonum(by)
+if i==47 then
+cl,by=cj(by,"~"),""
+for line in all(cl) do
+by..="\n"..line
 end
 end
-co[cm[1][j]]=cc
+ck[ci[1][i]]=by
 end
-cf[tonum(cm[g][1])]=co
+cb[tonum(ci[g][1])]=ck
 end
 for g=-2,66 do
-bf[g]={}
-for cq=-2,66 do
-bf[g][cq]=0
+bc[g]={}
+for cm=-2,66 do
+bc[g][cm]=0
 end
 end
 cursor={
 w=8,
 h=8,
-cr=function(self)
+cn=function(self)
 return{
-cs=self.cs+(not ct and cu or 0)+2,
-cv=self.cv+(not ct and cw or 0)+1,
+co=self.co+(not cp and cq or 0)+2,
+cr=self.cr+(not cp and cs or 0)+1,
 w=1,
 h=1
 }
 end,
-cx=function(self)
-spr((bm and bm.type==1 and bm.owner==1 or by) and 1,
-self.cs,self.cv)
+ct=function(self)
+spr((bj and bj.type==1 and bj.owner==1 or bu) and 1,
+self.co,self.cr)
 end
 }
-for ca=0,31 do
-for bz=0,127 do
-local cy=nil
-local cz=mget(bz,ca)
-if(cz==1) cu,cw,cy=e[1][4]-56,e[1][5]-56,cf[1]
-for da in all(cf) do
-if(da.obj_spr!=nil and da.obj_spr==cz) cy=da break
+for bw=0,31 do
+for bv=0,127 do
+local cu=nil
+local cv=mget(bv,bw)
+if(cv==1) cq,cs,cu=e[1][4]-56,e[1][5]-56,cb[1]
+for cw in all(cb) do
+if(cw.obj_spr!=nil and cw.obj_spr==cv) cu=cw break
 end
-if cy!=nil and(cz==1 or cz>=18) then
-local db,dc=bz,ca
-if(db>63) dc+=32 db-=64
-mset(bz,ca,cd(bz,ca+1))
-ce(cy,db*8,dc*8)
+if cu!=nil and(cv==1 or cv>=32) then
+local cx,cy=bv,bw
+if(cx>63) cy+=32 cx-=64
+mset(bv,bw,bz(bv,bw+1))
+ca(cu,cx*8,cy*8)
 end
 end
 end
-dd=cocreate(function()
+cz=cocreate(function()
 while true do
-if u%30==0 then
-de(false)
-n={}
-for df,dg in pairs(m) do
-n[dg:dh()]=df
+if s%30==0 then
+da"false"
+m={}
+for db in all(l) do
+m[db:dc()]=db
 end
-di={}
-if bb then
-for g=0,124,4 do
-for cq=0,124,4 do
-local bz,ca=g/2,cq/2
-local dj=cd(bz,ca)*8
-local dk=sget(dj%128+4,dj/16)
-if(bf[g/2][cq/2]==16) di[(g/2/2)..","..(cq/2/2)]=dk!=11 and dk or 15
+dd={}
+if y then
+for g=0,62,2 do
+for cm=0,62,2 do
+local de=bz(g,cm)*8
+if(bc[g][cm]==16) dd[(g/2)..","..(cm/2)]=de>0 and sget(de%128+3,de\8\16*8+3) or 15
 end
 yield()
 end
 end
-dl,dm,dn,dp=0,0,false,{0,0}
-r={{},{}}
-for dq in all(l) do
-if dq.owner==1 or(bb and dr(dq)) then
-di[flr(dq.cs/2/8)..","..flr(dq.cv/2/8)]=dq.col1
+df,dg,dh,di,q=0,0,false,{0,0},{{},{}}
+for dj in all(k) do
+if dj.owner==1 or(y and dk(dj)) then
+dd[(dj.co\2\8)..","..dj.cr\2\8]=dj.col1
 end
-if dq.owner==1 then
-dl-=dq.power
-if(dq.id==7) dn=true
-dm+=dq.storage
+if dj.owner==1 then
+df-=dj.power
+if(dj.id==7) dh=true
+dg+=dj.storage
 end
-dp[dq.owner]+=1
-r[dq.ds][dq.id]=dq
+di[dj.owner]+=1
+dl(q[dj.dm],dj.id,dj)
 end
-for dg in all(m) do
-if bb and(dg.owner==1 or dr(dg) and dg.z==1) then
-di[flr(dg.cs/2/8)..","..flr(dg.cv/2/8)]=dg.col1
+for db in all(l) do
+if y and(db.owner==1 or dk(db) and db.z==1) then
+dd[(db.co\2\8)..","..db.cr\2\8]=db.col1
 end
-if(dg.ds>0) r[dg.ds][dg.id]=dg
+if(db.dm>0) dl(q[db.dm],db.id,db)
 end
-bb,dt,o=(dn and dl>0),2,di
-if(f[3]>0 and f[1]>f[3]) du=1
-if(dp[2]==0 and a>1) du=2
-if(dp[1]==0) du=3
-if du then
-local dv=40
-for dw in all{du,t()-s,dx,dy(f[2]),x[1],x[2],v[1],v[2]} do
-dset(dv,dw)
-dv+=1
+y,dn,n=(dh and df>0),2,dd
+if(f[3]>0 and f[1]>f[3]) dp=1
+if(di[2]==0 and a>1) dp=2
+if(di[1]==0) dp=3
+if dp then
+local dq=40
+for dr in all{dp,t()-r,ds,dt(f[2]),v[1],v[2],u[1],u[2]} do
+dset(dq,dr)
+dq+=1
 end
 rectfill(30,54,104,70,0)
-?"mission "..(du<3 and"complete"or"failed"),36,60,c
 flip()
 load("pico-dune-main")
 end
@@ -247,210 +246,210 @@ yield()
 end
 end)
 music"7"
-dz=0
+du=0
 end
-function ce(cy,cs,cv,owner,ea)
-local eb=ec(cy,cs,cv,cy.type,nil,k[cy.func_init],k[cy.func_draw],k[cy.func_update],nil)
-eb.ed,eb.life=ec(cy,109,0,3,eb,nil,nil,k[cy.func_onclick]),ee and cy.hitpoint/2 or cy.hitpoint
-eb.owner=eb.owner or owner
-if not ea then
-if not eb.owner then
-local ef=9999
+function ca(cu,co,cr,owner,dv)
+local dw=dx(cu,co,cr,cu.type,nil,j[cu.func_init],j[cu.func_draw],j[cu.func_update],nil)
+dw.dy,dw.life=dx(cu,109,0,3,dw,nil,nil,j[cu.func_onclick]),dz and cu.hitpoint/2 or cu.hitpoint
+dw.owner=dw.owner or owner
+if not dv then
+if not dw.owner then
+local ea=9999
 for g=1,#e do
-local eg=eh(cs,cv,e[g][4],e[g][5])
-if(eg<ef) eb.ei,eb.owner,ef=g,min(g,2),eg
+local eb=ec(co,cr,e[g][4],e[g][5])
+if(eb<ea) dw.ed,dw.owner,ea=g,min(g,2),eb
 end
 else
-eb.ei,i=1,e[1]
+dw.ed,h=1,e[1]
 end
 else
-eb.ei=ea.ei
+dw.ed=dv.ed
 end
-eb.ds,eb.ej,i=owner or eb.owner,{},e[eb.ei or ea.ei]
-ek=i[1]
-eb.el,eb.col1,eb.col2=ek,i[2],i[3]
-for da in all(cf) do
-local em=da.req_faction
-if(da.parent_id!=nil and(da.parent_id==eb.id or da.parent2_id==eb.id))
-and(not em
-or(em>0 and em==ek)
-or(em<0 and-ek!=em))
+dw.dm,dw.ee,h=owner or dw.owner,{},e[dw.ed or dv.ed]
+ef=h[1]
+dw.eg,dw.col1,dw.col2=ef,h[2],h[3]
+for cw in all(cb) do
+local eh=cw.req_faction
+if(cw.parent_id!=nil and(cw.parent_id==dw.id or cw.parent2_id==dw.id))
+and(not eh
+or(eh>0 and eh==ef)
+or(eh<0 and-ef!=eh))
 then
-add(eb.ej,
-ec(da,109,0,4,eb,nil,nil,function(self)
-if bp then
-bm=self
+add(dw.ee,
+dx(cw,109,0,4,dw,nil,nil,function(self)
+if bm then
+bj=self
 else
-bu(self,1)
+bq(self,1)
 end
 end)
 )
 end
 end
-if eb.owner>1 then
-eb.ed.func_onclick=nil
-if(eb.id==19) en=eb
+if dw.owner>1 then
+dw.dy.func_onclick=nil
 end
-if cy.col1 then
-eb.col1,eb.col2=cy.col1,cy.col2
+if cu.col1 then
+dw.col1,dw.col2=cu.col1,cu.col2
 end
-if(eb.z>1) eb.owner=0
-local eo,ep=flr(cs/8),flr(cv/8)
-if cy.type==2 then
-local eq=cy.obj_spr==15
-for er=0,cy.w-1 do
-for es=0,cy.h-1 do
-et(eo+er,ep+es,eq and 15 or eb.owner==1 and 149 or 27)
+if(dw.z>1) dw.owner=0
+local ei,ej=co\8,cr\8
+if cu.type==2 then
+local ek=cu.obj_spr==22
+for el=0,cu.w-1 do
+for em=0,cu.h-1 do
+en(ei+el,ej+em,ek and 22 or dw.owner==1 and 81 or 103)
 end
 end
-if(not eq) add(l,eb)
-if eb.id==6 and not eb.ck then
-local eu,ev=ew(eb)
-ce(cf[32],eu,ev,eb.owner,eb)
+if(not ek) add(k,dw)
+if dw.id==6 and not dw.cg then
+eo(dw)
 end
 else
-eb.ex=eb.norotate!=1 and flr(rnd"8")*.125
-if eb.arms>0 then
-eb.ey=function(self)
-self.ez,self.fa,self.fb,self.fc,self.fd=4,self.cs+4,self.cv+4,self.fe.cs+self.fe.w/2,self.fe.cv+self.fe.h/2
-local ff,fg=self.fc-self.fa,self.fd-self.fb
-local fh=sqrt(ff*ff+fg*fg)
-self.fi,self.fj=(ff/fh)*2,(fg/fh)*2
-cg(self.fire_sfx)
-fk(self)
+dw.ep=dw.norotate!=1 and flr(rnd"8")*.125
+if dw.arms>0 then
+dw.eq=function(self)
+self.er,self.es,self.et,self.eu,self.ev=4,self.co+4,self.cr+4,self.ew.co+self.ew.w/2,self.ew.cr+self.ew.h/2
+local ex,ey=self.eu-self.es,self.ev-self.et
+local ez=sqrt(ex*ex+ey*ey)
+self.fa,self.fb=(ex/ez)*2,(ey/ez)*2
+cc(self.fire_sfx)
+fc(self)
 end
-if(eb.speed==0) et(eo,ep,149)
+if(dw.speed==0) en(ei,ej,21)
 else
-if(eb.id==32) eb.fl=0 ea=nil
-eb.fm=ea
+if(dw.id==32) dw.fd=0
+dw.fe=dv
 end
-add(m,eb)
-fn(eb)
+add(l,dw)
+ff(dw)
 end
-fk(eb)
-return eb
+fc(dw)
+return dw
 end
-function ec(fo,cs,cv,fp,ck,func_init,func_draw,func_onclick)
-local fq={
-fr=fo,
-id=fo.id,
-hitpoint=fo.hitpoint,
-cs=cs,
-cv=cv,
-z=fo.z,
-fs=cs/8,
-ft=cv/8,
-type=fp,
-ck=ck,
+function dx(fg,co,cr,fh,cg,func_init,func_draw,func_onclick)
+local fi={
+fj=fg,
+id=fg.id,
+hitpoint=fg.hitpoint,
+co=co,
+cr=cr,
+z=fg.z,
+fk=co/8,
+fl=cr/8,
+type=fh,
+cg=cg,
 func_onclick=func_onclick,
-w=fo.w*8,
-h=fo.h*8,
-fu=fo.obj_spr,
-fv=fo.w,
-fw=fo.h,
-col_cycle=cn(fo.col_cycle),
-cr=function(self)
+w=fg.w*8,
+h=fg.h*8,
+fm=fg.obj_spr,
+fn=fg.w,
+fo=fg.h,
+col_cycle=cj(fg.col_cycle),
+cn=function(self)
 return{
-cs=self.cs,
-cv=self.cv,
+co=self.co,
+cr=self.cr,
 w=(self.type>2 and self.type<5 and 16 or self.w)-1,
 h=(self.type>2 and self.type<5 and 16 or self.h)-1
 }
 end,
-cx=function(self)
-if self.type>2
-or(self.cs+self.w>=cu
-and self.cs<=cu+127
-and self.cv+self.h>=cw
-and self.cv<cw+127+self.z)
+ct=function(self)
+local co=self.co
+local cr=self.cr
+local fp=self.type
+if fp>2
+or(co+self.w>=cq
+and co<=cq+127
+and cr+self.h>=cs
+and cr<cs+127+self.z)
 then
 pal()
 palt(0,false)
-if(self.trans_col and self.type~=3) palt(self.trans_col,true)
-if(self.el and self.id!=18) pal(12,self.col1) pal(14,self.col2)
-if self.type>2 and self.type<5 then
-local fx=self.type==4 and self or self.ck
-rectfill(self.cs-1,self.cv-1,self.cs+16,self.cv+19,0)
-local fy=fx.hitpoint
-local cc=self.process==1 and 15*(fx.life/100) or 15*(fx.life/fy)
-if(fx.life>0 and not bp) rectfill(self.cs,self.cv+17,self.cs+cc,self.cv+18,self.process==1 and 12 or fx.life<fy*.33 and 8 or fx.life<fy*.66 and 10 or 11)
-pal(11,fx.icol1) pal(3,fx.icol2)
+if(self.trans_col and fp<=2 or fp>=5) palt(self.trans_col,true)
+if(self.eg and self.id!=18) pal(12,self.col1) pal(14,self.col2)
+if fp>2 and fp<5 then
+local fq=fp==4 and self or self.cg
+rectfill(co-1,cr-1,co+16,cr+19,0)
+local fr=fq.hitpoint
+local by=self.process==1 and 15*(fq.life/100) or 15*(fq.life/fr)
+if(fq.life>0 and not bm) rectfill(co,cr+17,co+by,cr+18,self.process==1 and 12 or fq.life<fr*.33 and 8 or fq.life<fr*.66 and 10 or 11)
+pal(11,fq.icol1) pal(3,fq.icol2)
 end
 if self.col_cycle then
 pal(self.col_cycle_src,self.col_cycle[self.col_cycle_pos])
 end
 if(func_draw) func_draw(self)
-if self.ex then
-if not self.fz or self.fz>.025 then
-for g=1,2 do
-if(g==2 or self.speed>0) ga(self.obj_spr%16*8,flr(self.obj_spr/16)*8,self.cs,self.cv-(g==2 and self.z or 0),.25-self.ex,1,self.trans_col,g==1 and 5 or flr(self.flash_count)%2==0 and 7 or nil)
-end
+if self.ep then
+if not self.fs or self.fs>.025 then
+ft(self.obj_spr%16*8,self.obj_spr\16*8,co,cr,.25-self.ep,1,self.trans_col,self.z,flr(self.flash_count)%2==0 and 7 or nil)
 end
 else
-if self.type>2 then
-spr(self.ico_spr,self.cs,self.cv,self.ico_w,self.ico_h)
+if fp>2 then
+spr(self.ico_spr,co,cr,self.ico_w,self.ico_h)
 else
-gb(self)
+fu(self)
 end
 end
-if self.fa then
+if self.es then
 if self.fire_type==1 then
-pset(self.fa,self.fb,rnd"2"<1 and 8 or 9)
+pset(self.es,self.et,rnd"2"<1 and 8 or 9)
 else
-local gc=self.fire_type==2
-gd(self.fa,self.fb,0,
+local fv=self.fire_type==2
+fw(self.es,self.et,0,
 0,0,
-gc and .15 or 2,
+fv and .15 or 2,
 -.01,
-gc and 20 or 2.5,
-self.id==40 and{11} or gc and cn("7,7,10,9,8,2,13,6,7") or{15},
+fv and 20 or 2.5,
+self.id==40 and{11} or fv and cj("7,7,10,9,8,2,13,6,7") or{15},
 rnd"2"<1 and 0xa5a5.8 or 0)
 end
 end
-if(self.life<self.hitpoint*.33 and not self.altframe and rnd"10"<1 and self.type<=2) gd(self.cs+3.5,self.cv+3.5,1,.1,-.02,.05,-.002,80,cn("10,8,9,6,5"),rnd"2"<1 and 0xa5a5.8 or 0)
+if(self.life<self.hitpoint*.33 and not self.altframe and rnd"10"<1 and fp<=2) fw(self.co+3.5,cr+3.5,1,.1,-.02,.05,-.002,80,cj("10,8,9,6,5"),rnd"2"<1 and 0xa5a5.8 or 0)
 self.hit=0
 end
 end,
-ge=function(self)
+fx=function(self)
 local life=self.life
+local fp=self.type
 self.flash_count=max(self.flash_count-.4,1)
-if self.hit>0 and self.ds>0 then
-de(true)
-if(dt==0 or stat(24)>5) dt=1 music"0"
-if(self.arms>0 and self.ez==0) gf(self,self.gg)
-if(self.obj_spr<=49 and life<100) self.fv,self.fw=0.5,0.5
-if(life<50 and self.ez!=7) gh(self,r[self.ds][14] or self.fm)
+if self.hit>0 and self.dm>0 then
+da"true"
+if(dn==0 or stat(24)>5) dn=1 music"0"
+if(self.arms>0 and self.er==0) fy(self,self.fz)
+if(self.obj_spr<=49 and life<100) self.fn,self.fo=0.5,0.5
+if(life<50 and self.er!=7) ga(self,gb(q[self.dm][14]) or self.fe)
 end
-if(self.type<=2 and life<=0 and not self.fz) self.ez=5 self.gi=nil self.fz=(self.type==2 and 1 or .5) cg(self.death_sfx) dz+=((self.type==2 or self.id==38) and 0.25 or 0)
-if self.fz then
-self.fz-=.025
-if self.fz<=0 then
-if self.type==2 then
-for er=0,self.fv-1 do
-for es=0,self.fw-1 do
-et(self.cs/8+er,self.cv/8+es,14)
+if(fp<=2 and life<=0 and not self.fs) self.er=5 self.gc=nil self.fs=(fp==2 and 1 or .5) cc(self.death_sfx) du+=((fp==2 or self.id==38) and 0.25 or 0)
+if self.fs then
+self.fs-=.025
+if self.fs<=0 then
+if fp==2 then
+for el=0,self.fn-1 do
+for em=0,self.fo-1 do
+en(self.co/8+el,self.cr/8+em,21)
 end
 end
-del(l,self)
-v[self.gg.ds]+=1
+del(k,self)
+u[self.fz.dm]+=1
 else
-local gj,gk=self:cb()
-if(cd(gj,gk)<9) et(gj,gk,20)
-if(self.id<=17) et(gj,gk,14)
-if(self.fm) self.fm.br=false
-del(m,self)
+local gd,ge=self:bx()
+if(bz(gd,ge)<9) en(gd,ge,33)
+if(self.id<=16) en(gd,ge,21)
+if(self.fe) self.fe.bo=false
+gf(self)
 if self.id==42 then
-gl(self,gj,gk,
-function(dg,cs,cv)
-if(cd(cs,cv)==0) et(cs,cv,8)
+gg(self,gd,ge,
+function(db,co,cr)
+if(bz(co,cr)==0) en(co,cr,10)
 end,
 4,true)
 end
-if(self.gg) x[self.gg.ds]+=1
+if(self.fz) v[self.fz.dm]+=1
 end
-if(bm==self) bm=nil
+if(bj==self) bj=nil
 else
-if(rnd(self.type==2 and 2 or 8)<1) gm(self.cs+rnd(self.w),self.cv+rnd(self.h))
+if(rnd(fp==2 and 2 or 8)<1) gh(self.co+rnd(self.w),self.cr+rnd(self.h))
 end
 end
 if self.framecount!=nil then
@@ -458,8 +457,8 @@ self.frame+=1
 if self.frame>self.framecount then
 self.frame=0
 if self.altframe
-and self.ez==2 then
-self.obj_spr=self.fu+(self.altframe-self.obj_spr)
+and self.er==2 then
+self.obj_spr=self.fm+(self.altframe-self.obj_spr)
 end
 if self.col_cycle then
 self.col_cycle_pos+=1
@@ -467,57 +466,57 @@ if(self.col_cycle_pos>#self.col_cycle) self.col_cycle_pos=1
 end
 end
 end
-if self.fa then
-self.fa+=self.fi
-self.fb+=self.fj
-if eh(
-self.fa,self.fb,
-self.fc,self.fd)<2
+if self.es then
+self.es+=self.fa
+self.et+=self.fb
+if ec(
+self.es,self.et,
+self.eu,self.ev)<2
 then
-gm(self.fa,self.fb,self.fire_type)
-local fe=self.fe
-if eh(
-self.fa,self.fb,
-fe.cs+fe.w/2,
-fe.cv+fe.h/2)<4
+gh(self.es,self.et,self.fire_type)
+local ew=self.ew
+if ec(
+self.es,self.et,
+ew.co+ew.w/2,
+ew.cr+ew.h/2)<4
 then
-fe.life-=self.arms
-fe.hit,fe.gg=self.fire_type,self
-if self.id==40 and fe.speed!=nil then
-fe.owner,fe.el,fe.col1,fe.col2=self.owner,self.el,self.col1,self.col2
-fn(self)
-elseif fe.gn then
-fe.el,fe.col1,fe.col2,fe.gn=fe.gn,fe.go,fe.gp,nil
-fn(fe)
+ew.life-=self.arms
+ew.hit,ew.fz=self.fire_type,self
+if self.id==40 and ew.speed!=nil then
+ew.owner,ew.eg,ew.col1,ew.col2=self.owner,self.eg,self.col1,self.col2
+ff(self)
+elseif ew.gi then
+ew.eg,ew.col1,ew.col2,ew.gi=ew.gi,ew.gj,ew.gk,nil
+ff(ew)
 end
 end
-self.fa=nil
+self.es=nil
 end
 end
 if self.process>0
-and not self.bt
-and not self.gq then
+and not self.bp
+and not self.gl then
 if self.process==1 and self.spent>self.cost then
-self.gq=true
-if(self.ck.owner==1) cg"56"bx("cONSTRUCTION cOMPLETE")
-if self.fr.type==1
+self.gl=true
+if(self.cg.owner==1) cc"56"bt("cONSTRUCTION cOMPLETE")
+if self.fj.type==1
 and self.parent_id!=1 then
-local eu,ev=ew(self.ck)
-ce(self.fr,eu,ev,self.ck.owner,self.ck)
-gr(self)
+local gm,gn=go(self.cg)
+ca(self.fj,gm,gn,self.cg.owner,self.cg)
+gp(self)
 end
 elseif self.process==2 and life>self.hitpoint then
 self.process=0
-if self.type==1 and self.speed>0 then
-self.gs.col_cycle={0}
-self.ez=0
-self.cs,self.cv=ew(self)
+if fp==1 and self.speed>0 then
+self.gq.col_cycle={0}
+self.er=0
+self.co,self.cr=go(self)
 end
 else
-if self.ci>(self.process==1 and 3 or 100) then
-if(gt(-1,self.process==1 and self.ck or self)) self.ci=0 self.spent+=1
+if self.ce>(self.process==1 and 3 or 100) then
+if(gr(-1,self.process==1 and self.cg or self)) self.ce=0 self.spent+=1
 else
-self.ci+=1
+self.ce+=1
 self.life=(self.process==1 and(self.spent/self.cost)*100 or life+.5)
 end
 end
@@ -525,210 +524,223 @@ end
 if self.fire_cooldown>0 then
 self.fire_cooldown-=.1
 end
-if(self.id==5) self.name="wINDTRAP (pOWER:"..dl..")"
+if(self.id==5) self.name="wINDTRAP (pOWER:"..df..")"
 end,
-gu=function(self,cs,cv)
-self.cs,self.cv=cs,cv
+gs=function(self,co,cr)
+self.co,self.cr=co,cr
 end,
-dh=function(self)
-local cs,cv=self:cb()
-return cs..","..cv
+dc=function(self)
+local co,cr=self:bx()
+return co..","..cr
 end,
-cb=function(self)
-return flr(self.cs/8),flr(self.cv/8)
+bx=function(self)
+return self.co\8,self.cr\8
 end
 }
-for df,gv in pairs(fo) do
-if not fq[df] and gv!=""then
-fq[df]=gv
+for gt,gu in pairs(fg) do
+if not fi[gt] and gu!=""then
+fi[gt]=gu
 end
 end
-if(func_init) func_init(fq)
-return fq
+if(func_init) func_init(fi)
+return fi
 end
-function gt(gw,fq)
-if(dy(f[fq.owner])+gw<0) return false
-f[fq.owner]+=sgn(gw)*shr(abs(gw),16)
-if(fq.owner==1) sfx"63"
+function gr(gv,fi)
+if(dt(f[fi.owner])+gv<0) return false
+f[fi.owner]+=sgn(gv)*(abs(gv)>>16)
+if(fi.owner==1) sfx"63"
 return true
 end
-function gm(cs,cv,gx)
-gd(cs,cv,2,
-0,0,.1,0,gx==1 and 5 or 30,cn("5,7,10,8,9,2"),rnd"2"<1 and 0xa5a5.8 or 0)
+function gh(co,cr,gw)
+fw(co,cr,2,
+0,0,.1,0,gw==1 and 5 or 30,cj("5,7,10,8,9,2"),rnd"2"<1 and 0xa5a5.8 or 0)
 end
-function fk(gy)
-if(gy.owner!=1 and gy.ez!=4) return
-local gz=gy.type==2 and 3 or 2
-for er=-gz,gz do
-for es=-gz,gz do
-local ha,hb=flr(gy.cs/8)+er,flr(gy.cv/8)+es
-bf[ha][hb]=16
-hc(ha,hb)
-for fg=-1,1 do
-for ff=-1,1 do
-hc(ha+ff,hb+fg)
+function fc(gx)
+if(gx.owner<=0 or gx.id==42) return
+local gy=gx.type==2 and 3 or 2
+for el=-gy,gy do
+for em=-gy,gy do
+local gz,ha=gx.co\8+el,gx.cr\8+em
+bc[gz][ha]=16
+hb(gz,ha)
+for ey=-1,1 do
+for ex=-1,1 do
+hb(gz+ex,ha+ey)
 end
 end
 end
 end
 end
 function _update60()
-hd,he,hf=stat"32",stat"33",stat"34"
-hg,hh,hi=(hf==1 and hj!=hf) or btnp"4",(hf>0) or btn"4",(hf==2 and hj!=hf) or btnp"5"
-for df=0,1 do
-if(btn(df)) y+=df*2-1
-if(btn(df+2)) ba+=df*2-1
+hc,hd,he=stat"32",stat"33",stat"34"
+hf,hg,hh=(he==1 and hi!=he) or btnp"4",(he>0) or btn"4",(he==2 and hi!=he) or btnp"5"
+for gt=0,1 do
+if(btn(gt)) w+=gt*2-1
+if(btn(gt+2)) x+=gt*2-1
 end
-hk,hl=mid(0,hd+y,127),mid(0,he+ba,127)
-cursor.cs,cursor.cv=hk,hl
-if not bp then
-if(hk<4) cu-=2
-if(hk>123) cu+=2
-if(hl<4) cw-=2
-if(hl>123) cw+=2
-cu,cw=mid(cu,368),mid(-8,cw,368)
-for dg in all(m) do
-if dg then
-if(dg.gi and costatus(dg.gi)!='dead') assert(coresume(dg.gi,dg))
-if hm
-and fget(cd(dg:cb()),2)
-and eh(hn,ho,dg.cs,dg.cv)<1
-and dg.z==1
+hj,hk=mid(0,hc+w,127),mid(0,hd+x,127)
+cursor.co,cursor.cr=hj,hk
+if not bm then
+if(hj<4) cq-=2
+if(hj>123) cq+=2
+if(hk<4) cs-=2
+if(hk>123) cs+=2
+cq,cs=mid(cq,368),mid(-8,cs,368)
+for db in all(l) do
+if db then
+if(db.gc) hl,hm=coresume(db.gc,db)
+if(not hl) db.gc=nil
+if hn
+and fget(bz(db:bx()),2)
+and ec(ho,hp,db.co,db.cr)<1
+and db.z==1
 then
-del(m,dg)
-hp=.01
-cg"50"
+gf(db)
+hq=.01
+cc"50"
 end
 end
 end
-for df,hq in pairs(q) do
-hq.fg+=hq.hr
-hq.cs+=hq.ff
-hq.cv+=hq.fg
-hq.ex+=hq.hs
-hq.life+=1
-if(hq.life>=hq.ht) del(q,hq)
-end
-hu()
-assert(coresume(dd))
+for hr in all(p) do
+hr.ey+=hr.hs
+hr.co+=hr.ex
+hr.cr+=hr.ey
+hr.ep+=hr.ht
+hr.life+=1
+if(hr.life>=hr.hu) del(p,hr)
 end
 hv()
-hj,bv,bq=hf,bm,bi
-u+=1
+assert(coresume(cz))
+end
+hw()
+hi,br,bn=he,bj,bf
+s+=1
+end
+function gf(db)
+del(l,db)
+if db.id==32 and#q[db.dm][32]<=1 then
+hx=gb(q[db.dm][6])
+if(hx) eo(hx)
+end
+end
+function eo(hy)
+local gm,gn=go(hy)
+local hz=ca(cb[32],gm,gn,hy.owner,hy)
 end
 function _draw()
-hw()
-hx()
+ia()
+ib()
 end
-function hc(cs,cv)
-if(cs<0 or cs>#bf or cv<0 or cv>#bf) return
-local hy=0
-if bf[cs][cv]!=0 then
-if(bf[cs][cv-1]>0) hy+=1
-if(bf[cs-1][cv]>0) hy+=2
-if(bf[cs+1][cv]>0) hy+=4
-if(bf[cs][cv+1]>0) hy+=8
-bf[cs][cv]=1+hy
+function hb(co,cr)
+if(co<0 or co>#bc or cr<0 or cr>#bc) return
+local ic=0
+if bc[co][cr]!=0 then
+if(bc[co][cr-1]>0) ic+=1
+if(bc[co-1][cr]>0) ic+=2
+if(bc[co+1][cr]>0) ic+=4
+if(bc[co][cr+1]>0) ic+=8
+bc[co][cr]=1+ic
 end
 end
-function hz()
+function id(co,cr)
+local by=bz(co,cr)
+return by>=4 and by<=10
 end
-function ia(cs,cv)
-local cc=cd(cs,cv)
-return cc>=2 and cc<=8
-end
-function fn(dg,ib)
-dg.ez,dg.ic=ib or 0,nil
-dg.gi=cocreate(function(self)
+function ff(db,ie)
+db.er,db.ig=ie or 0,nil
+db.gc=cocreate(function(self)
 while true do
 if self.z>1 then
-ie(self,
-mid(flr(self.fs+rnd"32")-16,64),
-mid(flr(self.ft+rnd"32")-16,64))
+ih(self,
+mid(flr(self.fk+rnd"32")-16,64),
+mid(flr(self.fl+rnd"32")-16,64))
 end
-if rnd"250"<1 and self.arms>0 and self.ez!=8 then
-local gj,gk=self:cb()
-gl(self,gj,gk,
-function(dg,cs,cv)
-local fe=m[n[cs..","..cv]]
-if(fe!=ig and fe.ds!=dg.ds and bf[cs][cv]==16 and fe.z==1) gf(dg,fe) return true
+if rnd(250)<1 and self.arms>0 and self.er!=8 then
+local gd,ge=self:bx()
+gg(self,gd,ge,
+function(db,co,cr)
+local ew=m[co..","..cr]
+if ew!=ii and ew.dm!=db.dm and bc[co][cr]==16 and ew.z==1 then
+fy(db,ew)
+return true
+end
 end,
-5)
+max(4,self.range))
 elseif self.id==34 then
-ih(self)
+ij(self)
 end
-local fm=self.gs or self.fm
+local fe=self.gq or self.fe
 if self.id==32 then
-if self.ez==0 or self.ez==9 then
-if self.fl<=1500
-and self.ez!=7 and self.ez!=9 then
-self.gs=nil
-local ii,ij
-local ik,il=self:cb()
-if ia(ik,il) and not self.im then
-ii,ij=ik,il
+if self.er==0 or self.er==9 then
+if self.fd<=1500
+and self.er!=7 and self.er!=9 then
+self.gq=nil
+local ik,il
+local im,fp=self:bx()
+if id(im,fp) and not self.io then
+ik,il=im,fp
 else
-gl(self,ik,il,
-function(dg,cs,cv)
-if ia(cs,cv) and rnd"10"<1 then
-ii,ij=cs,cv
+gg(self,im,fp,
+function(db,co,cr)
+if id(co,cr) then
+ik,il=co,cr
 return true
 end
 end,
 10)
 end
-if ii and ij then
-ie(dg,ii,ij)
-if(ia(dg:cb())) dg.ez=6
+if ik and il then
+ih(db,ik,il)
+if(id(db:bx())) db.er=6
 end
 end
-elseif self.fl>=1500
-and self.ez!=7 then
-self.ii,self.ij=self:cb()
-gh(self,fm or r[dg.ds][6])
-elseif self.ez==6 then
-self.im=false
-io(dg.cs,dg.cv,dg.ex+.75+rnd".2"-.1)
-local ip=dg:dh()
-self.fl+=.5
-p[ip],self.name=(p[ip] or 1000)-1,"hARVESTER ("..flr(self.fl/1500*100).."% fULL)"
-if p[ip]<=0 then
-local eo,ep=self:cb()
-for es=-1,1 do
-for er=-1,1 do
-cc=cd(eo+er,ep+es)
-et(eo+er,ep+es,
-(er==0 and es==0) and 0 or((cc>1 and cc<8) and 8 or cc)
+elseif self.fd>=1500
+and self.er!=7 then
+self.ik,self.il=self:bx()
+ga(self,fe or gb(q[db.dm][6]))
+elseif self.er==6 then
+self.io=false
+ip(db.co,db.cr,db.ep+.75+rnd".2"-.1)
+local iq=db:dc()
+self.fd+=.5
+o[iq],self.name=(o[iq] or 1000)-1,"hARVESTER ("..flr(self.fd/1500*100).."% fULL)"
+if o[iq]<=0 then
+local ei,ej=self:bx()
+for em=-1,1 do
+for el=-1,1 do
+by=bz(ei+el,ej+em)
+en(ei+el,ej+em,
+(el==0 and em==0) and 0 or((by>1 and by<8) and 10 or by)
 )
 end
 end
-self.ez=0
+self.er=0
 end
-if(self.fl%300==0) self.im=true self.ez=0
+if(self.fd%300==0) self.io=true self.er=0
 end
 end
 if self.id>26 then
-if self.ez==9 then
-if fm.life>0 and not fm.iq and self.life>0 then
-fm.br,self.ez,self.ex,self.cs,self.cv=false,8,.25,fm.cs+16,fm.cv+4
-if(bm==self) bm=nil
-if self.fl and fm.id==6 then
-fm.iq=true
-while self.fl>0 do
-self.fl-=1
-if flr(self.fl)%4==0 then
-if tonum(dx)<dm then
-gt(2,self)
+if self.er==9 then
+if fe.life>0 and not fe.ir and self.life>0 then
+fe.bo,self.er,self.ep,self.co,self.cr=false,8,.25,fe.co+16,fe.cr+4
+if(bj==self) bj=nil
+if self.fd and fe.id==6 then
+fe.ir=true
+while self.fd>0 do
+self.fd-=1
+if flr(self.fd)%4==0 then
+if tonum(ds)<dg then
+gr(2,self)
 elseif self.owner==1 then
-bx"sPICE LOST. bUILD sILO"
+bt"sPICE LOST. bUILD sILO"
 end
 end
 yield()
 end
-self.fl,fm.iq,self.ez=0,false,0
-if(self.ii) ie(self,self.ii,self.ij,0,true)
+self.fd,fe.ir,self.er=0,false,0
+if(self.ik) ih(self,self.ik,self.il,0,true)
 else
-self.process,self.ci,fm.col_cycle_src,fm.col_cycle=2,0,8,cn("7,10,0,0,7,0,0")
+self.process,self.ce,fe.col_cycle_src,fe.col_cycle=2,0,8,cj("7,10,0,0,7,0,0")
 end
 end
 end
@@ -738,146 +750,147 @@ yield()
 end
 end)
 end
-function ew(fe)
-local eu,ev=gl(fe,flr((fe.cs+8)/8),flr((fe.cv+8)/8),ir,nil,true)
-return eu*8,ev*8
+function go(ew)
+local gm,gn=gg(ew,(ew.co+8)\8,(ew.cr+8)\8,is,nil,true)
+return gm*8,gn*8
 end
-function io(cs,cv,ex)
-if(rnd"5"<1) gd(cs+sin(ex)*5.5+3.5,cv+-cos(ex)*5.5+3.5,rnd"2",.15,0,.1,-.01,25,cn("2,4,9,15"),0xa5a5.8)
+function ip(co,cr,ep)
+if(rnd"5"<1) fw(co+sin(ep)*5.5+3.5,cr+-cos(ep)*5.5+3.5,rnd"2",.15,0,.1,-.01,25,cj("2,4,9,15"),0xa5a5.8)
 end
-function gf(dg,fe)
-if dg.id!=19 then
-dg.ez,dg.fe=3,fe
-dg.gi=cocreate(function(self)
-while fe.life>0 do
-local is=eh(dg.cs,dg.cv,fe.cs,fe.cv)
-if is>dg.range*5
-and dg.speed>0 then
-ie(dg,flr(fe.cs/8),flr(fe.cv/8),dg.range*5)
-if dg.id==25 or dg.id==38 then
-dg.life=0
-for g=1,dg.id/3 do
-gm(dg.cs+rnd"32"-16,dg.cv+rnd"32"-16,2)
+function fy(db,ew)
+it=true
+if db.id!=19 then
+db.er,db.ew,db.gc=3,ew,cocreate(function(self)
+while ew.life>0 do
+local iu=ec(db.co,db.cr,ew.co,ew.cr)
+if iu>db.range*5
+and db.speed>0 then
+ih(db,ew.co\8,ew.cr\8,db.range*5)
+if db.id==25 or db.id==38 then
+db.life=0
+for g=1,db.id/3 do
+gh(db.co+rnd"32"-16,db.cr+rnd"32"-16,2)
 end
-fe.life-=(400+rnd"200")
-fe.gg=dg
+ew.life-=(400+rnd"200")
+ew.fz=db
 return
 end
 end
-if not dg.norotate then
-local it=atan2(dg.cs-fe.cs,dg.cv-fe.cv)
-while(dg.ex!=it) do
-iu(dg,it)
+if not db.norotate then
+local iv=atan2(db.co-ew.co,db.cr-ew.cr)
+while(db.ep!=iv) do
+iw(db,iv)
 end
 end
-if is<=dg.range*5 then
-if(dg.fire_cooldown<=0 and not dg.fa) dg.ey(dg) dg.fire_cooldown=dg.fire_rate
-elseif dg.speed==0 then
-fn(dg)
+if iu<=db.range*5 then
+if(db.fire_cooldown<=0 and not db.es) db.eq(db) db.fire_cooldown=db.fire_rate
+elseif db.speed==0 then
+ff(db)
 end
 yield()
-if(dg.id==40 or dg.id==34 or fe.el==dg.el or fe.ic) break
+if(db.id==40 or db.id==34 or ew.eg==db.eg or ew.ig) break
 end
-fn(self)
+ff(self)
 end)
 else
-local iv={24,25,38,38}
-gf(ce(cf[iv[dg.el]],dg.cs,dg.cv,dg.owner),fe)
-dg.fire_cooldown=1750
+local ix={24,25,38,38}
+fy(ca(cb[ix[db.eg]],db.co,db.cr,db.owner),ew)
+db.fire_cooldown=1750
 end
 end
-function gl(dg,cs,cv,iw,ix,iy)
-for t=0,ix or 64,.02 do
-local er,es=flr(cs+t*cos(t)),flr(cv+t*sin(t))
-if(iw(dg,er,es)) return er,es
-if(not iy) yield()
+function gg(db,co,cr,iy,iz,ja)
+for t=0,iz or 4,.04 do
+local el,em=mid(flr(co+t*cos(t)),61),mid(flr(cr+t*sin(t)),61)
+if(iy(db,el,em)) return el,em
+if(not ja) yield()
 end
 end
-function cd(bz,ca)
-if(ca>31) bz+=64 ca-=32
-return mget(bz,ca)
+function bz(bv,bw)
+if(bw>31) bv+=64 bw-=32
+return mget(bv,bw)
 end
-function et(bz,ca,iz)
-if(ca>31) bz+=64 ca-=32
-mset(bz,ca,iz)
+function en(bv,bw,jb)
+if(bw>31) bv+=64 bw-=32
+mset(bv,bw,jb)
 end
-function ir(dg,cs,cv)
-return not fget(cd(cs,cv),0)
-and not n[cs..","..cv]
+function is(db,co,cr)
+return not fget(bz(co,cr),0)
+and not m[co..","..cr]
 end
-function ie(dg,cs,cv,ja,jb,ib)
-local jc=dg.z>1
-if jb then
-local jd=r and r[dg.ds][33] or false
-if jd and not jd.ic then
-jd.ic,dg.ic=dg,jd
-jd.gi=cocreate(function(je)
-ie(je,flr(dg.cs/8),flr(dg.cv/8))
-if(bm==dg) bm=nil
-if dg.life>0 then
-del(m,dg)
-ie(jd,cs,cv)
-dg:gu(jd.cs,jd.cv)
-add(m,dg)
-fn(dg,ib)
+function ih(db,co,cr,jc,jd,ie)
+::retry_hail::
+local je=db.z>1
+if jd then
+local jf=q and gb(q[db.dm][33])
+if jf and not jf.ig and jf.eg==db.eg then
+jf.ig,db.ig,db.er,jf.gc=db,jf,2,cocreate(function(jg)
+ih(jg,db.co\8,db.cr\8)
+if(bj==db) bj=nil
+if db.life>0 then
+jf.obj_spr=149
+del(l,db)
+ih(jf,co,cr)
+db:gs(jf.co,jf.cr)
+add(l,db)
+ff(db,ie)
 end
-fn(jd)
+jf.obj_spr=73
+ff(jf)
 end)
 return
 end
 end
 ::restart_move_unit::
-if not jc and not ir(nil,cs,cv) then
-cs,cv=gl(dg,cs,cv,ir)
+if not je and not is(nil,co,cr) then
+co,cr=gg(db,co,cr,is)
 end
-dg.ik,dg.il,dg.jf,dg.ez=cs,cv,dg.ez,1
-dg.jg=nil
-local jh,ji,jj={cs=flr(dg.cs/8),cv=flr(dg.cv/8)},{cs=dg.ik,cv=dg.il},function(jk) return shl(jk.cv,8)+jk.cs end
-local jl,
-jm={
-jn=jh,
-jo=0,
-jp=jq(jh,ji)
+db.im,db.fp,db.jh,db.er,db.ji=co*8,cr*8,db.er,1,nil
+local jj,jk,jl={co=db.co\8,cr=db.cr\8},{co=co,cr=cr},function(jm) return(jm.cr<<8)+jm.co end
+local jn,
+jo={
+jp=jj,
+jq=0,
+jr=js(jj,jk)
 },{}
-jm[jj(jh)]=jl
-local jr,js,jt,ju,count={jl},1,jj(ji),32767.99,0
-while js>0 do
-local cost,jv=ju
-for g=1,js do
-local jw=jr[g].jo+jr[g].jp
-if(jw<=cost) jv,cost=g,jw
+jo[jl(jj)]=jn
+local jt,ju,jv,jw,count={jn},1,jl(jk),32767.99,0
+while ju>0 do
+local cost,jx=jw
+for g=1,ju do
+local jy=jt[g].jq+jt[g].jr
+if(jy<=cost) jx,cost=g,jy
 end
-jl=jr[jv]
-jr[jv],jl.jx=jr[js],true
-js-=1
-local hq=jl.jn
-if jj(hq)==jt then
-hq={ji}
-while jl.jy do
-jl=jm[jj(jl.jy)]
-add(hq,jl.jn)
+jn=jt[jx]
+jt[jx],jn.jz=jt[ju],true
+ju-=1
+local hr=jn.jp
+if jl(hr)==jv then
+hr={jk}
+while jn.ka do
+jn=jo[jl(jn.ka)]
+add(hr,jn.jp)
 end
-dg.jg=hq
+db.ji=hr
 goto end_pathfinding
 end
-for jz in all(ka(hq,jc)) do
-local id=jj(jz)
-local kb=not jc and fget(cd(jz.cs,jz.cv),1) and 4 or 1
-if(hq.cs!=jz.cs and hq.cv!=jz.cv) kb+=.2
-local kc,kd=
-jm[id],
-jl.jo+kb
-if not kc then
-kc={
-jn=jz,
-jo=ju,
-jp=jq(jz,ji)
+for kb in all(kc(hr,je)) do
+local id=jl(kb)
+local kd=not je and fget(bz(kb.co,kb.cr),1) and 4 or 1
+if(hr.co!=kb.co and hr.cr!=kb.cr) kd+=.2
+local ke,kf=
+jo[id],
+jn.jq+kd
+if not ke then
+ke={
+jp=kb,
+jq=jw,
+jr=js(kb,jk)
 }
-js+=1
-jr[js],jm[id]=kc,kc
+ju+=1
+jt[ju],jo[id]=ke,ke
 end
-if not kc.jx and kc.jo>kd then
-kc.jo,kc.jy=kd,hq
+if not ke.jz and ke.jq>kf then
+ke.jq,ke.ka=kf,hr
 end
 end
 count+=1
@@ -887,93 +900,104 @@ if(count>3000 or stat(0)/2048>.8) goto end_pathfinding
 end
 end
 ::end_pathfinding::
-dg.jf,dg.ez=dg.ez,2
-if dg.jg!=nil then
-for g=#dg.jg-1,1,-1 do
-local jk=dg.jg[g]
-if not dg.norotate then
-local it=atan2(
-dg.cs-(jk.cs*8),
-dg.cv-(jk.cv*8))
-while(dg.ex!=it) do
-iu(dg,it)
+db.jh,db.er=db.er,2
+if db.ji!=nil then
+for g=#db.ji-1,1,-1 do
+local jm=db.ji[g]
+if not db.norotate then
+local iv=atan2(
+db.co-(jm.co*8),
+db.cr-(jm.cr*8))
+while(db.ep!=iv) do
+iw(db,iv)
 end
 end
-if(not jc and not ir(nil,jk.cs,jk.cv)) goto restart_move_unit
-local ke,kf=dg.speed or .5,sqrt((jk.cs*8-dg.cs)^2+(jk.cv*8-dg.cv)^2)
-local kg,kh=ke*(jk.cs*8-dg.cs)/kf,ke*(jk.cv*8-dg.cv)/kf
-for g=0,kf/ke-1 do
-n[jk.cs..","..jk.cv]=dg
-dg.cs+=kg
-dg.cv+=kh
+if(not je and not is(nil,jm.co,jm.cr)) goto restart_move_unit
+local kg,kh=db.speed or .5,sqrt((jm.co*8-db.co)^2+(jm.cr*8-db.cr)^2)
+local ki,kj=kg*(jm.co*8-db.co)/kh,kg*(jm.cr*8-db.cr)/kh
+for g=0,kh/kg-1 do
+m[jm.co..","..jm.cr]=db
+db.co+=ki
+db.cr+=kj
+if db.id==33 then
+if db.ig then
+local ez=ec(db.co,db.cr,db.im,db.fp)
+if(ez<32) db.z=ez/4
+end
+db.z=mid(2,db.z+0.1,8)
+db.speed=db.z/12
+end
 yield()
 end
-dg.cs,dg.cv,n[jk.cs..","..jk.cv]=jk.cs*8,jk.cv*8,dg
-fk(dg)
-if(eh(dg.cs,dg.cv,dg.ik*8,dg.il*8)<=(ja or 0)) break
+db.co,db.cr,m[jm.co..","..jm.cr]=jm.co*8,jm.cr*8,db
+fc(db)
+if(ec(db.co,db.cr,db.im,db.fp)<=(jc or 0)) break
 end
+elseif jd then
+goto retry_hail
 end
-dg.ez=0
+db.er=0
 end
-function hw()
+function ia()
 cls"15"
-camera(cu+(16-rnd"32")*dz,cw+(16-rnd"32")*dz)
-dz=(dz>0.05) and dz*0.95 or 0
-if hm then
-for g=1,#hm do
+camera(cq+(16-rnd"32")*du,cs+(16-rnd"32")*du)
+du=(du>0.05) and du*0.95 or 0
+if hn then
+for g=1,#hn do
 if(g%2==1) fillp(0xa5a5.8)
 circfill(
-hm[g][1]+4,
-hm[g][2]+4,4,
-ki[g%#ki+1])
+hn[g][1]+4,
+hn[g][2]+4,4,
+kk[g%#kk+1])
 fillp()
 end
-if(hp>0) spr(88+hp,hn,ho)
+if(hq>0) spr(88+hq,ho,hp)
 end
 palt(11,true)
 palt(0,false)
-map(0,0,0,0,64,32)
-map(64,0,0,256,64,32)
-for dq in all(l) do
-if not bp then
-dq:ge()
-if(dq.cl) dq.cl:ge()
+map(0,0,0,0,64,32,0x8)
+map(64,0,0,256,64,32,0x8)
+for dj in all(k) do
+if not bm then
+dj:fx()
+if(dj.ch) dj.ch:fx()
 end
-dq:cx()
-if(dq==bm) rect(bm.cs,bm.cv,bm.cs+bm.w-1,bm.cv+bm.h-1,7)
+dj:ct()
+if(dj==bj) rect(bj.co,bj.cr,bj.co+bj.w-1,bj.cr+bj.h-1,7)
 end
 pal()
-for hq=1,2 do
-for dg in all(m) do
-if(hq==1 and dg.z==1) or(hq==2 and dg.z>1) then
-if(not bp) dg:ge()
-if(dg.process!=2 or dg.speed==0) dg:cx()
-if(dg==bm) spr(16,bm.cs,bm.cv)
+for hr=1,2 do
+for db in all(l) do
+if(hr==1 and db.z==1) or(hr==2 and db.z>1) then
+if(not bm) db:fx()
+if(db.process!=2 or db.speed==0) db:ct()
+if(db==bj) spr(2,bj.co,bj.cr)
 end
 end
 end
-for df,hq in pairs(q) do
-if(hq.kj) fillp(hq.kj)
-circfill(hq.cs,hq.cv,hq.ex,hq.kk[flr((#hq.kk/hq.ht)*hq.life)+1])
+for hr in all(p) do
+if(hr.kl) fillp(hr.kl)
+circfill(hr.co,hr.cr,hr.ep,hr.km[flr((#hr.km/hr.hu)*hr.life)+1])
 fillp()
 end
-local kl,km=flr(cu/8),flr(cw/8)
+local kn,ko=cq\8,cs\8
 palt(0,false)
 palt(11,true)
-for er=kl-1,kl+16 do
-for es=km-1,km+16 do
-if bf[er][es]!=0 and bf[er][es]!=16 then
-spr(bf[er][es]+31,er*8,es*8)
-elseif bf[er][es]<16 then
-rectfill(er*8,es*8,er*8+7,es*8+7,0)
+for el=kn-1,kn+16 do
+for em=ko-1,ko+16 do
+local gd,ge=el*8,em*8
+if bc[el][em]!=0 and bc[el][em]!=16 then
+spr(bc[el][em]+31,gd,ge)
+elseif bc[el][em]<16 then
+rectfill(gd,ge,gd+7,ge+7,0)
 end
 end
 end
 end
-function bx(kn)
-bd,be=kn,500
+function bt(kp)
+ba,bb=kp,500
 end
-function hx()
+function ib()
 camera(0,0)
 pal()
 palt(0,false)
@@ -981,446 +1005,444 @@ rectfill(0,0,127,8,9)
 rect(90,90,124,124,c)
 rect(91,91,123,123,d)
 rectfill(92,92,122,122,0)
-if(be>0) be-=1 print(bd,2,2)
-dx=dy(f[1])
-? sub("000000",#dx+1)..dx,103,2,d
-if bb!=bg then
-bc,ko=bb and 1 or 59,bb and 1 or-1
-if(ko<1) bx("pOWER LOW.bUILD wINDTRAP")
-cg"55"
+if(bb>0) bb-=1 print(ba,2,2)
+ds=dt(f[1])
+if y!=bd then
+z,kq=y and 1 or 59,y and 1 or-1
+if(kq<1) bt("pOWER LOW.bUILD wINDTRAP")
+cc"55"
 end
-bg=bb
-if bc>0 and bc<60 then
-bc+=ko
+bd=y
+if z>0 and z<60 then
+z+=kq
 clip(
-max(109-bc,91),
-max(109-(bc>20 and bc-20 or 0),92),
-min(bc*2,32),
-min((bc>20 and bc-20 or 1)*2,32))
+max(109-z,91),
+max(109-(z>20 and z-20 or 0),92),
+min(z*2,32),
+min((z>20 and z-20 or 1)*2,32))
 for g=1,300 do
 pset(92+rnd"32",91+rnd"32",5+rnd"3")
 end
 clip()
 return
 end
-for er=0,30 do
-for es=0,30 do
-if(o[er..","..es]) pset(92+er,92+es,o[er..","..es])
+for el=0,30 do
+for em=0,30 do
+local gt=el..","..em
+if(n[gt]) pset(92+el,92+em,n[gt])
 end
 end
-local kp,kq=92+cu/16,93+cw/16
-rect(kp,kq,kp+7,kq+6,7)
-if bm and bm.ico_spr then
-bm.ed:gu(109,20)
-bm.ed:cx()
-kr,ks=nil,nil
-if bm.owner==1 then
-if bm.cl then
-bm.cl:gu(109,44)
-bm.cl:cx()
+local kr,ks=92+cq/16,93+cs/16
+rect(kr,ks,kr+7,ks+6,7)
+local kt=bj and bj.ch
+if bj and bj.ico_spr then
+bj.dy:gs(109,20)
+bj.dy:ct()
+ku,kv=nil,nil
+if bj.owner==1 then
+if kt then
+kt:gs(109,44)
+kt:ct()
 end
-if bm.life<bm.hitpoint
-and bm.id!=4
-and(bm.type==2
-or bm.speed==0) then
-kr=ec(cf[80],117,28,5,{},nil,bs,repair_click)
-kr:cx()
+if bj.life<bj.hitpoint
+and bj.id!=4
+and(bj.type==2
+or bj.speed==0) then
+ku=dx(cb[80],117,28,5,{},nil,draw_action,repair_click)
+ku:ct()
 end
-if(bm.id==19
-and bm.fire_cooldown<=0)
-or bm.id==35
+if(bj.id==19
+and bj.fire_cooldown<=0)
+or bj.id==35
 then
-ks=ec(cf[81],109,29,5,{},nil,bs,bw)
-ks:cx()
+kv=dx(cb[81],109,29,5,{},nil,draw_action,bs)
+kv:ct()
 end
 end
 end
 pal()
-if bm
-and bm.cl
-and(bm.cl.type==4
-and bm.cl.speed==0)
-and bm.cl.life>=100 then
-local kt,ku=flr((cursor.cs+cu)/8),flr((cursor.cv+cw)/8)
-local kv,kw,w,h=kt*8-cu,ku*8-cw,bm.cl.fv,bm.cl.fw
-kx,ky,ee=false,false,false
-for er=-1,w do
-for es=-1,h do
-local cc=cd(kt+er,ku+es)
-if er==-1 or er==w or es==-1 or es==h then
-if(cc==15 or cc>=58) kx=true
+if kt
+and(kt.type==4
+and kt.speed==0)
+and kt.life>=100 then
+local kw,kx=(cursor.co+cq)\8,(cursor.cr+cs)\8
+local ky,kz,w,h=kw*8-cq,kx*8-cs,kt.fn,kt.fo
+la,lb,dz=false,false,false
+for el=-1,w do
+for em=-1,h do
+local by=bz(kw+el,kx+em)
+if el==-1 or el==w or em==-1 or em==h then
+if(by==22 or by>=58) la=true
 else
-if(cc>=9 and cc<=14) ee=true
-if(n[kt+er..","..ku+es] or cc==0 or cc<8 or cc>16) ky=true
+if(by>=12 and by<=21) dz=true
+if(m[kw+el..","..kx+em] or by==0 or by<=12 or by>=23) lb=true
 end
 end
 end
-if(ky) kx=false
+if(lb) la=false
 fillp("0b1110110110110111.1")
-rectfill(kv,kw,
-kv+bm.cl.w,kw+bm.cl.h,kx and 11 or 8)
+rectfill(ky,kz,
+ky+kt.w,kz+kt.h,la and 11 or 8)
 fillp()
 end
-if bp then
-fillp(0xA5A5.8)
+if bm then
 rectfill(0,0,127,127,0)
 fillp()
 rectfill(3,22,124,95,d)
 rect(4,23,123,94,c)
-if bm.ej then
-bm.bn={}
+if bj.ee then
+bj.bk={}
 rectfill(6,25,27,92,0)
-local kz=1
-for g=1,#bm.ej do
-local la=bm.ej[g]
-if not la.req_id
-or r[bm.ds][la.req_id]
-and la.req_level<=a
+local lc=1
+for g=1,#bj.ee do
+local ld=bj.ee[g]
+if not ld.req_id
+or q[bj.dm][ld.req_id]
+and ld.req_level<=a
 then
-bm.bn[kz]=la
-if kz>=bh and kz<=bh+2 then
-la:gu(9,28+(kz-bh)*19)
-la:cx()
+bj.bk[lc]=ld
+if lc>=be and lc<=be+2 then
+ld:gs(9,28+(lc-be)*19)
+ld:ct()
 else
-la:gu(-16,16)
+ld:gs(-16,16)
 end
-bi=bi or bm.bn[1]
-if bi==la then
-bl=kz
-rect(la.cs-2,la.cv-2,
-la.cs+17,la.cv+17,
+bf=bf or bj.bk[1]
+if bf==ld then
+bi=lc
+rect(ld.co-2,ld.cr-2,
+ld.co+17,ld.cr+17,
 7)
-? bi.name,30,26,7
-?"cOST:"..bi.cost,85,33,9
-? bi.description,30,34,6
 end
-kz+=1
+lc+=1
 end
 end
 end
-for lb in all(bj) do
-lb:cx()
+for le in all(bg) do
+le:ct()
 end
 end
 palt(11,true)
-cursor:cx()
+cursor:ct()
 end
-function bk(cs,cv,lc,func_onclick,ld)
-add(bj,{
-cs=cs,
-cv=cv,
-w=ld or#lc*4+2,
+function bh(co,lf,func_onclick,lg)
+add(bg,{
+co=co,
+cr=83,
+w=lg or 22,
 h=8,
-lc=lc,
-cr=function(self)
+lf=lf,
+cn=function(self)
 return self
 end,
-cx=function(self)
-if(#lc>1) rectfill(self.cs,self.cv,self.cs+self.w,self.cv+self.h,self.le and c or 6)
-? self.lc,self.cs+2,self.cv+2,(#lc>1) and 0 or(self.le and c or 6)
+ct=function(self)
+if(#lf>1) rectfill(self.co,83,self.co+self.w,91,self.lh and c or 6)
 end,
 func_onclick=func_onclick
 })
 end
-function gb(fq)
-spr(fq.obj_spr,fq.cs,fq.cv,fq.fv,fq.fw)
+function fu(fi)
+spr(fi.obj_spr,fi.co,fi.cr,fi.fn,fi.fo)
 end
-function hv()
-lf=false
+function hw()
+li=false
+if bj then
+cp=true
+lj(ku)
+lj(kv)
+if(bj.dy and not bm and not li) lj(bj.dy) lj(bj.ch)
+if(bm) foreach(bj.ee,lj) foreach(bg,lj)
+cp=false
+end
+if not bm
+and not li then
+foreach(l,lj)
+foreach(k,lj)
+end
+if hg
+and not bm
+and hj>89 and hj<122
+and hk>90 and hk<123 then
+cq,cs=mid(0,(hj-94)*16,368),mid(-8,(hk-94)*16,368)
+bj=br
+elseif hf then
+if(bj and bj.type<=2) bt(bj.name)
+if li then
+if not bm and bj.cg!=nil then
+if(bj.func_onclick) bj:func_onclick()
+bj=br
+return
+end
+if(bm and bf.lf and bf.func_onclick) bf:func_onclick()
+if(bj.owner==1 and bj.type==1 and bj!=br and bj.speed>0) cc"62"
+if(bj.dm!=1 and br and(br.type==1 or(br.id==19 and bu)) and br.owner==1) bj.flash_count=10 fy(br,bj) bj=nil
+else
+if bj
+and bj.owner==1
+and bj.speed>0
+and bj.er!=7 then
+bj.gc=cocreate(function(db)
+ih(db,(cq+hj)\8,(cs+hk)\8)
+ff(db)
+end)
+end
+local kt=bj and bj.ch
+if kt
+and kt.life>=100
+and la then
+ca(kt.fj,
+(cursor.co+cq)\8*8,
+(cursor.cr+cs)\8*8,1)
+gp(kt)
+cc"61"
+end
+end
+bu=false
+elseif hh and not bm then
+bj,bu=nil,false
+end
+end
+function gp(fi)
+fi.life,fi.process,fi.spent,fi.gl=0,0,0,false
+if(fi.cg) fi.cg.bo=false
+end
+function lj(fi)
+if(not fi) return
+local lk,ll=cursor:cn(),fi:cn()
+fi.lh=lk.co<ll.co+ll.w and
+lk.co+lk.w>ll.co and
+lk.cr<ll.cr+ll.h and
+lk.cr+lk.h>ll.cr
+if hf and fi.lh then
 if bm then
-ct=true
-lg(kr)
-lg(ks)
-if(bm.ed and not bp and not lf) lg(bm.ed) lg(bm.cl)
-if(bp) foreach(bm.ej,lg) foreach(bj,lg)
-ct=false
-end
-if not bp
-and not lf then
-foreach(m,lg)
-foreach(l,lg)
-end
-if hh
-and not bp
-and hk>89 and hk<122
-and hl>90 and hl<123 then
-cu,cw=mid(0,(hk-94)*16,368),mid(-8,(hl-94)*16,368)
-bm=bv
-elseif hg then
-if(bm and bm.type<=2) bx(bm.name)
-if lf then
-if not bp and bm.ck!=nil then
-if(bm.func_onclick) bm:func_onclick()
-bm=bv
-return
-end
-if(bp and bi.lc and bi.func_onclick) bi:func_onclick()
-if(bm.owner==1 and bm.type==1 and bm!=bv and bm.speed>0) cg"62"
-if(bm.ds!=1 and bv and(bv.type==1 or(bv.id==19 and by)) and bv.owner==1) bm.flash_count=10 gf(bv,bm) bm=nil
+bf=fi
 else
-if bm
-and bm.owner==1
-and bm.speed>0
-and bm.ez!=7 then
-bm.gi=cocreate(function(dg)
-ie(dg,flr((cu+hk)/8),flr((cw+hl)/8))
-fn(dg)
-end)
-end
-if bm
-and bm.cl
-and bm.cl.life>=100
-and kx then
-ce(bm.cl.fr,
-flr((cursor.cs+cu)/8)*8,
-flr((cursor.cv+cw)/8)*8,1)
-gr(bm.cl)
-cg"61"
-end
-end
-by=false
-elseif hi and not bp then
-bm,by=nil,false
-end
-end
-function gr(fq)
-fq.life,fq.process,fq.spent,fq.gq=0,0,0,false
-if(fq.ck) fq.ck.br=false
-end
-function lg(fq)
-if(not fq) return
-local lh,li=cursor:cr(),fq:cr()
-fq.le=lh.cs<li.cs+li.w and
-lh.cs+lh.w>li.cs and
-lh.cv<li.cv+li.h and
-lh.cv+lh.h>li.cv
-if hg and fq.le then
-if bp then
-bi=fq
-else
-if(fq.type<=2 and bf[flr((cursor.cs+cu)/8)][flr((cursor.cv+cw)/8)]!=16 or fq.ez==8) return
-if bm
-and bv
-and(fq.id==6 and bv.id==32
-or fq.id==14 and bv.id>26)
-and fq.owner==1 and bv.owner==1
+if(fi.type<=2 and bc[(cursor.co+cq)\8][(cursor.cr+cs)\8]!=16 or fi.er==8) return
+if bj
+and br
+and(fi.id==6 and br.id==32
+or fi.id==14 and br.id>26)
+and fi.owner==1 and br.owner==1
 then
-gh(bv,fq)
+ga(br,fi)
 return
 else
-bm=fq
+bj=fi
 end
 end
-lf=true
+li=true
 end
 end
-function gh(dg,lj)
-lj=lj or r[dg.ds][1] or dg
-dg.ez,lj.br,dg.gs=7,true,lj
-if(dg.id!=32 or lj.id==6) dg.fm=lj
-dg.gi=cocreate(function(dg)
-local lk=lj.id!=1 and 9 or 0
-ie(dg,(lj.cs+16)/8,lj.cv/8,0,true,lk)
-if(not dg.ic) fn(dg,lk)
+function ga(db,hy)
+hy=hy or gb(q[db.dm][1]) or db
+db.er,hy.bo,db.gq=7,true,hy
+if(db.id!=32 or hy.id==6) db.fe=hy
+db.gc=cocreate(function(db)
+local lm=hy.id!=1 and 9 or 0
+ih(db,(hy.co+16)/8,hy.cr/8,0,true,lm)
+if(not db.ig) ff(db,lm)
 end)
 end
-ll=0
-function hu()
-if t()>b*20 and t()%b==0 then
-local lm=rnd(m)
-if lm.owner==2 and lm.arms>0 and lm.ez==0 then
-ih(lm)
+ln=0
+function hv()
+if it and t()%b==0 then
+local lo=rnd(l)
+if lo.owner==2 and lo.arms>0 and lo.er==0 then
+ij(lo)
 end
-local ln=rnd(l)
-if ln.owner==2 and
-(not ln.cl or ln.cl.process!=1) then
-local lo=rnd(ln.ej)
-if lo and lo.speed>0 then
-lo:func_onclick()
+local lp=rnd(k)
+if lp.owner==2 and
+(not lp.ch or lp.ch.process!=1) then
+local lq=rnd(lp.ee)
+if lq and lq.speed>0 then
+lq:func_onclick()
 end
-if ln.life<ln.hitpoint and ln.process!=2 then
-bu(ln,2)
-end
-end
-if lp and lp.type==2
-and en and en.fire_cooldown<=0 then
-gf(en,lp)
+if lp.life<lp.hitpoint and lp.process!=2 then
+bq(lp,2)
 end
 end
-ll-=1
-if ll<0 then
-if hm then
-hm=nil
+local lr=gb(q[2][19])
+if lr and lr.fire_cooldown<=0
+and lt and lt.type==2 then
+fy(lr,lt)
+end
+end
+ln-=1
+if ln<0 then
+if hn then
+hn=nil
 else
-hm,lq,lr,ki,hp={{rnd"500",rnd"500"}},rnd"1",0,{15,9,4},0
+hn,lu,lv,kk,hq={{rnd"500",rnd"500"}},rnd"1",0,cj("15,9,4"),0
 end
-lt=rnd"5000"
-ll=lt
+lw=rnd"5000"
+ln=lw
 end
-if hm then
-if(u%6<1 or#hm<30) and hp==0 then
-while#hm<31 do
-if(rnd"9"<.5) lr=rnd".04"-.02
-hn,ho=hm[#hm][1],hm[#hm][2]
-add(hm,{hn+sin(lq),ho-cos(lq)})
-lq+=lr
-end
-end
-if(#hm>30) del(hm,hm[1])
-if(hp>0) hp+=.01 io(hn,ho,rnd"1")
-if(hp>2) hp=0
+if hn then
+if(s%6<1 or#hn<30) and hq==0 then
+while#hn<31 do
+if(rnd"9"<.5) lv=rnd".04"-.02
+ho,hp=hn[#hn][1],hn[#hn][2]
+add(hn,{ho+sin(lu),hp-cos(lu)})
+lu+=lv
 end
 end
-function ih(fq)
-local lp=lu(fq)
-if(lp and dr(lp)) gf(fq,lp)
+if(#hn>30) del(hn,hn[1])
+if(hq>0) hq+=.01 ip(ho,hp,rnd"1")
+if(hq>2) hq=0
 end
-function lu(fq)
-local lv
+end
+function ij(fi)
 repeat
-lv=(rnd"4"<1) and rnd(m) or rnd(l)
-until lv.ds!=fq.ds
-return lv
+lt=(rnd"4"<1) and rnd(l) or rnd(k)
+until lt.dm!=fi.dm
+if(lt and dk(lt)) fy(fi,lt)
 end
-function dr(fq)
-local cs,cv=fq:cb()
-return bf[cs][cv]==16
+function dk(fi)
+local co,cr=fi:bx()
+return bc[co][cr]==16
 end
-function cg(lw)
-sfx(lw,3)
+function cc(lx)
+sfx(lx,3)
 end
-function de(lx)
-local cc=peek(0x3115)
-if(band(cc,128)>0!=lx) cc=bxor(cc,128)
-poke(0x3115,cc)
+function da(ly)
+local by=peek(0x3115)
+if(by&128>0!=ly) by=by^^128
+poke(0x3115,by)
 end
-function dy(cc)
-local ly,gv="",abs(cc)
+function dt(by)
+local lz,gu="",abs(by)
 repeat
-ly=(gv%0x0.000a/0x.0001)..ly
-gv/=10
-until gv==0
-if(cc<0) ly="-"..ly
-return ly
+lz=(gu%0x0.000a/0x.0001)..lz
+gu/=10
+until gu==0
+return lz
 end
-function cn(lz,fh,ma)
-fh=fh or","
-if(ma) lz=split(lz,ma)
-if type(lz)=="table"then
+function cj(ma,ez,mb)
+ez=ez or","
+if(mb) ma=split(ma,mb)
+if type(ma)=="table"then
 local t={}
-while#lz>0 do
-local ly=lz[1]
-add(t,split(ly,fh))
-del(lz,ly)
+while#ma>0 do
+local lz=ma[1]
+add(t,split(lz,ez))
+del(ma,lz)
 end
 return t
 else
-return split(lz,fh)
+return split(ma,ez)
 end
 end
-function ga(ii,ij,cs,cv,it,w,mb,mc)
-local md,me=cos(it),sin(it)
-local mf,mg,hy=md,me,shl(0xfff8,w-1)
+function dl(mc,md,gx)
+if(not mc[md]) mc[md]={}
+add(mc[md],gx)
+end
+function gb(mc)
+if(mc) return rnd(mc)
+end
+function ft(ik,il,co,cr,iv,w,me,mf,mg)
+local mh,mi=cos(iv),sin(iv)
+local mj,mk,ic=mh,mi,0xfff8<<w-1
 w*=4
-md*=w-0.5
-me*=w-0.5
-local mh,mi,w=me-md+w,-md-me+w,2*w-1
-for mj=0,w do
-local mk,ml=mh,mi
-for mm=0,w do
-if band(bor(mk,ml),hy)==0 then
-local mn=sget(ii+mk,ij+ml)
-if(mn!=mb) pset(cs+mj,cv+mm,mc or mn)
-end
-mk-=mg
-ml+=mf
-end
-mh+=mf
-mi+=mg
+mh*=w-0.5
+mi*=w-0.5
+local ml,mm,w=mi-mh+w,-mh-mi+w,2*w-1
+for mn=0,w do
+local mo,mp=ml,mm
+for mq=0,w do
+if((mo|mp)&ic)==0 then
+local mr=sget(ik+mo,il+mp)
+if mr!=me then
+if(mf) pset(co+mn,cr+mq,1)
+pset(co+mn,cr+mq-mf,mg or mr)
 end
 end
-function eh(mo,mp,mq,mr)
-return sqrt(((mo-mq)>>10)^2+((mp-mr)>>10)^2)<<10
+mo-=mk
+mp+=mj
 end
-function iu(dg,ms)
-local gw=ms-dg.ex
-if(dg.z>1) dg.ex=ms
-if gw>0.5 then
-gw-=1
-elseif gw<-0.5 then
-gw+=1
+ml+=mj
+mm+=mk
 end
-if gw>0.0087 then
-dg.ex+=0.0087
-elseif gw<-0.0087 then
-dg.ex-=0.0087
+end
+function ec(ms,mt,mu,mv)
+return sqrt(((ms-mu)>>10)^2+((mt-mv)>>10)^2)<<10
+end
+function iw(db,mw)
+local gv=mw-db.ep
+if(db.z>1) db.ep=mw
+if gv>0.5 then
+gv-=1
+elseif gv<-0.5 then
+gv+=1
+end
+if gv>0.0087 then
+db.ep+=0.0087
+elseif gv<-0.0087 then
+db.ep-=0.0087
 else
-dg.ex=ms
+db.ep=mw
 end
 yield()
 end
-function ka(jk,jc)
-local mt={}
-for er=-1,1 do
-for es=-1,1 do
-if(er!=0 or es!=0) mu(jk.cs+er,jk.cv+es,mt,jc)
+function kc(jm,je)
+local mx={}
+for el=-1,1 do
+for em=-1,1 do
+if(el!=0 or em!=0) my(jm.co+el,jm.cr+em,mx,je)
 end
 end
-return mt
+return mx
 end
-function mu(mv,mw,mx,jc)
-if(jc or not fget(cd(mv,mw),0) and not n[mv..","..mw] and mv>=0 and mw>=0 and mv<=63 and mw<=63) add(mx,{cs=mv,cv=mw})
+function my(mz,na,nb,je)
+if(je or not fget(bz(mz,na),0) and not fget(bz(mz,na),7) and not m[mz..","..na] and mz>=0 and na>=0 and mz<=63 and na<=63) add(nb,{co=mz,cr=na})
 end
-function jq(it,my)
-return abs(it.cs-my.cs)+abs(it.cv-my.cv)
+function js(iv,nc)
+return abs(iv.co-nc.co)+abs(iv.cr-nc.cr)
 end
-function gd(cs,cv,ex,ff,fg,hs,hr,life,kk,kj)
-local hq={
-cs=cs,cv=cv,ex=ex,ff=ff,fg=fg,hs=hs,
-life=0,hr=hr,
-kk=kk,kj=kj,
-mz=cv,ht=life
-}
-add(q,hq,1)
+function fw(co,cr,ep,ex,ey,ht,hs,life,km,kl)
+add(p,{
+co=co,cr=cr,ep=ep,ex=ex,ey=ey,ht=ht,
+life=0,hs=hs,
+km=km,kl=kl,
+nd=cr,hu=life},1)
 end
 __gfx__
-bbbbbbbbbb171bbbbbbbbbbb99b9bb99bbbbbbbbbbbbbbbb9b9b99b99bb9999bb99bbbbbbb95555555d555d55d155dbbbbbbbbbb55551d51dddddddddddddddd
-bb11bbbbb17771bbbbbb9bbb9b9999b9bbb9bbbbbbbbbbbbb9999b99b99999b9bbbbbb99bbbd5515155551555555d59bbb9d5d9bd55d5155d5555555d5555555
-bb171bbb1711171bbbbb9999999b99999999bbbbbbbbbbbb9b99999b999999999bb99b9bbbd555d55d55d55555d515db555155155155555dd5015515d5555555
-bb1771bb7717177bbbb99b9bb9999b9bb9b99bbbb9bbbb9b9999b99b99999999bb99bbbbb955515d55515d5d155d55db55d5155d5d55d555d5105555d5555555
-bb17771b1711171bbbbbb9b99bb9999b9b9bbbbbbb99b999b9b99bbb99999999b999b99bbd55d551d5555555d515559b155555d555d555d1d5555111d5555555
-bb177771b17771bbbbbb9999b999b99b9999bbbb999b99b99bbbbbbbb999999999bb9bbbbd515d5555d515555d555dbbd55d55555d551555d1555101d5555555
-bb17711bbb171bbbbbb99b9b99b999b9b9b99bbb9b99b99bbbbbbbbb9999999bbbbbbbbbb95d5555555555155155dbbb5d555d15db9d5d9bd5555111d5555555
-bbb11bbbbbbbbbbbbbbb99b9bb9bbb999b99bbbbb99b99b9bbbbbbbb999b9999bbb99bbbbbd551d5555d5555555559bb55515555bbbbbbbbd5515555d5555555
-b7bbbb7bbbbbbbbbbbbb9bbbbbbbbbbbbbb9bbbbbbbbbbbbbbbbbbbb55d555d55d44444555d555d5d44444444444444444444444542444444444444444444424
-77bbbb77bbbbbbbbbb99bbbbbbbbbbbbbb66669bbbbbbbbbb6bbbbbb1555515d4444444444555155544444444444444444444444544224222242224442422442
-bbbbbbbb0000b000b9bbb79bbbb777bbb66dd66bbd5bb5bbbbbbbb6b5d55d444444444444445d555444444444444444444444444524442444424442224444221
-bbbbbbbb07700077bbb799bbbb77994bb6d55d6bb5dbbbbbbbbbbbbb55544444444444444444445d444444444444444444444442522222212222222242222110
-bbbbbbbb00777770bb99bbbbbb79994bb6d55d6bbbbb555bbbbbbbbb555444444444444444444445444444444444444444444422502112121121122121121200
-bbbbbbbb07700077b79bbbbbbb79944bb66dd66bbbbb5d5bbbb6bbbb55d444444444444444444445444444444444444444444242550221200012210012100005
-77bbbb770000b00099bbbbb9bbb444bbbb6666bbbbbb555bbbbbbbbb154444444444444444444444444444444444444444444240555000055000000500055555
-b7bbbb7bbbbbbbbbbbbbb99bbbbbbbbbb9bbbbbbbbbbbbbbbbbbbbbb55444444444444444444444444444444444444444444442155555555555555555555d555
-bbbbbbbbbbbbbbbbbd5d5555bbbbb1b155d555db1b1bbbbbbb0ee0bbbbbbbbbbbbbbbbbbbbbbbbbb10000000bbbbbbb0000000010bbbbbbb0000000000000000
-dbbbbbbbbbbbbbddbd555155bbb1bb001555d5db00bb1bbbbb5c65bbbbbbbbbbbb676bbbbb676bbbb0000000bbbbb1000000000b00bbbbbbb000000b00000000
-55d9bbbbbbbb9d55bb55d555bb1b00005d5555bb0001b1bbbb0c60bbbbbbbbbbbbb7bbbbbbb7bbbb1b000000bbbb1b00000000b1001bbbbbb1b1b1bb00000000
-5555dbbbbbbd555dbbd15d5db1b0000055555dbb00000b1bbb5c75bbbbbbbbbbbb676bbbb6e6e6bbbb000000bbbbb100000001bb00b1bbbbbb1b1bbb00000000
-d55559bbbb955555bb955555bb000000d555d9bb000001bbbbbc7bbbbbb1b1bb7e777e7bbb676bbbb1b00000bbbb1b0000000b1b001bbbbbbbbbbbbb00000000
-55d55dbbbbd51555bbbb9d551b00000055d9bbbb000000b1bb0cc0bbbb1b1b1bbbb7bbbbbbb7bbbbbb1b0000bbbbb1000001b1bb00b1bbbbbbbbbbbb00000000
-555555dbbd555515bbbbbbbdb0000000dbbbbbbb0000000bbb5dd5bbb000000bbbbcbbbbbbbcbbbbbbb1bb00bbbbbb0000bb1bbb001bbbbbbbbbbbbb00000000
-555d55dbbd5d5555bbbbbbbb10000000bbbbbbbb00000001bb0cc0bb00000000bbbbbbbbbbbbbbbbbbbbb1b1bbbbbbb01b1bbbbb0bbbbbbbbbbbbbbb00000000
+bbbbbbbbbb171bbbb7bbbb7bbbbbbbbbbbbbbbbb99b9bb99bbbbbbbbbbbbbbbb9b9b99b99bb9999bb99bbbbbbbbb9bbbbb95555555d555555d155dbbbbbbbbbb
+bb11bbbbb17771bb77bbbb77bbbbbbbbbbbb9bbb9b9999b9bbb9bbbbbbbbbbbbb9999b99b99999b9bbbbbb99bb99bbbbbbbd5515555555515555d59bbb9d5d9b
+bb171bbb1711171bbbbbbbbb0000b000bbbb9999999b99999999bbbbbbbbbbbb9b99999b999999999bb99b9bb9bbb79bbbd555d5515d5d5555d515db55515515
+bb1771bb7717177bbbbbbbbb07700077bbb99b9bb9999b9bb9b99bbbb9bbbb9b9999b99b99999999bb99bbbbbbb799bbb955515d5555155d155d55db55d5155d
+bb17771b1711171bbbbbbbbb00777770bbbbb9b99bb9999b9b9bbbbbbb99b999b9b99bbb99999999b999b99bbb99bbbbbd55d55155155555d515559b155555d5
+bb177771b17771bbbbbbbbbb07700077bbbb9999b999b99b9999bbbb999b99b99bbbbbbbb999999999bb9bbbb79bbbbbbd515d55d555d5555d555dbbd55d5555
+bb17711bbb171bbb77bbbb770000b000bbb99b9b99b999b9b9b99bbb9b99b99bbbbbbbbb9999999bbbbbbbbb99bbbbb9b95d5555555555155155dbbb5d555d15
+bbb11bbbbbbbbbbbb7bbbb7bbbbbbbbbbbbb99b9bb9bbb999b99bbbbb99b99b9bbbbbbbb999b9999bbb99bbbbbbbb99bbbd551d5515d555d555559bb55515555
+55551d51bbbbbbbbbbbbbbbbbd5d555555d555dbdddddddddddddddd55d555d55d44444555d555d5d44444444444444444444444542444444444444444444424
+d55d5155bbbbbbdddbbbbbbbbd5551551555d5dbd5555555d55555551555515d4444444444555155544444444444444444444444544224222242224442422442
+5155555dbbbb9d5555d9bbbbbb55d5555d5555bbd5015515d55555555d55d444444444444445d555444444444444444444444444524442444424442224444221
+5d55d555bbbd555d5555dbbbbbd15d5d55555dbbd5105555d5555555555d4444444444444444445d444444444444444444444442522222212222222242222110
+55d555d1bb955555d55559bbbb955555d555d9bbd5555111d5555555555444444444444444444445444444444444444444444422502112121121122121121200
+5d551555bbd5155555d55dbbbbbb9d5555d9bbbbd1555101d555555555d444444444444444444445444444444444444444444242550221200012210012100005
+db9d5d9bbd555515555555dbbbbbbbbddbbbbbbbd5555111d5555555154444444444444444444444444444444444444444444240555000055000000500055555
+bbbbbbbbbd5d5555555d55dbbbbbbbbbbbbbbbbbd5515555d555555555444444444444444444444444444444444444444444442155555555555555555555d555
+bbbbbbbbbbb9bbbbbbbbbbbbbbbbb1b1bbbbbbbb1b1bbbbbbb0ee0bbbbbbbbbbbbbbbbbbbbbbbbbb10000000bbbbbbb0000000010bbbbbbb0000000000000000
+bbbbbbbbbb66669bbbbbbbbbbbb1bb00b6bbbbbb00bb1bbbbb5c65bbbbbbbbbbbb676bbbbb676bbbb0000000bbbbb1000000000b00bbbbbbb000000b00000000
+bbb777bbb66dd66bbd5bb5bbbb1b0000bbbbbb6b0001b1bbbb0c60bbbbbbbbbbbbb7bbbbbbb7bbbb1b000000bbbb1b00000000b1001bbbbbb1b1b1bb00000000
+bb77994bb6d55d6bb5dbbbbbb1b00000bbbbbbbb00000b1bbb5c75bbbbbbbbbbbb676bbbb6e6e6bbbb000000bbbbb100000001bb00b1bbbbbb1b1bbb00000000
+bb79994bb6d55d6bbbbb555bbb000000bbbbbbbb000001bbbbbc7bbbbbb1b1bb7e777e7bbb676bbbb1b00000bbbb1b0000000b1b001bbbbbbbbbbbbb00000000
+bb79944bb66dd66bbbbb5d5b1b000000bbb6bbbb000000b1bb0cc0bbbb1b1b1bbbb7bbbbbbb7bbbbbb1b0000bbbbb1000001b1bb00b1bbbbbbbbbbbb00000000
+bbb444bbbb6666bbbbbb555bb0000000bbbbbbbb0000000bbb5dd5bbb000000bbbbcbbbbbbbcbbbbbbb1bb00bbbbbb0000bb1bbb001bbbbbbbbbbbbb00000000
+bbbbbbbbb9bbbbbbbbbbbbbb10000000bbbbbbbb00000001bb0cc0bb00000000bbbbbbbbbbbbbbbbbbbbb1b1bbbbbbb01b1bbbbb0bbbbbbbbbbbbbbb00000000
 b7bbb7bbb7bbb7bbbbeeeebbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb0cddc0bbecccebbbbbbbbbbdddddddddddddddddddddddddfff61ffddddd999dddddddd
 bcbbbcbbbcbbbcbbb0cccc0bb0ece0bbb0eee0bbb6cdc6bbb6ccc6bbbed77deb0ccccc0bbdeeedbbd555555555555544c4555555df44414ff559999999555765
 bebbbebbbebbbebbb0cccc0bb0d6d0bbb0d6d0bbb7d7d7bbbcdddcbbbc6776cb0cecec0bb6cdc6bbd5555555555554a904455555dfff4144f54499999445f66f
-b0bbb0bb0b0b0b0bbeccccebbbc7cbbbbbc7cbbbb7d6d7bbbc6c6cbbbc6776cbec6c6cebb6d7d6bbd4c455444445549904499c95df444444f52449494425dffd
-bbb7bbbbbbb7bbbbbeccccebbbcccbbbb0c7c0bbb7c6c7bbbc7c7cbbbed66debee6e6eebb6d4d6bb4a042499999452424297a094dffffffff5424444424556d5
-bbbcbbbbbbbcbbbbb0ecce0bbb606bbbb0ccc0bbb7c0c7bbbc0c0cbbbec66cebec0c0cebb69996bb49029999c0994922229aa094d44444444522424244255425
+b0bbb0bb0b0b0b0bbeccccebbbc7cbbbbbc7cbbbb7d6d7bbbc6c6cbbbc6776cbec6c6cebb6d7d6bbd4c455444444549904499c95df444444f52449494425dffd
+bbb7bbbbbbb7bbbbbeccccebbbcccbbbb0c7c0bbb7c6c7bbbc7c7cbbbed66debee6e6eebb6d4d6bb4a042499999442424297a094dffffffff5424444424556d5
+bbbcbbbbbbbcbbbbb0ecce0bbb606bbbb0ccc0bbb7c0c7bbbc0c0cbbbec66cebec0c0cebb69996bb49029999c0994422229aa094d44444444522424244255425
 bbbebbbbbbbebbbbb0deed0bbbb0bbbbbb6b6bbbb6eee6bbb6eee6bbb0e66e0b00ccc00bbdeaedbb242499aee099942dd1499942d41441144554224224555425
-bbb0bbbbbb0b0bbbbbeccebbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb00bbbbbbbbbbbbbbbbbbbd2499a77a0a94942d1542425d44411114555224225ff2225
-d77dd77d67d6fffdd6dddddd6ddddddddddcddddddddddddddddddddbbbbbbbbbbb8bbbbb5e77e5bd1499a77aaa99424d15242f5d55555555555555555f44225
-76667666561ffff1dd577765d5555555d560d55555555555d5555555bbbbbbbbbbb9bbbbbbc77cbbd1299aaaaaa94942d551414fdddddbbdddbbdd5d5fff4445
-76667666565f4441d576611655577765d56d1555c5555555d5bbbbb5bbbddbbbbbdadbbbbbb77bbbd52499aaaa9494245552424fdd55bb5ddddbb5dd5f444445
-d6621662165ffff1d7661bb155766116d5110d560d6c0655d5555555bbd66dbbbb666bbbc767767cd5424999994942425551424fd55bbddadad5bb5d5fff4765
-d2221222165f1011d76101b107661bb1d51001d6d6ee0dd5d55aaa55bbd66dbbbbb6bbbbc767767cd5542494949424255555114fd5bbd5aadaaddbb55444f66f
+bbb0bbbbbb0b0bbbbbeccebbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb00bbbbbbbbbbbbbbbbbbbd2499a77a0a99442d1542425d44411114555224225ff2225
+d77dd77d67d6fffdd6dddddd6ddddddddddcddddddddddddddddddddbbbbbbbbbbb8bbbbb5e77e5bd1499a77aaa99422d15242f5d55555555555555555f44225
+76667666561ffff1dd577765d5555555d560d55555555555d5555555bbbbbbbbbbb9bbbbbbc77cbbd1299aaaaaa99442d551414fdddddbbdddbbdd5d5fff4445
+76667666565f4441d576611655577765d56d1555c5555555d5bbbbb5bbbddbbbbbdadbbbbbb77bbbd52499aaaa9994225552424fdd55bb5ddddbb5dd5f444445
+d6621662165ffff1d7661bb155766116d5110d560d6c0655d5555555bbd66dbbbb666bbbc767767cd5229999999942425551424fd55bbddadad5bb5d5fff4765
+d2221222165f1011d76101b107661bb1d51001d6d6ee0dd5d55aaa55bbd66dbbbbb6bbbbc767767cd5542499999424255555114fd5bbd5aadaaddbb55444f66f
 622112211ddf1001d76000b0176101b1d515050116dd0dd5d5555555bbbddbbbbbb6bbbbbbb77bbbd55142424242421599c9554fdbbddaa5ddaad5bb5414dffd
 61155111515510056d600b01576000b0d55d155106dd15d5d5558555bbb67bbbbbb6bbbbbb5775bbd55f1424242421197a09954fdbd5aadd8d5aaddb544446d4
 66767555d55d5555d5d1b1155d600b01d566665551ddd501d5588855bbb67bbbbbb7bbbbbb6556bbd5599c9212121119aa09954fd5daa5d888ddaadd55555425
@@ -1456,14 +1478,14 @@ d50015055505ddd6766ddd05d5c7c5cd6cccc6dc56dddd10777666dd55777777ccc7d1cc5ccccc7c
 d55555555d101dd6766dd105d1dcd1c1d6666d1c56dddd1066dd666155766dddcc6666666dddc7dcddd7dddddddd666611dddddddddcc6dd66dd577ddcd6dccc
 d455555550001dd6766dd105d1cdc177660dd1c656dddd106666661155766dddff61616160d0cc5cdd75ddf2dddddd6600111ddddddddd115d66d55ddccd577c
 d15ddddddddd1dd6d16dd105d51117c67c601ccd5d111110dddd22115d766dddf666ddd66d55dc5fddd1df442df4dddd044fff44fffdd100d51dddddf0c77dd5
-d55776d7777716d6116d6105d500dcd76dcd0dd1dddddddddddd2661dd766dddf666ddd66d55dffffd42d9442d94d76d54450ffff50555555d11117fdd7dddd5
-d55666666666ddd6766ddd05d555dccddccd0110d5ddddd5dddd2261d5566ddd777777777776666d9944444444444994605060ff50606666d5117f11dd5d11d5
-d56ddddddddd1d0888880105d55cd6cccc6dc005d55ddd55dddd2261ddd55d6d777777766667777d49442424242449d46605066665066666dd7ff6f6fd5d00d5
-d5d111111111101d6dd6d005d55c1d6666d1c555d555d555dddd22655dddd565ffff7776666666dd4944242424244994666666d666666ddd662f5f5f5f266666
-d551a1a11111008888888005d556c1dddd1c6055d5551555dddd2265555ddd654999466555555dddff22222222222255ddd666666dddd5666662222222666666
-d45111111111016d6d6d6d05d55dcc1111ccd055d55111555555555555777777994999966ddddd945555555555999955666666dd776666666666666666666667
-d44555555555555555555555d761ddccccdd1076d511111555555555766666669449449499449949555999995555999966666655ddddd7775555566666667fff
-d11555555555555555555555d6d511dddd11056dd111111155555576666dddd6444444444444444499999999999555596666666666655ddd5556666667ffffff
+d55776d7777716d6116d6105d500dcd76dcd0dd1b5e77e5bdddd2661dd766dddf666ddd66d55dffffd42d9442d94d76d54450ffff50555555d11117fdd7dddd5
+d55666666666ddd6766ddd05d555dccddccd0110bec77ccbdddd2261d5566ddd777777777776666d9944444444444994605060ff50606666d5117f11dd5d11d5
+d56ddddddddd1d0888880105d55cd6cccc6dc005bee77ecbdddd2261ddd55d6d777777766667777d49442424242449d46605066665066666dd7ff6f6fd5d00d5
+d5d111111111101d6dd6d005d55c1d6666d1c555c767767cdddd22655dddd565ffff7776666666dd4944242424244994666666d666666ddd662f5f5f5f266666
+d551a1a11111008888888005d556c1dddd1c6055c767767cdddd2265555ddd654999466555555dddff22222222222255ddd666666dddd5666662222222666666
+d45111111111016d6d6d6d05d55dcc1111ccd055bee77ecb5555555555777777994999966ddddd945555555555999955666666dd776666666666666666666667
+d44555555555555555555555d761ddccccdd1076be5775cb55555555766666669449449499449949555999995555999966666655ddddd7775555566666667fff
+d11555555555555555555555d6d511dddd11056dbb6556bb55555576666dddd6444444444444444499999999999555596666666666655ddd5556666667ffffff
 ccccc7776cccccccffffffffffffffffcccccccccccccccccccccccccccccccc9999999999999999ccccccccccccc0cccccccccccccccccccccccccccccccccc
 ccccc77767ccccccffffffffffffffffcccccccccccccc77ccc7c7ccccc776cc9999999777799999ccccccccccccc0ccccccccccccccccccc71dcccc1c0c1cc7
 ccccc79767ccccccffffffffffffffffccccccccccc77766cc77c7cccccc6ccc99999772fff11447cccccccccccccdccccccc677ddcccccc5666ccccc101c7d7
@@ -1643,41 +1665,41 @@ f000000ffffffffffffffffffffffffffffffffffffffffffffffffffffcff17ffffffffffffffff
 00000000000000000fffffff7fffffffff5555ffffffffffffffffff000000000000000000000000000000000000000000000000100000000000000000000000
 
 __gff__
-0400040404040404040000000000020000000606060604010101010101010101000000010000000000000101010000010000000000000000000001010101010101010001000102010000010101020201010101000001020101010101010202010101010101010101010101010101010101010101010101010101010101010101
-0101010101010000000001010000000001010101010100000000010100000000000000000000000001010000000000000000000000000000010100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+040080000c0c0c0c0c0c0c0e0808080808080808080a08090909090909090909060e0e010c00000000000000000000010000000000000000000001010101010101010001000102010000010101020201010101000001020101010101010202010101010101010101010101010101010101010101010101010101010101010101
+0101010101010000000001010000000001010101010000000000010100000000000000000000000001010000000000000000000000000000010100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 __map__
-03030303044400006800680042000a0a240203030304220d24020303042244000068004200000000008565000000000000000021200000000040000a0a0a2f2f0000000203030303070707070300000000000000000800000000000000000000000000000000000000210a0a2405040000000000000000080303030306000000
-03030303080000000000000000000203030303060303030303030303030400000000000000000000000f00000020000000000042004200420000002402032f2f0000000303030307070707030300000000000000000000000000000000000000000000000000000000220a240000000000000000000000000000000000000000
-030303048585420042006500000008030306210c200803070703030303035785850f858557000000000f6200000f000000002100000000000085850203032f2f20000203070303030707070303030400000000000800000000000000000000000000000000000000000000000000000000000000000000000000000000000000
-0303030422850000000000000085000806210f0f0f20030307070303030385853a00008585200000000f0000000f000000005785858585858585020303032f2f24000307070303070703030707070300000000000000080000210c0a0c20000000210c0a0c200000000000000000000000000000121212000000000000000000
-03030303048585858585858585852000213a00000f0f2008030303030303850f0000000f850f00000085858585850000000f0f0d0d0d0d0d2402030303032f2f0000080303080303030303070703030400000000000000210c0a0a0a0a0a0000210a0a0a0a0a0c20000000000000000000000012121212120000000000000000
-08140303030422570a0a0d0d0f0f40000f00000062000020030303030306858500000085850f6e000f0f0f0f0f0f0f0f0f0f0002030303030303030303032f2f00000000000000000000030307070303000000000000000a0a0a0a0a0a240000090a0a0a0a0a0a0a0c0c20000000000000000203041212120000000000000000
-080303030703040f37240000220a00000f0000000000000f0f20080600218585850f8585850f00000f0f2400220f0f0f0f000203030303030303066800202f2f0000210c0a0c20000000080307070703040000000000210a0a0a0a0a24000000090a0a0a0a0a0a0a0a0a0a0c2000000000020303030412121200000000000000
-000000030703060f0b0203050409856e00850f850f856000850b00000022578585858585570f85850024020304856e000f0003030303030303062100000f2f2f210c0a0a0a0a0a200204000307070303030000000000090a0a0a240000000000090a0a0a0a0a0a0a0a0a0a0a0b00000002030707070304121212000000000000
-000000080306000f0b030703032285000085858585850000850a200000000057858585000a0d0d2400000303068500000f0003030303030306214400000f2f2f0a0a0a1d0a0a0a240303030307070707030000000000220a2400000000000000090a0a0a0a0d0d0a0a0a0a0d2400000003030307030303121212120000000000
-000000000000000f0b0303070308858585850a0d0a858585850a0a20000002030304090a0b0000000000080621858585570003030303030621360000000f2f2f0a1d0a0a0a0a2402030303030303070703000000000000000000002120000000090a0a0a0b000000000000000000000003030307070306121212120000000000
-20000000000057570b030303060009570a0b000000220a0a570f0a0b000203070303090a0b000000000000210a0a0a0a0b0002030303068585858585850f2f2f0a0a0a0d0d240203030307030307070303000021200000020304210a0a200000090a0a0a0b000000000000000000000008030707030612121212000000000000
-0b00000000005757240303030000090a0a0b00000000220d0d0f370a200803070703090a0b0000000000210a0a370a0a0a20000837210c8560006500000f2f2f0a0d24000002030707030303030307070304210a0b0002030303090a0a0a0000220a0a0a0b000000000000000000000000080303060012121200000000000000
-0a20000000000203030303030000090a370b000000000000000f0f0f0a2003070306090a0a20000000210a0a0a0a0a570f0f0f200008228500000000000f2f2f2400000000000803030600030303030306210a0a0b0003070703220a0a24000000090a0a0a200000000000000000000000000000000000121200000000000000
-0a0a200000000307070703030000090a0a0a2000000000000000220f0f0b080306210a0a0a0a0c0c0c0a0a0d0a0a0a0f3a00000f000000008585858585852f2f00000000000000000000000803030306210a0a0a0b000307070303040000000000220a0a0a0a2000000000000000000000000000000000121200000000000000
-0a0a0a2000000803070303030000220a0a0a0a2000000000000000090f0f0c2000000000220a0a0a0a24000000220a0f0000000f203700000022856200002f2f0000000000000000000000000000210c0a0a0a0a0b0003030707030300000000000000220a0a0a0c200000000000000000000000000012121212120000000000
-0a0a0a0a2000000303030306000000090a0a0a0b00000000000000090a0f0f0a200000000000220a240000000000220f0000000f0b0000000000850000002f2f00000000000000000000000000150d0a0a0a0a0a0b00000803030306000000000000000000220a0d240500000000000000000000000000121212000002030000
-0a0a0a0a0b00000806000000000000090a0a0a2400000013000000220a0a0f0f0b0000000000000000000000000000570f0f0f0f0f00000000000f0f0f0f2f2f000000000000000000000000000000220a0a0a0a0a20000008030600000000000000000002030303030303030400000000000000000000121212020303030000
-0a0a0d0d0b00000000000000000000090a0a2400000000000000000000220a0f0a20000000000000000013000000000000000f40000000003700090f6e002f2f00000000000000000000210c000000000000090a0a0a200000000000000000210c0b000003030307070703030300000000000000000000000000030707070000
-0a2402030304140000000000000000090a24000000000000000000000000090f0a0b000000000000000000000000000000000f00000000000000090f00002f2f000203030400000000210a0a000000000000090a0a0a0a20000000210c380c370a00000203030707030303030600000000000000001300000000030707070000
-0b02030703030304000000000000002224000000000000000000000000002257570b00000000000000000000000002030400090f0f0000000000098585852f2f000307030304000000090a0a200000000000090a0a0a0a0a0c0c0c300a0a0a0a0a00000000080303030703212000000000000000000000000000080303070000
-0b03070703030303000000000000000000000000000000000000000000000057570b000000000000000000000008030303000f42000000000000220d57372f2f000303070303000000090a0a0a0000001300090a0a0a0a0a0a0a0a0a0a010e0a3600000000000008030306090b00000000000000000000000000210b03070000
-0b0803030303030600000000000000000000000000000000000000000000210a0a24000000000000000000030303030703005700002000000015000000222f2f000307070703000000090a0a0a20000000210a0a0a0a0a0a0a0a360a0a0e0e0a0b00000000000000000000090a20000000000000000000000000000203030000
-0a0c0c2008000000000000000000000002030400000000000000000000210a0a24000000000000210c0a0c200307030303000f574400000f0b00000000002f2f000307070703000000090a0a0a0a0c0c0c0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a3700000000000000000000090a0a0c2000000000000000000000000803060000
-0a0a0a0b00000000000000000000020303030300000000000800210c0c0a0a2400000000000000090a0a0a0b030707070300220f0000000f0000000000002f2f080303030306000000090a0a0a0a0a0a0a0a2400220a0a0a0a0a0a340a0a0a0a0b00000000000000000000220d0a0a0a20000000000000000000000000000000
-0d0d0d2400000000000000000203030707070300000000000000220a0d0d240000000000000000090a0a0d240303070306000009240000000000000000002f2f000000000000000000090a0a0a0a0a0d2400000000090a0a0a0a0a0a0a0a380a0b000000000000000000000000220a0a0b000000000000000000000000000000
-000000000000000000000000030707070303030400000005000000000000000000000000000000090a2400020303030600000000000000000000000000002f2f000000000000000000090a0a0a0a24000000000000220a0a0a24000000220a0a0b00000000000000000000000204220a0b000000000000000000000000000000
-0000000000000000000000000803070703061212000000030000000000000000000000000000210a240000000803060000000000080000020304000000002f2f000000000000000000220a0a0a240000000000000000090a240000000000220a24000000000000210b020303030304220a0c2000000000000000000000000000
-0000000000000000000000000008030306121212000000030400000000000000000000210a0a0a0b000000000000000000000000000203030303030304002f2f00210c0b000000000000220d24000000000000000000222400000000000000000203080000000000000307030303030304220a0b000000000000000000000000
-0000000000000000000000000000001212120000000000000000000000000000000000220a0a0a24000002030303040000000000000003070703030303042f2f00000000000000000000000000000000000000000000000000000000000003030303030400000000020307070307070703000000000000000000000000000000
-00000000000000000000000000000000000000000000000000000000000000000000000000000000000000030303030000000008000008030707070707032f2f00000000000000000000000000000000000000000000000000020303050008030303061212000000030303030303030306000002030303040000000000000000
-0000000000000000020303040000000000000000000000000000000000000000000000000000000000020303030306210c0b0000000000030303030703062f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f
-000000000002030303070303040000000000000000000000000000000000000000000000000000000000210c0c0c0c0a24000000000000030303070703002f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f
+05050505064400006800680042000d0d140405050506131014040505061344000068004200000000008565000000000000000011120000004940000d0d0d2f2f0000000405050505090909090500000000000000000a00000000000000000000000000000000000000110d0d14070600000000000000000a0505050508000000
+050505050a0000000000000000000405050505080505050505050505050600000000000000000000001600000012000000000042004200420000001404052f2f0000000505050509090909050500000000000000000000000000000000000000000000000000000000130d140000000000000000000000000000000000000000
+05050506858542004200650000000a050508110f120a050909050505050557858585858557000000001662000016000000001100000000000085850405052f2f12000405090505050909090505050600000000000a00000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+0505050613850000000000000085000a081116161612050509090505050585853a00008585120000001600000016000000005785858585858585040505052f2f140005090905050909050509090905000000000000000a0000110f0d0f12000000110f0d0f1200000000000000000000000000000b0b0b000000000000000000
+05050505068585858585858585851249113a00001616120a05050505050585160000001685160000008585858585000000161610101010101404050505052f2f00000a05050a0505050505090905050600000000000000110f0d0d0d0d0d0000110d0d0d0d0d0f1200000000000000000000000b0b0b0b0b0000000000000000
+0a210505050613570d0d101016164000160000006200001205050505050885850000008585166e00161616161616161616160004050505050505050505052f2f00000000000000000000050509090505000000000000000d0d0d0d0d0d1400000c0d0d0d0d0d0d0d0f0f12000000000000000405060b0b0b0000000000000000
+0a0505050905061637140000130d0000160000000000001616120a08001185858516858585160000161614001316161616000405050505050505086800122f2f0000110f0d0f120000000a0509090905060000000000110d0d0d0d0d140000000c0d0d0d0d0d0d0d0d0d0d0f120000000004050505060b0b0b00000000000000
+00000005090508160d040507060c856e0085168516856000850e00000013578585858585571685850014040506856e0016000505050505050508110000162f2f110f0d0d0d0d0d1204060005090905050500000000000c0d0d0d1400000000000c0d0d0d0d0d0d0d0d0d0d0d0e000000040509090905060b0b0b000000000000
+0000000a050800160e050905051385000085858585850000850d120000000057858585570d101014000005050885000016000505050505050811440000162f2f0d0d0d1d0d0d0d140505050509090909050000000000130d14000000000000000c0d0d0d0d10100d0d0d0d1014000000050505090505050b0b0b0b0000000000
+00000000000000160e050509050a858585850d100d858585850d0d120000040505060c0d0e00000000000a081185858557000505050505081136000000162f2f0d1d0d0d0d0d14040505050505050909050000000000000000000011120000000c0d0d0d0e0000000000000000000000050505090905080b0b0b0b0000000000
+12000000000057570e05050508000c570d0e000000130d0d57160d0e0004050905050c0d0e000000000000110d0d0d0d0e00040505050885850d858585162f2f0d0d0d1010140405050509050509090505000011120000040506110d0d1200000c0d0d0d0e00000000000000000000000a05090905080b0b0b0b000000000000
+0e000000000057571405050500000c0d0d0e0000000013101016370d120a050909050c0d0e0000000000110d0d370d0d0d12000a37110f856000650000162f2f0d1014000004050909050505050509090506110d0e00040505050c0d0d0d0000130d0d0d0e0000000000000000000000000a050508000b0b0b00000000000000
+0d120000000004050505050500000c0d370e000000000000001616160d12050905080c0d0d12000000110d0d0d0d0d5716161612000a13850000000000162f2f1400000000000a05050800050505050508110d0d0e0005090905130d0d140000000c0d0d0d1200000000000000000000000000000000000b0b00000000000000
+0d0d1200000005090909050500000c0d0d0d12000000000000001316160e0a0508110d0d0d0d0f0f0f0d0d100d0d0d163a000016000000008585858585852f2f00000000000000000000000a05050508110d0d0d0e000509090505060000000000130d0d0d0d12000000000000000000000000000000000b0b00000000000000
+0d0d0d1200000a05090505050000130d0d0d0d12000000000000000c16160f1200000000130d0d0d0d14000000130d1600000016123700000013856200002f2f0000000000000000000000000000110f0d0d0d0d0e0005050909050500000000000000130d0d0d0f12000000000000000000000000000b0b0b0b0b0000000000
+0d0d0d0d12000005050505080000000c0d0d0d0e000000000000000c0d16160d120000000000130d1400000000001316000000160e0000000000850000002f2f0000000000000000000000000015100d0d0d0d0d0e00000a05050508000000000000000000130d101407000000000000000000000000000b0b0b000004050000
+0d0d0d0d0e00000a080000000000000c0d0d0d1400000020000000130d0d16160e00000000000000000000000000005716161616160000000000161616162f2f000000000000000000000000000000130d0d0d0d0d1200000a0508000000000000000000040505050505050506000000000000000000000b0b0b040505050000
+0d0d10100e000000000000000000000c0d0d1400000000000000000000130d160d120000000000000000200000000000000016400049000037000c166e002f2f00000000000000000000110f0000000000000c0d0d0d120000000000000000110f0e000005050509090905050500000000000000000000000000050909090000
+0d14040505062100000000000000000c0d140000000000000000000000000c160d0e0000000000000000000000000000000016000000000000000c1600002f2f000405050600000000110d0d0000000000000c0d0d0d0d12000000110f380f370d14000405050909050505050800000000000000002000000000050909090000
+0e04050905050506000000000000001314000000000000000000000000001357570e000000000000000000000000040506000c161600000000000c8585852f2f0005090505060000000c0d0d1200000000000c0d0d0d0d0d0f0f0f0d300d0d0d0e000000000a05050509051112000000000000000000000000000a0505090000
+0e05090905050505000000000000000000000000000000000000000000000057570e00000000000000000000000a050505001642000000000000131057372f2f0005050905050000000c0d0d0d00000020000c0d0d0d0d0d0d36440d0d01220d360000000000000a0505080c0e00000000000000000000000000110e05090000
+0e0a05050505050800000000000000000000000000000000000000000000110d0d140000000000000000000505050509050057000012000000150000000d2f2f0005090909050000000c0d0d0d12000000110d0d0d0d0d0d0d0d0d0d0d22220d0e000000000000000000000c0d12000000000000000000000000000405050000
+0d0f0f120a000000000000000000000004050600000000000000000000110d0d14000000000000110f0d0f120509050505001657440000160e00000000132f2f0005090909050000000c0d0d0d0d0f0f0f0d0d0d0d0d0d0d0d6a0d0d4942160d37000000000000000000000c0d0d0f1200000000000000000000000a05080000
+0d0d0d0e00000000000000000000040505050500000000000a00110f0f0d0d14000000000000000c0d0d0d0e0509090905001316000000160000000000002f2f0a05050505080000000c0d0d0d0d0d0d0d0d1400130d0d0d0d0d0d340d0d0d0d0e0000000000000000000013100d0d0d12000000000000000000000000000000
+1010101400000000000000000405050909090500000000000000130d10101400000000000000000c0d0d1014050509050800000c140000000000000000002f2f0000000000000000000c0d0d0d0d0d1014000000000c0d0d0d0d100d100d380d0e000000000000000000000000130d0d0e000000000000000000000000000000
+0000000000000000000000000509090905050506000000070000000000000000000000000000000c0d1400040505050800000000000000000000000000002f2f0000000000000000000c0d0d0d0d14000000000000130d0d0d14000000130d0d0e00000000000000000000000406130d0e000000000000000000000000000000
+0000000000000000000000000a05090905080b0b000000050000000000000000000000000000110d140000000a050800000000000a0000040506000000002f2f000000000000000000130d0d0d1400000000000000000c0d140000000000130d14000000000000110e040505050506130d0f1200000000000000000000000000
+000000000000000000000000000a0505080b0b0b000000050600000000000000000000110d0d0d0e000000000000000000000000000405050505050506002f2f00110f0e0000000000001310140000000000000000001314000000000000000004050a0000000000000509050505050506130d0e000000000000000000000000
+0000000000000000000000000000000b0b0b0000000000000000000000000000000000130d0d0d14000004050505060000000000000005090905050505062f2f00000000000000000000000000000000000000000000000000000000000005050505050600000000040509090509090905000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000000000000000000000000005050505000000000a00000a050909090909052f2f0000000000000000000000000000000000000000000000000004050507000a050505080b0b000000050505050505050508000004050505060000000000000000
+0000000000000000040505060000000000000000000000000000000000000000000000000000000000040505050508110f0e0000000000050505050905082f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f
+000000000004050505090505060000000000000000000000000000000000000000000000000000000000110f0f0f0f0d14000000000000050505090905002f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f
 __sfx__
 010c0004246152461524615246250c000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 010200020c4100c210000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
