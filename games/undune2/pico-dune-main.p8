@@ -96,7 +96,7 @@ function _init()
  load_data()
 
  -- debug!!!
- --mode = levelintro_mode
+ mode = levelintro_mode
  --mode = levelselect_mode
 
  -- initialise modes
@@ -143,6 +143,7 @@ function _update60()
   end
 
  elseif mode == levelintro_mode then
+  update_leveintro()
   -- load and initialise game cart
   if btnp(5) then   
    load_level(p_level)
@@ -445,8 +446,7 @@ end
 -->8
 -- level intro screen
 
-function init_levelintro()
- _set_fps(30)
+function init_levelintro() 
  mode = levelintro_mode
 
  if p_fact<=1 then
@@ -462,6 +462,10 @@ function init_levelintro()
 
  -- play "intro" music
  music(6)
+end
+
+function update_leveintro()
+ _set_fps(30)
 end
 
 function draw_levelintro()
