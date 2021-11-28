@@ -65,9 +65,20 @@ cls()
 
 palt(0,false)
 palt(12,true)
-spr(0, 0,40,  16,16)
+
 
 draw_planet((time()\1)%4)
+
+rect(40,36,128,112,7)
+  msg=[[arrakis, known as dune. land of sand; home of
+the spice melange. whoever 
+controls dune controls the spice.
+the emperor has proposed a 
+challenge to each of the houses.]]
+  ?msg,0,5,9
+  ?msg,0,4,5
+
+spr(0, 0,40,  16,16)
 
 flip()
 goto _

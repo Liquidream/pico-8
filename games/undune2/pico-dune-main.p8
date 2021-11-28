@@ -143,7 +143,7 @@ function _update60()
   end
 
  elseif mode == levelintro_mode then
-  update_leveintro()
+  update_levelintro()
   -- load and initialise game cart
   if btnp(5) then   
    load_level(p_level)
@@ -462,10 +462,22 @@ function init_levelintro()
 
  -- play "intro" music
  music(6)
+
+ msg=[[with my guidance, you may be
+able to assist us in conquering
+this dusty, little planet.]]
+ current_msg=nil
+ co_text=cocreate(text_spool)
 end
 
-function update_leveintro()
+function update_levelintro()
  _set_fps(30)
+
+ if (co_text!=nil and costatus(co_text)!="dead") then
+  coresume(co_text)
+ else
+  co_text=nil
+ end 
 end
 
 function draw_levelintro()
@@ -487,11 +499,13 @@ function draw_levelintro()
   -- harkonnen
   draw_planet(0)
   rect(40,36,128,112,7)
-  msg=[[with my guidance, you may be
-able to assist us in conquering
-this dusty, little planet.]]
-  ?msg,2,5,9
-  ?msg,2,4,5
+  
+  if (current_msg) draw_dialog()
+--   msg=[[with my guidance, you may be
+-- able to assist us in conquering
+-- this dusty, little planet.]]
+--   ?msg,2,5,9
+--   ?msg,2,4,5
   palt(0,false)
   palt(12,true)
   spr(0, 0,40,  16,16)
@@ -562,6 +576,26 @@ function draw_planet(pnum)
 
 end
 
+-- Dialog Text Flow with Coroutines by @MBoffin
+-- https://www.lexaloffle.com/bbs/?tid=35381
+function draw_dialog()
+ --rectfill(0,96,127,128,6) 
+ ?current_msg,2,5,11
+ ?current_msg,2,4,5
+ ?"❎ to skip",83,121,6
+end
+function text_spool()
+ for i=1,#msg do
+  current_msg=sub(msg,1,i)
+  --sfx(0)
+  if (btnp(❎)) break
+  yield()yield()
+ end
+ yield()
+ current_msg=msg
+ while not btnp(❎) do yield() end
+ current_msg=nil
+end
 
 -->8
 -- level end screen
