@@ -96,7 +96,7 @@ function _init()
  load_data()
 
  -- debug!!!
- mode = levelintro_mode
+ --mode = levelintro_mode
  --mode = levelselect_mode
 
  -- initialise modes
@@ -117,7 +117,6 @@ function _init()
  --end
 
 end
-
 
 function _update60()
 
@@ -345,12 +344,13 @@ end
 -->8
 -- title screen
 
-function init_title()
+function init_title() 
  load_gfx_page(0)
  angle,cy=0.25,-96
 end
 
 function update_title()
+ _set_fps(60)
  -- auto-rotate in...
  if angle>.0 then
   angle-=.1/128
@@ -370,9 +370,9 @@ function draw_title()
 	-- code distorts slightly)
 	--angle=0
 	if angle~=0 then 
-	 spr3d(8,24,123,20,cy,angle,1)
+	 spr3d(8,0,123,20,cy,angle,1)
 	else
-	 spr(49, 3,38, 15,3)
+	 spr(1, 3,38, 15,3)
 	end
 	
 	local start⧗=6.5
@@ -446,6 +446,7 @@ end
 -- level intro screen
 
 function init_levelintro()
+ _set_fps(30)
  mode = levelintro_mode
 
  if p_fact<=1 then
@@ -480,7 +481,7 @@ function draw_levelintro()
 
  elseif p_fact==3 then
   -- harkonnen
-  draw_planet(1)
+  draw_planet(0)
   rect(40,36,128,112,7)
   msg=[[with my guidance, you may be
 able to assist us in conquering
@@ -509,12 +510,26 @@ function draw_planet(pnum)
 	dx=100
 	dy=75
 
-	c=({[0]={0,9,11,14,15,8}, --dune
---	   {0,9,3,6,12}, --dune v2 (too yellow)
-	   {0,10,1,13,2},--7 --atreides
-    {0,9,4,7,5}, --ordos
-	   {0,9,11,3} --harkonnen
+	c=(
+			{[0]={0,9,11,14,15,8,8,8}, --dune
+--	 [0]={0,9,3,6,12}, --dune v2 (too yellow)
+	   {0,10,1,13,2,6},--7 --atreides
+    {0,10,1,7,5,15,15},--ordos
+	   {0,9,2,15,6,6,6} --harkonnen
 	  })[pnum]
+	  
+	 --spare cols: 2,6,8,15
+	p=({
+[0]={[0]=0,1,3,4,5,6,9,13,15,128,129,132,10,140,142,143},
+				{[0]=0,1,3,4,5,6,139,13,8,128,129,132,8,140,142,8},
+				{[0]=0,1,8,4,5,6,12,13,15,128,129,132,10,140,142,7},
+				{[0]=0,1,2,4,5,6,8,13,15,128,129,132,10,140,142,136}
+	  })[pnum]
+	
+	g=({[0]=.5,.65,0.75,.5})[pnum]
+	
+	pal(p,1)
+	  
 	srand(6)--6
 	u=cos(.5)
 	v=sin(.4)
@@ -534,7 +549,7 @@ function draw_planet(pnum)
 	 for y=-1,.95,.05 do 
 	  h=x*x+y*y
 	  z=(1-h)^.5
-	  r=x*u+y*v+1.3+2*((x+y)%.1)
+	  r=x*u+y*v+g+2*((x+y)%.1)
 	  r=max(min(1,z*r))
 	  r=(c)[flr(r*(#c-1))+1]
 	  if(h<1)pset(dx+x*20,dy+y*20,r)
@@ -542,6 +557,8 @@ function draw_planet(pnum)
 	end
 
 end
+
+
 -->8
 -- level end screen
 
