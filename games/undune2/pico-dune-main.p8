@@ -264,7 +264,7 @@ end
 function load_level(num)
  
  -- debug
- --num=9
+ num=2
  
  printh("in load_level("..num..")...")
  printh("p_fact = "..p_fact)
@@ -327,9 +327,12 @@ function load_level(num)
  -- load level map data
  local mapfile = "pico-dune-map"..num..".p8"
  printh("loading data from: "..mapfile)
- reload(0x4300, 0x2000, 0x1000, mapfile)  -- read map data to user mem
- cstore(0x2000, 0x4300, 0x1000, game_cart)    -- write user mem to game map data
-
+ -- read map_cart data to user mem
+ -- then write back to game_cart
+ reload(0x4300, 0x2000, 0x1000, mapfile)   -- read map data
+ cstore(0x2000, 0x4300, 0x1000, game_cart) -- write map data
+ reload(0x4300, 0x3100, 0x1199, mapfile)   -- read music+sfx data
+ cstore(0x3100, 0x4300, 0x1199, game_cart) -- write music+sfx data
  load(game_cart)
 end
 
@@ -1469,8 +1472,7 @@ end
 -- vget  read function (x,y)
 -- vset  write function (x,y,v)
 
-function
-    px9_decomp(x0,y0,src,vget,vset)
+   function px9_decomp(x0,y0,src,vget,vset)
 
     local function vlist_val(l, val)
         -- find position and move
