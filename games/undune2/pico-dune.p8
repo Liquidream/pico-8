@@ -996,7 +996,7 @@ function do_guard(unit, start_state)
             return true
             end
           end,
-        10)
+        20)
       end
       -- found spice?
       if sx and sy then
