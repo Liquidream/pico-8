@@ -264,7 +264,7 @@ end
 function load_level(num)
  
  -- debug
- num=2
+ num=4
  
  printh("in load_level("..num..")...")
  printh("p_fact = "..p_fact)
