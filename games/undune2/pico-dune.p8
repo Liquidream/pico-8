@@ -559,7 +559,7 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
         end
        end
        -- smoking?
-       if (self.life<self.hitpoint*.33 and not self.altframe and rnd"10"<1 and ty<=2) add_particle(self.x+3.5,y+3.5, 1, .1,-.02,.05, -.002, 80,split2d"10,8,9,6,5", rnd"2"<1 and 0xa5a5.8 or 0)
+       if (self.life<self.hitpoint*.33 and not self.altframe and rnd"10"<1 and ty<=2) add_particle(self.x+3.5,y+3.5, 1, .1,-.02,.05, -.002, 80,split2d"10,8,9,6", rnd"2"<1 and 0xa5a5.8 or 0)
        -- reset hit flag
        self.hit=0
     end --abort if off-screen
@@ -777,8 +777,8 @@ function reveal_fow(object)
  -- > firing ai
  -- 0=idle/guarding, 1=pathfinding, 2=moving, 3=attacking, 4=firing, 5=exploding
  
- if(object.owner<=0 or object.id==42) return -- show all bases for demo!
- --if(object.owner!=1 and object.state!=4) return
+ --if(object.owner<=0 or object.id==42) return -- show all bases (for demos!)
+ if(object.owner!=1 and object.state!=4) return
 
  local size = object.type==2 and 3 or 2
  -- clear group of tiles
