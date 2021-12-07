@@ -5,7 +5,7 @@ __lua__
 -- by paul nicholas
 -- (with support from my patrons)
 
-cartdata("pn_undune2") 
+cartdata"pn_undune2"
 
 -- data flags
 p_level,ai_level,p_col1,p_col2=dget"0",dget"1",dget"7",dget"8"
@@ -329,7 +329,7 @@ function _init()
     rectfill(30,54,104,70,0)
     ?"mission "..(endstate<3 and "complete" or "failed"),36,60,p_col1
     flip()
-    load("pico-dune-main")
+    load"pico-dune-main"
    end  
   end --alt?
 
@@ -430,7 +430,8 @@ function m_map_obj_tree(objref, x,y, owner, factory)
     end
   else
     -- unit props
-    newobj.r=newobj.norotate!=1 and flr(rnd"8")*.125
+    newobj.r=newobj.norotate!=1 and (xpos%8)*.125
+    --newobj.r=newobj.norotate!=1 and flr(rnd"8")*.125
     if newobj.arms>0 then
      -- combat stuff
      newobj.fire=function(self)
@@ -527,10 +528,6 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
        if self.r then
         if not self.death_time or self.death_time>.025  then
          rsspr(self.obj_spr%16*8,self.obj_spr\16*8, x, y, .25-self.r, 1, self.trans_col, self.z, flr(self.flash_count)%2==0 and 7 or nil)
-         -- draw twice (shadow first, then norm)         
-         -- for i=1,2 do
-         --  if (i==2 or self.speed>0) rspr(self.obj_spr%16*8,self.obj_spr\16*8, x, y-(i==2 and self.z or 0), .25-self.r, 1, self.trans_col, i==1 and 5 or flr(self.flash_count)%2==0 and 7 or nil)
-         -- end
         end
        -- norm sprite
        else       
@@ -557,12 +554,12 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
           is_missile and .15 or 2,
           -.01, 
           is_missile and 20 or 2.5, 
-          self.id==40 and {11} or is_missile and split2d("7,7,10,9,8,2,13,6,7") or {15},
+          self.id==40 and {11} or is_missile and split2d"7,7,10,9,8,2,13,6,7" or {15},
           rnd"2"<1 and 0xa5a5.8 or 0)
         end
        end
        -- smoking?
-       if (self.life<self.hitpoint*.33 and not self.altframe and rnd"10"<1 and ty<=2) add_particle(self.x+3.5,y+3.5, 1, .1,-.02,.05, -.002, 80,split2d("10,8,9,6,5"), rnd"2"<1 and 0xa5a5.8 or 0)
+       if (self.life<self.hitpoint*.33 and not self.altframe and rnd"10"<1 and ty<=2) add_particle(self.x+3.5,y+3.5, 1, .1,-.02,.05, -.002, 80,split2d"10,8,9,6,5", rnd"2"<1 and 0xa5a5.8 or 0)
        -- reset hit flag
        self.hit=0
     end --abort if off-screen
@@ -687,7 +684,7 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
 
       if self.process==1 and self.spent>self.cost then
         -- const complete!
-        self.done = true
+        self.done=true
         if (self.parent.owner==1) ssfx"56" set_message("cONSTRUCTION cOMPLETE")
         -- auto-deploy units
         if self.ref.type==1
@@ -771,7 +768,7 @@ end
 
 function make_explosion(x,y,size_type)
  add_particle(x, y, 2, 
-         0,0,.1,0, size_type==1 and 5 or 30, split2d("5,7,10,8,9,2"), rnd"2"<1 and 0xa5a5.8 or 0)
+         0,0,.1,0, size_type==1 and 5 or 30, split2d"5,7,10,8,9,2", rnd"2"<1 and 0xa5a5.8 or 0)
 end
 
 function reveal_fow(object)
@@ -990,7 +987,7 @@ function do_guard(unit, start_state)
         -- look for nearest spice
         ping(self,tx,ty,
           function(unit,x,y)
-            if is_spice_tile(x,y) then-- and rnd"10"<1 then
+            if is_spice_tile(x,y) and rnd"10"<1 then
             --found spice
             sx,sy=x,y
             return true
@@ -1085,7 +1082,7 @@ function do_guard(unit, start_state)
       else
        -- must be a repairable unit
        -- spark flash while repairing       
-       self.process,self.procstep,last_fact.col_cycle_src,last_fact.col_cycle = 2,0,8,split2d("7,10,0,0,7,0,0")
+       self.process,self.procstep,last_fact.col_cycle_src,last_fact.col_cycle = 2,0,8,split2d"7,10,0,0,7,0,0"
       end -- capacity check
      
      end -- if unloading/repairing
@@ -1112,22 +1109,23 @@ end
 
 function add_spice_cloud(x,y,r)
  -- spice clouds
- if (rnd"5"<1) add_particle(x+ sin(r)*5.5 +3.5,y+ -cos(r)*5.5 +3.5, rnd"2", .15,0,.1, -.01, 25,split2d("2,4,9,15"), 0xa5a5.8)
+ if (rnd"5"<1) add_particle(x+ sin(r)*5.5 +3.5,y+ -cos(r)*5.5 +3.5, rnd"2", .15,0,.1, -.01, 25,split2d"2,4,9,15", 0xa5a5.8)
 end
 
 function do_attack(unit, target)
- ai_awake=true
+ -- spice bloom?
+ ai_awake = target.id!=42 
  -- normal attack?
- if unit.id != 19 then
+ local firing_rage=unit.range*5
+ if unit.id!=19 then   
    -- 0=idle/guarding, 1=pathfinding, 2=moving, 3=attacking, 5=exploding
    unit.state,unit.target,unit.cor = 3,target, cocreate(function(self)
     while target.life>0 do
-     local targdist=dist(unit.x,unit.y,target.x,target.y)
      --  1) move to within firing range of target
-     if targdist > unit.range*5
-      and unit.speed>0 then
+     if dist(unit.x,unit.y,target.x,target.y) > firing_rage
+       and unit.speed>0 then
       -- move to within firing range of target
-      move_unit_pos(unit,target.x\8,target.y\8,unit.range*5)
+      move_unit_pos(unit,target.x\8,target.y\8,firing_rage)
 
       -- saboteur or death hand?
       if unit.id==25 or unit.id==38 then
@@ -1149,7 +1147,7 @@ function do_attack(unit, target)
       end
      end
      -- 3) commence firing
-     if targdist<=unit.range*5 then
+     if dist(unit.x,unit.y,target.x,target.y)<=firing_rage then      
       if (unit.fire_cooldown<=0 and not unit.bullet_x) unit.fire(unit) unit.fire_cooldown=unit.fire_rate
      elseif unit.speed==0 then
       -- turrets default to guard if out of range
@@ -1162,7 +1160,7 @@ function do_attack(unit, target)
     end -- 4) repeat 1-3 until target destroyed
 
     -- reset to guard
-    do_guard(self)
+    do_guard(unit)
    end)
   
  else
@@ -1170,8 +1168,7 @@ function do_attack(unit, target)
   -- palace attack!
   --
   -- palace weapons (emperor also uses death hand)
-  local weapons={24,25,38,38}
-  do_attack(m_map_obj_tree(obj_data[weapons[unit.faction]], unit.x,unit.y, unit.owner), target)      
+  do_attack(m_map_obj_tree(obj_data[({24,25,38,38})[unit.faction]], unit.x,unit.y, unit.owner), target)      
   unit.fire_cooldown = 1750 --350=1m (so 1750 = 5mins for palace weapon again, avg for all factions)
  end
 end
@@ -1181,11 +1178,11 @@ end
 -- source = unit doing ping
 function ping(unit,x,y,func,max_dist,skip_yield)
  for t=0,max_dist or 4,.04 do
- --for t=0,max_dist or 64,.02 do
  	local xx,yy=mid(flr(x+t*cos(t)),61),mid(flr(y+t*sin(t)),61)
-		if (func(unit,xx,yy)) return xx,yy
+	if (func(unit,xx,yy)) return xx,yy
   -- give others a chance!  
-  if (not skip_yield) yield()  -- (better perf for unit updates, but causes pauses on start/deploy harvester)  
+  -- (better perf for unit updates, but causes pauses on start/deploy harvester)  
+  if (not skip_yield) yield()  
  end
 end
 
@@ -1473,7 +1470,7 @@ end
 
 function draw_ui()
  -- ui (score, mouse, etc.)
- camera(0,0)
+ camera()
  pal()
  -- selected objects?
  palt(0,false)
@@ -1604,8 +1601,8 @@ function draw_ui()
   fillp(▒)
   rectfill(0,0,127,127,0)
   fillp()  
-  rectfill(3, 22, 124, 95, p_col2)
-  rect(4, 23, 123, 94, p_col1) 
+  rectfill(3,22,124,95,p_col2)
+  rect(4,23,123,94,p_col1) 
 
   -- build menu?  
   if selected_obj.build_objs then
@@ -1892,7 +1889,7 @@ function update_ai()
    worm_segs=nil
   else
    -- show worm
-   worm_segs,worm_dir,worm_turn,worm_cols,worm_frame={{rnd"500",rnd"500"}},rnd"1",0,split2d("15,9,4"),0
+   worm_segs,worm_dir,worm_turn,worm_cols,worm_frame={{rnd"500",rnd"500"}},rnd"1",0,split2d"15,9,4",0
   end
   worm_life_start=rnd"5000"
   worm_life=worm_life_start
@@ -2365,11 +2362,11 @@ __map__
 04050505060000000b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0000000000000005090530000000000000000f0e000000000000000c0d0e00000000000a00002f2f0b0b0b00000b0b000000000c0d0d0d12000000000000110d0d0d1200000000000000001310000a000000000000000b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0000
 050505090500000000000b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0000000000000a0508000000000000000f0d0d0e0000000000000c0d0d0f000000000000002f2f0b0b000000000b0b000000130d0d0d0d0f0d0d0d0f0f0d0d0d0d100000000000000000000000000000000000000b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0000
 0505090905000000000b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0000000000000000000000000000000c0d10000000000000000d0d0d0d0f0000000000002f2f0b00000000000b0b00000000130d0d0d0d0d0d0d0d0d0d340d14000000000000000000000000000000000000000b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0000
-05050505050000000000000000000b0b0b0b0b0405060b0b0b0b000000000000000000000000000000000000000000000000000d0d0d0d0d0f00000000002f2f0000000000000b0b0000000000130d0d0d0d0d0d340d0d0d0d3400000000000000000000000000000000000705060b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0000
-0d0d12050a000000000000000000000000000005050505050506000011330d0f0f0f0d0d1200000000000000000000000000000c0d0d0d0d0d00000000002f2f0b0b0b0b0b0b0b0b0000000000000c0d0d0d0d0d0d0d01220d0000000000000d0f0d0e0000000b0b0b0405050505060b0b0b0b0b0b00000b0b0b0b0b0b0b0000
+05050505050000000000000000000b0b0b0b0b0405060b0b0b0b000000000000000000000000000000000000000000000000000d0d0d0d0d0f00000000002f2f0000000000000b0b0000000000130d0d0d0d0d340d0d0d0d0d3400000000000000000000000000000000000705060b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0000
+0d0d12050a000000000000000000000000000005050505050506000011330d0f0f0f0d0d1200000000000000000000000000000c0d0d0d0d0d00000000002f2f0b0b0b0b0b0b0b0b0000000000000c0d0d0d0d0d420d01220d0000000000000d0f0d0e0000000b0b0b0405050505060b0b0b0b0b0b00000b0b0b0b0b0b0b0000
 0d0d0d0d1200000000110d0d120000000000000a05050909090506110d0d0d330d0d0d0d0d12000000000000000000000000110d0d0d0d0d1000000000002f2f0b0b0b0b0b0b0b0b0b0b0b000000130d0d0d0d300d0d2222143000000000000c0d14000000000000000a0505090905060b0b0b0b000000000000000000000000
-0d0d0d0d0d0d0f0f0d0d0d0d0e00000000000000040909050505050c0d0d0d0d0d0d0d0d0d0d1200000000000000000000000c0d0d0d0d100000000000002f2f0b0b0b0b0b0b0b0b0b0b0b0b000000130d0d0d0d0d340d0d00000000000000131400000000000000000a0905090505050b0b0b0b000000000000000000000000
-0d0d0d0d0d0d0d0d0d0d0d0d140000000b0b00000509090505050a130d0d0d0d0d14000000130d0f0f0d0d120000000000000d0d140000000000000000002f2f0b0b0b0b0b0b0b0b0b0b0b000a00000000000c0d0d0d300d00000000000000000000000000000a000004050509090905060b0b0b00000000000000000b0b0000
+0d0d0d0d0d0d0f0f0d0d0d0d0e00000000000000040909050505050c0d0d0d0d0d0d0d0d0d0d1200000000000000000000000c0d0d0d0d100000000000002f2f0b0b0b0b0b0b0b0b0b0b0b0b000000130d0d0d0d0d440d0d00000000000000131400000000000000000a0905090505050b0b0b0b000000000000000000000000
+0d0d0d0d0d0d0d0d0d0d0d0d140000000b0b00000509090505050a130d0d0d0d0d14000000130d0f0f0d0d120000000000000d0d140000000000000000002f2f0b0b0b0b0b0b0b0b0b0b0b000a00000000000c300d0d0d0d00000000000000000000000000000a000004050509090905060b0b0b00000000000000000b0b0000
 0d0d0d0d0d0d0d0d0d0d0d0d0000000b0b0b0b0b050905050a000000130d0d0d0d00000000000c0d0d0d0d0d0d120000000000000000000000000000110d2f2f0b0b0b0b0b0b0b0b0b0b00000000000000000c0d0d0d0d140000000000000000000000000a0000110e0a050509090905000b0b0b000000000000000b0b0b0000
 0d0d0d0d0d0d0d0d0d0d0d140000000b0b0b0b0b0a0505050a000000000c0d0d0e0000000000130d0d0d0d0d0d0e00000000000000000000000000110d0d2f2f0b0b0b0b0b0b0b0b0b0b000000000a000000130d0d0d1400000000000000000000000b0b0000000000000509090905050b0b0b0b0b0000000000000b0b0b0000
 0d0d0d0d0d0d0d0d0d0d140000000000000000000000000000000000000c0d0d0d0000000000000c0d0d0d0d0d14040506000000000000000000110d0d0d2f2f0b0b0b0b0b0b0b0b0b0b0b000000000000000000000000000000000000000000000b0b0b0b00000000000a05090909050b0b0b0b0b00000000000b0b0b0b0000
