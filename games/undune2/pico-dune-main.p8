@@ -72,11 +72,24 @@ mission_data={
 }
 }
 
-
--- if debug then
---  -- debug mission for easy win 
---  mission_data[3][2]={2,1200,nil,2,3,144,200,1,144,152,nil,nil,nil,nil,nil,nil,8}
--- end
+mentat_dialogs={ 
+{ -- atredies missions
+ "gREETINGS,\ni AM YOUR mENTAT cYRIL.:tOGETHER WE WILL PURGE THIS\nPLANET OF THE FOULNESS OF THE\nOTHER hOUSES.:tHE hIGH cOMMAND WISHES YOU\nTO PRODUCE 1000 CREDITS.:yOU MAY EARN CREDITS BY\nBUILDING A REFINERY AND\nHARVESTING SPICE",
+ "gREETINGS,\ni AM HONORED TO SEE YOU AGAIN.:tHE hIGH cOMMAND NOW REQUIRES\nTHAT YOU PRODUCE 2700 CREDITS\nIN A NEW HARVESTING AREA.:uNFORTUNATELY, WE HAVE\nCONFIRMED THE PRESENCE OF AN\noRDOS BASE IN THIS REGION.:gOOD LUCK!",
+ {}, 
+},
+{ -- ordos missions
+ {},
+ {},
+ {}, 
+},
+{ -- harkonnen missions
+ "", --intro text
+ "with my guidance, you may be\nable to assist us in conquering\nthis dusty, little planet.",
+ {},
+ {}, 
+}
+}
 
 -- vars
 mode = title_mode
@@ -96,8 +109,9 @@ function _init()
  load_data()
 
  -- debug!!!
- --mode = levelintro_mode
+ mode = houseselect_mode
  --mode = levelselect_mode
+ --mode = levelintro_mode
 
  -- initialise modes
  if (mode==title_mode) init_title()
@@ -144,10 +158,7 @@ function _update60()
 
  elseif mode == levelintro_mode then
   update_levelintro()
-  -- load and initialise game cart
-  if btnp(5) then   
-   load_level(p_level)
-  end
+  
 
  elseif mode == levelend_mode then
   update_levelend()
@@ -449,27 +460,20 @@ end
 -->8
 -- level intro screen
 
+
+
 function init_levelintro() 
  mode = levelintro_mode
 
- if p_fact<=1 then
-  -- intro/atreides
-  load_gfx_page(2)
- elseif p_fact==2 then
-  -- ordos
-  load_gfx_page(3)
- elseif p_fact==3 then
-  -- harkonnen
-  load_gfx_page(4)
- end
+ current_msg=nil
+ last_msg_part=false
 
+ load_gfx_page(p_fact+1)
+ 
  -- play "intro" music
  music(6)
 
- msg=[[with my guidance, you may be
-able to assist us in conquering
-this dusty, little planet.]]
- current_msg=nil
+ msg=mentat_dialogs[p_fact][2] 
  co_text=cocreate(text_spool)
 end
 
@@ -480,52 +484,42 @@ function update_levelintro()
   coresume(co_text)
  else
   co_text=nil
- end 
+ end
+
+ -- load and initialise game cart
+  if btnp(5) and last_msg_part then   
+   load_level(p_level)
+  end
 end
 
-function draw_levelintro()
- pal({[0]=0,1,3,4,5,6,9,13,15,128,129,132,10,140,142,143},1) 
+function draw_levelintro() 
  cls() 
- if p_fact==0 then
-  -- intro
-  spr(0, 0,40,  6,16)
+ --dune bg
+ draw_mentat(0) 
 
- elseif p_fact==1 then
-  -- atreides
-  spr(7, 0,40,  8,11)
- 
- elseif p_fact==2 then
-  -- ordos
-  spr(0, 0,40,  16,16)
-
- elseif p_fact==3 then
-  -- harkonnen
-  draw_planet(0)
-  rect(40,36,128,112,7)
-  
-  if (current_msg) draw_dialog()
---   msg=[[with my guidance, you may be
--- able to assist us in conquering
--- this dusty, little planet.]]
---   ?msg,2,5,9
---   ?msg,2,4,5
-  palt(0,false)
-  palt(12,true)
-  spr(0, 0,40,  16,16)
- 
- end 
-
-
- --print("\n(todo: level intro screen)",0,0,8)
- --print("\n< press ❎ >",0,8)
- 
- -- poss mentat eye code...
- -- https://twitter.com/p01/status/1414888619211476992
-
- -- poss layout ideas
- -- https://www.youtube.com/watch?v=7GQkBJe3MTc
+ if (current_msg) draw_dialog() 
+ ?"❎ to "..(last_msg_part and "start" or "skip"),83,121,6
 end
 
+function draw_mentat(pnum) 
+ --pnum (0=dune,  1=atreides, etc.)
+ pal({[0]=0,1,3,4,5,6,9,13,15,128,129,132,10,140,142,143},1) 
+ 
+ -- space bg + window
+ draw_planet(pnum)
+ rect(40,36,128,112,7)
+
+ palt(0,false)
+ 
+ if p_fact==1 then
+  palt(2, true)
+  spr(7, 0,40,  16,16) 
+ else
+  palt(12, true)
+  spr(0, 0,40,  16,16)
+ end
+
+end
 
 function draw_planet(pnum)
 	dx=100
@@ -582,22 +576,26 @@ end
 -- Dialog Text Flow with Coroutines by @MBoffin
 -- https://www.lexaloffle.com/bbs/?tid=35381
 function draw_dialog()
- --rectfill(0,96,127,128,6) 
  ?current_msg,2,5,11
  ?current_msg,2,4,5
- ?"❎ to skip",83,121,6
 end
 function text_spool()
- for i=1,#msg do
-  current_msg=sub(msg,1,i)
-  --sfx(0)
-  if (btnp(❎)) break
-  yield()yield()
+ local msgparts=split(msg,":")
+ for j=1,#msgparts do
+  msg=msgparts[j]
+  for i=1,#msg do
+   current_msg=sub(msg,1,i)
+   --sfx(0)
+   if (btnp(❎)) break
+   yield()yield()
+  end
+  yield()
+  current_msg=msg  
+  last_msg_part=(j==#msgparts)
+  while not (btnp(❎) or last_msg_part) do yield() end  
+  --current_msg=nil
+  _update_buttons()
  end
- yield()
- current_msg=msg
- while not btnp(❎) do yield() end
- current_msg=nil
 end
 
 -->8
