@@ -1,1417 +1,925 @@
 pico-8 cartridge // http://www.pico-8.com
 version 34
 __lua__
--- undune ii
--- by paul nicholas
--- (with support from my patrons)
-
--- =======================================
--- main cart (title menu, level select)
--- =======================================
--- constants
---debug=true
-
---game_cart = "pico-dune_fmt.p8"
-game_cart = "pico-dune.p8"
-
--- music
--- 00 = title
--- 06 = intro/advisor/level lose?
--- 10 = level win
--- 12 = map screen
-
-
-faction_cols = {
- { 12, 1}, -- 1 = Atreides
- { 11, 3}, -- 2 = Ordos
- { 8,  2}, -- 3 = Harkonnen
- { 14, 2}, -- 4 = Emperor?
+_a="pico-dune.p8"
+_b={
+{ 12, 1},
+{ 11, 3},
+{ 8,  2},
+{ 14, 2},
 }
-
--- cart modes
-title_mode=1
-houseselect_mode=2
-levelintro_mode=3
-levelend_mode=4
-levelselect_mode=5
-
--- No.|Starting Credits|Objective Credits|# Bases|P Faction|P XPos|P YPos|AI Fact 1|AI XPos 1|AI YPos 1|AI Fact 2|AI XPos 2|AI YPos 2|AI Fact 3|AI XPos 3|AI YPos 3|AI Level
-mission_data={
-{ -- atredies missions
- {1,999,1000,4,1,88,72,2,24,64,2,160,64,2,160,152,20},
- {2,1200,2700,2,1,144,200,2,120,96,nil,nil,nil,nil,nil,nil,8},
- {3,1500,nil,2,1,176,112,3,408,440,nil,nil,nil,nil,nil,nil,7},
- {4,1500,nil,2,1,176,432,3,296,16,nil,nil,nil,nil,nil,nil,6},
- {5,1500,nil,2,1,88,200,2,448,288,nil,nil,nil,nil,nil,nil,5},
- {6,1700,nil,3,1,264,312,3,8,24,3,480,136,nil,nil,nil,4},
- {7,2000,nil,4,1,200,72,2,280,408,nil,nil,nil,nil,nil,nil,3},
- {8,2000,nil,4,1,192,240,3,328,8,2,248,448,2,424,424,2},
- {9,2500,nil,4,1,232,416,4,360,40,3,112,40,2,408,136,1},
-},
-{ -- ordos missions
- {1,999,1000,4,2,88,72,3,24,64,3,160,64,3,160,152,20},
- {2,1200,2700,2,2,144,200,3,120,96,nil,nil,nil,nil,nil,nil,8},
- {3,1500,nil,2,2,176,112,1,408,440,nil,nil,nil,nil,nil,nil,7},
- {4,1500,nil,2,2,176,432,1,296,16,nil,nil,nil,nil,nil,nil,6},
- {5,1500,nil,2,2,88,200,3,448,288,nil,nil,nil,nil,nil,nil,5},
- {6,1700,nil,3,2,264,312,1,8,24,1,480,136,nil,nil,nil,4},
- {7,2000,nil,4,2,200,72,3,280,408,nil,nil,nil,nil,nil,nil,3},
- {8,2000,nil,4,2,192,240,1,328,8,3,248,448,3,424,424,2},
- {9,2500,nil,4,2,232,416,4,360,40,1,112,40,3,408,136,1},
-},
-{ -- harkonnen missions
- {1,999,1000,4,3,88,72,1,24,64,1,160,64,1,160,152,20},
- {2,1200,2700,2,3,144,200,1,120,96,nil,nil,nil,nil,nil,nil,8},
- {3,1500,nil,2,3,176,112,2,408,440,nil,nil,nil,nil,nil,nil,7},
- {4,1500,nil,2,3,176,432,2,296,16,nil,nil,nil,nil,nil,nil,6},
- {5,1500,nil,2,3,88,200,1,448,288,nil,nil,nil,nil,nil,nil,5},
- {6,1700,nil,3,3,264,312,2,8,24,2,480,136,nil,nil,nil,4},
- {7,2000,nil,4,3,200,72,1,280,408,nil,nil,nil,nil,nil,nil,3},
- {8,2000,nil,4,3,192,240,2,328,8,1,248,448,1,424,424,2},
- {9,2500,nil,4,3,232,416,4,360,40,2,112,40,1,408,136,1},
+_c=1
+_d=2
+_e=3
+_f=4
+_g=5
+_h={
+{
+{1,999,1000,4,1,88,72,2,24,64,2,160,64,2,160,152,20},{2,1200,2700,2,1,144,200,2,120,96,nil,nil,nil,nil,nil,nil,8},{3,1500,nil,2,1,176,112,3,408,440,nil,nil,nil,nil,nil,nil,7},{4,1500,nil,2,1,176,432,3,296,16,nil,nil,nil,nil,nil,nil,6},{5,1500,nil,2,1,88,200,2,448,288,nil,nil,nil,nil,nil,nil,5},{6,1700,nil,3,1,264,312,3,8,24,3,480,136,nil,nil,nil,4},{7,2000,nil,4,1,200,72,2,280,408,nil,nil,nil,nil,nil,nil,3},{8,2000,nil,4,1,192,240,3,328,8,2,248,448,2,424,424,2},{9,2500,nil,4,1,232,416,4,360,40,3,112,40,2,408,136,1},},{
+{1,999,1000,4,2,88,72,3,24,64,3,160,64,3,160,152,20},{2,1200,2700,2,2,144,200,3,120,96,nil,nil,nil,nil,nil,nil,8},{3,1500,nil,2,2,176,112,1,408,440,nil,nil,nil,nil,nil,nil,7},{4,1500,nil,2,2,176,432,1,296,16,nil,nil,nil,nil,nil,nil,6},{5,1500,nil,2,2,88,200,3,448,288,nil,nil,nil,nil,nil,nil,5},{6,1700,nil,3,2,264,312,1,8,24,1,480,136,nil,nil,nil,4},{7,2000,nil,4,2,200,72,3,280,408,nil,nil,nil,nil,nil,nil,3},{8,2000,nil,4,2,192,240,1,328,8,3,248,448,3,424,424,2},{9,2500,nil,4,2,232,416,4,360,40,1,112,40,3,408,136,1},},{
+{1,999,1000,4,3,88,72,1,24,64,1,160,64,1,160,152,20},{2,1200,2700,2,3,144,200,1,120,96,nil,nil,nil,nil,nil,nil,8},{3,1500,nil,2,3,176,112,2,408,440,nil,nil,nil,nil,nil,nil,7},{4,1500,nil,2,3,176,432,2,296,16,nil,nil,nil,nil,nil,nil,6},{5,1500,nil,2,3,88,200,1,448,288,nil,nil,nil,nil,nil,nil,5},{6,1700,nil,3,3,264,312,2,8,24,2,480,136,nil,nil,nil,4},{7,2000,nil,4,3,200,72,1,280,408,nil,nil,nil,nil,nil,nil,3},{8,2000,nil,4,3,192,240,2,328,8,1,248,448,1,424,424,2},{9,2500,nil,4,3,232,416,4,360,40,2,112,40,1,408,136,1},}
 }
+_i={
+{
+"gREETINGS,\ni AM YOUR mENTAT cYRIL.:tOGETHER WE WILL PURGE THIS\nPLANET OF THE FOULNESS OF THE\nOTHER hOUSES.:tHE hIGH cOMMAND WISHES YOU\nTO PRODUCE 1000 CREDITS.:yOU MAY EARN CREDITS BY\nBUILDING A REFINERY AND\nHARVESTING SPICE","gREETINGS,\ni AM HONORED TO SEE YOU AGAIN.:tHE hIGH cOMMAND NOW REQUIRES\nTHAT YOU PRODUCE 2700 CREDITS\nIN A NEW HARVESTING AREA.:uNFORTUNATELY, WE HAVE\nCONFIRMED THE PRESENCE OF AN\noRDOS BASE IN THIS REGION.:gOOD LUCK!","tHE BATTLE WITH THE OTHER \nhOUSES HAS INTENSIFIED AND WE \nARE NOW FORCED TO ENGAGE IN \nSOME SELECTED OFFENSIVE \nMANEUVERS.:tHE hARKONNEN ARE BEING \nEXTREMELY TROUBLESOME IN YOUR \nNEXT REGION, AND WE MUST ASK \nYOU TO REMOVE THEIR PRESENCE \nFROM THIS AREA.","yOUR DEMONSTRATION OF MILITARY \nSKILLS NOW FORCES US TO ASSIGN \nYOU TO ANOTHER OFFENSIVE \nCAMPAIGN AGAINST THE hOUSE \nhARKONNEN.:tHEY HAVE CONTINUED TO ATTACK \nOUR PEACEFUL HARVESTERS, AND \nMUST BE REMOVED FROM THE AREA.","wELCOME.\n\ntHE RULES SEEM TO HAVE CHANGED.:\naS YOU HAVE WITNESSED THE \neMPEROR HIMSELF HAS BEEN AIDING \nTHE EFFORTS OF OUR COMPETITORS!:aS A PART OF OUR NEW STRATEGY, \nWE MUST ASK THAT YOU ELIMINATE \nTHE TREACHEROUS oRDOS FORCES \nTHAT PRESENTLY CONTROL THIS \nREGION.","aS THE BATTLE FOR THIS PLANET \nINTENSIFIES, ALL EFFORTS MUST \nBE TAKEN TO ENSURE SUCCESS.:oNCE AGAIN WE MUST CALL UPON \nYOU TO DESTROY OUR ENEMIES IN A \nTROUBLED SECTOR.:hOUSE hARKONNEN MUST BE TAUGHT \nA LESSON.\n\ntHANK YOU, AND GOOD LUCK!","tHE BATTLE GOES WELL, BUT THERE \nIS NO TIME TO RELAX.:wE HAVE AN URGENT NEED FOR YOU \nTO SUBDUE ALL oRDOS FORCES IN \nTHIS REGION PROMPTLY.:oUR ONGOING NEGOTIATIONS ARE \nAIDED IMMEASURABLY BY \nCORRESPONDING VICTORIES IN THE \nFIELD.:wE ARE COUNTING ON YOU.","aLTHOUGH YOU HAVE EARNED A WELL \nDESERVED REST, i'M AFRAID THE \nPOLITICAL SITUATION REQUIRES \nTHAT WE SEND YOU BACK INTO THE \nFIELD IMMEDIATELY.:bOTH oRDOS AND hARKONNEN FORCES \nHAVE BUILT UP TO UNACCEPTABLE \nLEVELS IN THIS REGION, AND NOW \nMUST BE REMOVED COMPLETELY.","yOUR NEXT ASSIGNMENT WILL \nDETERMINE THE ENTIRE OUTCOME OF \nOUR EFFORTS ON dUNE.:vICTORY WILL NOT COME EASILY.:iN ADDITION TO DESTROYING ALL \nREMAINING oRDOS AND hARKONNEN \nTROOPS...:...YOU ARE ALSO INSTRUCTED TO \nSUBDUE eMPEROR fREDERICK'S \nFORCES.:aLL OF OUR HOPES AND DREAMS ARE\nRIDING ON YOU, AND WE HUMBLY \nBEG YOU TO PROVIDE ONE FINAL \nVICTORY FOR OUR NOBLE \nhOUSE aTREIDES.","gOOD MORNING YOUR LORDSHIP,\nAND CONGRATULATIONS!\n\nyOU SERVED hOUSE aTREIDES WELL.:wE WILL NOT SOON FORGET OUR \nMOST NOBLE WARRIOR.:i GO NOW TO RELAY THE NEWS OF \nYOUR MOST GLORIOUS VICTORY AND \nDELIVER YOUR TERMS TO THE \neMPEROR.",},{
+"wELCOME.\ni AM YOUR mENTAT, AND YOU MAY \nCALL ME aMMON.:tO BE OF ANY VALUE TO THE \ncARTEL, YOU MUST PROVIDE US \nWITH CREDITS.:aS A TEST, WE WILL ASSIGN YOU \nTO A REGION, AND ASK THAT YOU \nMEET A PRODUCTION QUOTA OF \n1000 CREDITS.:bUILD A REFINERY AND HARVEST \nTHE SPICE IN THE AREA. i AM \nVERY BUSY, BUT YOU MAY CALL \nUPON ME IF YOU HAVE FURTHER \nQUESTIONS.","yOUR QUOTA IS NOW 2700 CREDITS, \nAND THIS SPICE ACCUMULATION IS \nYOUR PRIMARY DIRECTIVE.:wE DO NOT EXPECT YOU TO DESTROY \nTHE hARKONNEN FORCES IN THE \nAREA,:HOWEVER YOU SHOULD CONSIDER THE \nTIME THAT COULD BE SAVED BY \nAPPROPRIATING THEIR SILOS.","wE FIND THE ACTIVITIES OF \naTREIDES TROOPS IN THIS REGION \nINCONVENIENT.:pLEASE REMOVE THIS OBSTACLE.\n\nwE CANNOT ALLOW THE MYTHICAL \nVALUE OF FAIR PLAY TO IMPEDE \nOUR PROGRESS.","tHE aTREIDES FORCES IN THIS \nAREA MUST BE ELIMINATED.:aS ALWAYS, WE APPRECIATE YOUR \nCAPTURE OF ANY ENEMY SILOS OR \nOTHER STRUCTURES THAT MIGHT BE \nSALVAGEABLE.","sO, OUR SPIES REVEAL WHY THE \nsARDAUKAR ATTACKED US IN YOUR \nLAST MISSION.\n\ni WILL NEED TO LOOK INTO THIS.:aLTHOUGH THE hARKONNEN \nCOMMANDERS ARE LAUGHABLY STUPID\nTHEIR MILITARY STRENGTH IS A \nTHREAT TO US IN THIS AREA.:tHEY MUST BE ELIMINATED AS SOON\nAS POSSIBLE.","tHE aTREIDES HAVE BECOME FAR \nTOO VOCAL IN THIS SECTOR, AND \nWHINE CONSTANTLY ABOUT THEIR \nRIGHTS.:wE oRDOS DO NOT HAVE THE \nLEISURE OF POINTLESS \nCONVERSATION, AND MUST ASK YOU \nELIMINATE THIS DISTRACTION.","hARKONNEN FORCES CONTINUE TO \nTHWART OUR EFFORTS IN THIS \nREGION, AND MUST BE REMOVED \nCOMPLETELY.:cRUSH THEIR BELOVED TROOPERS \nAND THEY WILL RUN CRYING BACK \nTO THEIR UGLY MOTHERS!","bOTH aTREIDES AND hARKONNEN \nFORCES OPPOSE OUR CONTROL OF \nTHIS AREA AND MUST THEREFORE BE\nDESTROYED.:tHE TIME OF COOPERATION AND \nCOMPROMISE IS PAST, AND ALL \nENEMIES OF hOUSE oRDOS MUST BE\nELIMINATED!","eMPEROR fREDERICK HAS JOINED \nTHE LIST OF oRDOS' ENEMIES, AND \nMUST BE PUNISHED.:dESTROY HIS TROOPS AND ANY \naTREIDES AND hARKONNEN REMNANTS \nTHAT STILL OPPOSE US ON THIS \nPLANET.:wE HAVE RISKED EVERYTHING ON \nTHIS FINAL BATTLE, AND CANNOT \nTOLERATE LESS THAN YOUR BEST \nEFFORT.","gOOD mORNING, YOUR LORDSHIP, \nAND CONGRATULATIONS!\n\nyOU'VE SERVED hOUSE oRDOS WELL.:wE WILL NOT SOON FORGET OUR \nMOST NOBLE WARRIOR!:i GO NOW TO RELAY THE NEWS OF \nYOUR MOST GLORIOUS VICTORY, AND \nDELIVER YOUR TERMS TO THE \neMPEROR.",},{
+"i AM THE mENTAT, rADNOR.:wITH MY GUIDANCE, YOU MAY BE \nABLE TO ASSIST US IN CONQUERING \nTHIS DUSTY LITTLE PLANET.:fOR YOUR FIRST TEST YOU WILL BE\nEXPECTED TO PRODUCE 1000 \nCREDITS, AND NOT A GRANULE LESS:yOU MAY EARN CREDITS BY \nHARVESTING SPICE, AND WILL NEED\nTO BUILD A REFINERY TO CONVERT\nSPICE TO CREDITS.:iF ANY OF OUR FOOLISH ENEMIES \nATTEMPTS TO ATTACK YOUR BASE \nYOU WILL HAVE THE PLEASURE OF\nSEEING THE INVINCIBLE hARKONNEN\nTROOPS IN ACTION.","hOUSE hARKONNEN HAS GENEROUSLY \nGRANTED YOU A NEW OPPORTUNITY \nTO SERVE US.:wE WILL NOW ALLOW YOU TO TAKE \nCOMMAND IN A MORE DANGEROUS \nAREA, AND ACCUMULATE 2700 \nCREDITS.:aLTHOUGH THE WORTHLESS aTREIDES\nYOU MAY ENCOUNTER IN THIS \nREGION SHOULD BE ELIMINATED AS \nA MATTER OF PRINCIPLE,:...THE SPICE QUOTA IS \nYOUR OBJECTIVE.","tHE DESPISED oRDOS ARE WELL \nESTABLISHED IN THIS REGION, AND \nARE HARVESTING SPICE THAT \nSHOULD RIGHTFULLY BELONG TO \nhOUSE hARKONNEN.:dESTROY THE oRDOS INSTALLATIONS \nIN THIS AREA AND ASSERT CONTROL \nIN THE NAME OF hOUSE hARKONNEN.","oNE SMALL VICTORY DOES NOT WIN \nTHE WAR.:aNOTHER REGION HAS THE \nMISFORTUNE TO BE INFESTED WITH \nVERMIN FROM hOUSE oRDOS, AND \nYOU MUST NOW REPEAT YOUR \nSUCCESS.:i HAVE MANY DELICATE POLITICAL \nNEGOTATIONS ON MY MIND, AND i \nDON'T NEED TO BE WORRYING ABOUT\nLOOSE ENDS.","sO, THE eMPEROR WAS HELPING THE \noRDOS IN YOUR LAST MISSION.:nEVER THE LESS, hOUSE aTREIDES \nHAS GROWN STRONGER DUE TO OUR \nNEGLIGENCE, AND MUST NOW BE \nTAUGHT A LESSON.:yOU WILL REMOVE ALL THE \naTREIDES FROM THIS REGION.","yOU ARE TO PROCEED INTO YET \nANOTHER REGION DOMINATED BY \nTHOSE PESKY oRDOS, AND i EXPECT\nYOU TO OVERCOME THIS RATHER \nTROUBLESOME oRDOS GROUP.:wE HAVE ESTABLISHED A GOOD \nREPUTATION ON THIS PLANET.\n\ndO NOT EMBARRASS ME NOW!","rEPORTS OF NEW aTREIDES \nACTIVITY REQUIRE THAT i SEND \nYOU IMMEDIATELY BACK TO THE \nFRONT LINE.:yOU DO NOT SEEM TO ENJOY REST \nAND RELAXATION ANYWAY.\n\ni THINK YOU WOULD PREFER TO \nCRUSH THE aTREIDES.","i HAVE USED MY INFLUENCE TO \nARRANGE A pALACE FOR YOU.:a COMMANDER OF YOUR STATUS MAY \nREQUIRE RELAXATION OCCASIONALLY \nBUT i EXPECT AN EVEN GREATER \nEFFICIENCY ON YOUR PART WILL \nCOME FROM OUR GENEROSITY.:bOTH aTREIDES AND oRDOS FORCES \nEXIST IN THIS REGION,\nAND ALL MUST BE ELIMINATED!","wE HAVE BEEN DECEIVED!:oUR BARGAINING IN GOOD FAITH \nHAS ONLY BROUGHT A TREACHEROUS \nHARVEST. aLL HAVE CONSPIRED \nAGAINST US, AND ALL MUST DIE!:yOUR MILITARY SKILLS ARE THE \nLAST REMAINING HOPE FOR THIS \nPLANET.:dESTROY ALL REMAINING aTREIDES \nAND oRDOS FORCES, AND CONQUER \nTHE eMPEROR'S pALACE.\nhE HAS TREATED US POORLY, AND \nMUST NOT LIVE ANOTHER DAY!","gOOD mORNING, YOUR LORDSHIP, \nAND CONGRATULATIONS!\n\nyOU HAVE SERVED ME, i MEAN \nhOUSE hARKONNEN, WELL.:oUR hOUSE WILL NOT SOON FORGET \nOUR MOST NOBLE WARRIOR!:i GO NOW TO RELAY THE NEWS OF \nYOUR MOST GLORIOUS VICTORY, AND \nDELIVER YOUR TERMS TO THE \neMPEROR.",}
 }
-
-mentat_dialogs={ 
-{ -- atredies missions
- "gREETINGS,\ni AM YOUR mENTAT cYRIL.:tOGETHER WE WILL PURGE THIS\nPLANET OF THE FOULNESS OF THE\nOTHER hOUSES.:tHE hIGH cOMMAND WISHES YOU\nTO PRODUCE 1000 CREDITS.:yOU MAY EARN CREDITS BY\nBUILDING A REFINERY AND\nHARVESTING SPICE",
- "gREETINGS,\ni AM HONORED TO SEE YOU AGAIN.:tHE hIGH cOMMAND NOW REQUIRES\nTHAT YOU PRODUCE 2700 CREDITS\nIN A NEW HARVESTING AREA.:uNFORTUNATELY, WE HAVE\nCONFIRMED THE PRESENCE OF AN\noRDOS BASE IN THIS REGION.:gOOD LUCK!",
- "tHE BATTLE WITH THE OTHER \nhOUSES HAS INTENSIFIED AND WE \nARE NOW FORCED TO ENGAGE IN \nSOME SELECTED OFFENSIVE \nMANEUVERS.:tHE hARKONNEN ARE BEING \nEXTREMELY TROUBLESOME IN YOUR \nNEXT REGION, AND WE MUST ASK \nYOU TO REMOVE THEIR PRESENCE \nFROM THIS AREA.", 
- "yOUR DEMONSTRATION OF MILITARY \nSKILLS NOW FORCES US TO ASSIGN \nYOU TO ANOTHER OFFENSIVE \nCAMPAIGN AGAINST THE hOUSE \nhARKONNEN.:tHEY HAVE CONTINUED TO ATTACK \nOUR PEACEFUL HARVESTERS, AND \nMUST BE REMOVED FROM THE AREA.",
- "wELCOME.\n\ntHE RULES SEEM TO HAVE CHANGED.:\naS YOU HAVE WITNESSED THE \neMPEROR HIMSELF HAS BEEN AIDING \nTHE EFFORTS OF OUR COMPETITORS!:aS A PART OF OUR NEW STRATEGY, \nWE MUST ASK THAT YOU ELIMINATE \nTHE TREACHEROUS oRDOS FORCES \nTHAT PRESENTLY CONTROL THIS \nREGION.",
- "aS THE BATTLE FOR THIS PLANET \nINTENSIFIES, ALL EFFORTS MUST \nBE TAKEN TO ENSURE SUCCESS.:oNCE AGAIN WE MUST CALL UPON \nYOU TO DESTROY OUR ENEMIES IN A \nTROUBLED SECTOR.:hOUSE hARKONNEN MUST BE TAUGHT \nA LESSON.\n\ntHANK YOU, AND GOOD LUCK!",
- "tHE BATTLE GOES WELL, BUT THERE \nIS NO TIME TO RELAX.:wE HAVE AN URGENT NEED FOR YOU \nTO SUBDUE ALL oRDOS FORCES IN \nTHIS REGION PROMPTLY.:oUR ONGOING NEGOTIATIONS ARE \nAIDED IMMEASURABLY BY \nCORRESPONDING VICTORIES IN THE \nFIELD.:wE ARE COUNTING ON YOU.",
- "aLTHOUGH YOU HAVE EARNED A WELL \nDESERVED REST, i'M AFRAID THE \nPOLITICAL SITUATION REQUIRES \nTHAT WE SEND YOU BACK INTO THE \nFIELD IMMEDIATELY.:bOTH oRDOS AND hARKONNEN FORCES \nHAVE BUILT UP TO UNACCEPTABLE \nLEVELS IN THIS REGION, AND NOW \nMUST BE REMOVED COMPLETELY.",
- "yOUR NEXT ASSIGNMENT WILL \nDETERMINE THE ENTIRE OUTCOME OF \nOUR EFFORTS ON dUNE.:vICTORY WILL NOT COME EASILY.:iN ADDITION TO DESTROYING ALL \nREMAINING oRDOS AND hARKONNEN \nTROOPS...:...YOU ARE ALSO INSTRUCTED TO \nSUBDUE eMPEROR fREDERICK'S \nFORCES.:aLL OF OUR HOPES AND DREAMS ARE\nRIDING ON YOU, AND WE HUMBLY \nBEG YOU TO PROVIDE ONE FINAL \nVICTORY FOR OUR NOBLE \nhOUSE aTREIDES.",
- "gOOD MORNING YOUR LORDSHIP,\nAND CONGRATULATIONS!\n\nyOU SERVED hOUSE aTREIDES WELL.:wE WILL NOT SOON FORGET OUR \nMOST NOBLE WARRIOR.:i GO NOW TO RELAY THE NEWS OF \nYOUR MOST GLORIOUS VICTORY AND \nDELIVER YOUR TERMS TO THE \neMPEROR.",
-},
-{ -- ordos missions
- "wELCOME.\ni AM YOUR mENTAT, AND YOU MAY \nCALL ME aMMON.:tO BE OF ANY VALUE TO THE \ncARTEL, YOU MUST PROVIDE US \nWITH CREDITS.:aS A TEST, WE WILL ASSIGN YOU \nTO A REGION, AND ASK THAT YOU \nMEET A PRODUCTION QUOTA OF \n1000 CREDITS.:bUILD A REFINERY AND HARVEST \nTHE SPICE IN THE AREA. i AM \nVERY BUSY, BUT YOU MAY CALL \nUPON ME IF YOU HAVE FURTHER \nQUESTIONS.",
- "yOUR QUOTA IS NOW 2700 CREDITS, \nAND THIS SPICE ACCUMULATION IS \nYOUR PRIMARY DIRECTIVE.:wE DO NOT EXPECT YOU TO DESTROY \nTHE hARKONNEN FORCES IN THE \nAREA,:HOWEVER YOU SHOULD CONSIDER THE \nTIME THAT COULD BE SAVED BY \nAPPROPRIATING THEIR SILOS.",
- "wE FIND THE ACTIVITIES OF \naTREIDES TROOPS IN THIS REGION \nINCONVENIENT.:pLEASE REMOVE THIS OBSTACLE.\n\nwE CANNOT ALLOW THE MYTHICAL \nVALUE OF FAIR PLAY TO IMPEDE \nOUR PROGRESS.",
- "tHE aTREIDES FORCES IN THIS \nAREA MUST BE ELIMINATED.:aS ALWAYS, WE APPRECIATE YOUR \nCAPTURE OF ANY ENEMY SILOS OR \nOTHER STRUCTURES THAT MIGHT BE \nSALVAGEABLE.",
- "sO, OUR SPIES REVEAL WHY THE \nsARDAUKAR ATTACKED US IN YOUR \nLAST MISSION.\n\ni WILL NEED TO LOOK INTO THIS.:aLTHOUGH THE hARKONNEN \nCOMMANDERS ARE LAUGHABLY STUPID\nTHEIR MILITARY STRENGTH IS A \nTHREAT TO US IN THIS AREA.:tHEY MUST BE ELIMINATED AS SOON\nAS POSSIBLE.",
- "tHE aTREIDES HAVE BECOME FAR \nTOO VOCAL IN THIS SECTOR, AND \nWHINE CONSTANTLY ABOUT THEIR \nRIGHTS.:wE oRDOS DO NOT HAVE THE \nLEISURE OF POINTLESS \nCONVERSATION, AND MUST ASK YOU \nELIMINATE THIS DISTRACTION.",
- "hARKONNEN FORCES CONTINUE TO \nTHWART OUR EFFORTS IN THIS \nREGION, AND MUST BE REMOVED \nCOMPLETELY.:cRUSH THEIR BELOVED TROOPERS \nAND THEY WILL RUN CRYING BACK \nTO THEIR UGLY MOTHERS!",
- "bOTH aTREIDES AND hARKONNEN \nFORCES OPPOSE OUR CONTROL OF \nTHIS AREA AND MUST THEREFORE BE\nDESTROYED.:tHE TIME OF COOPERATION AND \nCOMPROMISE IS PAST, AND ALL \nENEMIES OF hOUSE oRDOS MUST BE\nELIMINATED!",
- "eMPEROR fREDERICK HAS JOINED \nTHE LIST OF oRDOS' ENEMIES, AND \nMUST BE PUNISHED.:dESTROY HIS TROOPS AND ANY \naTREIDES AND hARKONNEN REMNANTS \nTHAT STILL OPPOSE US ON THIS \nPLANET.:wE HAVE RISKED EVERYTHING ON \nTHIS FINAL BATTLE, AND CANNOT \nTOLERATE LESS THAN YOUR BEST \nEFFORT.",
- "gOOD mORNING, YOUR LORDSHIP, \nAND CONGRATULATIONS!\n\nyOU'VE SERVED hOUSE oRDOS WELL.:wE WILL NOT SOON FORGET OUR \nMOST NOBLE WARRIOR!:i GO NOW TO RELAY THE NEWS OF \nYOUR MOST GLORIOUS VICTORY, AND \nDELIVER YOUR TERMS TO THE \neMPEROR.",
-},
-{ -- harkonnen missions
- "i AM THE mENTAT, rADNOR.:wITH MY GUIDANCE, YOU MAY BE \nABLE TO ASSIST US IN CONQUERING \nTHIS DUSTY LITTLE PLANET.:fOR YOUR FIRST TEST YOU WILL BE\nEXPECTED TO PRODUCE 1000 \nCREDITS, AND NOT A GRANULE LESS:yOU MAY EARN CREDITS BY \nHARVESTING SPICE, AND WILL NEED\nTO BUILD A REFINERY TO CONVERT\nSPICE TO CREDITS.:iF ANY OF OUR FOOLISH ENEMIES \nATTEMPTS TO ATTACK YOUR BASE \nYOU WILL HAVE THE PLEASURE OF\nSEEING THE INVINCIBLE hARKONNEN\nTROOPS IN ACTION.",
- "hOUSE hARKONNEN HAS GENEROUSLY \nGRANTED YOU A NEW OPPORTUNITY \nTO SERVE US.:wE WILL NOW ALLOW YOU TO TAKE \nCOMMAND IN A MORE DANGEROUS \nAREA, AND ACCUMULATE 2700 \nCREDITS.:aLTHOUGH THE WORTHLESS aTREIDES\nYOU MAY ENCOUNTER IN THIS \nREGION SHOULD BE ELIMINATED AS \nA MATTER OF PRINCIPLE,:...THE SPICE QUOTA IS \nYOUR OBJECTIVE.",
- "tHE DESPISED oRDOS ARE WELL \nESTABLISHED IN THIS REGION, AND \nARE HARVESTING SPICE THAT \nSHOULD RIGHTFULLY BELONG TO \nhOUSE hARKONNEN.:dESTROY THE oRDOS INSTALLATIONS \nIN THIS AREA AND ASSERT CONTROL \nIN THE NAME OF hOUSE hARKONNEN.",
- "oNE SMALL VICTORY DOES NOT WIN \nTHE WAR.:aNOTHER REGION HAS THE \nMISFORTUNE TO BE INFESTED WITH \nVERMIN FROM hOUSE oRDOS, AND \nYOU MUST NOW REPEAT YOUR \nSUCCESS.:i HAVE MANY DELICATE POLITICAL \nNEGOTATIONS ON MY MIND, AND i \nDON'T NEED TO BE WORRYING ABOUT\nLOOSE ENDS.",
- "sO, THE eMPEROR WAS HELPING THE \noRDOS IN YOUR LAST MISSION.:nEVER THE LESS, hOUSE aTREIDES \nHAS GROWN STRONGER DUE TO OUR \nNEGLIGENCE, AND MUST NOW BE \nTAUGHT A LESSON.:yOU WILL REMOVE ALL THE \naTREIDES FROM THIS REGION.",
- "yOU ARE TO PROCEED INTO YET \nANOTHER REGION DOMINATED BY \nTHOSE PESKY oRDOS, AND i EXPECT\nYOU TO OVERCOME THIS RATHER \nTROUBLESOME oRDOS GROUP.:wE HAVE ESTABLISHED A GOOD \nREPUTATION ON THIS PLANET.\n\ndO NOT EMBARRASS ME NOW!",
- "rEPORTS OF NEW aTREIDES \nACTIVITY REQUIRE THAT i SEND \nYOU IMMEDIATELY BACK TO THE \nFRONT LINE.:yOU DO NOT SEEM TO ENJOY REST \nAND RELAXATION ANYWAY.\n\ni THINK YOU WOULD PREFER TO \nCRUSH THE aTREIDES.",
- "i HAVE USED MY INFLUENCE TO \nARRANGE A pALACE FOR YOU.:a COMMANDER OF YOUR STATUS MAY \nREQUIRE RELAXATION OCCASIONALLY \nBUT i EXPECT AN EVEN GREATER \nEFFICIENCY ON YOUR PART WILL \nCOME FROM OUR GENEROSITY.:bOTH aTREIDES AND oRDOS FORCES \nEXIST IN THIS REGION,\nAND ALL MUST BE ELIMINATED!",
- "wE HAVE BEEN DECEIVED!:oUR BARGAINING IN GOOD FAITH \nHAS ONLY BROUGHT A TREACHEROUS \nHARVEST. aLL HAVE CONSPIRED \nAGAINST US, AND ALL MUST DIE!:yOUR MILITARY SKILLS ARE THE \nLAST REMAINING HOPE FOR THIS \nPLANET.:dESTROY ALL REMAINING aTREIDES \nAND oRDOS FORCES, AND CONQUER \nTHE eMPEROR'S pALACE.\nhE HAS TREATED US POORLY, AND \nMUST NOT LIVE ANOTHER DAY!",
- "gOOD mORNING, YOUR LORDSHIP, \nAND CONGRATULATIONS!\n\nyOU HAVE SERVED ME, i MEAN \nhOUSE hARKONNEN, WELL.:oUR hOUSE WILL NOT SOON FORGET \nOUR MOST NOBLE WARRIOR!:i GO NOW TO RELAY THE NEWS OF \nYOUR MOST GLORIOUS VICTORY, AND \nDELIVER YOUR TERMS TO THE \neMPEROR.",
-}
-}
-
--- vars
-mode = title_mode
-seq_cor = nil
-
--- title vars
-
--- level-end vars
-endstate = 0
-
-
+_j=_c
+_k=nil
+_l=0
 function _init()
- cartdata("pn_undune2")
-
- log_cartdata()
-
- load_data()
-
- -- debug!!!
- --mode = houseselect_mode
- --mode = levelselect_mode
- --mode = levelintro_mode
- --mode = levelend_mode
-
- -- initialise modes
- if (mode==title_mode) init_title()
- if (mode==houseselect_mode) init_houseselect()
- if (mode==levelintro_mode)  init_levelintro() 
- if (mode==levelend_mode)  init_levelend()
- --if (mode==levelselect_mode) p_fact=3 p_level=2 init_levelselect() 
- --if (mode==levelselect_mode) p_fact=3 p_level=2 init_levelselect() 
-
- -- debug menu
- --if debug then
-  menuitem(1,"!reset cartdata!",function()
-   for i=0,63 do
-    dset(i,nil)
-   end
-  end)
- --end
-
+cartdata("pn_undune2")
+_aa()
+_p()
+_j=_d
+if(_j==_c) _ab()
+if(_j==_d) _ah()
+if(_j==_e) _m=3 _n=1 _ap()
+if(_j==_f) _a1()
+if(_j==_g) _m=3 _n=9 _ba()
+menuitem(1,"!reset cartdata!",function()
+for i=0,63 do
+dset(i,nil)
 end
-
+end)
+end
 function _update60()
-
- if mode == title_mode then
-  update_title()
-  -- switch to house select
-  if btnp(5) then   
-   if p_fact == 0 then
-    -- starting new game
-    init_houseselect()
-   else
-    -- continuing existing game
-    init_levelintro()  
-   end
-  end 
- 
- elseif mode == houseselect_mode then
-  update_houseselect()
-  -- switch to level intro
-  if btnp(5) then
-   -- set player faction 
-   p_fact = ui_cursor -- (1=atreides, 2=ordos, 3-harkonen)
-   init_levelintro()
-  end
-
- elseif mode == levelintro_mode then
-  update_levelintro()
-  
-
- elseif mode == levelend_mode then
-  update_levelend()
-  
-  if btnp(5) then   
-   -- switch to level select
-   init_levelselect()   
-  end
-
-elseif mode == levelselect_mode then
-  update_levelselect()
-  -- switch to level intro
-  if btnp(5) then   
-   init_levelintro()
-  end
-  
- end
-
+if _j==_c then
+_ac()
+if btnp(5) then
+if _m==0 then
+_ah()
+else
+_ap()
 end
-
-
+end
+elseif _j==_d then
+_ai()
+if btnp(5) then
+_m=_ak
+_ap()
+end
+elseif _j==_e then
+_as()
+elseif _j==_f then
+_a4()
+if btnp(5) then
+_n +=1
+printh("p_level now set to = " .._n)
+dset(0, _n)
+dset(40, 0)
+_ba()
+end
+elseif _j==_g then
+_bm()
+if btnp(5) then
+_ap()
+end
+end
+end
 function _draw()
- --## don't clear here - as coroutines handle own drawing
- --cls()
-
- -- check for gfx change
- if req_gfx_num != curr_gfx_num then
-  --printh("gfx update!!!!!!")
-  -- reset to compressed sprite data
-  reload()
-  -- decompress requested gfx page to screen
-  load_gfx(req_gfx_num,0,0)
-  -- copy screen to sprite sheet
-  memcpy(0x0000,0x6000,0x2000)  
-  -- save value
-  curr_gfx_num = req_gfx_num
-  -- tidy up
-  cls()
- end
-
- --print("-main cart-",0,0,8)
-
- if mode == title_mode then
-  draw_title()
-
- elseif mode == houseselect_mode then
-  draw_houseselect()
-
- elseif mode == levelintro_mode then
-  draw_levelintro()
- 
- elseif mode == levelselect_mode then
-  draw_levelselect()
-  -- print("\n(level select screen)")
-  -- print("\n< press ❎ to choose level >")
- 
- elseif mode == levelend_mode then
-  draw_levelend()
- 
- end 
-
- -- debug state
- -- if debug then
- --  printo("mode="..mode.."\nlevelend_mode="..levelend_mode.."\np_level="..p_level,2,110,8)  
- -- end
+if _c0 !=_o then
+reload()
+_c1(_c0,0,0)
+memcpy(0x0000,0x6000,0x2000)
+_o=_c0
+cls()
 end
-
-
-
-
-function load_data()
- -- load saved data to determine current "state"
-
- p_fact = dget(6)
- p_level = max(1, dget(0))
- printh("p_level: = "..tostr(p_level))
-
- endstate = dget(40)  -- (0=none, 1=credit target, 2=enemy defeated, 3=player lost)
- printh("endstate = "..tostr(endstate))
- if endstate>0 then
-  mode = levelend_mode
-  -- get level end data
-  p_score = dget(2)  
-  p_time = flr(dget(41)) -- playing time 
-  p_harvested = dget(42) -- spice harvested by player
-  ai_harvested = dget(43) -- harvested by ai
-  p_units = dget(44) -- units destroyed by player
-  ai_units = dget(45) -- units destroyed by ai
-  p_buildings = dget(46) -- buildings destroyed by player
-  ai_buildings = dget(47) -- buildings destroyed by ai  
-  --
-  if endstate < 3 then 
-   -- play "win" music
-   music(10)
-  else
-   -- play "lose" music
-   music(6)
-  end
- else
-  -- play "title" music
-  music(0)
- end
-
+if _j==_c then
+_ae()
+elseif _j==_d then
+_aj()
+elseif _j==_e then
+_au()
+elseif _j==_g then
+_bn()
+elseif _j==_f then
+_a8()
 end
-
-
-function load_level(num)
- 
- -- debug
- --num=4
- 
- printh("in load_level("..num..")...")
- printh("p_fact = "..p_fact)
-
- --debug
- --p_fact = 3 -- (1=atreides, 2=ordos, 3-harkonen)
-
- p_col1 = faction_cols[p_fact][1]
- p_col2 = faction_cols[p_fact][2]
- mdata = mission_data[p_fact][num]
- ai1_fact = mdata[8]
- ai2_fact = mdata[11]
- ai3_fact = mdata[14]
- 
- dset(0, num)
- dset(1, mdata[17]) -- ai level
-  
- num_bases=mdata[4]
- dset(5, num_bases)
-
- dset(6, p_fact) -- p_fact
- dset(7, p_col1) -- p_col1
- dset(8, p_col2) -- p_col2
- dset(9, mdata[6]) -- player base x-pos
- dset(10,mdata[7]) -- player base y-pos
-
- --ai1_fact = 1
- dset(11, ai1_fact) -- ai_faction
- dset(12, ai1_fact and faction_cols[ai1_fact][1] or nil)
- dset(13, ai1_fact and faction_cols[ai1_fact][2] or nil)
- dset(14, mdata[9])  -- ai1 base x-pos
- dset(15, mdata[10]) -- ai1 base y-pos 
-
- --ai2_fact = 1
- dset(16, ai2_fact)
- dset(17, ai2_fact and faction_cols[ai2_fact][1] or nil)
- dset(18, ai2_fact and faction_cols[ai2_fact][2] or nil)
- dset(19, mdata[12]) -- ai2 base x-pos
- dset(20, mdata[13]) -- ai2 base y-pos
-
- --ai3_fact = 1
- dset(21, ai3_fact)
- dset(22, ai3_fact and faction_cols[ai3_fact][1] or nil)
- dset(23, ai3_fact and faction_cols[ai3_fact][2] or nil)
- dset(24, mdata[15]) -- ai3 base x-pos
- dset(25, mdata[16]) -- ai3 base y-pos
-
- dset(35, mdata[2]) -- starting credits
- dset(36, mdata[3]) -- target credits
-
- dset(41, 0) -- playing time
- dset(42, 0) -- harvested
- dset(43, 0) -- ai harvested
- dset(44, 0) -- units destroyed
- dset(45, 0) -- ai units destroyed
- dset(46, 0) -- buildings destroyed
- dset(47, 0) -- ai buildings destroyed
-
- log_cartdata()
-
- -- load level map data
- local mapfile = "pico-dune-map"..num..".p8"
- printh("loading data from: "..mapfile)
- -- read map_cart data to user mem
- -- then write back to game_cart
- reload(0x4300, 0x2000, 0x1000, mapfile)   -- read map data
- cstore(0x2000, 0x4300, 0x1000, game_cart) -- write map data
- reload(0x4300, 0x3100, 0x1199, mapfile)   -- read music+sfx data
- cstore(0x3100, 0x4300, 0x1199, game_cart) -- write music+sfx data
- load(game_cart)
+if debug then
+_cj("mode=" .._j.."\nlevelend_mode=" .._f.."\np_level=" .._n,2,110,8)
 end
-
-
-function log_cartdata()
- printh("--- cart data ---------")
- for i=0,63 do
-  --dset(i,0)
-  printh("["..i.."] "..tostr(dget(i)))
- end
 end
-
--->8
--- title screen
-
-function init_title() 
- load_gfx_page(0)
- angle,cy=0.25,-96
+function _p()
+_m=dget(6)
+_n=max(1, dget(0))
+printh("p_level: = " ..tostr(_n))
+_l=dget(40)
+printh("endstate = " ..tostr(_l))
+if _l>0 then
+_j=_f
+_q=dget(2)
+_r=_z()
+_s=flr(dget(41))
+_t=dget(42)
+_u=dget(43)
+_v=dget(44)
+_w=dget(45)
+_x=dget(46)
+_y=dget(47)
+if _l < 3 then
+music(10)
+else
+music(6)
 end
-
-function update_title()
- _set_fps(60)
- -- auto-rotate in...
- if angle>.0 then
-  angle-=.1/128
-  cy+=.25
- else
-  angle=0
- end
+else
+music(0)
 end
-
-function draw_title()
- cls()
-  --print("\n(title screen)",0,0,8)
- 
- --pal()
-	-- draw orginal sprite when
-	-- not rotating (as rotation
-	-- code distorts slightly)
-	--angle=0
-	if angle~=0 then 
-	 spr3d(8,0,123,20,cy,angle,1)
-	else
-	 spr(1, 3,38, 15,3)
-	end
-	
-	local start⧗=6.5
- --local start⧗=0
-	if t()>start⧗ then
-	 local tagline="the demaking of a dynasty"
-		fadeprint(tagline,12,62, (t()-start⧗)*8,3)
-		fadeprint(tagline,12,61, (t()-start⧗)*8)
-  fadeprint(" bY pAUL nICHOLAS @liquidream",4,104, (t()-start⧗)*8, 5)
-  fadeprint("♪cHRIS dONNELLY @gruber_music",4,112, (t()-start⧗)*8, 4)
-  fadeprint("(oRIGINAL BY wESTWOOD sTUDIOS)",4,120, (t()-start⧗)*8, 3)
-	end
-
- if t()>start⧗+1 then
-  local msg = "press ❎ to "..(p_fact>0 and "continue" or "start")
-  if(t()\1%2==0)printo(msg,60-(#msg*4)/2,78,7,3)
- end
-
- -- intro anim (crisp hd)
- -- https://www.youtube.com/watch?v=SJ436NYbyK8
- -- (use this one for intro captions...)
- -- https://www.youtube.com/watch?v=TqCDj0IRSTk
 end
-
--->8
--- house selection screen
-
-function init_houseselect()
- mode = houseselect_mode
- load_gfx_page(0) 
- ui_cursor=1
+function _z()
+return"sQUAD lEADER" end
+function _0(_1)
+printh("in load_level(" .._1..")...")
+printh("p_fact = " .._m)
+_2=_b[_m][1]
+_3=_b[_m][2]
+_4=_h[_m][_1]
+_5=_4[8]
+_6=_4[11]
+_7=_4[14]
+dset(0, _1)
+dset(1, _4[17])
+_8=_4[4]
+dset(5, _8)
+dset(6, _m)
+dset(7, _2)
+dset(8, _3)
+dset(9, _4[6])
+dset(10,_4[7])
+dset(11, _5)
+dset(12, _5 and _b[_5][1] or nil)
+dset(13, _5 and _b[_5][2] or nil)
+dset(14, _4[9])
+dset(15, _4[10])
+dset(16, _6)
+dset(17, _6 and _b[_6][1] or nil)
+dset(18, _6 and _b[_6][2] or nil)
+dset(19, _4[12])
+dset(20, _4[13])
+dset(21, _7)
+dset(22, _7 and _b[_7][1] or nil)
+dset(23, _7 and _b[_7][2] or nil)
+dset(24, _4[15])
+dset(25, _4[16])
+dset(35, _4[2])
+dset(36, _4[3])
+dset(41, 0)
+dset(42, 0)
+dset(43, 0)
+dset(44, 0)
+dset(45, 0)
+dset(46, 0)
+dset(47, 0)
+_aa()
+local _9="pico-dune-map" .._1..".p8" printh("loading data from: " .._9)
+reload(0x4300, 0x2000, 0x1000, _9)
+cstore(0x2000, 0x4300, 0x1000, _a)
+reload(0x4300, 0x3100, 0x1199, _9)
+cstore(0x3100, 0x4300, 0x1199, _a)
+load(_a)
 end
-
-function update_houseselect()
- if (btnp(0) and ui_cursor>1) ui_cursor-=1
- if (btnp(1) and ui_cursor<3) ui_cursor+=1
+function _aa()
+printh("--- cart data ---------")
+for i=0,63 do
+printh("[" ..i.."] " ..tostr(dget(i)))
 end
-
-function draw_houseselect()
- cls()
- pal()
- pal(10,139,1)
- pal(14,140,1)
- pal(15,130,1)
- -- print("\n(house select screen)",0,0,8)
- -- print("\n< press ❎ >",0,8)
-
- ssprint("select your house",28,28, 9,2,7)
-
- spr(48, 5,47,  4,4)
- spr(52, 47,47, 4,4)
- spr(56, 89,47, 4,4)
- map(48,0, 1,45, 5,7)
- map(48,0, 43,45, 5,7)
- map(48,0, 85,45, 5,7)
-
- houses={"aTREIDES","  oRDOS","hARKONNEN"}
- for i=0,2 do
-  local off=i*29+(i*5)
-  local gap=i*8
-  --rectfill(2+off+gap,86,39+off+gap,92,9)
-  rect(off+gap,84,41+off+gap,94,ui_cursor==i+1 and 7 or 0)
-  ?houses[i+1],4+off+gap,87,1--faction_cols[i+1][2]
- end
- local fact_cols=faction_cols[ui_cursor]
- printo("press ❎ to select",30,108,fact_cols[1],1)
 end
-
-
--->8
--- level intro screen
-
-
-
-function init_levelintro() 
- mode = levelintro_mode
- current_msg=nil
- last_msg_part=false
- cls()
- load_gfx_page(p_fact+1)
- 
- -- play "intro" music
- music(6)
-
- msg=mentat_dialogs[p_fact][p_level] 
- co_text=cocreate(text_spool)
+function _ab()
+_cy(0)
+_ad,cy=0.25,-96
 end
-
-function update_levelintro()
- _set_fps(30)
-
- if (co_text!=nil and costatus(co_text)!="dead") then
-  coresume(co_text)
- else
-  co_text=nil
- end
-
- -- load and initialise game cart
-  if btnp(5) and last_msg_part then   
-   load_level(p_level)
-  end
+function _ac()
+_set_fps(60)
+if _ad>.0 then
+_ad-=.1/128
+cy+=.25
+else
+_ad=0
 end
-
-function draw_levelintro() 
- cls()
- --dune bg
- draw_mentat(0) 
-
- if (current_msg) draw_dialog() 
- ?"❎ to "..(last_msg_part and "start" or "skip"),83,121,6
 end
-
-function draw_mentat(pnum) 
- --pnum (0=dune,  1=atreides, etc.)
- pal({[0]=0,1,3,4,5,6,9,13,15,128,129,132,10,140,142,143},1) 
- 
- -- space bg + window
- draw_planet(pnum)
- rect(40,36,128,112,7)
-
- palt(0,false)
- 
- if p_fact==1 then
-  palt(2, true)
-  spr(7, 0,40,  16,16) 
- else
-  palt(12, true)
-  spr(0, 0,40,  16,16)
- end
-
+function _ae()
+cls()
+if _ad~=0 then
+_cc(8,0,123,20,cy,_ad,1)
+else
+spr(1, 3,38, 15,3)
 end
-
-function draw_planet(pnum)
-	dx=100
-	dy=75
-
-	c=(
-			{[0]={0,9,11,14,15,8,8,8}, --dune
---	 [0]={0,9,3,6,12}, --dune v2 (too yellow)
-	   {0,10,1,13,2,6},--7 --atreides
-    {0,10,1,7,5,15,15},--ordos
-	   {0,9,2,15,6,6,6} --harkonnen
-	  })[pnum]
-	  
-	 --spare cols: 2,6,8,15
-	p=({
-[0]={[0]=0,1,3,4,5,6,9,13,15,128,129,132,10,140,142,143},
-				{[0]=0,1,3,4,5,6,139,13,8,128,129,132,8,140,142,8},
-				{[0]=0,1,8,4,5,6,12,13,15,128,129,132,10,140,142,7},
-				{[0]=0,1,2,4,5,6,8,13,15,128,129,132,10,140,142,136}
-	  })[pnum]
-	
-	g=({[0]=.5,.65,0.75,.5})[pnum]
-	
-	pal(p,1)
-	  
-	srand(6)--6
-	u=cos(.5)
-	v=sin(.4)
-	
-	--stars
-	for i=1,50 do
-	 pset(40+rnd(88),36+rnd(76),rnd{10,13,1})
-	end
-	
-	-- atmosphere
-	circfill(dx-1,dy-1,22,10)
-	circfill(dx-1,dy-1,21,13)
-	circfill(dx-1,dy-1,20,10) --if not ordos
-	
-	-- planet
-	for x=-1,.95,.05 do 
-	 for y=-1,.95,.05 do 
-	  h=x*x+y*y
-	  z=(1-h)^.5
-	  r=x*u+y*v+g+2*((x+y)%.1)
-	  r=max(min(1,z*r))
-	  r=(c)[flr(r*(#c-1))+1]
-	  if(h<1)pset(dx+x*20,dy+y*20,r)
-	 end
-	end
-
+local start⧗=6.5
+if t()>start⧗ then
+local _af="the demaking of a dynasty" _cd(_af,12,62, (t()-start⧗)*8,3)
+_cd(_af,12,61, (t()-start⧗)*8)
+_cd(" bY pAUL nICHOLAS @liquidream",4,104, (t()-start⧗)*8, 5)
+_cd("♪cHRIS dONNELLY @gruber_music",4,112, (t()-start⧗)*8, 4)
+_cd("(oRIGINAL BY wESTWOOD sTUDIOS)",4,120, (t()-start⧗)*8, 3)
 end
-
--- Dialog Text Flow with Coroutines by @MBoffin
--- https://www.lexaloffle.com/bbs/?tid=35381
-function draw_dialog()
- ?current_msg,2,5,11
- ?current_msg,2,4,5
+if t()>start⧗+1 then
+local _ag="press ❎ to " ..(_m>0 and"continue" or"start")
+if(t()\1%2==0)_cj(_ag,60-(#_ag*4)/2,78,7,3)
 end
-function text_spool()
- local msgparts=split(msg,":")
- for j=1,#msgparts do
-  msg=msgparts[j]
-  for i=1,#msg do
-   current_msg=sub(msg,1,i)
-   --sfx(0)
-   if (btnp(❎)) break
-   yield()yield()
-  end
-  yield()
-  current_msg=msg  
-  last_msg_part=(j==#msgparts)
-  while not (btnp(❎) or last_msg_part) do yield() end  
-  --current_msg=nil
-  _update_buttons()
- end
 end
-
--->8
--- level end screen
-
-function init_levelend()
- load_gfx_page(1)
- pal()
- pal(3, 137, 1)
-
- -- debug testing
- -- p_score=500
- -- p_time=5000 
- -- p_harvested=30000
- -- ai_harvested=25000
- -- p_units=302
- -- ai_units=75
- -- p_buildings=74
- -- ai_buildings=13
-
- local hours = flr(p_time / 3600 )
- p_time = p_time - hours * 3600
- local minutes = flr(p_time / 60)
- p_time=hours.."H "..minutes.."M"
-
- -- calc score
- --printh("score b4:"..p_score)
- p_score += p_units-ai_units + p_buildings-ai_buildings + p_harvested\100
- p_rank = calc_rank()
- --printh("score af:"..p_score)
- --printh("rank:"..p_rank) 
- -- save score
- dset(2, p_score)
- -- move to next level
- p_level += 1
- printh("p_level now set to = "..p_level)
- dset(0, p_level)
- dset(40, 0) -- clear endstate
-
- stats={
- 	{ 0, p_harvested, 62, 8, 60, p_harvested },
- 	{ 0, ai_harvested, 68, 6, 60, p_harvested },
-  { 0, p_units, 85, 8, 40, p_units },
-  { 0, ai_units, 91, 6, 40, p_units },
-  { 0, p_buildings, 107, 8, 20, p_buildings},
-  { 0, ai_buildings, 113, 6, 20, p_buildings }
-  }
- curr_stat=1
- stat_delay=100
+function _ah()
+_j=_d
+_cy(0)
+_ak=1
 end
-
-
-function calc_rank()
- ranks=split"25,sAND sNAKE,50,dESERT mONGOOSE,100,sAND wARRIOR,150,dUNE tROOPER,200,sQUAD lEADER,400,oUTPOST cOMMANDER,500,bASE cOMMANDER,700,wARLORD,1000,cHIEF wARLORD,1400,rULER OF aRRAKIS,18000,eMPEROR"
- rank="sAND fLEA"
- for i=1,#ranks,2 do
-  if p_score>=ranks[i] then
-   rank=ranks[i+1]
-  end
- end 
- return rank
+function _ai()
+if(btnp(0) and _ak>1) _ak-=1
+if(btnp(1) and _ak<3) _ak+=1
 end
-
-function update_levelend()
- -- in stats mode
- if stat_delay > 0 then
-  -- pausing
-  stat_delay-=1
-  return
- end
- if curr_stat <= #stats then
-  -- scale the stats?
-  stats[curr_stat][1] += (stats[curr_stat][6]/stats[curr_stat][5])/3
-  
-  if stats[curr_stat][1] >= stats[curr_stat][2] then
-  	stats[curr_stat][1] = stats[curr_stat][2]
-   curr_stat+=1
-   stat_delay=50
-  end
- end 
+function _aj()
+cls()
+pal()
+pal(10,139,1)
+pal(14,140,1)
+pal(15,130,1)
+_cq("select your house",28,28, 9,2,7)
+spr(48, 5,47,  4,4)
+spr(52, 47,47, 4,4)
+spr(56, 89,47, 4,4)
+map(48,0, 1,45, 5,7)
+map(48,0, 43,45, 5,7)
+map(48,0, 85,45, 5,7)
+_al={"aTREIDES","  oRDOS","hARKONNEN" }
+for i=0,2 do
+local _am=i*29+(i*5)
+local _an=i*8
+rect(_am+_an,84,41+_am+_an,94,_ak==i+1 and 7 or 0)
+?_al[i+1],4+_am+_an,87,1
 end
-
-function draw_levelend()
- cls()
-
- --
- -- init custom screen palette
- --
- palt(0,false)   -- show blacks
- pal(14, 137, 1)  -- bright pink > dark orange
- pal(12, 140, 1) -- light blue > royal blue
- pal(11, 139, 1) -- light green > grass green
- pal(10, 3, 1)   -- yellow > rough green
- --pal(8, 136, 1) -- red > cherry
- pal(6, 143, 1)  -- skin > peach
- pal(13, 134, 1) -- greyblue > beige
- --pal(7, 142, 1)  -- white > peach2
- 
- pal(6, 14, 1)  -- grey > pink (as pink is being used in marble replacement)
-
- -- debug data
- -- step in original = n*0.003
- 
- local spr_fact=9
- map()
- map(17,1,8,2,14,6)
-  
- spr(spr_fact,1,22,3,3)
- spr(spr_fact,103,22,3,3)
-
- sprint("sCORE:"..p_score,16,7,7)
- -- todo: round to nearest minute
- sprint("tIME:"..p_time,70,7)
-
- sprint("yOU'VE ATTAINED\n  THE RANK OF",36,24)
- sprint(p_rank,65-#p_rank*2,37,8)
-  
-	rect(8,56,120,75,4)
-	line(26,56,100,56,9)
- sprint("SPICE HARVESTED BY",28,53)
- sprint("  YOU:\nENEMY:",11,61)
- sprint(flr(stats[1][1]).."\n"..flr(stats[2][1]),100,61)
- 
- rect(8,79,120,98,4)
- line(26,79,100,79,9)
- sprint("UNITS DESTROYED BY",28,76)
- sprint("  YOU:\nENEMY:",11,84)
- sprint(flr(stats[3][1]).."\n"..flr(stats[4][1]),100,84)
- 
- rect(8,102,120,120,4)
- line(18,102,108,102,9)
- sprint("BUILDINGS DESTROYED BY",20,99)
- sprint("  YOU:\nENEMY:",11,106)
- sprint(flr(stats[5][1]).."\n"..flr(stats[6][1]),100,106)
- 
- -- draw bars 
- for i=1,#stats do
-  draw_bar(
-  	35,
-  	stats[i][3],
-   stats[i][5],
-  	stats[i][1],
-   stats[i][6],
-  	stats[i][4])  
- end
- 
+local _ao=_b[_ak]
+_cj("press ❎ to select",30,108,_ao[1],1)
 end
-
--->8
--- level select screen
-
-function init_levelselect()
- mode = levelselect_mode
- load_gfx_page(1)
- -- play "select" music
- music(12)
- -- init map region data
- rdata=split2d(spr_data,",","\n")
- 
- -- define colour "filters"
- map_cols={
-  [-1]={6,7,13},-- orig map
-  [0]={0,0,0},  -- borderline
-  {12,1,0},     -- attreides
-  {11,10,1},    -- ordos
-  {8,2,1,7,7},  -- harkonnen
-  {5,2,0}     -- emperor
- } 
-
- col_origmap=-1
- col_borderline=0
- col_attreides=1
- col_ordos=2
- col_harkonnen=3
- col_emperor=4
- messagetext1=""
- messagetext2=""
- msg_ypos=0
- _t=0
-
- -- init map anim sequence
- seq_cor=cocreate(play_map_sequence)
+function _ap()
+_j=_e
+_aq=nil
+_ar=false
+_cy(_m+1)
+music(6)
+_ag=_i[_m][1]
+_at=cocreate(_az)
 end
-
-function update_levelselect()
- -- in map mode
-
- -- update coroutine
- if seq_cor and costatus(seq_cor)~="dead" then
-  assert(coresume(seq_cor, p_level)) 
- end
+function _as()
+_set_fps(30)
+if(_at!=nil and costatus(_at)!="dead") then
+coresume(_at)
+else
+_at=nil
 end
-
-function draw_levelselect()
- -- debug data
- if debug then
-  local spr_fact=9
- end
- 
- pal(5, 14, 1)  -- grey > pink (as pink is being used in marble replacement)
-
- --printo("p_level="..p_level,2,121,8)
-
+if btnp(5) and _ar then
+_0(_n)
 end
-
-
- -- play scripted animated sequence
- -- (typically, one for each level) 
-function play_map_sequence(seqnum)
- printh("seqnum = "..seqnum)
-
- --::demo::
- 
- -- dummy pause in to allow gfx unpack to happen before map() call below
- -- (not necessary in final game - only when *starting* on level select)
- yield()
- 
- local nextreg_num
- local nextreg_currcol -- ref to next region's orig col b4 start flashing player fact
-
- -- "paint" blank map
- cls()
- pal()
- pal(1,6)
- pal(2,7)
- pal(3,13)
- map(32,0,0,0)
- spr(49,4,20,15,8)
- pal()
-
- --
- -- init custom screen palette
- --
- palt(0,false)   -- show blacks
- pal(14, 137, 1)  -- bright pink > dark orange
- pal(12, 140, 1) -- light blue > royal blue
- pal(11, 139, 1) -- light green > grass green
- pal(10, 3, 1)   -- yellow > rough green
- --pal(8, 136, 1) -- red > cherry
- pal(6, 143, 1)  -- skin > peach
- pal(13, 134, 1) -- greyblue > beige
- pal(7, 142, 1)  -- dark red > peach2
- 
- printo("your next conquest",30,7,8,0) 
- 
- if seqnum > 2 then
-  setmap(0, map_cols[col_borderline])
- end
-
- if p_fact == 1 then
-  -- =========================================================
-  -- atreides
-  -- =========================================================
-  if seqnum == 1 then
-   -- intro anim?
-  elseif seqnum == 2 then
-   -- first map sequence
-   cleartext()  
-   wait(20)    
-   show_message("tHREE hOUSES HAVE\nCOME TO dUNE.") 
-   show_message("tHE LAND HAS\nBECOME DIVIDED.")   
-   fizzlemap(0,  map_cols[col_borderline])
-   cleartext()
-   show_message("aTREIDES CLAIMED\nSTRATEGIC REGIONS")
-   fizzlemap({13,7,20,14,21,22}, map_cols[col_attreides])
-   cleartext()
-   show_message("oRDOS MOVED IN\nFROM THE EAST.")
-   fizzlemap({19,27,26,25,24,23}, map_cols[col_ordos])
-   cleartext()
-   show_message("hARKONNEN INVADED\nFROM THE NORTH.")
-   fizzlemap({6,5,4,10,3,9}, map_cols[col_harkonnen])
-   nextreg_num = 23
-   nextreg_currcol = map_cols[col_ordos]
-
-  elseif seqnum == 3 then
-   setmap({13,7,20,14,21,22}, map_cols[col_attreides])
-   setmap({19,27,26,25,24,23}, map_cols[col_ordos])
-   setmap({6,5,4,10,3,9}, map_cols[col_harkonnen])
-   show_message("aTREIDES CAPTURED\nMORE TERRITORY...")
-   fizzlemap({8,15},  map_cols[col_attreides])
-   show_message("...AND DROVE THE\noRDOS OUT.")   
-   fizzlemap({23}, map_cols[col_attreides])
-   show_message("oRDOS HEADED\nFOR hARKONNEN.")   
-   fizzlemap({12,18,16,17}, map_cols[col_ordos])
-   show_message("hARKONNEN EXPANDED\nTHEIR BORDERS.")
-   fizzlemap({1,2,11}, map_cols[col_harkonnen])
-   nextreg_num = 2
-   nextreg_currcol = map_cols[col_harkonnen]
-  
-  elseif seqnum == 4 then
-   setmap({13,7,20,14,21,22,8,15,23}, map_cols[col_attreides])
-   setmap({19,27,26,25,24,12,18,16,17}, map_cols[col_ordos])
-   setmap({6,5,4,10,3,9,1,2,11}, map_cols[col_harkonnen])
-   show_message("hARKONEN BORDERS\nWERE WEAK...")
-   fizzlemap({1,2,3}, map_cols[col_attreides])
-   fizzlemap({11}, map_cols[col_ordos])
-   show_message("...EXCEPT FOR\nONE OUTPOST.")
-   fizzlemap({16}, map_cols[col_harkonnen])
-   nextreg_num = 9
-   nextreg_currcol = map_cols[col_harkonnen]
- 
-  elseif seqnum == 5 then
-   setmap({13,7,20,14,21,22,8,15,23,1,2,3}, map_cols[col_attreides])
-   setmap({19,27,26,25,24,12,18,17,11}, map_cols[col_ordos])
-   setmap({6,5,4,10,9,16}, map_cols[col_harkonnen])
-   show_message("hARKONEN CONTINUED\nTO RETREAT.")
-   fizzlemap({4,9,16}, map_cols[col_attreides])
-   show_message("...INTO TERRITORY\nOF THE oRDOS.")
-   fizzlemap({11}, map_cols[col_harkonnen])
-			nextreg_num = 25
-   nextreg_currcol = map_cols[col_ordos]
-
-  elseif seqnum == 6 then
-   setmap({13,7,20,14,21,22,8,15,23,1,2,3,4,9,16}, map_cols[col_attreides])
-   setmap({19,27,26,25,24,12,18,17}, map_cols[col_ordos])
-   setmap({6,5,10,11}, map_cols[col_harkonnen])
-   show_message("aLL FORCES WERE\nAIMED AT oRDOS.")
-   fizzlemap({17,25,24}, map_cols[col_attreides])
-   fizzlemap({18}, map_cols[col_harkonnen])
-			nextreg_num = 11
-   nextreg_currcol = map_cols[col_harkonnen]
-
-  elseif seqnum == 7 then
-   setmap({13,7,20,14,21,22,8,15,23,1,2,3,4,9,16,17,25,24}, map_cols[col_attreides])
-   setmap({19,27,26,12}, map_cols[col_ordos])
-   setmap({6,5,10,11,18}, map_cols[col_harkonnen])
-   show_message("aTREIDES PUSHED\nhARKONNEN BACK.")
-   fizzlemap({10,11,18}, map_cols[col_attreides])
-			nextreg_num = 26   
-   nextreg_currcol = map_cols[col_ordos]
-
- elseif seqnum == 8 then
-   setmap({13,7,20,14,21,22,8,15,23,1,2,3,4,9,16,17,25,24,10,11,18}, map_cols[col_attreides])
-   setmap({19,27,26,12}, map_cols[col_ordos])
-   setmap({6,5}, map_cols[col_harkonnen])
-   show_message("oRDOS WERE NEARLY\nWIPED OUT.")
-   fizzlemap({26,27,19}, map_cols[col_attreides])
-			nextreg_num = 5   
-   nextreg_currcol = map_cols[col_harkonnen]
-
-  elseif seqnum == 9 then
-   setmap({13,7,20,14,21,22,8,15,23,1,2,3,4,9,16,17,25,24,10,11,18,26,27,19}, map_cols[col_attreides])
-   setmap({12}, map_cols[col_ordos])
-   setmap({6,5}, map_cols[col_harkonnen])
-   show_message("oNLY THE eMPEROR'S\nFORCES REMAIN.")
-   fizzlemap({5,12}, map_cols[col_attreides])
-   fizzlemap({6}, map_cols[col_emperor])
-			nextreg_num = 6
-   nextreg_currcol = map_cols[col_emperor]
-
-  end
-
- elseif p_fact == 2 then
-  -- =========================================================
-  -- ordos
-  -- =========================================================
-  if seqnum == 1 then
-   -- intro anim?
-  elseif seqnum == 2 then
-   -- first map sequence
-   cleartext()  
-   wait(20)    
-   show_message("tHREE hOUSES HAVE\nCOME TO dUNE.") 
-   show_message("tHE LAND HAS\nBECOME DIVIDED.")   
-   fizzlemap(0,  map_cols[col_borderline])
-   cleartext()
-   show_message("oRDOS TOOK THE\nBEST LAND")
-   fizzlemap({19,27,26,25,24,23}, map_cols[col_ordos])
-   cleartext()
-   show_message("hARKONNEN ARE\nA THREAT.")
-   fizzlemap({6,5,4,10,3,9}, map_cols[col_harkonnen])
-   cleartext()
-   show_message("hOUSE aTREIDES\nIS NEARBY.")
-   fizzlemap({13,7,20,14,21,22}, map_cols[col_attreides])
-   nextreg_num = 16
-   nextreg_currcol = map_cols[col_origmap]
-
-  elseif seqnum == 3 then
-   setmap({19,27,26,25,24,23}, map_cols[col_ordos])
-   setmap({6,5,4,10,3,9}, map_cols[col_harkonnen])
-   setmap({13,7,20,14,21,22}, map_cols[col_attreides])
-   show_message("oRDOS ADVANCED\nWITHOUT CHALLENGE.")
-   fizzlemap({15,16,17},  map_cols[col_ordos])
-   show_message("tHE hARKONNEN\nDREW CLOSER.")
-   fizzlemap({11,12,18}, map_cols[col_harkonnen])
-   show_message("tHE aTREIDES\nSPREAD TOO THIN.")   
-   fizzlemap({1,2,8}, map_cols[col_attreides])
-   nextreg_num = 14
-   nextreg_currcol = map_cols[col_attreides]
-
-  elseif seqnum == 4 then
-   setmap({19,27,26,25,24,23,15,16,17}, map_cols[col_ordos])
-   setmap({6,5,4,10,3,9,11,12,18}, map_cols[col_harkonnen])
-   setmap({13,7,20,14,21,22,1,2,8}, map_cols[col_attreides])
-   show_message("aLL ATTACKS WERE\nAIMED AT aTREIDES.")
-   fizzlemap({8,14,22}, map_cols[col_ordos])
-   fizzlemap({2}, map_cols[col_harkonnen])   
-   nextreg_num = 13
-   nextreg_currcol = map_cols[col_attreides]
-
-  elseif seqnum == 5 then
-   setmap({19,27,26,25,24,23,15,16,17,8,14,22}, map_cols[col_ordos])
-   setmap({6,5,4,10,3,9,11,12,18,2}, map_cols[col_harkonnen])
-   setmap({13,7,20,21,1}, map_cols[col_attreides])
-   show_message("oRDOS OVERPOWERED\nTHE aTREIDES...")
-   fizzlemap({21,20,13}, map_cols[col_ordos])
-   show_message("...WHILE THEY WERE\nFIGHTING hARKONNEN")
-   fizzlemap({2,3}, map_cols[col_attreides])   
-   nextreg_num = 18
-   nextreg_currcol = map_cols[col_harkonnen]
-
-  elseif seqnum == 6 then
-   setmap({19,27,26,25,24,23,15,16,17,8,14,22,21,20,13}, map_cols[col_ordos])
-   setmap({6,5,4,10,9,11,12,18}, map_cols[col_harkonnen])
-   setmap({7,1,2,3}, map_cols[col_attreides])
-   show_message("hARKONNEN HAD TO\nBE TURNED BACK.")
-   fizzlemap({18,11,12}, map_cols[col_ordos])
-   nextreg_num = 2
-   nextreg_currcol = map_cols[col_attreides]
-
-  elseif seqnum == 7 then
-   setmap({19,27,26,25,24,23,15,16,17,8,14,22,21,20,13,18,11,12}, map_cols[col_ordos])
-   setmap({6,5,4,10,9}, map_cols[col_harkonnen])
-   setmap({7,1,2,3}, map_cols[col_attreides])
-   show_message("oRDOS KILLED OFF\nMOST OF aTREIDES")
-   fizzlemap({7,1,2}, map_cols[col_ordos])
-   nextreg_num = 6
-   nextreg_currcol = map_cols[col_harkonnen]
-
-  elseif seqnum == 8 then
-   setmap({19,27,26,25,24,23,15,16,17,8,14,22,21,20,13,18,11,12,7,1,2}, map_cols[col_ordos])
-   setmap({6,5,4,10,9}, map_cols[col_harkonnen])
-   setmap({3}, map_cols[col_attreides])
-   show_message("oRDOS GAINED MORE\nhARKONNEN LAND.")
-   fizzlemap({6,5,10}, map_cols[col_ordos])
-   nextreg_num = 3
-   nextreg_currcol = map_cols[col_attreides]
-
-  elseif seqnum == 9 then
-   setmap({19,27,26,25,24,23,15,16,17,8,14,22,21,20,13,18,11,12,7,1,2,6,5,10}, map_cols[col_ordos])
-   setmap({4,9}, map_cols[col_harkonnen])
-   setmap({3}, map_cols[col_attreides])
-   show_message("sOON oRDOS WILL\nRULE ALL OF dUNE.")
-   fizzlemap({3,9}, map_cols[col_ordos])
-   fizzlemap({4}, map_cols[col_emperor])
-   nextreg_num = 4
-   nextreg_currcol = map_cols[col_emperor]
-
-  end
-
- elseif p_fact == 3 then 
-  -- =========================================================
-  -- harkonnen
-  -- =========================================================
-  if seqnum == 1 then
-   -- intro anim?
-  elseif seqnum == 2 then
-   -- first map sequence
-   cleartext()  
-   wait(20)    
-   show_message("tHREE hOUSES HAVE\nCOME TO dUNE.") 
-   show_message("tHE LAND HAS\nBECOME DIVIDED.")   
-   fizzlemap(0,  map_cols[col_borderline])
-   cleartext()
-   show_message("hARKONNEN ARRIVED\nFIRST.")
-   fizzlemap({6,5,4,10,3,9}, map_cols[col_harkonnen])
-   cleartext()
-   show_message("tHE WEAK aTREIDES\nWILL BE EASY.")
-   fizzlemap({13,7,20,14,21,22}, map_cols[col_attreides])
-   cleartext()
-   show_message("tHE oRDOS ARE\nGETTING CLOSER.")
-   fizzlemap({19,27,26,25,24,23}, map_cols[col_ordos])
-   nextreg_num = 2
-   nextreg_currcol = map_cols[col_origmap]
-
-  elseif seqnum == 3 then
-   setmap({6,5,4,10,3,9}, map_cols[col_harkonnen])
-   setmap({13,7,20,14,21,22}, map_cols[col_attreides])
-   setmap({19,27,26,25,24,23}, map_cols[col_ordos])
-   show_message("hARKONNEN SPREAD\nOUT STRONG FORCES.")
-   fizzlemap({2,1,8},  map_cols[col_harkonnen])
-   show_message("aTREIDES WENT\nAFTER oRDOS.")
-   fizzlemap({15,16,23}, map_cols[col_attreides])
-   show_message("oRDOS STOLE EVEN\nMORE LAND.")
-   fizzlemap({17,11,18,12}, map_cols[col_ordos])
-   nextreg_num = 11
-   nextreg_currcol = map_cols[col_ordos]
-  
-  elseif seqnum == 4 then
-    setmap({6,5,4,10,3,9,2,1,8}, map_cols[col_harkonnen])
-    setmap({13,7,20,14,21,22,15,16,23}, map_cols[col_attreides])
-    setmap({19,27,26,25,24,17,11,18,12}, map_cols[col_ordos])
-    show_message("oRDOS DID NOT\nSTAND A CHANCE.")
-    fizzlemap({17,11,12}, map_cols[col_harkonnen])
-    show_message("aTREIDES AND oRDOS\nTRADED LAND.")
-    fizzlemap({24}, map_cols[col_attreides])
-    fizzlemap({16}, map_cols[col_ordos])
-    nextreg_num = 18
-    nextreg_currcol = map_cols[col_ordos]
-
-  elseif seqnum == 5 then
-   setmap({6,5,4,10,3,9,2,1,8,17,11,12}, map_cols[col_harkonnen])
-   setmap({13,7,20,14,21,22,15,23,24}, map_cols[col_attreides])
-   setmap({19,27,26,25,18,16}, map_cols[col_ordos])
-   fizzlemap(25,  map_cols[col_harkonnen])
-   show_message("aN oRDOS OUTPOST\nWAS SURROUNDED.")
-   fizzlemap({18,19},  map_cols[col_harkonnen])
-   show_message("tHE oRDOS BROKE\nTHROUGH aTREIDES.")
-   fizzlemap(24, map_cols[col_ordos])
-   nextreg_num = 7
-   nextreg_currcol = map_cols[col_attreides]
-
-  elseif seqnum == 6 then
-   setmap({6,5,4,10,3,9,2,1,8,17,11,12,25,18,19}, map_cols[col_harkonnen])
-   setmap({13,7,20,14,21,22,15,23}, map_cols[col_attreides])
-   setmap({27,26,16,24}, map_cols[col_ordos])
-   show_message("sOON tHE aTREIDES\nWILL BE EXTINCT.")
-   fizzlemap({7,14,13}, map_cols[col_harkonnen])
-   fizzlemap({23}, map_cols[col_ordos])
-   nextreg_num = 26
-   nextreg_currcol = map_cols[col_ordos]
-
-  elseif seqnum == 7 then
-   setmap({6,5,4,10,3,9,2,1,8,17,11,12,25,18,19,7,14,13}, map_cols[col_harkonnen])
-   setmap({20,21,22,15}, map_cols[col_attreides])
-   setmap({27,26,16,24,23}, map_cols[col_ordos])
-   show_message("hARKONNEN CRUSHED\nMOST OF THE oRDOS.")
-   fizzlemap({24,26,27},  map_cols[col_harkonnen])
-   show_message("aTREIDES RECLAIMED\nITS LAND.")
-   fizzlemap(23, map_cols[col_attreides])
-   nextreg_num = 21
-   nextreg_currcol = map_cols[col_attreides]
-
-  elseif seqnum == 8 then
-   setmap({6,5,4,10,3,9,2,1,8,17,11,12,25,18,19,7,14,13,24,26,27}, map_cols[col_harkonnen])
-   setmap({20,21,22,15,23}, map_cols[col_attreides])
-   setmap({16}, map_cols[col_ordos])
-   show_message("hARKONNEN CRUSHED\nTHE aTREIDES.")
-   fizzlemap({20,21,22},  map_cols[col_harkonnen])
-   nextreg_num = 16
-   nextreg_currcol = map_cols[col_ordos]
-
-  elseif seqnum == 9 then
-   setmap({6,5,4,10,3,9,2,1,8,17,11,12,25,18,19,7,14,13,24,26,27,20,21,22}, map_cols[col_harkonnen])
-   setmap({15,23}, map_cols[col_attreides])
-   setmap({16}, map_cols[col_ordos])
-   show_message("oNLY THE hARKONNEN\nWILL PREVAIL.")
-   fizzlemap({16,23},  map_cols[col_harkonnen])
-   fizzlemap({15},  map_cols[col_emperor])
-   nextreg_num = 15
-   nextreg_currcol = map_cols[col_emperor]
-
-  end
-
- end -- factions
-
- -- flash next region until player "starts"
- show_message("pRESS ❎ tO sTART")
- while true do
-  setmap(nextreg_num, map_cols[p_fact])
-  wait(20)
-  setmap(nextreg_num, nextreg_currcol)   
-  wait(20)
-
-  --seqnum+=1
-  --goto demo   
- end
-
 end
-
-function show_message(msg)
- messagetext2=messagetext1
- messagetext1=msg
- msg_ypos=80
- clip(27,99,75,18)
- for i=1,85 do
-  cleartext()
-  ?messagetext1,29,msg_ypos,0
-  ?messagetext2,29,msg_ypos+22,0
-  yield()--flip()
-  -- move message
-  if (i<46) msg_ypos+=.5
- end
- clip()
+function _au()
+cls()
+_av(0)
+if(_aq) _ay()
+?"❎ to " ..(_ar and"start" or"skip"),83,121,6
 end
-
-function cleartext()
- rectfill(27,99,101,116,9)
+function _av(_aw)
+pal({[0]=0,1,3,4,5,6,9,13,15,128,129,132,10,140,142,143},1)
+_ax(_aw)
+rect(40,36,128,112,7)
+palt(0,false)
+if _m==1 then
+palt(2, true)
+spr(7, 0,40,  16,16)
+else
+palt(12, true)
+spr(0, 0,40,  16,16)
 end
-
-function split2d(str,d,dd) 
- d=d or ","
- if (dd) str=split(str,dd) 
- if type(str)=="table" then
-  local t={}
-  while #str>0 do
-   local s=str[1]   
-   add(t,split(s,d))
-   del(str,s)
-  end
-  return t
- else
-  return split(str,d)
- end 
 end
-
--- filtered-fizzlesspr
-function fizzlemap(rnum, cols)
- sx=8
- sy=20
- sw=119
- sh=64
- dx=4 
- dy=20
- offx=0
- offy=4 -- if map sprite not 1:1 with screen draw pos
- speed=3
- num=0
- taps=0x3006
- lfsr=0x3fff
-
- -- handle table param
- if type(rnum)=="table" then
-  rtable=rnum
- else
-  rtable={rnum}
- end
-
- for rnum in all(rtable) do
-  for _x=0,127 do
-   for _y=0,127 do
-    num+=1
-    if (num==0x4000) then
-     num=0
-     x,y = 0,0
-    end
-    x,y = band(lfsr,0x7f),flr(lshr(lfsr,7))
-    lfsr = bxor(flr(lshr(lfsr,1)),band(-band(lfsr,1),taps))
-    -- within draw region?   
-    if x>=sx and x<=sx+sw
-     and y>=sy and y<=sy+sh 
-    then
-     if not rnum or rdata[y-sy+1][x-sx+1]==rnum
-     then
-      local origcol=sget(x+offx,y+offy)
-      pset(dx-sx+x,dy-sy+y, cols[origcol])
-     end
-    end
-   end
-   if(_x%speed==0)yield()--flip()
-  end
- end
+function _ax(_aw)
+dx=100
+dy=75
+c=(
+{[0]={0,9,11,14,15,8,8,8},
+{0,10,1,13,2,6},
+{0,10,1,7,5,15,15},
+{0,9,2,15,6,6,6}
+})[_aw]
+p=({
+[0]={[0]=0,1,3,4,5,6,9,13,15,128,129,132,10,140,142,143},{[0]=0,1,3,4,5,6,139,13,8,128,129,132,8,140,142,8},{[0]=0,1,8,4,5,6,12,13,15,128,129,132,10,140,142,7},{[0]=0,1,2,4,5,6,8,13,15,128,129,132,10,140,142,136}
+})[_aw]
+g=({[0]=.5,.65,0.75,.5})[_aw]
+pal(p,1)
+srand(6)
+u=cos(.5)
+v=sin(.4)
+for i=1,50 do
+pset(40+rnd(88),36+rnd(76),rnd{10,13,1})
 end
-
--- immediately set a region's colour
-function setmap(rnum, cols)
- sx=8
- sy=20
- sw=119
- sh=64
- dx=4
- dy=20
- offx=0
- offy=4 -- if map sprite not 1:1 with screen draw pos
- rtable=nil
- 
- -- handle table param
- if type(rnum)=="table" then
-  rtable={}
-  for k in all(rnum) do
-   rtable[k]=k
-  end
- end
-
- for x=0,127 do
-  for y=0,127 do
-   if x>=sx and x<=sx+sw
-    and y>=sy and y<=sy+sh 
-   then
-    if not rnum 
-     or (rtable and rtable[rdata[y-sy+1][x-sx+1]])
-     or rdata[y-sy+1][x-sx+1]==rnum
-    then     
-     local origcol=sget(x+offx,y+offy)
-     pset(dx-sx+x,dy-sy+y, cols[origcol])
-    end    
-   end
-  end
- end
+circfill(dx-1,dy-1,22,10)
+circfill(dx-1,dy-1,21,13)
+circfill(dx-1,dy-1,20,10)
+for x=-1,.95,.05 do
+for y=-1,.95,.05 do
+h=x*x+y*y
+z=(1-h)^.5
+r=x*u+y*v+g+2*((x+y)%.1)
+r=max(min(1,z*r))
+r=(c)[flr(r*(#c-1))+1]
+if(h<1)pset(dx+x*20,dy+y*20,r)
 end
-
-
--->8
--- 3d funcs
-
-function v2_dot(a,b)
- return a[1]*b[1]+a[2]*b[2]
 end
-
-function v2_make(a,b)
- return {b[1]-a[1],b[2]-a[2]}
 end
-
-function v2_normz(a)
- local x,z=a[1],a[2]
- local d=sqrt(x*x+z*z)
- return {
-  x/d,z/d
- },d
+function _ay()
+?_aq,2,5,11
+?_aq,2,4,5
 end
-
-function v2_add(a,b,scale)
- scale=scale or 1
- return {
-  a[1]+scale*b[1],
-  a[2]+scale*b[2]}  
+function _az()
+local _a0=split(_ag,":")
+for j=1,#_a0 do
+_ag=_a0[j]
+for i=1,#_ag do
+_aq=sub(_ag,1,i)
+if(btnp(❎)) break
+yield()yield()
 end
-
-function spr3d(sx,sy,sw,sh,y,angle,scale)
-	-- camera pos
-	local c={0,sw}	
-	-- wall pos is assumed to be zero
-	-- wall u/v vectors
-	local v={sin(angle),-cos(angle)}
-	local u={-v[2],v[1]}
-	for i=0,127 do
-		-- camera to screen normal vector
-		-- note: could be precomputed
-		local n,d=v2_normz(v2_make(c,{i-63.5,0}))
-  	-- intersect wall
-		local t0=(-v2_dot(c,v))/v2_dot(n,v)		
-		if t0>0 then 
-		 -- find projection on wall
-		 local x=v2_add(c,n,t0)
-		 -- project wx on wall
-		 local t1=v2_dot(x,u)/(scale*sw)+0.5
-		 if t1>=0 and t1<1 then
-	  	local w=scale*d/t0
-	  	local y0=63.5-(sh/2-y)*w
-	  	-- %1: adjust flooring impact on actual span height
-	   sspr(sx+sw*t1,sy,1,sh,i,y0,1,sh*w+y0%1)
-	  end
-	 end
-	end
+yield()
+_aq=_ag
+_ar=(j==#_a0)
+while not (btnp(❎) or _ar) do yield() end
+_update_buttons()
 end
-
--->8
--- helper funcs
-
--- use red gradient
--- make with #PALETTE_MAKER
--- https://www.lexaloffle.com/bbs/?pid=68190
-_pal={0,128,130,2,136,8}
-pal(_pal,1)
-
-function fadeprint(text, x, y, fadeamount, maxfade)
- local fcol = mid(0,flr(fadeamount),maxfade or #_pal)
- print(text, x, y, fcol)
 end
-
---print string with outline.
-function printo(str,startx,
-															 starty,col,
-															 col_bg)
- for xx = -1, 1 do
-		for yy = -1, 1 do
-			print(str, startx+xx, starty+yy, col_bg)
-		end
- end
- print(str,startx,starty,col)
+function _a1()
+_cy(0)
+pal(3, 137, 1)
+_q=927
+_s=5000
+local _a2=flr(_s / 3600 )
+_s=_s - _a2 * 3600
+local _a3=flr(_s / 60)
+_s=_a2.."H " .._a3.."M"
+_a5={
+{ 0, _t, 62, 8, 60, _t },{ 0, _u, 68, 6, 60, _t },{ 0, _v, 85, 8, 40, _v },{ 0, _w, 91, 6, 40, _v },{ 0, _x, 107, 8, 20, _x},{ 0, _y, 113, 6, 20, _x }
+}
+_a6=1
+_a7=100
 end
-
---shadow print
-function sprint(str,x,y,col,scol)
- print(str, x, y+1, scol or 2)
- print(str, x, y,    col or 7)
+function _a4()
+if _a7 > 0 then
+_a7-=1
+return
 end
-
---shiny shadow print
-function ssprint(str,x,y,col,scol,hcol)
- sprint(str,x,y,col,scol)
- clip(x,y+1,#str*4,3)
- print(str,x,y,hcol)
- clip()
+if _a6 <=#_a5 then
+_a5[_a6][1] +=(_a5[_a6][6]/_a5[_a6][5])/3
+if _a5[_a6][1] >=_a5[_a6][2] then
+_a5[_a6][1]=_a5[_a6][2]
+_a6+=1
+_a7=50
 end
-
-function draw_bar(x,y,max_w,val,max_val,col)
- if (val <=0) return 
- local w=mid(0,val/max_val*max_w,max_w) 
- rectfill(x+1,y+1,x+w+1,y+4,2)
- rectfill(x,y,x+w,y+3,col)
 end
-
-
-function wait(num)
- for i=1,num do
- yield()--flip()
- end 
 end
-
--->8
-spr_data=[[
+function _a8()
+cls()
+palt(0,false)
+pal(14, 137, 1)
+pal(12, 140, 1)
+pal(11, 139, 1)
+pal(10, 3, 1)
+pal(6, 143, 1)
+pal(13, 134, 1)
+pal(6, 14, 1)
+local _a9=9
+map()
+map(17,1,8,2,14,6)
+spr(_a9,1,22,3,3)
+spr(_a9,103,22,3,3)
+_co("sCORE:" .._q,16,7,7)
+_co("tIME:" .._s,70,7)
+_co("yOU'VE ATTAINED\n  THE RANK OF",36,24)
+_co(_r,42,37,8)
+rect(8,56,120,75,4)
+line(26,56,100,56,9)
+_co("SPICE HARVESTED BY",28,53)
+_co("  YOU:\nENEMY:",11,61)
+_co(flr(_a5[1][1]).."\n" ..flr(_a5[2][1]),100,61)
+rect(8,79,120,98,4)
+line(26,79,100,79,9)
+_co("UNITS DESTROYED BY",28,76)
+_co("  YOU:\nENEMY:",11,84)
+_co(flr(_a5[3][1]).."\n" ..flr(_a5[4][1]),100,84)
+rect(8,102,120,120,4)
+line(18,102,108,102,9)
+_co("BUILDINGS DESTROYED BY",20,99)
+_co("  YOU:\nENEMY:",11,106)
+_co(flr(_a5[5][1]).."\n" ..flr(_a5[6][1]),100,106)
+for i=1,#_a5 do
+_cs(
+35,_a5[i][3],_a5[i][5],_a5[i][1],_a5[i][6],_a5[i][4])
+end
+end
+function _ba()
+_j=_g
+_cy(0)
+music(12)
+_bb=_bu(_cx,",","\n")
+_bc={
+[-1]={6,7,13},
+[0]={0,0,0},
+{12,1,0},
+{11,10,1},
+{8,2,1,7,7},
+{5,2,0}
+}
+_bd=-1
+_be=0
+_bf=1
+_bg=2
+_bh=3
+_bi=4
+_bj="" _bk="" _bl=0
+_t=0
+_k=cocreate(_bo)
+end
+function _bm()
+if _k and costatus(_k)~="dead" then
+assert(coresume(_k, _n))
+end
+end
+function _bn()
+if debug then
+local _a9=9
+end
+pal(5, 14, 1)
+end
+function _bo(_bp)
+printh("seqnum = " .._bp)
+yield()
+local _bq
+local _br
+cls()
+pal()
+pal(1,6)
+pal(2,7)
+pal(3,13)
+map(32,0,0,0)
+spr(97,4,20,15,8)
+pal()
+palt(0,false)
+pal(14, 137, 1)
+pal(12, 140, 1)
+pal(11, 139, 1)
+pal(10, 3, 1)
+pal(6, 143, 1)
+pal(13, 134, 1)
+pal(7, 142, 1)
+_cj("your next conquest",30,7,8,0)
+if _bp > 2 then
+_b6(0, _bc[_be])
+end
+if _m==1 then
+if _bp==1 then
+elseif _bp==2 then
+_bt()
+_cw(20)
+_bs("tHREE hOUSES HAVE\nCOME TO dUNE.")
+_bs("tHE LAND HAS\nBECOME DIVIDED.")
+_bw(0,  _bc[_be])
+_bt()
+_bs("aTREIDES CLAIMED\nSTRATEGIC REGIONS")
+_bw({13,7,20,14,21,22}, _bc[_bf])
+_bt()
+_bs("oRDOS MOVED IN\nFROM THE EAST.")
+_bw({19,27,26,25,24,23}, _bc[_bg])
+_bt()
+_bs("hARKONNEN INVADED\nFROM THE NORTH.")
+_bw({6,5,4,10,3,9}, _bc[_bh])
+_bq=23
+_br=_bc[_bg]
+elseif _bp==3 then
+_b6({13,7,20,14,21,22}, _bc[_bf])
+_b6({19,27,26,25,24,23}, _bc[_bg])
+_b6({6,5,4,10,3,9}, _bc[_bh])
+_bs("aTREIDES CAPTURED\nMORE TERRITORY...")
+_bw({8,15},  _bc[_bf])
+_bs("...AND DROVE THE\noRDOS OUT.")
+_bw({23}, _bc[_bf])
+_bs("oRDOS HEADED\nFOR hARKONNEN.")
+_bw({12,18,16,17}, _bc[_bg])
+_bs("hARKONNEN EXPANDED\nTHEIR BORDERS.")
+_bw({1,2,11}, _bc[_bh])
+_bq=2
+_br=_bc[_bh]
+elseif _bp==4 then
+_b6({13,7,20,14,21,22,8,15,23}, _bc[_bf])
+_b6({19,27,26,25,24,12,18,16,17}, _bc[_bg])
+_b6({6,5,4,10,3,9,1,2,11}, _bc[_bh])
+_bs("hARKONEN BORDERS\nWERE WEAK...")
+_bw({1,2,3}, _bc[_bf])
+_bw({11}, _bc[_bg])
+_bs("...EXCEPT FOR\nONE OUTPOST.")
+_bw({16}, _bc[_bh])
+_bq=9
+_br=_bc[_bh]
+elseif _bp==5 then
+_b6({13,7,20,14,21,22,8,15,23,1,2,3}, _bc[_bf])
+_b6({19,27,26,25,24,12,18,17,11}, _bc[_bg])
+_b6({6,5,4,10,9,16}, _bc[_bh])
+_bs("hARKONEN CONTINUED\nTO RETREAT.")
+_bw({4,9,16}, _bc[_bf])
+_bs("...INTO TERRITORY\nOF THE oRDOS.")
+_bw({11}, _bc[_bh])
+_bq=25
+_br=_bc[_bg]
+elseif _bp==6 then
+_b6({13,7,20,14,21,22,8,15,23,1,2,3,4,9,16}, _bc[_bf])
+_b6({19,27,26,25,24,12,18,17}, _bc[_bg])
+_b6({6,5,10,11}, _bc[_bh])
+_bs("aLL FORCES WERE\nAIMED AT oRDOS.")
+_bw({17,25,24}, _bc[_bf])
+_bw({18}, _bc[_bh])
+_bq=11
+_br=_bc[_bh]
+elseif _bp==7 then
+_b6({13,7,20,14,21,22,8,15,23,1,2,3,4,9,16,17,25,24}, _bc[_bf])
+_b6({19,27,26,12}, _bc[_bg])
+_b6({6,5,10,11,18}, _bc[_bh])
+_bs("aTREIDES PUSHED\nhARKONNEN BACK.")
+_bw({10,11,18}, _bc[_bf])
+_bq=26
+_br=_bc[_bg]
+elseif _bp==8 then
+_b6({13,7,20,14,21,22,8,15,23,1,2,3,4,9,16,17,25,24,10,11,18}, _bc[_bf])
+_b6({19,27,26,12}, _bc[_bg])
+_b6({6,5}, _bc[_bh])
+_bs("oRDOS WERE NEARLY\nWIPED OUT.")
+_bw({26,27,19}, _bc[_bf])
+_bq=5
+_br=_bc[_bh]
+elseif _bp==9 then
+_b6({13,7,20,14,21,22,8,15,23,1,2,3,4,9,16,17,25,24,10,11,18,26,27,19}, _bc[_bf])
+_b6({12}, _bc[_bg])
+_b6({6,5}, _bc[_bh])
+_bs("oNLY THE eMPEROR'S\nFORCES REMAIN.")
+_bw({5,12}, _bc[_bf])
+_bw({6}, _bc[_bi])
+_bq=6
+_br=_bc[_bi]
+end
+elseif _m==2 then
+if _bp==1 then
+elseif _bp==2 then
+_bt()
+_cw(20)
+_bs("tHREE hOUSES HAVE\nCOME TO dUNE.")
+_bs("tHE LAND HAS\nBECOME DIVIDED.")
+_bw(0,  _bc[_be])
+_bt()
+_bs("oRDOS TOOK THE\nBEST LAND")
+_bw({19,27,26,25,24,23}, _bc[_bg])
+_bt()
+_bs("hARKONNEN ARE\nA THREAT.")
+_bw({6,5,4,10,3,9}, _bc[_bh])
+_bt()
+_bs("hOUSE aTREIDES\nIS NEARBY.")
+_bw({13,7,20,14,21,22}, _bc[_bf])
+_bq=16
+_br=_bc[_bd]
+elseif _bp==3 then
+_b6({19,27,26,25,24,23}, _bc[_bg])
+_b6({6,5,4,10,3,9}, _bc[_bh])
+_b6({13,7,20,14,21,22}, _bc[_bf])
+_bs("oRDOS ADVANCED\nWITHOUT CHALLENGE.")
+_bw({15,16,17},  _bc[_bg])
+_bs("tHE hARKONNEN\nDREW CLOSER.")
+_bw({11,12,18}, _bc[_bh])
+_bs("tHE aTREIDES\nSPREAD TOO THIN.")
+_bw({1,2,8}, _bc[_bf])
+_bq=14
+_br=_bc[_bf]
+elseif _bp==4 then
+_b6({19,27,26,25,24,23,15,16,17}, _bc[_bg])
+_b6({6,5,4,10,3,9,11,12,18}, _bc[_bh])
+_b6({13,7,20,14,21,22,1,2,8}, _bc[_bf])
+_bs("aLL ATTACKS WERE\nAIMED AT aTREIDES.")
+_bw({8,14,22}, _bc[_bg])
+_bw({2}, _bc[_bh])
+_bq=13
+_br=_bc[_bf]
+elseif _bp==5 then
+_b6({19,27,26,25,24,23,15,16,17,8,14,22}, _bc[_bg])
+_b6({6,5,4,10,3,9,11,12,18,2}, _bc[_bh])
+_b6({13,7,20,21,1}, _bc[_bf])
+_bs("oRDOS OVERPOWERED\nTHE aTREIDES...")
+_bw({21,20,13}, _bc[_bg])
+_bs("...WHILE THEY WERE\nFIGHTING hARKONNEN")
+_bw({2,3}, _bc[_bf])
+_bq=18
+_br=_bc[_bh]
+elseif _bp==6 then
+_b6({19,27,26,25,24,23,15,16,17,8,14,22,21,20,13}, _bc[_bg])
+_b6({6,5,4,10,9,11,12,18}, _bc[_bh])
+_b6({7,1,2,3}, _bc[_bf])
+_bs("hARKONNEN HAD TO\nBE TURNED BACK.")
+_bw({18,11,12}, _bc[_bg])
+_bq=2
+_br=_bc[_bf]
+elseif _bp==7 then
+_b6({19,27,26,25,24,23,15,16,17,8,14,22,21,20,13,18,11,12}, _bc[_bg])
+_b6({6,5,4,10,9}, _bc[_bh])
+_b6({7,1,2,3}, _bc[_bf])
+_bs("oRDOS KILLED OFF\nMOST OF aTREIDES")
+_bw({7,1,2}, _bc[_bg])
+_bq=6
+_br=_bc[_bh]
+elseif _bp==8 then
+_b6({19,27,26,25,24,23,15,16,17,8,14,22,21,20,13,18,11,12,7,1,2}, _bc[_bg])
+_b6({6,5,4,10,9}, _bc[_bh])
+_b6({3}, _bc[_bf])
+_bs("oRDOS GAINED MORE\nhARKONNEN LAND.")
+_bw({6,5,10}, _bc[_bg])
+_bq=3
+_br=_bc[_bf]
+elseif _bp==9 then
+_b6({19,27,26,25,24,23,15,16,17,8,14,22,21,20,13,18,11,12,7,1,2,6,5,10}, _bc[_bg])
+_b6({4,9}, _bc[_bh])
+_b6({3}, _bc[_bf])
+_bs("sOON oRDOS WILL\nRULE ALL OF dUNE.")
+_bw({3,9}, _bc[_bg])
+_bw({4}, _bc[_bi])
+_bq=4
+_br=_bc[_bi]
+end
+elseif _m==3 then
+if _bp==1 then
+elseif _bp==2 then
+_bt()
+_cw(20)
+_bs("tHREE hOUSES HAVE\nCOME TO dUNE.")
+_bs("tHE LAND HAS\nBECOME DIVIDED.")
+_bw(0,  _bc[_be])
+_bt()
+_bs("hARKONNEN ARRIVED\nFIRST.")
+_bw({6,5,4,10,3,9}, _bc[_bh])
+_bt()
+_bs("tHE WEAK aTREIDES\nWILL BE EASY.")
+_bw({13,7,20,14,21,22}, _bc[_bf])
+_bt()
+_bs("tHE oRDOS ARE\nGETTING CLOSER.")
+_bw({19,27,26,25,24,23}, _bc[_bg])
+_bq=2
+_br=_bc[_bd]
+elseif _bp==3 then
+_b6({6,5,4,10,3,9}, _bc[_bh])
+_b6({13,7,20,14,21,22}, _bc[_bf])
+_b6({19,27,26,25,24,23}, _bc[_bg])
+_bs("hARKONNEN SPREAD\nOUT STRONG FORCES.")
+_bw({2,1,8},  _bc[_bh])
+_bs("aTREIDES WENT\nAFTER oRDOS.")
+_bw({15,16,23}, _bc[_bf])
+_bs("oRDOS STOLE EVEN\nMORE LAND.")
+_bw({17,11,18,12}, _bc[_bg])
+_bq=11
+_br=_bc[_bg]
+elseif _bp==4 then
+_b6({6,5,4,10,3,9,2,1,8}, _bc[_bh])
+_b6({13,7,20,14,21,22,15,16,23}, _bc[_bf])
+_b6({19,27,26,25,24,17,11,18,12}, _bc[_bg])
+_bs("oRDOS DID NOT\nSTAND A CHANCE.")
+_bw({17,11,12}, _bc[_bh])
+_bs("aTREIDES AND oRDOS\nTRADED LAND.")
+_bw({24}, _bc[_bf])
+_bw({16}, _bc[_bg])
+_bq=18
+_br=_bc[_bg]
+elseif _bp==5 then
+_b6({6,5,4,10,3,9,2,1,8,17,11,12}, _bc[_bh])
+_b6({13,7,20,14,21,22,15,23,24}, _bc[_bf])
+_b6({19,27,26,25,18,16}, _bc[_bg])
+_bw(25,  _bc[_bh])
+_bs("aN oRDOS OUTPOST\nWAS SURROUNDED.")
+_bw({18,19},  _bc[_bh])
+_bs("tHE oRDOS BROKE\nTHROUGH aTREIDES.")
+_bw(24, _bc[_bg])
+_bq=7
+_br=_bc[_bf]
+elseif _bp==6 then
+_b6({6,5,4,10,3,9,2,1,8,17,11,12,25,18,19}, _bc[_bh])
+_b6({13,7,20,14,21,22,15,23}, _bc[_bf])
+_b6({27,26,16,24}, _bc[_bg])
+_bs("sOON tHE aTREIDES\nWILL BE EXTINCT.")
+_bw({7,14,13}, _bc[_bh])
+_bw({23}, _bc[_bg])
+_bq=26
+_br=_bc[_bg]
+elseif _bp==7 then
+_b6({6,5,4,10,3,9,2,1,8,17,11,12,25,18,19,7,14,13}, _bc[_bh])
+_b6({20,21,22,15}, _bc[_bf])
+_b6({27,26,16,24,23}, _bc[_bg])
+_bs("hARKONNEN CRUSHED\nMOST OF THE oRDOS.")
+_bw({24,26,27},  _bc[_bh])
+_bs("aTREIDES RECLAIMED\nITS LAND.")
+_bw(23, _bc[_bf])
+_bq=21
+_br=_bc[_bf]
+elseif _bp==8 then
+_b6({6,5,4,10,3,9,2,1,8,17,11,12,25,18,19,7,14,13,24,26,27}, _bc[_bh])
+_b6({20,21,22,15,23}, _bc[_bf])
+_b6({16}, _bc[_bg])
+_bs("hARKONNEN CRUSHED\nTHE aTREIDES.")
+_bw({20,21,22},  _bc[_bh])
+_bq=16
+_br=_bc[_bg]
+elseif _bp==9 then
+_b6({6,5,4,10,3,9,2,1,8,17,11,12,25,18,19,7,14,13,24,26,27,20,21,22}, _bc[_bh])
+_b6({15,23}, _bc[_bf])
+_b6({16}, _bc[_bg])
+_bs("oNLY THE hARKONNEN\nWILL PREVAIL.")
+_bw({16,23},  _bc[_bh])
+_bw({15},  _bc[_bi])
+_bq=15
+_br=_bc[_bi]
+end
+end
+_bs("pRESS ❎ tO sTART")
+while true do
+_b6(_bq, _bc[_m])
+_cw(20)
+_b6(_bq, _br)
+_cw(20)
+end
+end
+function _bs(_ag)
+_bk=_bj
+_bj=_ag
+_bl=80
+clip(27,99,75,18)
+for i=1,85 do
+_bt()
+?_bj,29,_bl,0
+?_bk,29,_bl+22,0
+yield()
+if(i<46) _bl+=.5
+end
+clip()
+end
+function _bt()
+rectfill(27,99,101,116,9)
+end
+function _bu(_bv,d,dd)
+d=d or","
+if(dd) _bv=split(_bv,dd)
+if type(_bv)=="table" then
+local t={}
+while #_bv>0 do
+local s=_bv[1]
+add(t,split(s,d))
+del(_bv,s)
+end
+return t
+else
+return split(_bv,d)
+end
+end
+function _bw(_bx, _by)
+sx=8
+sy=20
+sw=119
+sh=64
+dx=4
+dy=20
+_bz=0
+_b0=28
+_b1=3
+_1=0
+_b2=0x3006
+_b3=0x3fff
+if type(_bx)=="table" then
+_b4=_bx
+else
+_b4={_bx}
+end
+for _bx in all(_b4) do
+for _x=0,127 do
+for _y=0,127 do
+_1+=1
+if(_1==0x4000) then
+_1=0
+x,y=0,0
+end
+x,y=band(_b3,0x7f),flr(lshr(_b3,7))
+_b3=bxor(flr(lshr(_b3,1)),band(-band(_b3,1),_b2))
+if x>=sx and x<=sx+sw
+and y>=sy and y<=sy+sh
+then
+if not _bx or _bb[y-sy+1][x-sx+1]==_bx
+then
+local _b5=sget(x+_bz,y+_b0)
+pset(dx-sx+x,dy-sy+y, _by[_b5])
+end
+end
+end
+if(_x%_b1==0)yield()
+end
+end
+end
+function _b6(_bx, _by)
+sx=8
+sy=20
+sw=119
+sh=64
+dx=4
+dy=20
+_bz=0
+_b0=28
+_b4=nil
+if type(_bx)=="table" then
+_b4={}
+for k in all(_bx) do
+_b4[k]=k
+end
+end
+for x=0,127 do
+for y=0,127 do
+if x>=sx and x<=sx+sw
+and y>=sy and y<=sy+sh
+then
+if not _bx
+or (_b4 and _b4[_bb[y-sy+1][x-sx+1]])
+or _bb[y-sy+1][x-sx+1]==_bx
+then
+local _b5=sget(x+_bz,y+_b0)
+pset(dx-sx+x,dy-sy+y, _by[_b5])
+end
+end
+end
+end
+end
+function _b7(a,b)
+return a[1]*b[1]+a[2]*b[2]
+end
+function _b8(a,b)
+return {b[1]-a[1],b[2]-a[2]}
+end
+function _b9(a)
+local x,z=a[1],a[2]
+local d=sqrt(x*x+z*z)
+return {
+x/d,z/d
+},d
+end
+function _ca(a,b,_cb)
+_cb=_cb or 1
+return {
+a[1]+_cb*b[1],a[2]+_cb*b[2]}
+end
+function _cc(sx,sy,sw,sh,y,_ad,_cb)
+local c={0,sw}
+local v={sin(_ad),-cos(_ad)}
+local u={-v[2],v[1]}
+for i=0,127 do
+local n,d=_b9(_b8(c,{i-63.5,0}))
+local t0=(-_b7(c,v))/_b7(n,v)
+if t0>0 then
+local x=_ca(c,n,t0)
+local t1=_b7(x,u)/(_cb*sw)+0.5
+if t1>=0 and t1<1 then
+local w=_cb*d/t0
+local y0=63.5-(sh/2-y)*w
+sspr(sx+sw*t1,sy,1,sh,i,y0,1,sh*w+y0%1)
+end
+end
+end
+end
+_ch={0,128,130,2,136,8}
+pal(_ch,1)
+function _cd(_ce, x, y, _cf, _cg)
+local _ci=mid(0,flr(_cf),_cg or #_ch)
+print(_ce, x, y, _ci)
+end
+function _cj(_bv,_ck,_cl,_cm,_cn)
+for xx=-1, 1 do
+for yy=-1, 1 do
+print(_bv, _ck+xx, _cl+yy, _cn)
+end
+end
+print(_bv,_ck,_cl,_cm)
+end
+function _co(_bv,x,y,_cm,_cp)
+print(_bv, x, y+1, _cp or 2)
+print(_bv, x, y,    _cm or 7)
+end
+function _cq(_bv,x,y,_cm,_cp,_cr)
+_co(_bv,x,y,_cm,_cp)
+clip(x,y+1,#_bv*4,3)
+print(_bv,x,y,_cr)
+clip()
+end
+function _cs(x,y,_ct,_cu,_cv,_cm)
+if(_cu <=0) return
+local w=mid(0,_cu/_cv*_ct,_ct)
+rectfill(x+1,y+1,x+w+1,y+4,2)
+rectfill(x,y,x+w,y+3,_cm)
+end
+function _cw(_1)
+for i=1,_1 do
+yield()
+end
+end
+_cx=[[
 1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,0,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,0,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,0,0,5,5,5,5,5,5,5,5,5,5,0,0,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6
 1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,0,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,0,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,0,5,5,5,5,5,5,5,5,5,5,5,0,0,0,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6
 1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,1,0,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,0,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,0,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,0,0,5,5,5,5,5,5,5,5,5,5,5,5,0,0,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6
@@ -1477,137 +985,76 @@ spr_data=[[
 20,20,20,20,20,20,20,0,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,0,22,22,22,22,22,22,22,22,22,22,0,15,15,15,15,15,15,15,15,15,15,15,0,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,0,24,24,24,24,24,24,24,24,24,24,0,0,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,0,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27
 20,20,20,20,20,20,20,0,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,0,22,22,22,22,22,22,22,22,22,22,22,0,15,15,15,15,15,15,15,15,15,15,0,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,0,24,24,24,24,24,24,24,24,24,24,0,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,0,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27
 ]]
-
-
--->8
--- cart data related
-
-req_gfx_num = -1
-curr_gfx_num = -1
-
-function load_gfx_page(gfx_num) 
- req_gfx_num = gfx_num
+_c0=-1
+_o=-1
+function _cy(_cz)
+_c0=_cz
 end
-
--- skip through compressed data
--- blocks and load the one at
--- index
-function load_gfx(index,x,y)
- local offset=0x0000 -- screen memory
- for i=0,index-1 do
-  offset += peek(offset+0) + peek(offset+1)*256 + 2
- end
- -- use sget,sset to write back
- -- to the spritesheet instead
- -- of the screen
- px9_decomp(x,y,offset+2,pget,pset)
+function _c1(_c2,x,y)
+local _c3=0x0000
+for i=0,_c2-1 do
+_c3 +=peek(_c3+0) + peek(_c3+1)*256 + 2
 end
-
--->8
--- px9 decompress
-
--- x0,y0 where to draw to
--- src   compressed data address
--- vget  read function (x,y)
--- vset  write function (x,y,v)
-
-   function px9_decomp(x0,y0,src,vget,vset)
-
-    local function vlist_val(l, val)
-        -- find position and move
-        -- to head of the list
-        local v,i=l[1],1
-        while v!=val do
-            i+=1
-            v,l[i]=l[i],v
-        end
-        l[1]=val
-    end
-
-    -- bit cache is between 16 and 
-    -- 31 bits long with the next
-    -- bit always aligned to the
-    -- lsb of the fractional part
-    local cache,cache_bits=0,0
-    function getval(bits)
-        if cache_bits<16 then
-            -- cache next 16 bits
-            cache+=%src>>>16-cache_bits
-            cache_bits+=16
-            src+=2
-        end
-        -- clip out the bits we want
-        -- and shift to integer bits
-        local val=cache<<32-bits>>>16-bits
-        -- now shift those bits out
-        -- of the cache
-        cache=cache>>>bits
-        cache_bits-=bits
-        return val
-    end
-
-    -- get number plus n
-    function gnp(n)
-        local bits=0
-        repeat
-            bits+=1
-            local vv=getval(bits)
-            n+=vv
-        until vv<(1<<bits)-1
-        return n
-    end
-
-    -- header
-
-    local 
-        w,h_1,
-        eb,el,pr,
-        x,y,
-        splen,
-        predict
-        =
-        gnp"1",gnp"0",
-        gnp"1",{},{},
-        0,0,
-        0
-
-    for i=1,gnp"1" do
-        add(el,getval(eb))
-    end
-    for y=y0,y0+h_1 do
-        for x=x0,x0+w-1 do
-            splen-=1
-
-            if(splen<1) then
-                splen,predict=gnp"1",not predict
-            end
-
-            local a=y>y0 and vget(x,y-1) or 0
-
-            -- create vlist if needed
-            local l=pr[a]
-            if not l then
-                l={}
-                for e in all(el) do
-                    add(l,e)
-                end
-                pr[a]=l
-            end
-
-            -- grab index from stream
-            -- iff predicted, always 1
-
-            local v=l[predict and 1 or gnp"2"]
-
-            -- update predictions
-            vlist_val(l, v)
-            vlist_val(el, v)
-
-            -- set
-            vset(x,y,v)
-
-        end
-    end
+_c4(x,y,_c3+2,pget,pset)
+end
+function _c4(x0,y0,_c5,_c6,_c7)
+local function _c8(l, _cu)
+local v,i=l[1],1
+while v!=_cu do
+i+=1
+v,l[i]=l[i],v
+end
+l[1]=_cu
+end
+local _db,_dc=0,0
+function _c9(_da)
+if _dc<16 then
+_db+=%_c5>>>16-_dc
+_dc+=16
+_c5+=2
+end
+local _cu=_db<<32-_da>>>16-_da
+_db=_db>>>_da
+_dc-=_da
+return _cu
+end
+function _dd(n)
+local _da=0
+repeat
+_da+=1
+local vv=_c9(_da)
+n+=vv
+until vv<(1<<_da)-1
+return n
+end
+local
+w,h_1,eb,el,pr,x,y,_de,_df
+=
+_dd"1",_dd"0",_dd"1",{},{},0,0,0
+for i=1,_dd"1" do
+add(el,_c9(eb))
+end
+for y=y0,y0+h_1 do
+for x=x0,x0+w-1 do
+_de-=1
+if(_de<1) then
+_de,_df=_dd"1",not _df
+end
+local a=y>y0 and _c6(x,y-1) or 0
+local l=pr[a]
+if not l then
+l={}
+for e in all(el) do
+add(l,e)
+end
+pr[a]=l
+end
+local v=l[_df and 1 or _dd"2" ]
+_c8(l, v)
+_c8(el, v)
+_c7(x,y,v)
+end
+end
 end
 
 __gfx__
