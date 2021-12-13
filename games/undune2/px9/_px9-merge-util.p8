@@ -102,7 +102,9 @@ function compress_cart_data(target_cart)
  -- refresh latest list
  init_cartlist()
  
- for c in all(cart_disks) do
+ --for c in all(cart_disks) do
+ for i=1,#cart_disks do
+  local c=cart_disks[i]
   -- import core (all data from sprite sheet > end of sprite flags)
   printh("compressing "..c.cart.."...")
   -- import all spritesheet data
@@ -110,7 +112,11 @@ function compress_cart_data(target_cart)
   
   -- compress entire spritesheet gfx (to screen working area)
   --add_gfx(0,0,128,128)-- full spritesheet
-  add_gfx(0,0,128,88)-- not quite full sheet
+  if i==1 then
+   add_gfx(0,0,128,56)-- even less on cart 1
+  else
+   add_gfx(0,0,128,88)-- not quite full sheet
+  end
  end
 
 
