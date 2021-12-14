@@ -150,11 +150,7 @@ function _init()
 
  -- debug menu
  --if debug then
-  menuitem(1,"!reset cartdata!",function()
-   for i=0,63 do
-    dset(i,nil)
-   end
-  end)
+  menuitem(1,"!wipe save data!",reset_saved_data)
  --end
 
 end
@@ -192,7 +188,11 @@ function _update60()
   
   if input_pressed() then   
    -- switch to level select
-   init_levelselect()   
+   if p_level<=9 then 
+    init_levelselect()
+   else
+    init_levelintro()
+   end
   end
 
  elseif mode == levelselect_mode then
@@ -256,6 +256,12 @@ function _draw()
  -- end
 end
 
+function reset_saved_data()
+ for i=0,63 do
+  dset(i,nil)
+ end
+end
+
 function input_pressed(test)
  local val = btnp"5" or (stat"34">0 and not ismouseclicked)
  --printh("input_pressed="..tostr(val).." > "..tostr(test))
@@ -268,10 +274,11 @@ function load_data()
 
  p_fact = dget(6)
  p_level = max(1, dget(0))
- printh("p_level: = "..tostr(p_level))
-
+ --p_level = 9
  endstate = dget(40)  -- (0=none, 1=credit target, 2=enemy defeated, 3=player lost)
- printh("endstate = "..tostr(endstate))
+ -- printh("p_level: = "..tostr(p_level))
+ -- printh("endstate = "..tostr(endstate))
+ 
  if endstate>0 then
   mode = levelend_mode
   -- get level end data
@@ -430,8 +437,8 @@ function draw_title()
 	end
 
  if t()>start⧗+1 then
-  local msg = "❎ / \^.⁶	>.>\"\"、 to "..(p_fact>0 and "continue" or "start")
-  if(t()\1%2==0)printo(msg,60-(#msg*2)/2-6,78,7,3)
+  local msg = "❎ / \^.⁶	>.>\"\"、 TO "..(p_fact>0 and "cONTINUE" or "sTART")
+  if(t()\1%2==0) printo(msg,52-(#msg*2)/2,78,7,3)
  end
 
  -- intro anim (crisp hd)
@@ -514,7 +521,13 @@ function update_levelintro()
  
  -- load and initialise game cart
  if input_pressed() and last_msg_part then   
-  load_level(p_level)
+  if p_level<=9 then
+   load_level(p_level)
+  else
+   -- reset game back to start
+   reset_saved_data()
+   run()
+  end
  end
 end
 
@@ -524,7 +537,7 @@ function draw_levelintro()
  draw_mentat(0) 
 
  if (current_msg) draw_dialog() 
- ?"❎/\^.⁶	>.>\"\"、 to "..(last_msg_part and "start" or "skip"),72,120,6
+ ?"pRESS ❎/\^.⁶	>.>\"\"、",82,120,6
 end
 
 function draw_mentat(pnum) 
