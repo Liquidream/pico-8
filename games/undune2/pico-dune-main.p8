@@ -124,6 +124,9 @@ endstate = 0
 function _init()
  cartdata("pn_undune2")
 
+ -- Enable "locked" mouse pointer
+ poke(0x5f2d, 0x5)
+
  log_cartdata()
 
  load_data()
@@ -161,7 +164,7 @@ function _update60()
  if mode == title_mode then
   update_title()
   -- switch to house select
-  if btnp(5) then   
+  if input_pressed() then   
    if p_fact == 0 then
     -- starting new game
     init_houseselect()
@@ -174,7 +177,7 @@ function _update60()
  elseif mode == houseselect_mode then
   update_houseselect()
   -- switch to level intro
-  if btnp(5) then
+  if input_pressed() then
    -- set player faction 
    p_fact = ui_cursor -- (1=atreides, 2=ordos, 3-harkonen)
    init_levelintro()
@@ -187,7 +190,7 @@ function _update60()
  elseif mode == levelend_mode then
   update_levelend()
   
-  if btnp(5) then   
+  if input_pressed() then   
    -- switch to level select
    init_levelselect()   
   end
@@ -195,12 +198,13 @@ function _update60()
  elseif mode == levelselect_mode then
   update_levelselect()
   -- switch to level intro
-  if btnp(5) then   
+  if input_pressed() then   
    init_levelintro()
   end
   
  end
 
+ --ismouseclicked = stat"34">0
 end
 
 
@@ -252,8 +256,12 @@ function _draw()
  -- end
 end
 
-
-
+function input_pressed(test)
+ local val = btnp"5" or (stat"34">0 and not ismouseclicked)
+ --printh("input_pressed="..tostr(val).." > "..tostr(test))
+ ismouseclicked = stat"34">0
+ return val 
+end
 
 function load_data()
  -- load saved data to determine current "state"
@@ -422,8 +430,8 @@ function draw_title()
 	end
 
  if t()>start⧗+1 then
-  local msg = "press ❎ to "..(p_fact>0 and "continue" or "start")
-  if(t()\1%2==0)printo(msg,60-(#msg*4)/2,78,7,3)
+  local msg = "❎ / \^.⁶	>.>\"\"、 to "..(p_fact>0 and "continue" or "start")
+  if(t()\1%2==0)printo(msg,60-(#msg*2)/2-6,78,7,3)
  end
 
  -- intro anim (crisp hd)
@@ -503,11 +511,11 @@ function update_levelintro()
  else
   co_text=nil
  end
-
+ 
  -- load and initialise game cart
-  if btnp(5) and last_msg_part then   
-   load_level(p_level)
-  end
+ if input_pressed() and last_msg_part then   
+  load_level(p_level)
+ end
 end
 
 function draw_levelintro() 
@@ -516,7 +524,7 @@ function draw_levelintro()
  draw_mentat(0) 
 
  if (current_msg) draw_dialog() 
- ?"❎ to "..(last_msg_part and "start" or "skip"),83,121,6
+ ?"❎/\^.⁶	>.>\"\"、 to "..(last_msg_part and "start" or "skip"),72,120,6
 end
 
 function draw_mentat(pnum) 
@@ -601,16 +609,16 @@ function text_spool()
  local msgparts=split(msg,":")
  for j=1,#msgparts do
   msg=msgparts[j]
-  for i=1,#msg do
+  for i=1,#msg,0.5 do
    current_msg=sub(msg,1,i)
    --sfx(0)
-   if (btnp(❎)) break
-   yield()yield()
+   if (input_pressed("s")) printh("skip!") break
+   yield()
   end
   yield()
   current_msg=msg  
   last_msg_part=(j==#msgparts)
-  while not (btnp(❎) or last_msg_part) do yield() end  
+  while not (input_pressed() or last_msg_part) do yield() end  
   --current_msg=nil
   _update_buttons()
  end
@@ -700,16 +708,8 @@ function draw_levelend()
  -- init custom screen palette
  --
  palt(0,false)   -- show blacks
- pal(14, 137, 1)  -- bright pink > dark orange
- pal(12, 140, 1) -- light blue > royal blue
- pal(11, 139, 1) -- light green > grass green
- pal(10, 3, 1)   -- yellow > rough green
- --pal(8, 136, 1) -- red > cherry
- pal(6, 143, 1)  -- skin > peach
- pal(13, 134, 1) -- greyblue > beige
- --pal(7, 142, 1)  -- white > peach2
- 
- pal(6, 14, 1)  -- grey > pink (as pink is being used in marble replacement)
+ pal(14, 137, 1) -- bright pink > dark orange 
+ pal(6, 14, 1)   -- grey > pink (as pink is being used in marble replacement)
 
  map()
  map(17,1,8,2,14,6)
@@ -753,6 +753,7 @@ function draw_levelend()
   	stats[i][4])  
  end
  
+ if(curr_stat>6) printo("pRESS ❎ / \^.⁶	>.>\"\"、",40,120,7,0)
 end
 
 -->8
@@ -802,9 +803,9 @@ end
 
 function draw_levelselect()
  -- debug data
- if debug then
-  local spr_fact=9
- end
+ -- if debug then
+ --  local spr_fact=9
+ -- end
  
  --pal(5, 14, 1)  -- grey > pink (as pink is being used in marble replacement)
 
@@ -1175,7 +1176,7 @@ function play_map_sequence(seqnum)
  end -- factions
 
  -- flash next region until player "starts"
- show_message("pRESS ❎ tO sTART")
+ show_message(" ❎/\^.⁶	>.>\"\"、 tO sTART")
  while true do
   setmap(nextreg_num, map_cols[p_fact])
   wait(20)
@@ -1890,9 +1891,9 @@ __map__
 213f3f3f3f3f3f3f3f3f3f3f3f3f3f2200000000000000000000000000000000213f3f3f3f3f3f3f3f3f3f3f3f3f3f220000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 213f3f3f3f3f3f3f3f3f3f3f3f3f3f22000000000000000000000000000000000f14141414141414141414141414141f0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 213f3f3f3f3f3f3f3f3f3f3f3f3f3f2200000000000000000000000000000000111211121112111211121112111211120000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
-213f3f3f3f3f3f3f3f3f3f3f3f3f3f2200000000000000000000000000000000090a0b03040404040404040405090a0b0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
-213f3f3f3f3f3f3f3f3f3f3f3f3f3f2200000000000000000000000000000000191a1b133f3f3f3f3f3f3f3f15191a1b0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
-213f3f3f3f3f3f3f3f3f3f3f3f3f3f2200000000000000000000000000000000292a2b23242424242424242425292a2b0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+213f3f3f3f3f3f3f3f3f3f3f3f3f3f2200000000000000000000000000000000000000030404040404040404050000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+213f3f3f3f3f3f3f3f3f3f3f3f3f3f2200000000000000000000000000000000000000133f3f3f3f3f3f3f3f150000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+213f3f3f3f3f3f3f3f3f3f3f3f3f3f2200000000000000000000000000000000000000232424242424242424250000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 0f14141414141414141414141414141f00000000000000000000000000000000010201020102010201020102010201020000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 __sfx__
 010200030016500065007650c1000c000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
