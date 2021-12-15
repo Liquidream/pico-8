@@ -433,8 +433,8 @@ function init_houseselect()
 end
 
 function update_houseselect()
- if ((btnp(0) or (_t%10==0 and stat(38)<-10)) and ui_cursor>1) ui_cursor-=1
- if ((btnp(1) or (_t%10==0 and stat(38)>10)) and ui_cursor<3) ui_cursor+=1
+ if ((btnp(0) or (_t%5==0 and stat(38)<-10)) and ui_cursor>1) ui_cursor-=1
+ if ((btnp(1) or (_t%5==0 and stat(38)>10)) and ui_cursor<3) ui_cursor+=1
  _t+=1
 end
 
