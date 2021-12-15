@@ -429,11 +429,13 @@ function init_houseselect()
  mode = houseselect_mode
  load_gfx_page(0) 
  ui_cursor=1
+ _t=0
 end
 
 function update_houseselect()
- if (btnp(0) and ui_cursor>1) ui_cursor-=1
- if (btnp(1) and ui_cursor<3) ui_cursor+=1
+ if ((btnp(0) or (_t%10==0 and stat(38)<-10)) and ui_cursor>1) ui_cursor-=1
+ if ((btnp(1) or (_t%10==0 and stat(38)>10)) and ui_cursor<3) ui_cursor+=1
+ _t+=1
 end
 
 function draw_houseselect()
