@@ -35,7 +35,7 @@ levelintro_mode=3
 levelend_mode=4
 levelselect_mode=5
 
--- No.|Starting Credits|Objective Credits|# Bases|P Faction|P XPos|P YPos|AI Fact 1|AI XPos 1|AI YPos 1|AI Fact 2|AI XPos 2|AI YPos 2|AI Fact 3|AI XPos 3|AI YPos 3|AI Level
+
 mission_data={
 { -- atredies missions
  {1,999,1000,4,1,88,72,2,24,64,2,160,64,2,160,152,20},
@@ -73,6 +73,15 @@ mission_data={
 }
 
 mentat_dialogs={ 
+[0]={ -- introduction
+ "tHE PLANET aRRAKIS,\nKNOWN AS dUNE.\n\nlAND OF SAND; HOME OF THE \nsPICE mELANGE.:tHE sPICE CONTROLS THE eMPIRE.\nwHOEVER CONTROLS dUNE \nCONTROLS THE sPICE.:tHE eMPEROR HAS PROPOSED A \nCHALLENGE TO EACH OF THE hOUSES.:tHE hOUSE THAT PRODUCES THE \nMOST sPICE WILL CONTROL dUNE.\n\ntHERE ARE NO SET TERRITORIES \nAND NO RULES OF ENGAGEMENT.",
+ "vAST ARMIES HAVE ARRIVED.\nnOW, THREE HOUSES FIGHT FOR \nCONTROL OF dUNE.",
+ "tHE NOBLE aTREIDES,",
+ "THE INSIDIOUS oRDOS, ",
+ "AND THE EVIL hARKONNEN. ",
+ "oNLY ONE HOUSE WILL PREVAIL.",
+ "yOUR BATTLE FOR dUNE BEGINS...\n\n           ...now.",
+},
 { -- atredies missions
  "gREETINGS,\ni AM YOUR mENTAT cYRIL.:tOGETHER WE WILL PURGE THIS\nPLANET OF THE FOULNESS OF THE\nOTHER hOUSES.:tHE hIGH cOMMAND WISHES YOU\nTO PRODUCE 1000 CREDITS.:yOU MAY EARN CREDITS BY\nBUILDING A REFINERY AND\nHARVESTING SPICE",
  "gREETINGS,\ni AM HONORED TO SEE YOU AGAIN.:tHE hIGH cOMMAND NOW REQUIRES\nTHAT YOU PRODUCE 2700 CREDITS\nIN A NEW HARVESTING AREA.:uNFORTUNATELY, WE HAVE\nCONFIRMED THE PRESENCE OF AN\noRDOS BASE IN THIS REGION.:gOOD LUCK!",
@@ -137,9 +146,6 @@ function _init()
  --mode = levelintro_mode
  --mode = levelend_mode
 
- -- initialise modes
- -- mode=99
- -- load_gfx_page(4)
  
  if (mode==title_mode) init_title()
  if (mode==houseselect_mode) init_houseselect()
@@ -148,10 +154,7 @@ function _init()
  if (mode==levelselect_mode) init_levelselect() 
  --if (mode==levelselect_mode) p_fact=3 p_level=2 init_levelselect() 
 
- -- debug menu
- --if debug then
   menuitem(1,"!wipe save data!",reset_saved_data)
- --end
 
 end
 
@@ -160,14 +163,8 @@ function _update60()
  if mode == title_mode then
   update_title()
   -- switch to house select
-  if input_pressed() then   
-   if p_fact == 0 then
-    -- starting new game
-    init_houseselect()
-   else
-    -- continuing existing game
-    init_levelintro()  
-   end
+  if input_pressed() then      
+    init_levelintro()
   end 
  
  elseif mode == houseselect_mode then
@@ -200,11 +197,8 @@ function _update60()
   -- switch to level intro
   if input_pressed() then   
    init_levelintro()
-  end
-  
+  end  
  end
-
- --ismouseclicked = stat"34">0
 end
 
 
@@ -214,7 +208,6 @@ function _draw()
 
  -- check for gfx change
  if req_gfx_num != curr_gfx_num then
-  --printh("gfx update!!!!!!")
   -- reset to compressed sprite data
   reload()
   -- decompress requested gfx page to screen
@@ -244,16 +237,8 @@ function _draw()
  elseif mode == levelend_mode then
   draw_levelend()
  
- -- else
- --  -- debug draw sprite
- --  spr(0, 0,0, 16,16)
-  
  end 
 
- -- debug state
- -- if debug then
- --  printo("mode="..mode.."\nlevelend_mode="..levelend_mode.."\np_level="..p_level,2,110,8)  
- -- end
 end
 
 function reset_saved_data()
@@ -264,7 +249,6 @@ end
 
 function input_pressed(test)
  local val = btnp"5" or (stat"34">0 and not ismouseclicked)
- --printh("input_pressed="..tostr(val).." > "..tostr(test))
  ismouseclicked = stat"34">0
  return val 
 end
@@ -276,8 +260,7 @@ function load_data()
  p_level = max(1, dget(0))
  --p_level = 9
  endstate = dget(40)  -- (0=none, 1=credit target, 2=enemy defeated, 3=player lost)
- -- printh("p_level: = "..tostr(p_level))
- -- printh("endstate = "..tostr(endstate))
+ 
  
  if endstate>0 then
   mode = levelend_mode
@@ -412,13 +395,9 @@ end
 
 function draw_title()
  cls()
-  --print("\n(title screen)",0,0,8)
- 
- --pal()
 	-- draw orginal sprite when
 	-- not rotating (as rotation
 	-- code distorts slightly)
-	--angle=0
 	if angle~=0 then 
 	 spr3d(0,0,123,20,cy,angle,1)
 	else
@@ -441,10 +420,6 @@ function draw_title()
   if(t()\1%2==0) printo(msg,52-(#msg*2)/2,78,7,3)
  end
 
- -- intro anim (crisp hd)
- -- https://www.youtube.com/watch?v=SJ436NYbyK8
- -- (use this one for intro captions...)
- -- https://www.youtube.com/watch?v=TqCDj0IRSTk
 end
 
 -->8
@@ -501,13 +476,19 @@ function init_levelintro()
  current_msg=nil
  last_msg_part=false
  cls()
- load_gfx_page(p_fact+1)
+ load_gfx_page(max(2,p_fact+1))
  
- -- play "intro" music
- music(6)
+ -- play game/level "intro" music
+ music(p_fact==0 and 2 or 6)
 
- msg=mentat_dialogs[p_fact][p_level] 
- co_text=cocreate(text_spool)
+ printh("p_level="..tostr(p_level))
+
+ start_dialog()
+end
+
+function start_dialog()
+ msg=mentat_dialogs[p_fact][p_level+intro_counter] 
+ co_text=cocreate(text_spool) 
 end
 
 function update_levelintro()
@@ -520,25 +501,41 @@ function update_levelintro()
  end
  
  -- load and initialise game cart
- if input_pressed() and last_msg_part then   
-  if p_level<=9 then
-   load_level(p_level)
+ if input_pressed() and last_msg_part then
+  -- intro?
+  if p_fact==0 then
+   intro_counter+=1
+   if intro_counter>6 then
+    intro_counter=0
+    init_houseselect()
+   else
+    start_dialog()
+   end
   else
-   -- reset game back to start
-   reset_saved_data()
-   run()
+   if p_level<=9 then
+    load_level(p_level)
+   else
+    -- reset game back to start
+    reset_saved_data()
+    run()
+   end
   end
  end
 end
 
+intro_counter=0
+
 function draw_levelintro() 
  cls()
+
+ intro_plist={[0]=0,-1,1,2,3,-1,0}
  --dune bg
- draw_mentat(0) 
+ draw_mentat(p_fact==0 and intro_plist[intro_counter] or 0)
 
  if (current_msg) draw_dialog() 
- ?"pRESS ❎/\^.⁶	>.>\"\"、",82,120,6
+ ?"pRESS ❎/\^.⁶	>.>\"\"、",82,120,4
 end
+
 
 function draw_mentat(pnum) 
  --pnum (0=dune,  1=atreides, etc.)
@@ -550,7 +547,10 @@ function draw_mentat(pnum)
 
  palt(0,false)
  
- if p_fact==1 then
+ if p_fact==0 then
+  palt(12, true)
+  spr(0, 0,40,  6,16) 
+ elseif p_fact==1 then
   palt(2, true)
   spr(6, 0,40,  16,16) 
  else
@@ -564,14 +564,21 @@ function draw_planet(pnum)
 	dx=100
 	dy=75
 
+	srand(pnum)--6
+ 
+	--stars
+	for i=1,50 do
+  pset(40+rnd(88),36+rnd(76),rnd{10,13,1})
+	end
+
+ if pnum > -1 then
 	c=(
 			{[0]={0,9,11,14,15,8,8,8}, --dune
---	 [0]={0,9,3,6,12}, --dune v2 (too yellow)
 	   {0,10,1,13,2,6},--7 --atreides
     {0,10,1,7,5,15,15},--ordos
 	   {0,9,2,15,6,6,6} --harkonnen
 	  })[pnum]
-	  
+	
 	 --spare cols: 2,6,8,15
 	p=({
 [0]={[0]=0,1,3,4,5,6,9,13,15,128,129,132,10,140,142,143},
@@ -584,32 +591,28 @@ function draw_planet(pnum)
 	
 	pal(p,1)
 	  
-	srand(6)--6
 	u=cos(.5)
 	v=sin(.4)
 	
-	--stars
-	for i=1,50 do
-	 pset(40+rnd(88),36+rnd(76),rnd{10,13,1})
-	end
 	
-	-- atmosphere
-	circfill(dx-1,dy-1,22,10)
-	circfill(dx-1,dy-1,21,13)
-	circfill(dx-1,dy-1,20,10) --if not ordos
-	
-	-- planet
-	for x=-1,.95,.05 do 
-	 for y=-1,.95,.05 do 
-	  h=x*x+y*y
-	  z=(1-h)^.5
-	  r=x*u+y*v+g+2*((x+y)%.1)
-	  r=max(min(1,z*r))
-	  r=(c)[flr(r*(#c-1))+1]
-	  if(h<1)pset(dx+x*20,dy+y*20,r)
-	 end
-	end
+  -- atmosphere
+  circfill(dx-1,dy-1,22,10)
+  circfill(dx-1,dy-1,21,13)
+  circfill(dx-1,dy-1,20,10) --if not ordos
+  
+  -- planet
+  for x=-1,.95,.05 do 
+   for y=-1,.95,.05 do 
+    h=x*x+y*y
+    z=(1-h)^.5
+    r=x*u+y*v+g+2*((x+y)%.1)
+    r=max(min(1,z*r))
+    r=(c)[flr(r*(#c-1))+1]
+    if(h<1)pset(dx+x*20,dy+y*20,r)
+   end
+  end
 
+ end
 end
 
 -- Dialog Text Flow with Coroutines by @MBoffin
@@ -625,7 +628,7 @@ function text_spool()
   for i=1,#msg,0.5 do
    current_msg=sub(msg,1,i)
    --sfx(0)
-   if (input_pressed("s")) printh("skip!") break
+   if (input_pressed("s")) break
    yield()
   end
   yield()
@@ -720,9 +723,9 @@ function draw_levelend()
  --
  -- init custom screen palette
  --
- palt(0,false)   -- show blacks
- pal(14, 137, 1) -- bright pink > dark orange 
- pal(6, 14, 1)   -- grey > pink (as pink is being used in marble replacement)
+ palt(0,false)
+ pal(14, 137, 1)
+ pal(6, 14, 1)
 
  map()
  map(17,1,8,2,14,6)
@@ -815,14 +818,6 @@ function update_levelselect()
 end
 
 function draw_levelselect()
- -- debug data
- -- if debug then
- --  local spr_fact=9
- -- end
- 
- --pal(5, 14, 1)  -- grey > pink (as pink is being used in marble replacement)
-
- --printo("p_level="..p_level,2,121,8)
 
 end
 
@@ -871,7 +866,6 @@ function play_map_sequence(seqnum)
   
  printo("your next conquest",28,7,8,0) 
  ssprint("your next conquest",28,7, 8,0,5) 
- --printo("your next conquest",30,7,8,0) 
  
 -- for i=0,15 do 
 --  rectfill(i*8,20,i*8+7,28,i)
@@ -884,7 +878,6 @@ function play_map_sequence(seqnum)
  if p_fact == 1 then
   -- =========================================================
   -- atreides
-  -- =========================================================
   if seqnum == 1 then
    -- intro anim?
   elseif seqnum == 2 then
@@ -987,7 +980,6 @@ function play_map_sequence(seqnum)
  elseif p_fact == 2 then
   -- =========================================================
   -- ordos
-  -- =========================================================
   if seqnum == 1 then
    -- intro anim?
   elseif seqnum == 2 then
@@ -1085,7 +1077,6 @@ function play_map_sequence(seqnum)
  elseif p_fact == 3 then 
   -- =========================================================
   -- harkonnen
-  -- =========================================================
   if seqnum == 1 then
    -- intro anim?
   elseif seqnum == 2 then
@@ -1195,9 +1186,6 @@ function play_map_sequence(seqnum)
   wait(20)
   setmap(nextreg_num, nextreg_currcol)   
   wait(20)
-
-  --seqnum+=1
-  --goto demo   
  end
 
 end
@@ -1211,7 +1199,7 @@ function show_message(msg)
   cleartext()
   ?messagetext1,29,msg_ypos,0
   ?messagetext2,29,msg_ypos+22,0
-  yield()--flip()
+  yield()
   -- move message
   if (i<46) msg_ypos+=.5
  end
@@ -1975,11 +1963,11 @@ __sfx__
 010f0000309762b976309562720607e7507e7507e7507e7507e6507e6507e6507e6507e5507e5507e5507e5507e4507e4507e4507e4507e3507e3507e3507e3507e3507e3507e3507e3507e3507e3507e3507e35
 __music__
 01 08094a4b
-00 0c0d0a0b
+02 0c0d0a0b
 00 0e0f1011
 00 12141315
 00 16171819
-02 1a1b1c1d
+04 1a1b1c1d
 01 2021221f
 00 23242526
 00 2728292a
