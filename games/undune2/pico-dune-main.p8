@@ -74,8 +74,8 @@ mission_data={
 
 mentat_dialogs={ 
 [0]={ -- introduction
- "tHE PLANET aRRAKIS,\nKNOWN AS dUNE.\n\nlAND OF SAND; HOME OF THE \nsPICE mELANGE.:tHE sPICE CONTROLS THE eMPIRE.\nwHOEVER CONTROLS dUNE \nCONTROLS THE sPICE.:tHE eMPEROR HAS PROPOSED A \nCHALLENGE TO EACH OF THE hOUSES.:tHE hOUSE THAT PRODUCES THE \nMOST sPICE WILL CONTROL dUNE.\n\ntHERE ARE NO SET TERRITORIES \nAND NO RULES OF ENGAGEMENT.",
- "vAST ARMIES HAVE ARRIVED.\nnOW, THREE HOUSES FIGHT FOR \nCONTROL OF dUNE.",
+ "tHE PLANET aRRAKIS,\nKNOWN AS dUNE.\n\nlAND OF SAND;\nHOME OF THE sPICE mELANGE.:tHE sPICE CONTROLS THE eMPIRE.\n\nwHOEVER CONTROLS dUNE \nCONTROLS THE sPICE.:tHE eMPEROR HAS PROPOSED A \nCHALLENGE TO EACH OF THE hOUSES.:tHE hOUSE THAT PRODUCES THE \nMOST sPICE WILL CONTROL dUNE.\n\ntHERE ARE NO SET TERRITORIES \nAND NO RULES OF ENGAGEMENT.",
+ "vAST ARMIES HAVE ARRIVED.\n\nnOW, THREE HOUSES FIGHT FOR \nCONTROL OF dUNE.",
  "tHE NOBLE aTREIDES,",
  "THE INSIDIOUS oRDOS, ",
  "AND THE EVIL hARKONNEN. ",
@@ -533,7 +533,7 @@ function draw_levelintro()
  draw_mentat(p_fact==0 and intro_plist[intro_counter] or 0)
 
  if (current_msg) draw_dialog() 
- ?"pRESS ❎/\^.⁶	>.>\"\"、",82,120,4
+ printo("pRESS ❎/\^.⁶	>.>\"\"、",80,120,7,10) --4,9
 end
 
 
@@ -574,7 +574,7 @@ function draw_planet(pnum)
  if pnum > -1 then
 	c=(
 			{[0]={0,9,11,14,15,8,8,8}, --dune
-	   {0,10,1,13,2,6},--7 --atreides
+	   {0,10,1,13,2,15},--7 --atreides
     {0,10,1,7,5,15,15},--ordos
 	   {0,9,2,15,6,6,6} --harkonnen
 	  })[pnum]
@@ -582,8 +582,8 @@ function draw_planet(pnum)
 	 --spare cols: 2,6,8,15
 	p=({
 [0]={[0]=0,1,3,4,5,6,9,13,15,128,129,132,10,140,142,143},
-				{[0]=0,1,3,4,5,6,139,13,8,128,129,132,8,140,142,8},
-				{[0]=0,1,8,4,5,6,12,13,15,128,129,132,10,140,142,7},
+				{[0]=0,1,3,4,5,6,12,13,15,128,129,132,10,140,142,139},
+				{[0]=0,1,8,4,5,6,139,13,15,128,129,132,10,140,142,7},
 				{[0]=0,1,2,4,5,6,8,13,15,128,129,132,10,140,142,136}
 	  })[pnum]
 	
@@ -619,7 +619,7 @@ end
 -- https://www.lexaloffle.com/bbs/?tid=35381
 function draw_dialog()
  ?current_msg,2,5,11
- ?current_msg,2,4,5
+ ?current_msg,2,4,6 --8
 end
 function text_spool()
  local msgparts=split(msg,":")
