@@ -430,7 +430,6 @@ function m_map_obj_tree(objref, x,y, owner, factory)
   else
     -- unit props
     newobj.r=newobj.norotate!=1 and (xpos%8)*.125
-    --newobj.r=newobj.norotate!=1 and flr(rnd"8")*.125
     if newobj.arms>0 then
      -- combat stuff
      newobj.fire=function(self)
@@ -701,10 +700,9 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
         -- move unit to safe place?
         if ty==1 and self.speed>0 then
          -- stop flashing while repairing
-         self.return_to.col_cycle={0}
          -- go back to guard
-         self.state=0        
          -- find nearest point to factory
+         self.return_to.col_cycle,self.state={0},0
          self.x,self.y=nearest_space_to_object(self)
         end
       else
@@ -802,18 +800,21 @@ function _update60()
 
  -- update_level()
  -- mouse control
-  mouse_x,mouse_y,mouse_btn=stat"32",stat"33",stat"34"
-  left_button_clicked,left_button_down,right_button_clicked = (mouse_btn==1 and last_mouse_btn != mouse_btn) or btnp"4", (mouse_btn>0) or btn"4", (mouse_btn==2 and last_mouse_btn != mouse_btn) or btnp"5"
+ mouse_x,mouse_y,mouse_btn=stat"32",stat"33",stat"34"
+ left_button_clicked,left_button_down,right_button_clicked = (mouse_btn==1 and last_mouse_btn != mouse_btn) or btnp"4", (mouse_btn>0) or btn"4", (mouse_btn==2 and last_mouse_btn != mouse_btn) or btnp"5"
+ 
+ if mouse_x==lastmx and mouse_y==lastmy then
   -- keyboard input
-  for k=0,1 do
-   if (btn(k)) keyx+=k*2-1
-   if (btn(k+2)) keyy+=k*2-1
-   --if (btn(4,1)) stop("paused")
-  end
+  b=btn()
+  cursx+=b\2%2-b%2
+  cursy+=b\8%2-b\4%2
+ else
+  cursx,cursy = mouse_x,mouse_y
+ end
 
  -- update cursor/mouse pos
- cursx,cursy = mid(0,mouse_x+keyx,127),mid(0,mouse_y+keyy,127)
- cursor.x,cursor.y = cursx,cursy
+ cursx,cursy = mid(cursx,127),mid(cursy,127)
+ cursor.x,cursor.y,lastmx,lastmy = cursx,cursy,mouse_x,mouse_y 
 
  --
  -- game mode
@@ -827,7 +828,6 @@ function _update60()
 
   -- lock cam to map
   camx,camy = mid(camx,cam_max),mid(-8,camy,cam_max)
-  --camx,camy = mid(camx,368),mid(-8,camy,368)
    
   -- update all unit coroutines 
   -- (pathfinding, moving, attacking, etc.)
@@ -1706,7 +1706,7 @@ function update_collisions()
     and cursx>89 and cursx<122
     and cursy>90 and cursy<123 then
       -- clicked radar
-      camx,camy = mid(0,(cursx-94)*16, cam_max),mid(-8,(cursy-94)*16, cam_max)
+      camx,camy = mid((cursx-94)*16, cam_max),mid(-8,(cursy-94)*16, cam_max)
       selected_obj=last_selected_obj -- always do this, in case an obj under rader will select
  -- clicked something?
  elseif left_button_clicked then
