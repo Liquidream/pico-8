@@ -60,7 +60,7 @@ g_.draw_refinery=function(self)
    [10]=col2,
    [11]=col2,
    [12]=self.col1,
-   [14]=self.col2
+   [14]=col2
   }  
   if self.incoming then
    pal(self.col_cycle[self.col_cycle_pos], self.col1)
@@ -143,6 +143,7 @@ obj_data=[[id|name|obj_spr|ico_spr|type|w|h|z|trans_col|parent_id|parent2_id|own
 36|sONIC tANK|57|198|1|1|1|1|11|12|||||12|9|2|2|18|7|1||600||360|440|0.3|8|3|90|52|54||||0|0|0|0|0|0|1|1||0||dEVELOPED BY THE~aTREIDES,THIS ENHANCED~TANK FIRES POWERFUL~BLAST WAVES OF SONIC~ENERGY.||||
 37|dEVASTATOR|56|200|1|1|1|1|11|12|||||||2|2|18|8|3||800||240|1600|0.1|7|1|60|58|54||||0|0|0|0|0|0|1|1||0||tHE dEVESTATOR IS A~NUCLEAR-POWERED TANK,~WHICH FIRES DUAL PLASMA~CHARGES. mOST POWERFUL~TANK ON dUNE, BUT~POTENTIALLY UNSTABLE~IN COMBAT.||||
 38|dEATH hAND|72||1|1|1|8|11|||0|||||2|2|13|8|3||0||600|280|1|0|20|150|59|54||||0|0|0|0|0|0|1|1||0||tHE dEATH hAND IS A~SPECIAL hARKONNEN~pALACE WEAPON. aN~INACCURATE, BUT VERY~DESTRUCTIVE BALLISTIC~MISSILE.||||
+38.5|dEATH hAND|72||1|1|1|8|11|||0|||||2|2|13|8|4||0||600|280|1|0|20|150|59|54||||0|0|0|0|0|0|1|1||0||tHE dEATH hAND IS A~SPECIAL hARKONNEN~pALACE WEAPON. aN~INACCURATE, BUT VERY~DESTRUCTIVE BALLISTIC~MISSILE.||||
 39|rAIDER|51|204|1|1|1|1|11|11|||||12|1|2|2||2|2||150||32|320|0.75|3|1|8|60|54||||0|0|0|0|0|0|1|1||0||tHE oRDOS rAIDER IS~SIMILAR TO THE STANDARD~tRIKE, BUT WITH LESS~ARMOUR IN FAVOUR OF~SPEED.||||
 40|dEVIATOR|54|202|1|1|1|1|11|12|||||11|3|2|2|18|7|2||750||50|480|0.3|7|2|500|59|54||||0|0|0|0|0|0|1|1||0||tHE oRDOS dEVIATOR IS A~STANDARD mISSILE tANK,~WHICH FIRES UNIQUE~NERVE GAS MISSILES THAT~MAY TEMPORARILY CHANGE~ENEMY LOYALTY.||||
 41|sANDWORM|88||9|1|1|1|11||||||||2|2||3|||0||1200|4000|0.35|0|30|300|50|||||0|0|0|0|0|0|1|1||0||tHE sAND wORMS ARE~INDIGEONOUS TO dUNE.~aTTRACTED BY VIBRATIONS~ALMOST IMPOSSIBLE TO~DESTROY, WILL CONSUME~ANYTHING THAT MOVES.||||
@@ -174,7 +175,7 @@ function _init()
  -- keep separate to init globally
  obj_data={}
  -- loop all objects
- for i=2,45 do
+ for i=2,46 do
   local new_obj={}
   -- loop all properties
   for j=1,51 do
@@ -197,7 +198,7 @@ function _init()
  for i=-2,66 do
   fow[i]={}
   for l=-2,66 do
-   fow[i][l]=0 --16 --(16 to show all)
+   fow[i][l]=0 --(16 to show all)
   end
  end
 
@@ -206,8 +207,8 @@ function _init()
   h=8,
   get_hitbox=function(self)
    return {
-    x=self.x+(not ui_collision_mode and camx or 0)+2,
-    y=self.y+(not ui_collision_mode and camy or 0)+1,
+    x=self.x+(ui_collision_mode and 0 or camx)+2,
+    y=self.y+(ui_collision_mode and 0 or camy)+1,
     w=1,
     h=1
    }
@@ -344,17 +345,16 @@ function _init()
 
 end
 
-function fact_allowed(src_obj,targ_fact)
- local req_faq=src_obj.req_faction
+function fact_allowed(src_obj,dest_fact)
+ local req_faq=src_obj.req_faction 
  return not req_faq
-      or (req_faq>0 and req_faq==targ_fact)
-      or (req_faq<0 and -targ_fact!=req_faq)
+      or (req_faq>0 and req_faq==dest_fact)
+      or (req_faq<0 and -dest_fact!=req_faq)
 end
 
 function m_map_obj_tree(objref, x,y, owner, factory) 
   local newobj=m_obj_from_ref(objref, x,y, objref.type, nil, g_[objref.func_init], g_[objref.func_draw], g_[objref.func_update], nil)
   newobj.ico_obj,newobj.life=m_obj_from_ref(objref, 109,0, 3, newobj, nil, nil, g_[objref.func_onclick]), placement_damage and objref.hitpoint/2 or objref.hitpoint -- unless built without concrete
-  -- player-controlled or ai?
   -- 0=auto, 1=player, 2=computer/ai
   newobj.owner=newobj.owner or owner
   if not factory then
@@ -363,10 +363,10 @@ function m_map_obj_tree(objref, x,y, owner, factory)
     --calc closest base/owner
     local best_dist=9999
     for i=1,#bases do
-     local curr_dist=dist(x,y,bases[i][4],bases[i][5])
-     if (curr_dist<best_dist) newobj.base_idx,newobj.owner,best_dist=i,min(i,2),curr_dist
+      local curr_dist=dist(x,y,bases[i][4],bases[i][5])
+      if (curr_dist<best_dist) newobj.base_idx,newobj.owner,best_dist=i,min(i,2),curr_dist
     end
-   else 
+  else 
     -- assume player-owned
     -- (only wrong with blooms, as factory takes priority, but player can still attack)
     newobj.base_idx,base=1,bases[1]
@@ -385,13 +385,9 @@ function m_map_obj_tree(objref, x,y, owner, factory)
 
   -- go through all ref's and see if any valid for this building
   for o in all(obj_data) do
-   local req_faq=o.req_faction
     if o.parent_id!=nil 
      and (o.parent_id==newobj.id or o.parent2_id==newobj.id)
      and fact_allowed(o,new_faction)
-      -- not req_faq
-      -- or (req_faq>0 and req_faq==new_faction)
-      -- or (req_faq<0 and -new_faction!=req_faq))
     then
       add(newobj.build_objs,
         m_obj_from_ref(o, 109,0, 4, newobj, nil, nil, function(self)
@@ -536,8 +532,33 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
 
        -- rotating obj?
        if self.r then
-        if not self.death_time or self.death_time>.025  then
-         rsspr(self.obj_spr%16*8,self.obj_spr\16*8, x, y, .25-self.r, 1, self.trans_col, self.z, flr(self.flash_count)%2==0 and 7 or nil)
+        if not self.death_time or self.death_time>.025 then
+          -- rotate sprite (modified to allow for trans cols, shadow + solid col)
+          -- orig by freds72
+          -- https://www.lexaloffle.com/bbs/?pid=52525#p52541
+          local ca,sa=cos(.25-self.r),sin(.25-self.r)	
+          local ddx0,ddy0,mask = ca,sa,0xfff8<<1-1
+          --w*=4
+          ca*=4-0.5
+          sa*=4-0.5
+          local dx0,dy0,w = sa-ca+4,-ca-sa+4,2*4-1	
+          for ix=0,w do
+           local srcx,srcy=dx0,dy0
+           for iy=0,w do
+            if ((srcx|srcy) & mask)==0 then
+             local c=sget(self.obj_spr%16*8+srcx,self.obj_spr\16*8+srcy)
+             if c!=self.trans_col then
+              if (self.z) pset(x+ix,y+iy, 1)
+              pset(x+ix,y+iy-self.z, flr(self.flash_count)%2==0 and 7 or nil or c)
+             end				 
+            end
+            srcx-=ddy0
+            srcy+=ddx0			
+           end
+           dx0+=ddx0
+           dy0+=ddy0
+          end
+         
         end
        -- norm sprite
        else       
@@ -846,7 +867,6 @@ function _update60()
   for unit in all(units) do
     if unit then    
       if (unit.cor) active,ex=coresume(unit.cor, unit)
-      --if(ex) stop(trace(unit.cor, ex))
       if (not active) unit.cor = nil
 
       -- check sandworm collision        
@@ -1140,7 +1160,7 @@ function do_attack(unit, target)
       move_unit_pos(unit,target.x\8,target.y\8,firing_rage)
 
       -- saboteur or death hand?
-      if unit.id==25 or unit.id==38 then
+      if unit.arms==600 then
        unit.life=0
         for i=1,unit.id/3 do
          make_explosion(unit.x+rnd"32"-16,unit.y+rnd"32"-16, 2)
@@ -1179,8 +1199,8 @@ function do_attack(unit, target)
   --
   -- palace attack!
   --
-  -- palace weapons (emperor also uses death hand)
-  do_attack(m_map_obj_tree(obj_data[({24,25,38,38})[unit.faction]], unit.x,unit.y, unit.owner), target)      
+  -- palace weapons
+  do_attack(m_map_obj_tree(obj_data[({24,25,38,38.5})[unit.faction]], unit.x,unit.y, unit.owner, unit), target)      
   unit.fire_cooldown = 1750 --350=1m (so 1750 = 5mins for palace weapon again, avg for all factions)
  end
 end
@@ -1962,8 +1982,6 @@ function getscoretext(val)
      s = (v % 0x0.000a / 0x.0001)..s
      v /= 10
  until v==0
- -- (pn) disabled -ve score as should not be possible
- --if (val<0) s = "-"..s
  return s
 end
 
@@ -1992,33 +2010,6 @@ function safe_rnd(table)
  if(table) return rnd(table)
 end
 
--- rotate sprite (modified to allow for trans cols, shadow + solid col)
--- orig by freds72
--- https://www.lexaloffle.com/bbs/?pid=52525#p52541
-function rsspr(sx,sy,x,y,a,w,trans,shad_dist,single_col)
-	local ca,sa=cos(a),sin(a)	
-	local ddx0,ddy0,mask = ca,sa,0xfff8<<w-1
-	w*=4
-	ca*=w-0.5
-	sa*=w-0.5
-	local dx0,dy0,w = sa-ca+w,-ca-sa+w,2*w-1	
-	for ix=0,w do
-		local srcx,srcy=dx0,dy0
-		for iy=0,w do
-			if ((srcx|srcy) & mask)==0 then
-				local c=sget(sx+srcx,sy+srcy)
-				if c!=trans then
-				 if (shad_dist) pset(x+ix,y+iy, 1)
-				 pset(x+ix,y+iy-shad_dist, single_col or c)
-				end				 
-			end
-			srcx-=ddy0
-			srcy+=ddx0			
-		end
-		dx0+=ddx0
-		dy0+=ddy0
-	end
-end
 
 -- fixed sqrt to avoid overflow
 -- (thx @jamesedge - https://twitter.com/jamesedge/status/1292016544164315138)
@@ -2370,8 +2361,8 @@ __map__
 0d0d10100e000000000000000000000c0d0d1400000000000000000000130d240d120000000000000000200000000000000024400049000037000c246e002f2f00000000000000000000110f0000000000000c0d0d0d120000000000000000110f0e000005050509090905050500000000000000000000000000050909090000
 0d14040505062100000000000000000c0d140000000000000000000000000c240d0e0000000000000000000000000000000024000000000000000c2400002f2f000405050600000000110d0d0000000000000c0d0d0d0d120000001139380f370d14000405050909050505050800000000000000002000000000050909090000
 0e04050905050506000000000000001314000000000000000000000000001357570e000000000000000000000000040506000c242400000000000c8585852f2f0005090505060000000c0d0d1200000000000c0d0d0d0d0d0f0f0f370d0d0d0d0e000000000a05050509051112000000000000000000000000000a0505090000
-0e05090905050505000000000000000000000000000000000000000000000057570e00000000000000000000000a050505002442000000000000131057372f2f0005050905050000000c0d0d0d00000020000c0d0d0d0d0d0d0d0d0d0d01220d360000000000000a0505080c0e00000000000000000000000000110e05090000
-0e0a05050505050800000000000000000000000000000000000000000000110d0d140000000000000000000505050509050057000012000000150000000d2f2f0005090909050000000c0d0d0d12000000110d0d0d0d0d0d0d0d360d0d22220d0e000000000000000000000c0d12000000000000000000000000000405050000
+0e05090905050505000000000000000000000000000000000000000000000057570e00000000000000000000000a050505002442000000000000131057372f2f0005050905050000000c0d0d0d00000020000c0d0d0d0d0d0d0d3a0d0d01220d360000000000000a0505080c0e00000000000000000000000000110e05090000
+0e0a05050505050800000000000000000000000000000000000000000000110d0d140000000000000000000505050509050057000012000000150000000d2f2f0005090909050000000c0d0d0d12000000110d0d0d0d0d0d0d0d0d0d0d22220d0e000000000000000000000c0d12000000000000000000000000000405050000
 0d0f0f120a000000000000000000000004050600000000000000000000110d0d14000000000000110f0d0f120509050505002457440000240e00000000132f2f0005090909050000000c0d0d0d0d0f0f0f0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d37000000000000000000000c0d0d0f1200000000000000000000000a05080000
 0d0d0d0e00000000000000000000040505050500000000000a00110f0f0d0d14000000000000000c0d0d0d0e0509090905001324000000240000000000002f2f0a05050505080000000c0d0d0d0d0d0d0d0d1400130d0d0d0d0d0d340d0d0d0d0e0000000000000000000013100d0d0d12000000000000000000000000000000
 1010101400000000000000000405050909090500000000000000130d10101400000000000000000c0d0d1014050509050800000c140000000000000000002f2f0000000000000000000c0d0d0d0d0d1014000000000c0d0d0d0d100d100d38390e000000000000000000000000130d0d0e000000000000000000000000000000
