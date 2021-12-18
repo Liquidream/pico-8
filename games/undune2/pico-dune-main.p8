@@ -7,19 +7,11 @@ __lua__
 
 -- =======================================
 -- main cart (title menu, level select)
--- =======================================
+-- 
 -- constants
 --debug=true
 
---game_cart = "pico-dune_fmt.p8"
-game_cart = "pico-dune.p8"
-
--- music
--- 00 = title
--- 06 = intro/advisor/level lose?
--- 10 = level win
--- 12 = map screen
-
+game_cart = "pico-dune.p8" --_fmt.p8"
 
 faction_cols = {
  { 12, 1}, -- 1 = Atreides
@@ -94,6 +86,7 @@ mentat_dialogs={
  "aLTHOUGH YOU HAVE EARNED A WELL \nDESERVED REST, i'M AFRAID THE \nPOLITICAL SITUATION REQUIRES \nTHAT WE SEND YOU BACK INTO THE \nFIELD IMMEDIATELY.:bOTH oRDOS AND hARKONNEN FORCES \nHAVE BUILT UP TO UNACCEPTABLE \nLEVELS IN THIS REGION, AND NOW \nMUST BE REMOVED COMPLETELY.",
  "yOUR NEXT ASSIGNMENT WILL \nDETERMINE THE ENTIRE OUTCOME OF \nOUR EFFORTS ON dUNE.:vICTORY WILL NOT COME EASILY.:iN ADDITION TO DESTROYING ALL \nREMAINING oRDOS AND hARKONNEN \nTROOPS...:...YOU ARE ALSO INSTRUCTED TO \nSUBDUE eMPEROR fREDERICK'S \nFORCES.:aLL OF OUR HOPES AND DREAMS ARE\nRIDING ON YOU, AND WE HUMBLY \nBEG YOU TO PROVIDE ONE FINAL \nVICTORY FOR OUR NOBLE \nhOUSE aTREIDES.",
  "gOOD MORNING YOUR LORDSHIP,\nAND CONGRATULATIONS!\n\nyOU SERVED hOUSE aTREIDES WELL.:wE WILL NOT SOON FORGET OUR \nMOST NOBLE WARRIOR.:i GO NOW TO RELAY THE NEWS OF \nYOUR MOST GLORIOUS VICTORY AND \nDELIVER YOUR TERMS TO THE \neMPEROR.",
+ "mY GOODNESS, WHAT AN AWFUL \nDEFEAT!:pERHAPS WE HAVE GIVEN YOU TOO\nMUCH RESPONSIBILITY.:iF YOU FAIL AT YOUR NEXT\nASSIGNMENT,\nWE WILL HAVE TO SERIOUSLY\nCONSIDER SENDING YOU HOME!",
 },
 { -- ordos missions
  "wELCOME.\ni AM YOUR mENTAT, AND YOU MAY \nCALL ME aMMON.:tO BE OF ANY VALUE TO THE \ncARTEL, YOU MUST PROVIDE US \nWITH CREDITS.:aS A TEST, WE WILL ASSIGN YOU \nTO A REGION, AND ASK THAT YOU \nMEET A PRODUCTION QUOTA OF \n1000 CREDITS.:bUILD A REFINERY AND HARVEST \nTHE SPICE IN THE AREA. i AM \nVERY BUSY, BUT YOU MAY CALL \nUPON ME IF YOU HAVE FURTHER \nQUESTIONS.",
@@ -106,6 +99,7 @@ mentat_dialogs={
  "bOTH aTREIDES AND hARKONNEN \nFORCES OPPOSE OUR CONTROL OF \nTHIS AREA AND MUST THEREFORE BE\nDESTROYED.:tHE TIME OF COOPERATION AND \nCOMPROMISE IS PAST, AND ALL \nENEMIES OF hOUSE oRDOS MUST BE\nELIMINATED!",
  "eMPEROR fREDERICK HAS JOINED \nTHE LIST OF oRDOS' ENEMIES, AND \nMUST BE PUNISHED.:dESTROY HIS TROOPS AND ANY \naTREIDES AND hARKONNEN REMNANTS \nTHAT STILL OPPOSE US ON THIS \nPLANET.:wE HAVE RISKED EVERYTHING ON \nTHIS FINAL BATTLE, AND CANNOT \nTOLERATE LESS THAN YOUR BEST \nEFFORT.",
  "gOOD mORNING, YOUR LORDSHIP, \nAND CONGRATULATIONS!\n\nyOU'VE SERVED hOUSE oRDOS WELL.:wE WILL NOT SOON FORGET OUR \nMOST NOBLE WARRIOR!:i GO NOW TO RELAY THE NEWS OF \nYOUR MOST GLORIOUS VICTORY, AND \nDELIVER YOUR TERMS TO THE \neMPEROR.",
+ "aPPARENTLY, i WAS MISTAKEN \nABOUT YOUR POTENTIAL.:iT WILL COST US A GREAT DEAL TO\nRETAKE THIS REGION.:oNLY COMPLETE SUCCESS WITH YOUR\nNEXT ASSIGNMENT COULD POSSIBLY\nRESURRECT YOUR CAREER.",
 },
 { -- harkonnen missions
  "i AM THE mENTAT, rADNOR.:wITH MY GUIDANCE, YOU MAY BE \nABLE TO ASSIST US IN CONQUERING \nTHIS DUSTY LITTLE PLANET.:fOR YOUR FIRST TEST YOU WILL BE\nEXPECTED TO PRODUCE 1000 \nCREDITS, AND NOT A GRANULE LESS:yOU MAY EARN CREDITS BY \nHARVESTING SPICE, AND WILL NEED\nTO BUILD A REFINERY TO CONVERT\nSPICE TO CREDITS.:iF ANY OF OUR FOOLISH ENEMIES \nATTEMPTS TO ATTACK YOUR BASE \nYOU WILL HAVE THE PLEASURE OF\nSEEING THE INVINCIBLE hARKONNEN\nTROOPS IN ACTION.",
@@ -118,6 +112,7 @@ mentat_dialogs={
  "i HAVE USED MY INFLUENCE TO \nARRANGE A pALACE FOR YOU.:a COMMANDER OF YOUR STATUS MAY \nREQUIRE RELAXATION OCCASIONALLY \nBUT i EXPECT AN EVEN GREATER \nEFFICIENCY ON YOUR PART WILL \nCOME FROM OUR GENEROSITY.:bOTH aTREIDES AND oRDOS FORCES \nEXIST IN THIS REGION,\nAND ALL MUST BE ELIMINATED!",
  "wE HAVE BEEN DECEIVED!:oUR BARGAINING IN GOOD FAITH \nHAS ONLY BROUGHT A TREACHEROUS \nHARVEST. aLL HAVE CONSPIRED \nAGAINST US, AND ALL MUST DIE!:yOUR MILITARY SKILLS ARE THE \nLAST REMAINING HOPE FOR THIS \nPLANET.:dESTROY ALL REMAINING aTREIDES \nAND oRDOS FORCES, AND CONQUER \nTHE eMPEROR'S pALACE.\nhE HAS TREATED US POORLY, AND \nMUST NOT LIVE ANOTHER DAY!",
  "gOOD mORNING, YOUR LORDSHIP, \nAND CONGRATULATIONS!\n\nyOU HAVE SERVED ME, i MEAN \nhOUSE hARKONNEN, WELL.:oUR hOUSE WILL NOT SOON FORGET \nOUR MOST NOBLE WARRIOR!:i GO NOW TO RELAY THE NEWS OF \nYOUR MOST GLORIOUS VICTORY, AND \nDELIVER YOUR TERMS TO THE \neMPEROR.",
+ "yOU ARE BENEATH MY COMTEMPT.:dO YOU KNOW WHAT HAPPENS TO \nTHOSE WHO HAVE FAILED \nhOUSE hARKONNEN?",
 }
 }
 
@@ -145,9 +140,9 @@ function _init()
  --mode = houseselect_mode
  --mode = levelselect_mode
  --mode = levelintro_mode
- --mode = levelend_mode
+ --mode = levelend_mode 
 
- 
+
  if (mode==title_mode) init_title()
  if (mode==houseselect_mode) init_houseselect()
  if (mode==levelintro_mode)  init_levelintro() 
@@ -264,7 +259,11 @@ function load_data()
  
  
  if endstate>0 then
-  mode = levelend_mode
+  if endstate==3 then
+   mode = levelintro_mode
+  else
+   mode = levelend_mode
+  end
   -- get level end data
   p_score = dget(2)  
   p_time = flr(dget(41)) -- playing time 
@@ -295,8 +294,8 @@ function load_level(num)
  -- debug
  --num=9
  
- printh("in load_level("..num..")...")
- printh("p_fact = "..p_fact)
+ -- printh("in load_level("..num..")...")
+ -- printh("p_fact = "..p_fact)
 
  --debug
  --p_fact = 3 -- (1=atreides, 2=ordos, 3-harkonen)
@@ -491,7 +490,12 @@ function init_levelintro()
 end
 
 function start_dialog()
- msg=mentat_dialogs[p_fact][p_level+intro_counter] 
+ if (endstate!=3) then
+  endstate=0
+  msg=mentat_dialogs[p_fact][p_level+intro_counter] 
+ else
+  msg=mentat_dialogs[p_fact][11] 
+ end
  co_text=cocreate(text_spool) 
 end
 
@@ -516,7 +520,14 @@ function update_levelintro()
     start_dialog()
    end
   else
-   if p_level<=9 then
+   if endstate==3 then
+    endstate=0
+    if p_level>1 then 
+     init_levelselect()
+    else
+     init_levelintro()
+    end
+   elseif p_level<=9 then
     load_level(p_level)
    else
     -- reset game back to start
@@ -780,8 +791,8 @@ end
 -- level select screen
 
 function init_levelselect()
- mode = levelselect_mode
- load_gfx_page(1)
+ mode = levelselect_mode 
+ load_gfx_page(1) 
  -- play "select" music
  music(12)
  -- init map region data
@@ -813,6 +824,7 @@ function init_levelselect()
 end
 
 function update_levelselect()
+ _set_fps(60)
  -- in map mode
 
  -- update coroutine
@@ -1519,17 +1531,11 @@ end
 
 -->8
 -- px9 decompress
-
--- x0,y0 where to draw to
--- src   compressed data address
--- vget  read function (x,y)
--- vset  write function (x,y,v)
+-- https://www.lexaloffle.com/bbs/?tid=34058
 
    function px9_decomp(x0,y0,src,vget,vset)
 
-    local function vlist_val(l, val)
-        -- find position and move
-        -- to head of the list
+    local function vlist_val(l, val)        
         local v,i=l[1],1
         while v!=val do
             i+=1
@@ -1538,23 +1544,14 @@ end
         l[1]=val
     end
 
-    -- bit cache is between 16 and 
-    -- 31 bits long with the next
-    -- bit always aligned to the
-    -- lsb of the fractional part
     local cache,cache_bits=0,0
     function getval(bits)
         if cache_bits<16 then
-            -- cache next 16 bits
             cache+=%src>>>16-cache_bits
             cache_bits+=16
             src+=2
         end
-        -- clip out the bits we want
-        -- and shift to integer bits
         local val=cache<<32-bits>>>16-bits
-        -- now shift those bits out
-        -- of the cache
         cache=cache>>>bits
         cache_bits-=bits
         return val
@@ -1598,7 +1595,6 @@ end
 
             local a=y>y0 and vget(x,y-1) or 0
 
-            -- create vlist if needed
             local l=pr[a]
             if not l then
                 l={}
@@ -1608,18 +1604,13 @@ end
                 pr[a]=l
             end
 
-            -- grab index from stream
-            -- iff predicted, always 1
 
             local v=l[predict and 1 or gnp"2"]
 
-            -- update predictions
             vlist_val(l, v)
             vlist_val(el, v)
 
-            -- set
             vset(x,y,v)
-
         end
     end
 end
