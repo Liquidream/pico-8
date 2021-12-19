@@ -29,6 +29,7 @@ levelselect_mode=5
 
 
 
+-- No.|Starting Credits|Objective Credits|# Bases|P Faction|P XPos|P YPos|AI Fact 1|AI XPos 1|AI YPos 1|AI Fact 2|AI XPos 2|AI YPos 2|AI Fact 3|AI XPos 3|AI YPos 3|AI Level
 mission_data={
 { -- atredies missions
  {1,999,1000,4,1,88,72,2,24,64,2,160,64,2,160,152,20,32},
@@ -49,7 +50,7 @@ mission_data={
  {5,1500,nil,2,2,88,200,3,448,288,nil,nil,nil,nil,nil,nil,5,62},
  {6,1700,nil,3,2,264,312,1,8,24,1,480,136,nil,nil,nil,4,62},
  {7,2000,nil,4,2,200,72,3,280,408,nil,nil,nil,nil,nil,nil,3,62},
- {8,2000,nil,4,2,192,240,1,328,8,3,248,448,3,424,424,2,62},
+ {8,2000,nil,4,2,192,240,3,328,8,1,248,448,1,424,424,2,62},
  {9,2500,nil,4,2,232,416,4,360,40,1,112,40,3,408,136,1,62},
 },
 { -- harkonnen missions
@@ -291,14 +292,13 @@ end
 
 function load_level(num)
  
- -- debug
- --num=9
- 
- -- printh("in load_level("..num..")...")
- -- printh("p_fact = "..p_fact)
 
  --debug
- --p_fact = 3 -- (1=atreides, 2=ordos, 3-harkonen)
+ --num=6
+ --p_fact = 2 -- (1=atreides, 2=ordos, 3-harkonen)
+
+ -- printh("in load_level("..num..")...")
+ -- printh("p_fact = "..p_fact)
 
  p_col1 = faction_cols[p_fact][1]
  p_col2 = faction_cols[p_fact][2]
