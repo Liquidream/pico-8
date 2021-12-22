@@ -147,12 +147,11 @@ obj_data=[[id|name|obj_spr|ico_spr|type|w|h|z|trans_col|parent_id|parent2_id|own
 38|dEATH hAND|72||1|1|1|8|11|||0|||||2|2|13|8|3||0||600|280|1|0|20|150|59|54||||0|0|0|0|0|0|1|1||0||tHE dEATH hAND IS A~SPECIAL hARKONNEN~pALACE WEAPON. aN~INACCURATE, BUT VERY~DESTRUCTIVE BALLISTIC~MISSILE.||||
 38.5|dEATH hAND|72||1|1|1|8|11|||0|||||2|2|13|8|4||0||600|280|1|0|20|150|59|54||||0|0|0|0|0|0|1|1||0||tHE dEATH hAND IS A~SPECIAL hARKONNEN~pALACE WEAPON. aN~INACCURATE, BUT VERY~DESTRUCTIVE BALLISTIC~MISSILE.||||
 39|rAIDER|51|204|1|1|1|1|11|11|||||12|1|2|2||2|2||150||32|320|0.75|3|1|8|60|54||||0|0|0|0|0|0|1|1||0||tHE oRDOS rAIDER IS~SIMILAR TO THE STANDARD~tRIKE, BUT WITH LESS~ARMOUR IN FAVOUR OF~SPEED.||||
-40|dEVIATOR|54|202|1|1|1|1|11|12|||||11|3|2|2|18|7|2||75||50|480|0.3|7|1.9|500|59|54||||0|0|0|0|0|0|1|1||0||tHE oRDOS dEVIATOR IS A~STANDARD mISSILE tANK,~WHICH FIRES UNIQUE~NERVE GAS MISSILES THAT~MAY TEMPORARILY CHANGE~ENEMY LOYALTY.||||
+40|dEVIATOR|54|202|1|1|1|1|11|12|||||11|3|2|2|18|7|2||7||1|480|0.3|7|1.9|90|59|54||||0|0|0|0|0|0|1|1||0||tHE oRDOS dEVIATOR IS A~STANDARD mISSILE tANK,~WHICH FIRES UNIQUE~NERVE GAS MISSILES THAT~MAY TEMPORARILY CHANGE~ENEMY LOYALTY.||||
 41|sANDWORM|88||9|1|1|1|11||||||||2|2||3|||0||1200|4000|0.35|0|30|300|50|||||0|0|0|0|0|0|1|1||0||tHE sAND wORMS ARE~INDIGEONOUS TO dUNE.~aTTRACTED BY VIBRATIONS~ALMOST IMPOSSIBLE TO~DESTROY, WILL CONSUME~ANYTHING THAT MOVES.||||
 42|sPICE bLOOM|32||1|1|1|1|11|||2|||||1|1|||||||0|4|0|||||53|1|||0|0|0|0|0|0|1|1||0||||||
 80|rEPAIR|3|3|5|1|1|1|11||||||||1|1|||||||0|0||||||||||0|0|0|0|0|0|1|1||0||||draw_action||action_click
 81|lAUNCH|1|1|5|1|1|1|11||||||||1|1|||||||0|0||||||||||0|0|0|0|0|0|1|1||0||||draw_action||action_click]]
-
 
 
 -->8
@@ -700,11 +699,35 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
 
         -- deviator specific
         if self.id==40 and target.speed!=nil then
-         target.owner,target.faction,target.col1,target.col2 = self.owner,self.faction,self.col1,self.col2
+         target.old_fact_data,
+         target.faction,
+         target.owner,
+         target.created_by,
+         target.col1,
+         target.col2
+         =
+         {target.faction,
+          target.owner,
+          target.created_by,
+          target.col1,
+          target.col2},
+         self.faction,
+         self.owner,
+         self.created_by,
+         self.col1,
+         self.col2
          do_guard(self) -- stop attacking "converted" obj
-        elseif target.old_faction then
+        elseif target.old_fact_data then
          -- revert back to orig faction
-         target.faction,target.col1,target.col2,target.old_faction = target.old_faction,target.old_col1,target.old_col2,nil
+         target.old_fact_data,
+         target.faction,
+         target.owner,
+         target.created_by,
+         target.col1,
+         target.col2
+         =
+         nil,
+         unpack(target.old_fact_data)
          do_guard(target)
         end
 
@@ -997,7 +1020,7 @@ function do_guard(unit, start_state)
        return true
       end
      end,
-     max(4,self.range)) -- fixes lookout range (was self.range)
+     max(4,self.range))
 
    -- ornithopter?
    elseif self.id==34 then
@@ -1062,7 +1085,6 @@ function do_guard(unit, start_state)
      spice_tiles[unit_pos],self.name = (spice_tiles[unit_pos] or 1000)-1,"hARVESTER ("..flr(self.capacity/1500*100).."% fULL)"
      -- done current spot?
      if spice_tiles[unit_pos] <= 0 then      
-      -- (clear spice tile + depleat surrounding tiles)
       local xpos,ypos=self:get_tile_pos()
       for yy=-1,1 do
        for xx=-1,1 do
@@ -1085,7 +1107,6 @@ function do_guard(unit, start_state)
    if self.id>26 then    
     -- is carrying spice & close to refinary
     -- or been sent to repair facility
-    -- todo: if route impossible, use carryall to move unit
     if self.state==9 then
      -- check last factory is not destroyed or already busy
      -- (and that we are still alive!)
@@ -1193,7 +1214,7 @@ function do_attack(unit, target)
      yield()
      -- deviators should only fire once, per attack
      -- likewise, abort attack if unit becomes converted to "our" side
-     if (unit.id==40 or unit.id==34 or target.faction==unit.faction or target.link) break
+     if (unit.id==40 or unit.id==34 or target.faction==unit.faction or target.link) printh("abort attack") break
     end -- 4) repeat 1-3 until target destroyed
 
     -- reset to guard
@@ -1516,7 +1537,6 @@ function draw_level()
  end
 
 end
-
 
 function set_message(msg)
   message,msgcount = msg,500
