@@ -587,11 +587,11 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
          local is_missile = self.fire_type<=2
          add_particle(
           self.bullet_x, self.bullet_y, 
-          is_missile and 2.5 or 0,
-          0, 0, is_missile and -.15 or 1,
+          is_missile and 1.9 or 0,
+          0, 0, is_missile and -.3 or 1,
           0,---.02, 
-          is_missile and 15 or 2.5, 
-          is_missile and split2d"7,7,10,9,8,2" or {15},
+          is_missile and 10 or 2.5, 
+          is_missile and split2d"7,10,9,8,2" or {15},
           rnd"2"<1 and 0xa5a5.8 or 0)
         end
        end
@@ -802,11 +802,9 @@ function transact(diff, obj)
  return true
 end
 
-function make_explosion(x,y,size_type,num)
- for i=1,num or 3 do
-  add_particle(x+rnd"8"-4, y+rnd"8"-4, 2, 
+function make_explosion(x,y,size_type)
+  add_particle(x, y, 2, 
          0, 0, .1, -.01, size_type==1 and 5 or 20, size_type==1.9 and split2d"3,11,3" or split2d"5,7,5,7,10,8,9,2", rnd"2"<1 and 0xa5a5.8 or 0)
- end
 end
 
 function reveal_fow(object)
@@ -1169,9 +1167,9 @@ function do_attack(unit, target)
       -- saboteur or death hand?
       if unit.arms==600 then
        unit.life=0
-        --for i=1,unit.id/3 do
-         make_explosion(unit.x,unit.y, 2, unit.id/3)
-        --end
+        for i=1,unit.id/3 do
+         make_explosion(unit.x+rnd"32"-16,unit.y+rnd"32"-16, 2)
+        end
        --end
        target.life-=(400+rnd"200")
        target.hitby=unit
