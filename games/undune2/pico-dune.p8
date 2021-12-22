@@ -147,11 +147,12 @@ obj_data=[[id|name|obj_spr|ico_spr|type|w|h|z|trans_col|parent_id|parent2_id|own
 38|dEATH hAND|72||1|1|1|8|11|||0|||||2|2|13|8|3||0||600|280|1|0|20|150|59|54||||0|0|0|0|0|0|1|1||0||tHE dEATH hAND IS A~SPECIAL hARKONNEN~pALACE WEAPON. aN~INACCURATE, BUT VERY~DESTRUCTIVE BALLISTIC~MISSILE.||||
 38.5|dEATH hAND|72||1|1|1|8|11|||0|||||2|2|13|8|4||0||600|280|1|0|20|150|59|54||||0|0|0|0|0|0|1|1||0||tHE dEATH hAND IS A~SPECIAL hARKONNEN~pALACE WEAPON. aN~INACCURATE, BUT VERY~DESTRUCTIVE BALLISTIC~MISSILE.||||
 39|rAIDER|51|204|1|1|1|1|11|11|||||12|1|2|2||2|2||150||32|320|0.75|3|1|8|60|54||||0|0|0|0|0|0|1|1||0||tHE oRDOS rAIDER IS~SIMILAR TO THE STANDARD~tRIKE, BUT WITH LESS~ARMOUR IN FAVOUR OF~SPEED.||||
-40|dEVIATOR|54|202|1|1|1|1|11|12|||||11|3|2|2|18|7|2||750||50|480|0.3|7|2|500|59|54||||0|0|0|0|0|0|1|1||0||tHE oRDOS dEVIATOR IS A~STANDARD mISSILE tANK,~WHICH FIRES UNIQUE~NERVE GAS MISSILES THAT~MAY TEMPORARILY CHANGE~ENEMY LOYALTY.||||
+40|dEVIATOR|54|202|1|1|1|1|11|12|||||11|3|2|2|18|7|2||75||50|480|0.3|7|1.9|500|59|54||||0|0|0|0|0|0|1|1||0||tHE oRDOS dEVIATOR IS A~STANDARD mISSILE tANK,~WHICH FIRES UNIQUE~NERVE GAS MISSILES THAT~MAY TEMPORARILY CHANGE~ENEMY LOYALTY.||||
 41|sANDWORM|88||9|1|1|1|11||||||||2|2||3|||0||1200|4000|0.35|0|30|300|50|||||0|0|0|0|0|0|1|1||0||tHE sAND wORMS ARE~INDIGEONOUS TO dUNE.~aTTRACTED BY VIBRATIONS~ALMOST IMPOSSIBLE TO~DESTROY, WILL CONSUME~ANYTHING THAT MOVES.||||
 42|sPICE bLOOM|32||1|1|1|1|11|||2|||||1|1|||||||0|4|0|||||53|1|||0|0|0|0|0|0|1|1||0||||||
 80|rEPAIR|3|3|5|1|1|1|11||||||||1|1|||||||0|0||||||||||0|0|0|0|0|0|1|1||0||||draw_action||action_click
 81|lAUNCH|1|1|5|1|1|1|11||||||||1|1|||||||0|0||||||||||0|0|0|0|0|0|1|1||0||||draw_action||action_click]]
+
 
 
 -->8
@@ -361,23 +362,23 @@ function m_map_obj_tree(objref, x,y, owner, factory)
   newobj.ico_obj,newobj.life=m_obj_from_ref(objref, 109,0, 3, newobj, nil, nil, g_[objref.func_onclick]), placement_damage and objref.hitpoint/2 or objref.hitpoint -- unless built without concrete
   -- 0=auto, 1=player, 2=computer/ai
   newobj.owner=newobj.owner or owner
-  if not factory then
-   -- unless explicitly stated...
-   if not newobj.owner then
-    --calc closest base/owner
+  if factory then
+   --created by factory
+   newobj.base_idx=factory.base_idx
+  else
+   -- explicitly stated...
+   if newobj.owner then
+    -- assume player-owned
+    -- (only wrong with blooms, as factory takes priority, but player can still attack)
+    newobj.base_idx,base=1,bases[1]
+   else 
+     --calc closest base/owner
     local best_dist=9999
     for i=1,#bases do
       local curr_dist=dist(x,y,bases[i][4],bases[i][5])
       if (curr_dist<best_dist) newobj.base_idx,newobj.owner,best_dist=i,min(i,2),curr_dist
     end
-  else 
-    -- assume player-owned
-    -- (only wrong with blooms, as factory takes priority, but player can still attack)
-    newobj.base_idx,base=1,bases[1]
-   end 
-  else
-   --created by factory
-   newobj.base_idx=factory.base_idx
+   end
   end
   
   newobj.created_by,newobj.build_objs,base = owner or newobj.owner,{},bases[newobj.base_idx or factory.base_idx]
@@ -583,13 +584,14 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
          pset(self.bullet_x,self.bullet_y, rnd"2"<1 and 8 or 9)
         else
          -- missile/sonic wave
-         local is_missile = self.fire_type==2
-         add_particle(self.bullet_x, self.bullet_y, 0, 
-          0, 0, 
-          is_missile and .15 or 2,
-          -.01, 
-          is_missile and 20 or 2.5, 
-          self.id==40 and {11} or is_missile and split2d"7,7,10,9,8,2,13,6,7" or {15},
+         local is_missile = self.fire_type<=2
+         add_particle(
+          self.bullet_x, self.bullet_y, 
+          is_missile and 2.5 or 0,
+          0, 0, is_missile and -.15 or 1,
+          0,---.02, 
+          is_missile and 15 or 2.5, 
+          is_missile and split2d"7,7,10,9,8,2" or {15},
           rnd"2"<1 and 0xa5a5.8 or 0)
         end
        end
@@ -693,7 +695,7 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
         target.y+target.h/2) < 4 
        then
         target.life-=self.arms
-        --firetype: 0=none, 1=bullet, 2=missile, 3=sonic
+        --firetype: 0=none, 1=bullet, 2=missile, 1.9=deviator, 3=sonic, 20=death hand, 30=sandworm
         target.hit,target.hitby=self.fire_type,self
 
         -- deviator specific
@@ -800,9 +802,11 @@ function transact(diff, obj)
  return true
 end
 
-function make_explosion(x,y,size_type)
- add_particle(x, y, 2, 
-         0,0,.1,0, size_type==1 and 5 or 30, split2d"5,7,10,8,9,2", rnd"2"<1 and 0xa5a5.8 or 0)
+function make_explosion(x,y,size_type,num)
+ for i=1,num or 3 do
+  add_particle(x+rnd"8"-4, y+rnd"8"-4, 2, 
+         0, 0, .1, -.01, size_type==1 and 5 or 20, size_type==1.9 and split2d"3,11,3" or split2d"5,7,5,7,10,8,9,2", rnd"2"<1 and 0xa5a5.8 or 0)
+ end
 end
 
 function reveal_fow(object)
@@ -972,7 +976,7 @@ end
 function do_guard(unit, start_state)
  -- 0=idle/guarding, 1=pathfinding, 2=moving, 3=attacking, 4=firing, 5=exploding, 
  --(6=harvesting, 7=returning, 9=ready-to-unload/repair, 8=unloading/repairing)
- unit.state,unit.link = start_state or 0,nil
+ unit.state,unit.link,unit.last_move_result = start_state or 0,nil,true
  unit.cor = cocreate(function(self)
   while true do
    -- if carryall/ornithopter only
@@ -1032,7 +1036,7 @@ function do_guard(unit, start_state)
       end
       -- found spice?
       if sx and sy then
-        move_unit_pos(unit,sx,sy)
+        unit.last_move_result = move_unit_pos(unit,sx,sy,nil,not unit.last_move_result)
         -- landed on spice tile?
         -- switch to harvesting        
         if (is_spice_tile(unit:get_tile_pos())) unit.state=6
@@ -1041,7 +1045,7 @@ function do_guard(unit, start_state)
      end -- check factory busy
 
     -- are we full?
-    elseif self.capacity >= 1500 
+    elseif self.capacity >= 150 --1500
      and self.state!=7 then
       -- return to refinery when full
       self.sx,self.sy=self:get_tile_pos() -- remember where we were!
@@ -1165,9 +1169,9 @@ function do_attack(unit, target)
       -- saboteur or death hand?
       if unit.arms==600 then
        unit.life=0
-        for i=1,unit.id/3 do
-         make_explosion(unit.x+rnd"32"-16,unit.y+rnd"32"-16, 2)
-        end
+        --for i=1,unit.id/3 do
+         make_explosion(unit.x,unit.y, 2, unit.id/3)
+        --end
        --end
        target.life-=(400+rnd"200")
        target.hitby=unit
@@ -1214,7 +1218,7 @@ end
 function ping(unit,x,y,func,max_dist,skip_yield)
  for t=0,max_dist or 4,.04 do
  	local xx,yy=mid(flr(x+t*cos(t)),61),mid(flr(y+t*sin(t)),61)
-	if (func(unit,xx,yy)) return xx,yy
+	 if (func(unit,xx,yy)) return xx,yy
   -- give others a chance!  
   -- (better perf for unit updates, but causes pauses on start/deploy harvester)  
   if (not skip_yield) yield()  
@@ -1237,8 +1241,6 @@ function is_free_tile(unit,x,y)
 end
 
 function move_unit_pos(unit,x,y,dist_to_keep,try_hail,start_state)
-  
-  ::retry_hail::  
   
   local flying = unit.z>1
   -- before moving, can a carryall take us?  
@@ -1308,7 +1310,27 @@ function move_unit_pos(unit,x,y,dist_to_keep,try_hail,start_state)
     unit.path = p
     goto end_pathfinding
    end
-   for n in all(map_neighbors(p,flying)) do
+   -- map neighbors
+   -- returns any neighbor map
+   -- position at which flag zero
+   -- is unset
+   local neighbors = {}
+   for xx = -1, 1 do
+    for yy = -1, 1 do
+     local nx=p.x+xx
+     local ny=p.y+yy
+     if (xx!=0 or yy!=0)
+      --maybe_add
+      and flying or not fget(wrap_mget(nx,ny),0) 
+      and not fget(wrap_mget(nx,ny),7) 
+      and not object_tiles[nx..","..ny] 
+      and nx>=0 and ny>=0 and nx<=63 and ny<=63 then
+       add(neighbors, {x=nx, y=ny})
+     end
+    end
+   end
+   --
+   for n in all(neighbors) do
     local id = node_to_id(n)
     local curr_cost = not flying and fget(wrap_mget(n.x, n.y), 1) and 4 or 1
     if (p.x != n.x and p.y != n.y) curr_cost+=.2
@@ -1345,7 +1367,7 @@ function move_unit_pos(unit,x,y,dist_to_keep,try_hail,start_state)
   -- loop all path nodes...
   if unit.path!=nil then
 
-    for i=#unit.path-1,1,-1 do
+     for i=#unit.path-1,1,-1 do
       local node=unit.path[i]
 
       if not unit.norotate then
@@ -1397,15 +1419,15 @@ function move_unit_pos(unit,x,y,dist_to_keep,try_hail,start_state)
       if (dist(unit.x,unit.y,unit.tx,unit.ty) <= (dist_to_keep or 0)) break -- stop now
     end
 
-  elseif try_hail then 
-   -- if unit can hail and is blocked to reach target path
-   -- then retry from start (as poss carryall was busy)
-   goto retry_hail
+  else
+   unit.state=0 --idle
+   return false
   
   end -- path nil (can happen if unit is "pinned in")
 
   -- arrived?
   unit.state=0 --idle
+  return true
 end
 
 
@@ -1474,7 +1496,6 @@ function draw_level()
  end
 
  -- particles
- --draw_particles()
  for p in all(particles) do
   if (p.pattern) fillp(p.pattern)
   circfill(p.x,p.y,p.r,p.cols[ flr((#p.cols/p.life_orig)*p.life)+1 ])
@@ -1664,9 +1685,8 @@ function draw_ui()
       if selected_subobj == curr_item then 
         sel_build_item_idx=icount
         rect(curr_item.x-2, curr_item.y-2, 
-            curr_item.x+17, curr_item.y+17, 
-            7)
-        ?selected_subobj.name,30,26,7
+            curr_item.x+17, curr_item.y+17,7)
+        ?selected_subobj.name,30,26
         ?"cOST:"..selected_subobj.cost,85,33,9
         ?selected_subobj.description,30,34,6
       end
@@ -1674,8 +1694,6 @@ function draw_ui()
      end -- unlocked
     end -- for
   end -- has build obs
-
- -- pal() --else green=black
 
   -- ui elements (buttons)?
   for controls in all(ui_controls) do
@@ -1702,7 +1720,7 @@ function m_button(x,text,func_onclick,_w)
   draw=function(self)
     local c=self.hover and p_col1 or 6
     if(#text>1)rectfill(self.x,83,self.x+self.w,91, c)
-    ?self.text,self.x+2,85,(#text>1) and 0 or c
+    ?self.text,self.x+2,85,#text>1 and 0 or c
   end,
   func_onclick = func_onclick
  })
@@ -1870,7 +1888,6 @@ worm_life=0
 function update_ai()
  -- depending on ai level...
  if t()%ai_level==0 then
- --if ai_awake and t()%ai_level==0 then
   --
   -- unit attacks
   -- 
@@ -1933,7 +1950,7 @@ function update_ai()
   -- movement/turning
   if (t_%6<1 or #worm_segs<30) and worm_frame==0 then
    while #worm_segs<31 do
-    if(rnd"9"<.5) worm_turn=rnd".04"-.02
+    if (rnd"9"<.5) worm_turn=rnd".04"-.02
     -- ref to head
     head_worm_x,head_worm_y=worm_segs[#worm_segs][1],worm_segs[#worm_segs][2]
     add(worm_segs,{head_worm_x+sin(worm_dir),head_worm_y-cos(worm_dir)})
@@ -2046,28 +2063,6 @@ function turntowardtarget(unit, targetangle)
    unit.r = targetangle
   end  
   yield()
-end
-
--- returns any neighbor map
--- position at which flag zero
--- is unset
-function map_neighbors(node,flying)
- local neighbors = {}
- for xx = -1, 1 do
-  for yy = -1, 1 do
-   local nx=node.x+xx
-   local ny=node.y+yy
-   if (xx!=0 or yy!=0)
-    --maybe_add
-    and flying or not fget(wrap_mget(nx,ny),0) 
-    and not fget(wrap_mget(nx,ny),7) 
-    and not object_tiles[nx..","..ny] 
-    and nx>=0 and ny>=0 and nx<=63 and ny<=63 then
-     add(neighbors, {x=nx, y=ny})
-   end
-  end
- end
- return neighbors
 end
 
 function manhattan_distance(a, b)
@@ -2367,15 +2362,15 @@ __map__
 0d0d1200000005090909050500000c0d0d0d12000000000000001324240e0a0508110d0d0d0d0f0f0f0d0d100d0d0d243a000024000000008585858585852f2f00000000000000000000000a05050508110d0d0d0e000509090505060000000000130d0d0d0d12000000000000000000000000000000000b0b00000000000000
 0d0d0d1200000a05090505050000130d0d0d0d12000000000000000c24240f1200000000130d0d0d0d14000000130d2400000024123700000013856200002f2f0000000000000000000000000000110f0d0d0d0d0e0005050909050500000000000000130d0d0d0f12000000000000000000000000000b0b0b0b0b0000000000
 0d0d0d0d12000005050505080000000c0d0d0d0e000000000000000c0d24240d120000000000130d1400000000001324000000240e0000000000850000002f2f0000000000000000000000000015100d0d0d0d0d0e00000a05050508000000000000000000130d101407000000000000000000000000000b0b0b000004050000
-0d0d0d0d0e00000a080000000000000c0d0d0d1400000020000000130d0d24240e00000000000000000000000000005724242424240000000000242424242f2f000000000000000000000000000000130d0d0d0d0d1200000a0508000000000000000000040505050505050506000000000000000000000b0b0b040505050000
-0d0d10100e000000000000000000000c0d0d1400000000000000000000130d240d120000000000000000200000000000000024400049000037000c246e002f2f00000000000000000000110f0000000000000c0d0d0d120000000000000000110f0e000005050509090905050500000000000000000000000000050909090000
+0d0d0d0d0e00000a080000000000000c0d0d0d1400000020000000130d0d24240e00000000000000000000000000005724242424240000000000242424242f2f000000000000000000000000000000130d0d0d0d0d1200000a0508000000000000000000000505050505050506000000000000000000000b0b0b040505050000
+0d0d10100e000000000000000000000c0d0d1400000000000000000000130d240d120000000000000000200000000000000024400049000037000c246e002f2f00000000000000000000110f0000000000000c0d0d0d120000000000000000110f0e000042050509090905050500000000000000000000000000050909090000
 0d14040505062100000000000000000c0d140000000000000000000000000c240d0e0000000000000000000000000000000024000000000000000c2400002f2f000405050600000000110d0d0000000000000c0d0d0d0d120000001139380f370d14000405050909050505050800000000000000002000000000050909090000
-0e04050905050506000000000000001314000000000000000000000000001357570e000000000000000000000000040506000c242400000000000c8585852f2f0005090505060000000c0d0d1200000000000c0d0d0d0d0d0f0f0f370d0d0d0d0e000000000a05050509051112000000000000000000000000000a0505090000
-0e05090905050505000000000000000000000000000000000000000000000057570e00000000000000000000000a050505002442000000000000131057372f2f0005050905050000000c0d0d0d00000020000c0d0d0d0d0d0d0d0d0d0d01220d360000000000000a0505080c0e00000000000000000000000000110e05090000
-0e0a05050505050800000000000000000000000000000000000000000000110d0d140000000000000000000505050509050057000012000000150000000d2f2f0005090909050000000c0d0d0d12000000110d0d0d0d0d0d0d0d360d0d22220d0e000000000000000000000c0d12000000000000000000000000000405050000
-0d0f0f120a000000000000000000000004050600000000000000000000110d0d14000000000000110f0d0f120509050505002457440000240e00000000132f2f0005090909050000000c0d0d0d0d0f0f0f0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d37000000000000000000000c0d0d0f1200000000000000000000000a05080000
-0d0d0d0e00000000000000000000040505050500000000000a00110f0f0d0d14000000000000000c0d0d0d0e0509090905001324000000240000000000002f2f0a05050505080000000c0d0d0d0d0d0d0d0d1400130d0d0d0d0d0d340d0d0d0d0e0000000000000000000013100d0d0d12000000000000000000000000000000
-1010101400000000000000000405050909090500000000000000130d10101400000000000000000c0d0d1014050509050800000c140000000000000000002f2f0000000000000000000c0d0d0d0d0d1014000000000c0d0d0d0d100d100d38390e000000000000000000000000130d0d0e000000000000000000000000000000
+0e04050905050506000000000000001314000000000000000000000000001357570e000000000000000000000000040506000c242400000000000c8585852f2f0005090505060000000c0d0d1200000000000c0d0d0d0d0d0f0f4d0d0d0d0d0d0e000000200a05050509051112000000000000000000000000000a0505090000
+0e05090905050505000000000000000000000000000000000000000000000057570e00000000000000000000000a050505002442000000000000131057372f2f0005050905050000000c0d0d0d00000020000c0d0d0d0d0d0d0d0d0d0d01220d360000000000200a0505080c0e00000000000000000000000000110e05090000
+0e0a05050505050800000000000000000000000000000000000000000000110d0d140000000000000000000505050509050057000012000000150000000d2f2f0005090909050000000c0d0d0d12000000110d0d0d0d0d0d0d0d0d0d0d22220d0e000000200000004200000c0d12000000000000000000000000000405050000
+0d0f0f120a000000000000000000000004050600000000000000000000110d0d14000000000000110f0d0f120509050505002457440000240e00000000132f2f0005090909050000000c0d0d0d0d0f0f0f0d0d0d0d0d0d0d0d0d830d6a0d440d0d000000000000000000000c0d0d0f1200000000000000000000000a05080000
+0d0d0d0e00000000000000000000040505050500000000000a00110f0f0d0d14000000000000000c0d0d0d0e0509090905001324000000240000000000002f2f0a05050505080000000c0d0d0d0d0d0d0d0d1400130d0d0d0d0d0d0d0d0d0d0d0d0000420000000000000013100d0d0d12000000000000000000000000000000
+1010101400000000000000000405050909090500000000000000130d10101400000000000000000c0d0d1014050509050800000c140000000000000000002f2f0000000000000000000c0d0d0d0d0d1014000000000c0d0d0d0d100d10620d0d0e000000000000000000000000130d0d0e000000000000000000000000000000
 0000000000000000000000000509090905050506000000070000000000000000000000000000000c0d1400040505050800000000000000000000000000002f2f0000000000000000000c0d0d0d0d14000000000000130d0d0d14000000130d0d0e00000000000000000000000406130d0e000000000000000000000000000000
 0000000000000000000000000a05090905080b0b000000050000000000000000000000000000110d140000000a050800000000000a0000040506000000002f2f000000000000000000130d0d0d1400000000000000000c0d140000000000130d14000000000000110e040505050506130d0f1200000000000000000000000000
 000000000000000000000000000a0505080b0b0b000000050600000000000000000000110d0d0d0e000000000000000000000000000405050505050506002f2f00110f0e0000000000001310140000000000000000001314000000000000000004050a0000000000000509050505050506130d0e000000000000000000000000
