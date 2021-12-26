@@ -657,7 +657,7 @@ self._d0=false
 _d4(_cp.x, _cp.y, _cp.r+.75+rnd".2" -.1)
 local _d1=_cp:_cz()
 self.capacity+=.5
-_m[_d1],self._cx=(_m[_d1] or 1000)-1,"hARVESTER (" ..flr(self.capacity/1500*100).."% fULL)"
+_m[_d1],self._cx=(_m[_d1] or 1000)-1,"hARVESTER (" ..flr(self.capacity/1500*100).."%)"
 if _m[_d1] <=0 then
 local _bm,_bn=self:_c0()
 for yy=-1,1 do
@@ -1324,8 +1324,6 @@ function _gz(x, y, r, dx, dy, dr, _g0, _bd, _g1, _g2)
 add(_n, {
 x=x,y=y,r=r,dx=dx,dy=dy,dr=dr,_bd=0,_g0=_g0,_g1=_g1, _g2=_g2,_g3=y, _g4=_bd }, 1)
 end
-
-
 
 
 __gfx__

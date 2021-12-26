@@ -1047,7 +1047,7 @@ function do_guard(unit, start_state)
      local unit_pos = unit:get_tile_pos_index()
      --harvester should take about 110 secs to fill!
      self.capacity+=.5
-     spice_tiles[unit_pos],self.name = (spice_tiles[unit_pos] or 1000)-1,"hARVESTER ("..flr(self.capacity/1500*100).."% fULL)"
+     spice_tiles[unit_pos],self.name = (spice_tiles[unit_pos] or 1000)-1,"hARVESTER ("..flr(self.capacity/1500*100).."%)"
      -- done current spot?
      if spice_tiles[unit_pos] <= 0 then      
       local xpos,ypos=self:get_tile_pos()
