@@ -830,12 +830,16 @@ function _update60()
  mouse_x,mouse_y,mouse_btn=stat"32",stat"33",stat"34"
  left_button_clicked,left_button_down,right_button_clicked = (mouse_btn==1 and last_mouse_btn != mouse_btn) or btnp"4", (mouse_btn>0) or btn"4", (mouse_btn==2 and last_mouse_btn != mouse_btn) or btnp"5"
  
- if mouse_x==lastmx and mouse_y==lastmy then
+ if cursx==nil then
+  -- initial pos
+  cursx,cursy=64,64
+ elseif mouse_x==lastmx and mouse_y==lastmy then
   -- keyboard input
   b=btn()
   cursx+=b\2%2-b%2
   cursy+=b\8%2-b\4%2
  else
+  -- mouse moved
   cursx,cursy = mouse_x,mouse_y
  end
 
@@ -853,29 +857,25 @@ function _update60()
   if (cursy<4) camy-=2
   if (cursy>123) camy+=2
 
-  -- lock cam to map
-  camx,camy = mid(camx,cam_max),mid(-10,camy,cam_max)
-  
-  strnum=getscoretext(credits[1])
+  -- lock cam to map + calc score
+  camx,camy,strnum = mid(camx,cam_max),mid(-10,camy,cam_max),getscoretext(credits[1])
 
   -- update all unit coroutines 
   -- (pathfinding, moving, attacking, etc.)
   for unit in all(units) do
-   -- if unit then    
-      if (unit.cor) active,ex=coresume(unit.cor, unit)
-      if (not active) unit.cor = nil
+   if (unit.cor) active=coresume(unit.cor, unit)
+   if (not active) unit.cor=nil
 
-      -- check sandworm collision        
-      if worm_segs -- worm present
-       and fget(wrap_mget(unit:get_tile_pos()),2)  --unit on sand       
-       and dist(head_worm_x,head_worm_y,unit.x,unit.y) < 1
-       and unit.z==1
-       then
-        delete_unit(unit)
-        worm_frame=.01
-        ssfx"50"
-      end
-   -- end
+   -- check sandworm collision
+   if worm_segs -- worm present
+    and fget(wrap_mget(unit:get_tile_pos()),2)  --unit on sand       
+    and dist(head_worm_x,head_worm_y,unit.x,unit.y) < 1
+    and unit.z==1
+    then
+     delete_unit(unit)
+     worm_frame=1
+     ssfx"50"
+   end
   end
    
   --update_particles()
@@ -891,14 +891,176 @@ function _update60()
    if (p.life>=p.life_orig) del(particles,p)
   end
     
-  -- ai overall decision making (not individual units)
-  update_ai()
+  -- ai overall decision making (attack, build, repair, etc. - not individual units)
+  --update_ai()
+  -- depending on ai level...
+  if t()%ai_level==0 then
+   --
+   -- unit attacks
+   -- 
+   -- find the first ai unit and attack player  
+   local ai_unit=rnd(units)
+   if ai_unit.owner==2 and ai_awake[ai_unit.faction] and ai_unit.arms>0 and ai_unit.state==0 then
+    -- select a random target (unit or building)
+    attack_rnd_enemy(ai_unit)
+   end
+   
+   -- build units/repair
+   -- 
+   local ai_building=rnd(buildings) 
+   -- if ai owned...
+   --  is factory, builds units and is not already building...
+   if ai_building.owner==2    
+     and (not ai_building.build_obj or ai_building.build_obj.process!=1) then    
+     -- select a random unit to build
+     local u=rnd(ai_building.build_objs)
+     if u and u.speed>0 then
+      u:func_onclick()
+     end    
+
+     -- repair?
+     if ai_building.life<ai_building.hitpoint and ai_building.process!=2 then
+      -- auto-repair
+      process_click(ai_building, 2)
+     end
+   end
+
+   -- fire palace weapons
+   -- 
+   local ai_palace = safe_rnd(has_obj[2][19])
+   if ai_palace 
+    and ai_awake[ai_palace.faction]
+    and ai_palace.fire_cooldown<=0   
+    and p_target and p_target.type==2 then -- any player building
+     do_attack(ai_palace, p_target)
+   end
+
+  end
+
+  -- sandworm
+  -- 
+  worm_life-=1
+  -- appear/disappear
+  if worm_life<0 then
+   if worm_segs then
+    -- hide worm
+    worm_segs=nil
+   else
+    -- show worm
+    worm_segs,worm_dir,worm_turn,worm_cols,worm_frame={{rnd"500",rnd"500"}},rnd"1",0,split2d"15,9,4",0
+   end
+   worm_life_start=rnd"5000"
+   worm_life=worm_life_start
+  end
+
+  if worm_segs then
+   -- movement/turning
+   if (t_%6<1 or #worm_segs<30) and worm_frame==0 then
+    while #worm_segs<31 do
+     if (rnd"9"<.5) worm_turn=rnd".04"-.02
+     -- ref to head
+     head_worm_x,head_worm_y=worm_segs[#worm_segs][1],worm_segs[#worm_segs][2]
+     add(worm_segs,{head_worm_x+sin(worm_dir),head_worm_y-cos(worm_dir)})
+     worm_dir+=worm_turn
+    end   
+   end
+   if (#worm_segs>30) del(worm_segs,worm_segs[1])
+   if (worm_frame>0) worm_frame+=1 add_spice_cloud(head_worm_x,head_worm_y,rnd"1")
+   worm_frame%=200
+   --if (worm_life>worm_life_start-128 or worm_life<128) add_spice_cloud(head_worm_x,head_worm_y,rnd"1")
+  end
   
   -- bg work
   assert(coresume(worker_cor))
  end -- no menu
  
- update_collisions()
+ --update_collisions()
+ -- check all collisions
+ clickedsomething=false 
+ -- selected obj ui collision
+ if selected_obj then
+   ui_collision_mode=true
+   check_hover_select(repair_obj)
+   check_hover_select(launch_obj)
+   if (selected_obj.ico_obj and not show_menu and not clickedsomething) check_hover_select(selected_obj.ico_obj) check_hover_select(selected_obj.build_obj)
+   if (show_menu) foreach(selected_obj.build_objs, check_hover_select) foreach(ui_controls, check_hover_select)
+   ui_collision_mode=false
+ end
+ -- check map collisions
+ if not show_menu 
+  and not clickedsomething then  
+  -- unit collisions
+  foreach(units, check_hover_select)
+  -- building collisions 
+  foreach(buildings, check_hover_select)
+ end
+  
+ -- check for radar click
+ if left_button_down
+    and not show_menu 
+    and cursx>89 and cursx<122
+    and cursy>90 and cursy<123 then
+      -- clicked radar
+      camx,camy = mid((cursx-94)*16, cam_max),mid(-10,(cursy-94)*16, cam_max)
+      selected_obj=last_selected_obj -- always do this, in case an obj under rader will select
+ -- clicked something?
+ elseif left_button_clicked then
+  
+  -- update message
+  if (selected_obj and selected_obj.type<=2) set_message(selected_obj.name)
+ 
+  if clickedsomething then   
+    -- clicked factory/quick-build icon?
+    if not show_menu and selected_obj.parent!=nil then 
+     if (selected_obj.func_onclick) selected_obj:func_onclick()
+     selected_obj=last_selected_obj
+     return
+    end
+    -- click button?
+    if (show_menu and selected_subobj.text and selected_subobj.func_onclick) selected_subobj:func_onclick()
+    -- clicked own unit, first time?
+    if (selected_obj.owner==1 and selected_obj.type==1 and selected_obj!=last_selected_obj and selected_obj.speed>0) ssfx"62"    
+    -- clicked enemy object, last clicked ours (unit or palace)?... attack!
+    if (selected_obj.created_by!=1 and last_selected_obj and (last_selected_obj.type==1 or (last_selected_obj.id==19 and target_mode)) and last_selected_obj.owner==1) selected_obj.flash_count=10 do_attack(last_selected_obj, selected_obj) selected_obj=nil
+
+  -- deselect?
+  else
+    -- do we have a unit selected?
+    if selected_obj 
+     and selected_obj.owner==1 
+     and selected_obj.speed>0 
+     and selected_obj.state!=7 then     
+     selected_obj.cor = cocreate(function(unit)
+       move_unit_pos(unit, (camx+cursx)\8, (camy+cursy)\8)
+       do_guard(unit)
+      end)
+
+    end
+    
+    -- placement?
+    local sel_build_obj = selected_obj and selected_obj.build_obj 
+    if sel_build_obj
+     and sel_build_obj.life>=100
+     and placement_pos_ok then
+      -- place object
+      m_map_obj_tree(sel_build_obj.ref,
+       (cursor.x+camx)\8 *8,
+       (cursor.y+camy)\8 *8, 1)      
+      -- reset build
+      reset_build(sel_build_obj)
+      ssfx"61"
+    end
+
+  end 
+  
+  target_mode=false
+  
+ elseif right_button_clicked and not show_menu then
+  -- cancel selection
+  selected_obj,target_mode = nil,false
+ end --if buttonclicked
+
+
 
  last_mouse_btn,last_selected_obj,last_selected_subobj = mouse_btn,selected_obj,selected_subobj 
  t_+=1
@@ -920,9 +1082,289 @@ end
 
 function _draw()
  -- draw the map, objects - everything except ui
- draw_level()
+ --draw_level()
+	cls"15"
+ 
+ -- cam position (+ any "shaking")
+ camera(camx+(16-rnd"32")*shake, camy+(16-rnd"32")*shake)
+ 
+ -- finally, fade out the shake
+ shake = (shake>0.05) and shake*0.95 or 0
+ -- reset to 0 when very low
+ --if (shake<0.05) shake=0
+
+ -- draw sandworm
+ if worm_segs then
+  for i=1,#worm_segs do
+   if (i%2==1) fillp(0xa5a5.8)
+   circfill(
+    worm_segs[i][1]+4,
+    worm_segs[i][2]+4,4,
+    worm_cols[i%#worm_cols+1])
+   fillp()
+  end
+  -- eating?
+  if (worm_frame>0) spr(88+worm_frame\100, head_worm_x, head_worm_y)
+ end
+
+ palt(11,true)
+
+ -- don't trans black
+ palt(0,false) 
+  
+ map(0,0,  0,0,   64,32, 0x8)
+ map(64,0, 0,256, 64,32, 0x8)
+
+
+ -- buildings
+ for building in all(buildings) do 
+  if not show_menu then 
+    building:update()
+    if (building.build_obj) building.build_obj:update()
+  end
+  building:draw()
+  -- reticule
+  if (building == selected_obj) rect(selected_obj.x, selected_obj.y, selected_obj.x+selected_obj.w-1, selected_obj.y+selected_obj.h-1, 7)  
+ end
+
+ pal() 
+ 
+ -- draw units (2-passes, ground & flying)
+ for p=1,2 do
+  for unit in all(units) do
+   if (p==1 and unit.z==1) or (p==2 and unit.z>1) then
+    if (not show_menu) unit:update()
+    if (unit.process!=2 or unit.speed==0) unit:draw()
+    -- reticule
+    if (unit == selected_obj) spr(2, selected_obj.x, selected_obj.y)
+   end
+  end
+ end
+
+ -- particles
+ for p in all(particles) do
+  if (p.pattern) fillp(p.pattern)
+  circfill(p.x,p.y,p.r,p.cols[ flr((#p.cols/p.life_orig)*p.life)+1 ])
+  fillp()
+ end
+
+ -- draw fog-of-war
+ local mapx,mapy=camx\8,camy\8
+ palt(0,false)
+ palt(11,true)
+ for xx=mapx-1,mapx+16 do
+  for yy=mapy-1,mapy+16 do
+    local gx,gy=xx*8,yy*8
+    if fow[xx][yy]!=0 and fow[xx][yy]!=16 then
+     spr(fow[xx][yy]+31,gx,gy)
+    elseif fow[xx][yy]<16 then
+     rectfill(gx, gy, gx+7, gy+7, 0)
+    end
+  end
+ end
+
+
+ 
  -- draw score, mouse, etc.
- draw_ui()
+ --draw_ui()
+ camera()
+ pal()
+ -- selected objects?
+ palt(0,false)
+ 
+ -- top/header bar
+ rectfill(0,0,127,8,9)
+ line(0,9,127,9,4)
+
+ -- 
+ -- draw_radar()
+ -- 
+ rect(90,90,124,124,p_col1)
+ rect(91,91,123,123,p_col2)  
+ rectfill(92,92,122,122,0)
+
+ 
+ -- update/draw message
+ if (msgcount>0) msgcount-=1 ?message,2,2
+
+ -- score
+ ?sub("000000", #strnum+1)..strnum, 103,2, p_col2
+
+ -- turn on/off radar
+ if hq!=last_hq then
+  radar_frame,radar_dir = hq and 1 or 59, hq and 1 or -1
+  if (radar_dir<1) set_message"pOWER LOW.bUILD wINDTRAP"
+  ssfx"55"
+ end  
+ last_hq=hq
+
+ if radar_frame>0 and radar_frame<60 then
+   radar_frame+=radar_dir
+   -- draw radar anim
+   clip(
+     max(109-radar_frame,91),
+     max(109-(radar_frame>20 and radar_frame-20 or 0),92),
+     min(radar_frame*2,32),
+     min((radar_frame>20 and radar_frame-20 or 1)*2,32))
+   for i=1,300 do
+     pset(92+rnd"32",91+rnd"32",5+rnd"3")
+   end
+   clip()
+   return
+ end
+  
+ -- draw radar data
+ for xx=0,30 do
+  for yy=0,30 do
+   local k=xx..","..yy
+   if (radar_data[k]) pset(92+xx,92+yy,radar_data[k])
+  end
+ end
+ 
+ -- draw "view" bounds
+ local cx,cy=92+camx/16,93+camy/16
+ rect(cx,cy, cx+7,cy+6, 7)
+
+ local sel_build_obj = selected_obj and selected_obj.build_obj 
+
+ -- object menu icon/buttons? 
+ if selected_obj and selected_obj.ico_spr then
+  selected_obj.ico_obj:set_pos(109,20)
+  selected_obj.ico_obj:draw()  
+  -- player icons (build, actions, etc.)
+  repair_obj,launch_obj=nil,nil
+  if selected_obj.owner==1 then   
+   -- build
+   if sel_build_obj then
+    sel_build_obj:set_pos(109,44)
+    sel_build_obj:draw()    
+   end
+   -- repair? 
+   if selected_obj.life<selected_obj.hitpoint   
+    and selected_obj.id!=4
+    and (selected_obj.type==2
+      or selected_obj.speed==0) then
+     repair_obj=m_obj_from_ref(obj_data[80], 117,28, 5, {}, nil,draw_action, function()
+      process_click(last_selected_obj, 2)
+     end)     
+     repair_obj:draw()
+   end
+   -- fire palace weapon?   
+   if (selected_obj.id==19 
+    and selected_obj.fire_cooldown<=0)
+     or selected_obj.id==35
+    then
+     launch_obj=m_obj_from_ref(obj_data[81], 109,29, 5, {}, nil,draw_action, function()
+      -- palace? 
+      if last_selected_obj.id!=35 then
+       -- go into launch mode 
+       set_message"pick target"
+       target_mode=true
+      else
+       -- mcv mode
+       local mx,my=last_selected_obj:get_tile_pos()
+       local val=wrap_mget(mx,my)
+       if val>=12 and val<=22 then
+        last_selected_obj.life=0
+        m_map_obj_tree(obj_data[1],mx*8,my*8,1)
+        ssfx"61"
+       end
+       last_selected_obj=nil
+      end
+     end) 
+     launch_obj:draw()  
+   end
+
+  end
+ end
+
+ pal()
+
+ -- placement?
+ if sel_build_obj 
+  and (sel_build_obj.type==4
+   and sel_build_obj.speed==0)
+  and sel_build_obj.life>=100 then
+  -- draw placement
+  -- todo: improve this code!
+  local mxpos,mypos = (cursor.x+camx)\8, (cursor.y+camy)\8
+  local sxpos,sypos,w,h = mxpos*8-camx,mypos*8-camy,sel_build_obj.spr_w,sel_build_obj.spr_h
+  -- check ok to place
+  placement_pos_ok,placement_inner_invalid,placement_damage = false,false,false
+  for xx=-1,w do
+    for yy=-1,h do
+     local val=wrap_mget(mxpos+xx, mypos+yy)
+     if xx==-1 or xx==w or yy==-1 or yy==h then     
+      -- check edges
+      if (val==22 or val>=58 and val<=81) placement_pos_ok=true
+     else
+      -- check inner      
+      if (val>=12 and val<=21) placement_damage=true
+      if (object_tiles[mxpos+xx..","..mypos+yy] or val==0 or val<=11 or val>=23) placement_inner_invalid=true
+     end
+    end
+  end
+  if (placement_inner_invalid)placement_pos_ok=false
+
+  fillp("0b1110110110110111.1")
+  rectfill(sxpos, sypos,
+           sxpos+sel_build_obj.w, sypos+sel_build_obj.h, placement_pos_ok and 11 or 8)
+  fillp()
+ end
+
+
+ if show_menu then  
+  fillp(▒)
+  rectfill(0,0,127,127,0)
+  fillp()  
+  rectfill(3,22,124,95,p_col2)
+  rect(3,22,124,95,p_col1) 
+
+  -- build menu?  
+  if selected_obj.build_objs then
+    selected_obj.valid_build_objs={}
+    rectfill(6,25,27,92,0)
+    local icount=1
+    for i=1,#selected_obj.build_objs do
+     local curr_item=selected_obj.build_objs[i]
+     if not curr_item.req_id
+      or has_obj[selected_obj.created_by][curr_item.req_id]      
+      and curr_item.req_level<=p_level
+     then
+      selected_obj.valid_build_objs[icount]=curr_item
+      if icount>=menu_pos and icount<=menu_pos+2 then
+        curr_item:set_pos(9,28+(icount-menu_pos)*19)
+        curr_item:draw()
+      else
+        -- hide!
+        curr_item:set_pos(-16,16)
+      end
+      -- default selection
+      selected_subobj = selected_subobj or selected_obj.valid_build_objs[1]
+      -- draw selected reticule
+      if selected_subobj == curr_item then 
+        sel_build_item_idx=icount
+        rect(curr_item.x-2, curr_item.y-2, 
+            curr_item.x+17, curr_item.y+17,7)
+        ?selected_subobj.name,30,26
+        ?"cOST:"..selected_subobj.cost,85,33,9
+        ?selected_subobj.description,30,34,6
+      end
+      icount+=1
+     end -- unlocked
+    end -- for
+  end -- has build obs
+
+  -- ui elements (buttons)?
+  for controls in all(ui_controls) do
+    controls:draw()
+  end
+ end  -- if show_menu
+
+ -- cursor
+ palt(11,true)
+ cursor:draw()
+
 end
 
 -->8
@@ -1419,296 +1861,6 @@ end
 -->8
 -- draw related 
 --
-function draw_level()
- -- draw the map, objects - everything except ui
-	cls"15"
- 
- -- cam position (+ any "shaking")
- camera(camx+(16-rnd"32")*shake, camy+(16-rnd"32")*shake)
- 
- -- finally, fade out the shake
- shake = (shake>0.05) and shake*0.95 or 0
- -- reset to 0 when very low
- --if (shake<0.05) shake=0
-
- -- draw sandworm
- if worm_segs then
-  for i=1,#worm_segs do
-   if (i%2==1) fillp(0xa5a5.8)
-   circfill(
-    worm_segs[i][1]+4,
-    worm_segs[i][2]+4,4,
-    worm_cols[i%#worm_cols+1])
-   fillp()
-  end
-  -- eating?
-  if (worm_frame>0) spr(88+worm_frame, head_worm_x, head_worm_y)
- end
-
- palt(11,true)
-
- -- don't trans black
- palt(0,false) 
-  
- map(0,0,  0,0,   64,32, 0x8)
- map(64,0, 0,256, 64,32, 0x8)
-
-
- -- buildings
- for building in all(buildings) do 
-  if not show_menu then 
-    building:update()
-    if (building.build_obj) building.build_obj:update()
-  end
-  building:draw()
-  -- reticule
-  if (building == selected_obj) rect(selected_obj.x, selected_obj.y, selected_obj.x+selected_obj.w-1, selected_obj.y+selected_obj.h-1, 7)  
- end
-
- pal() 
- 
- -- draw units (2-passes, ground & flying)
- for p=1,2 do
-  for unit in all(units) do
-   if (p==1 and unit.z==1) or (p==2 and unit.z>1) then
-    if (not show_menu) unit:update()
-    if (unit.process!=2 or unit.speed==0) unit:draw()
-    -- reticule
-    if (unit == selected_obj) spr(2, selected_obj.x, selected_obj.y)
-   end
-  end
- end
-
- -- particles
- for p in all(particles) do
-  if (p.pattern) fillp(p.pattern)
-  circfill(p.x,p.y,p.r,p.cols[ flr((#p.cols/p.life_orig)*p.life)+1 ])
-  fillp()
- end
-
- -- draw fog-of-war
- local mapx,mapy=camx\8,camy\8
- palt(0,false)
- palt(11,true)
- for xx=mapx-1,mapx+16 do
-  for yy=mapy-1,mapy+16 do
-    local gx,gy=xx*8,yy*8
-    if fow[xx][yy]!=0 and fow[xx][yy]!=16 then
-     spr(fow[xx][yy]+31,gx,gy)
-    elseif fow[xx][yy]<16 then
-     rectfill(gx, gy, gx+7, gy+7, 0)
-    end
-  end
- end
-
-end
-
-function set_message(msg)
-  message,msgcount = msg,500
-end
-
-function draw_ui()
- -- ui (score, mouse, etc.)
- camera()
- pal()
- -- selected objects?
- palt(0,false)
- 
- -- top/header bar
- rectfill(0,0,127,8,9)
- line(0,9,127,9,4)
-
- -- 
- -- draw_radar()
- -- 
- rect(90,90,124,124,p_col1)
- rect(91,91,123,123,p_col2)  
- rectfill(92,92,122,122,0)
-
- 
- -- update/draw message
- if (msgcount>0) msgcount-=1 ?message,2,2
-
- -- score
- ?sub("000000", #strnum+1)..strnum, 103,2, p_col2
-
- -- turn on/off radar
- if hq!=last_hq then
-  radar_frame,radar_dir = hq and 1 or 59, hq and 1 or -1
-  if (radar_dir<1) set_message"pOWER LOW.bUILD wINDTRAP"
-  ssfx"55"
- end  
- last_hq=hq
-
- if radar_frame>0 and radar_frame<60 then
-   radar_frame+=radar_dir
-   -- draw radar anim
-   clip(
-     max(109-radar_frame,91),
-     max(109-(radar_frame>20 and radar_frame-20 or 0),92),
-     min(radar_frame*2,32),
-     min((radar_frame>20 and radar_frame-20 or 1)*2,32))
-   for i=1,300 do
-     pset(92+rnd"32",91+rnd"32",5+rnd"3")
-   end
-   clip()
-   return
- end
-  
- -- draw radar data
- for xx=0,30 do
-  for yy=0,30 do
-   local k=xx..","..yy
-   if (radar_data[k]) pset(92+xx,92+yy,radar_data[k])
-  end
- end
- 
- -- draw "view" bounds
- local cx,cy=92+camx/16,93+camy/16
- rect(cx,cy, cx+7,cy+6, 7)
-
- local sel_build_obj = selected_obj and selected_obj.build_obj 
-
- -- object menu icon/buttons? 
- if selected_obj and selected_obj.ico_spr then
-  selected_obj.ico_obj:set_pos(109,20)
-  selected_obj.ico_obj:draw()  
-  -- player icons (build, actions, etc.)
-  repair_obj,launch_obj=nil,nil
-  if selected_obj.owner==1 then   
-   -- build
-   if sel_build_obj then
-    sel_build_obj:set_pos(109,44)
-    sel_build_obj:draw()    
-   end
-   -- repair? 
-   if selected_obj.life<selected_obj.hitpoint   
-    and selected_obj.id!=4
-    and (selected_obj.type==2
-      or selected_obj.speed==0) then
-     repair_obj=m_obj_from_ref(obj_data[80], 117,28, 5, {}, nil,draw_action, function()
-      process_click(last_selected_obj, 2)
-     end)     
-     repair_obj:draw()
-   end
-   -- fire palace weapon?   
-   if (selected_obj.id==19 
-    and selected_obj.fire_cooldown<=0)
-     or selected_obj.id==35
-    then
-     launch_obj=m_obj_from_ref(obj_data[81], 109,29, 5, {}, nil,draw_action, function()
-      -- palace? 
-      if last_selected_obj.id!=35 then
-       -- go into launch mode 
-       set_message"pick target"
-       target_mode=true
-      else
-       -- mcv mode
-       local mx,my=last_selected_obj:get_tile_pos()
-       local val=wrap_mget(mx,my)
-       if val>=12 and val<=22 then
-        last_selected_obj.life=0
-        m_map_obj_tree(obj_data[1],mx*8,my*8,1)
-        ssfx"61"
-       end
-       last_selected_obj=nil
-      end
-     end) 
-     launch_obj:draw()  
-   end
-
-  end
- end
-
- pal()
-
- -- placement?
- if sel_build_obj 
-  and (sel_build_obj.type==4
-   and sel_build_obj.speed==0)
-  and sel_build_obj.life>=100 then
-  -- draw placement
-  -- todo: improve this code!
-  local mxpos,mypos = (cursor.x+camx)\8, (cursor.y+camy)\8
-  local sxpos,sypos,w,h = mxpos*8-camx,mypos*8-camy,sel_build_obj.spr_w,sel_build_obj.spr_h
-  -- check ok to place
-  placement_pos_ok,placement_inner_invalid,placement_damage = false,false,false
-  for xx=-1,w do
-    for yy=-1,h do
-     local val=wrap_mget(mxpos+xx, mypos+yy)
-     if xx==-1 or xx==w or yy==-1 or yy==h then     
-      -- check edges
-      if (val==22 or val>=58 and val<=81) placement_pos_ok=true
-     else
-      -- check inner      
-      if (val>=12 and val<=21) placement_damage=true
-      if (object_tiles[mxpos+xx..","..mypos+yy] or val==0 or val<=11 or val>=23) placement_inner_invalid=true
-     end
-    end
-  end
-  if (placement_inner_invalid)placement_pos_ok=false
-
-  fillp("0b1110110110110111.1")
-  rectfill(sxpos, sypos,
-           sxpos+sel_build_obj.w, sypos+sel_build_obj.h, placement_pos_ok and 11 or 8)
-  fillp()
- end
-
-
- if show_menu then  
-  fillp(▒)
-  rectfill(0,0,127,127,0)
-  fillp()  
-  rectfill(3,22,124,95,p_col2)
-  rect(3,22,124,95,p_col1) 
-
-  -- build menu?  
-  if selected_obj.build_objs then
-    selected_obj.valid_build_objs={}
-    rectfill(6,25,27,92,0)
-    local icount=1
-    for i=1,#selected_obj.build_objs do
-     local curr_item=selected_obj.build_objs[i]
-     if not curr_item.req_id
-      or has_obj[selected_obj.created_by][curr_item.req_id]      
-      and curr_item.req_level<=p_level
-     then
-      selected_obj.valid_build_objs[icount]=curr_item
-      if icount>=menu_pos and icount<=menu_pos+2 then
-        curr_item:set_pos(9,28+(icount-menu_pos)*19)
-        curr_item:draw()
-      else
-        -- hide!
-        curr_item:set_pos(-16,16)
-      end
-      -- default selection
-      selected_subobj = selected_subobj or selected_obj.valid_build_objs[1]
-      -- draw selected reticule
-      if selected_subobj == curr_item then 
-        sel_build_item_idx=icount
-        rect(curr_item.x-2, curr_item.y-2, 
-            curr_item.x+17, curr_item.y+17,7)
-        ?selected_subobj.name,30,26
-        ?"cOST:"..selected_subobj.cost,85,33,9
-        ?selected_subobj.description,30,34,6
-      end
-      icount+=1
-     end -- unlocked
-    end -- for
-  end -- has build obs
-
-  -- ui elements (buttons)?
-  for controls in all(ui_controls) do
-    controls:draw()
-  end
- end  -- if show_menu
-
- -- cursor
- palt(11,true)
- cursor:draw()
-
-end
-
 function m_button(x,text,func_onclick,_w)
  add(ui_controls,{
   x=x,
@@ -1728,98 +1880,14 @@ function m_button(x,text,func_onclick,_w)
  })
 end
 
+function set_message(msg)
+  message,msgcount = msg,500
+end
 
 
 -->8
 -- game flow / collisions
 
-
--- check all collisions
-function update_collisions()
- clickedsomething=false 
- -- selected obj ui collision
- if selected_obj then
-   ui_collision_mode=true
-   check_hover_select(repair_obj)
-   check_hover_select(launch_obj)
-   if (selected_obj.ico_obj and not show_menu and not clickedsomething) check_hover_select(selected_obj.ico_obj) check_hover_select(selected_obj.build_obj)
-   if (show_menu) foreach(selected_obj.build_objs, check_hover_select) foreach(ui_controls, check_hover_select)
-   ui_collision_mode=false
- end
- -- check map collisions
- if not show_menu 
-  and not clickedsomething then  
-  -- unit collisions
-  foreach(units, check_hover_select)
-  -- building collisions 
-  foreach(buildings, check_hover_select)
- end
-  
- -- check for radar click
- if left_button_down
-    and not show_menu 
-    and cursx>89 and cursx<122
-    and cursy>90 and cursy<123 then
-      -- clicked radar
-      camx,camy = mid((cursx-94)*16, cam_max),mid(-10,(cursy-94)*16, cam_max)
-      selected_obj=last_selected_obj -- always do this, in case an obj under rader will select
- -- clicked something?
- elseif left_button_clicked then
-  
-  -- update message
-  if (selected_obj and selected_obj.type<=2) set_message(selected_obj.name)
- 
-  if clickedsomething then   
-    -- clicked factory/quick-build icon?
-    if not show_menu and selected_obj.parent!=nil then 
-     if (selected_obj.func_onclick) selected_obj:func_onclick()
-     selected_obj=last_selected_obj
-     return
-    end
-    -- click button?
-    if (show_menu and selected_subobj.text and selected_subobj.func_onclick) selected_subobj:func_onclick()
-    -- clicked own unit, first time?
-    if (selected_obj.owner==1 and selected_obj.type==1 and selected_obj!=last_selected_obj and selected_obj.speed>0) ssfx"62"    
-    -- clicked enemy object, last clicked ours (unit or palace)?... attack!
-    if (selected_obj.created_by!=1 and last_selected_obj and (last_selected_obj.type==1 or (last_selected_obj.id==19 and target_mode)) and last_selected_obj.owner==1) selected_obj.flash_count=10 do_attack(last_selected_obj, selected_obj) selected_obj=nil
-
-  -- deselect?
-  else
-    -- do we have a unit selected?
-    if selected_obj 
-     and selected_obj.owner==1 
-     and selected_obj.speed>0 
-     and selected_obj.state!=7 then     
-     selected_obj.cor = cocreate(function(unit)
-       move_unit_pos(unit, (camx+cursx)\8, (camy+cursy)\8)
-       do_guard(unit)
-      end)
-
-    end
-    
-    -- placement?
-    local sel_build_obj = selected_obj and selected_obj.build_obj 
-    if sel_build_obj
-     and sel_build_obj.life>=100
-     and placement_pos_ok then
-      -- place object
-      m_map_obj_tree(sel_build_obj.ref,
-       (cursor.x+camx)\8 *8,
-       (cursor.y+camy)\8 *8, 1)      
-      -- reset build
-      reset_build(sel_build_obj)
-      ssfx"61"
-    end
-
-  end 
-  
-  target_mode=false
-  
- elseif right_button_clicked and not show_menu then
-  -- cancel selection
-  selected_obj,target_mode = nil,false
- end --if buttonclicked
-end
 
 function reset_build(obj)
  obj.life,obj.process,obj.spent,obj.done = 0,0,0,false
@@ -1886,86 +1954,7 @@ end
 -- whether worm is at surface (+ve) or not
 worm_life=0
 
--- ai strategy code (attack, build, repair, etc.)
-function update_ai()
- -- depending on ai level...
- if t()%ai_level==0 then
-  --
-  -- unit attacks
-  -- 
-  -- find the first ai unit and attack player  
-  local ai_unit=rnd(units)
-  if ai_unit.owner==2 and ai_awake[ai_unit.faction] and ai_unit.arms>0 and ai_unit.state==0 then
-   -- select a random target (unit or building)
-   attack_rnd_enemy(ai_unit)
-  end
-  
-  -- build units/repair
-  -- 
-  local ai_building=rnd(buildings) 
-  -- if ai owned...
-  --  is factory, builds units and is not already building...
-  if ai_building.owner==2    
-    and (not ai_building.build_obj or ai_building.build_obj.process!=1) then    
-    -- select a random unit to build
-    local u=rnd(ai_building.build_objs)
-    if u and u.speed>0 then
-     u:func_onclick()
-    end    
 
-    -- repair?
-    if ai_building.life<ai_building.hitpoint and ai_building.process!=2 then
-     -- auto-repair
-     process_click(ai_building, 2)
-    end
-  end
-
-  -- fire palace weapons
-  -- 
-  local ai_palace = safe_rnd(has_obj[2][19])
-  if ai_palace 
-   and ai_awake[ai_palace.faction]
-   and ai_palace.fire_cooldown<=0   
-   and p_target and p_target.type==2 then -- any player building
-    do_attack(ai_palace, p_target)
-  end
-
- end
-
- -- sandworm
- -- 
- worm_life-=1
- -- appear/disappear
- if worm_life<0 then
-  if worm_segs then
-   -- hide worm
-   worm_segs=nil
-  else
-   -- show worm
-   worm_segs,worm_dir,worm_turn,worm_cols,worm_frame={{rnd"500",rnd"500"}},rnd"1",0,split2d"15,9,4",0
-  end
-  worm_life_start=rnd"5000"
-  worm_life=worm_life_start
- end
-
- if worm_segs then
-  -- movement/turning
-  if (t_%6<1 or #worm_segs<30) and worm_frame==0 then
-   while #worm_segs<31 do
-    if (rnd"9"<.5) worm_turn=rnd".04"-.02
-    -- ref to head
-    head_worm_x,head_worm_y=worm_segs[#worm_segs][1],worm_segs[#worm_segs][2]
-    add(worm_segs,{head_worm_x+sin(worm_dir),head_worm_y-cos(worm_dir)})
-    worm_dir+=worm_turn
-   end   
-  end
-  if (#worm_segs>30) del(worm_segs,worm_segs[1])
-  if (worm_frame>0) worm_frame+=.01 add_spice_cloud(head_worm_x,head_worm_y,rnd"1")
-  if (worm_frame>2) worm_frame=0
-  --if (worm_life>worm_life_start-128 or worm_life<128) add_spice_cloud(head_worm_x,head_worm_y,rnd"1")
- end
-
-end
 
 
 function attack_rnd_enemy(obj) 
@@ -2354,26 +2343,26 @@ __map__
 00000000000000000000110d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d1200000000040507000000000000130d0d0d0d0406000000000000000d0d0d0d0d0d122f2f00000000000000000000000000000000000000000000000000000000000000000000110d0d120000000000000000000000000c0d0d0d0d0d0d0d0d0d14002f2f
 000000000000000000110d0d0d0d0d0d0d0d0d0d0d0d100d0d0d100d12000007050505000000000000000c0d0d0d0505050505060000000c0d0d0d0d0d0d2f2f000000000000000000000000000000000000000000000000000000000000000000110d0d0d0e000000000000000000000000000c0d0d0d0d0d0d140000002f2f
 0000000000000000110d0d0d0d0d100d100d0d0d0d140000000000130d0e04050505050000000000000013100d140a09050505050506000c0d0d0d0d0d0d2f2f00000a0000000000000000000000000000000000000000000000110d0d1200110d0d0d0d0d0e000000000000000000000000000c0d0d0d0d0d14000000002f2f
-0d0d0f0d0d0f0f0d0d0d0d0d0d14000000130d0d0e00000000000000000005090905050000000000000000000004050905090909050a110d0d0d0d0d0d0d2f2f000000000000110f1200000000000000000000000000110d0d0f0d0d0d0d0d0d0d0d0d0d0d0e000000000000000000000000000c0d0d0d0d0e00000000002f2f
+0d0d0f0d0d0f0f0d0d0d0d0d0d14000000130d0d0e00000000000000000005090905050000000000000000000004050905090909050a110d0d0d0d0d0d0d2f2f000000000000110f1200000000000000000000000000110d0d0f0d0d0d0d0d0d0d0d0d0d0d0e000000000000000000310000000c0d0d0d0d0e00000000002f2f
 0d0d0d0d0d0d0d0d0d0d0d0d0d00000000000c0d0e0000000405050506000509050905000000000000000000000505090905090505110d0d0d0d0d0d0d142f2f000a00000000130d14000000000000000000000000000d0d0d0d0d0d17190d0d0d0d0d0d0d0e00000000000000000000000000130d0d0d0d0e00000000002f2f
 00130d0d100d0d100d100d0d140000000000130d140000000a09090508000a0505050600000000000000000000050909090509050c0d0d0d0d0d0d0e00002f2f000000000000000000000000000000000000000000000c0d0d0d0d0d1d1b1b18190d0d0d0d0e0000000000000007050600000000130d0d0d0e00000000002f2f
 000000000000000000000c0d000000000000000c120000000a050508110f0d12050a00000000000000000000000a050909050905060c0d0d0d0d0d0e00002f2f000000000000000000000000000000000000000000000d0d0d0d0d0d0d1d1b1c1f0d140406130d0f0d0e00000005050500000000000c0d0d0e00111200002f2f
 000000000000000000000d0d000000000000000c0e0000000a0508110d0d0d0d12000000000000000000110d12000a050509090505130d0d0d0d0d0d12002f2f0000000000000000000000000000110f120000000000130d0d140000000c1d1e0d14040505000c0d0d000000000805080000000000130d0d0d0d0d0d0d0d2f2f
-000000000000000000000d0d000000000000110d0e000000000a110d340d0d0d0e0000000000000000000d0d0d1200000a05090905060c0d0d0d0d0d0e002f2f00070000000000000000110d0f0f0d0d14000000000000131400000000130d0d0d0405050800130d0d00000000000000000000000000130d0d0d0d0d0d0d2f2f
-0000000000000000000013140000000000000c0d0d1200000011620d0d6e0d0d0e000000000000000000130d0d1400000005050505060c0d0d0d0d0d0d002f2f0506000000000000000000130d0d0d0d0000000000000000000000000000130d14050505000000130e0000000000000000000000000000130d0d0d0d0d0d2f2f
-000000000000000000220000000000000000130d350d0d0f0d0d0d0d0d0d0d0d0e00000000000000000000131400000000000a0a110d0d0d0d0d0d0d0d002f2f05050600000000000000000000130d0e0000000000000000000000000000000405050508000405060e000000000000000000000000000000130d0d0d100d2f2f
-00000000000a110f0e00000000000000000000130d0d0122830d680d3d0d0d0d0d1200000000000000000000000000000000110d0d0d0d0d0d0d0d0d0e002f2f0905000000000000000000000000000d1200111200000000000000000405050505050811120a080c0d0d12000000000000000011120007050600070506002f2f
-00000405070c0d0d0000000000000000000031000c0d22220d0d0d0d0d0d0d0d0d0d000000000000000000000000000000110d0d0d0d0d0d0d0d0d0d0e002f2f090a110d12000000000000000000000c0d0d0d0d12000000000000000a0505000a08110d0d0f0e00130d0d12000000000000110d0d040505050505050a002f2f
-00000a0905070d14000000000000000000000011420d6a0d800d0d0d0d0d0d0d0d0d120000000000000000000000000000130d0d0d0d0d0d0d0d0d0d14002f2f0a000c0d0d120000000000000000000c0d0d0d0d0e0000000000000008050800000a130d0d140705070013140000000007000c0d0d0a0909090909050a002f2f
-00070509090a1300000000000000000000110d0d0d0d0d0d0d0d0d100d0d0d0d0d0d0d000000000000000000000000000000130d0d0d0d0d0d14070600002f2f00000d0d0d0e0000000000000000000c0d0d1400000000000000000000000007050700070505050530000000000000330506130d140505090909090506002f2f
-04050909050505000a0000000000110d0d0d0d0d620d0d380d14004900130d0d0d0d0d0e0000000000000000000000000000000000130d0d1407050500002f2f00000c0d0d0d0000000000000000110d0d140000000000040506000000000005050505050905050800000000000000000505060c0a0505050909050800002f2f
-0505050505050800110f0d0d0f0f0d0d0d0d100d0d0d0d0d140037003800130d0d0d0d00000000000000000000000000000000000000130d0705050500002f2f00110d0d0d0d0e000000000000000c0d0e07070600000005050506000000000a05090509090905000000000000000000300811330a0505090905080000002f2f
-05090505080000110d0d0d10100d0d0d10140013100d0d14070a0000000000130d100d12000000000000000000000000000000000000070a0509090506002f2f000c0d0d0d0d00000000000000000c0d0e0505050600000509050500000000000509090909050800000034000000000000110d0d120a05050508280033002f2f
+000000000000000000000d0d000000000000110d0e003100000a110d0d0d0d0d0e0000000000000000000d0d0d1200000a05090905060c0d0d0d0d0d0e002f2f00070000000000000000110d0f0f0d0d14000000000000131400000000130d0d0d0405050800130d0d00000000000000000000000000130d0d0d0d0d0d0d2f2f
+0000000000000000000013140000000000000c0d0d12000000110d0d0d0d0d0d0e000000000000000000130d0d1400000005050505060c0d0d0d0d0d0d002f2f0506000000000000000000130d0d0d0d0000000000000000000000000000130d14050505000000130e0000000000000000000000000000130d0d0d0d0d0d2f2f
+000000000000000000220000000000000000130d340d0d0f0d340d0d0d0d0d0d0e00000000000000000000131400000000000a0a110d0d0d0d0d0d0d0d002f2f05050600000000000000000000130d0e0000000000000000000000000000000405050508000405060e000000000000000000000000000000130d0d0d100d2f2f
+00000000000a110f0e00000000000000000000130d0d01220d0d0d0d0d0d0d0d0d1200000000000000000000000000000000110d0d0d0d0d0d0d0d0d0e002f2f0905000000000000000000000000000d1200111200000000000000000405050505050811120a080c0d0d12000000000000000011123007050600070506002f2f
+00000405070c0d0d0000000000000000000031000c0d22220d340d0d0d0d0d0d0d0d000000000000000000000000000000110d0d0d0d0d0d0d0d0d0d0e002f2f090a110d12000000000000000000000c0d0d0d0d12000000000000000a0505000a08110d0d0f0e00130d0d12000000330000110d0d040505050505050a002f2f
+00000a0905070d140000000000000000000000110d0d340d0d0d0d0d0d0d0d0d0d0d120000000000000000000000000000130d0d0d0d0d0d0d0d0d0d14002f2f0a000c0d0d120000000000000000000c0d0d0d0d0e0000330031000008050800000a130d0d140705070013140000000007000c0d0d0a0909090909050a002f2f
+00070509090a1300000000000000000000110d0d0d0d0d0d0d0d0d100d0d0d0d0d0d0d000000000000000000000000000000130d0d0d0d0d0d14070600002f2f00000d0d0d0e0000000000000000000c0d0d1400000000000000000000000007050700070505050530000000000000000506130d140505090909090506002f2f
+04050909050505000a0000000000110d0d0d0d0d0d0d0d0d0d14310000130d0d0d0d0d0e0000000000000000000000000000000000130d0d1407050500002f2f00000c0d0d0d0000000000000000110d0d140000000000040506000000000005050505050905050800000000000000000505060c0a0505050909050800002f2f
+0505050505050800110f0d0d0f0f0d0d0d0d100d0d0d0d0d140000000000130d0d0d0d00000000000000000000000000000000000000130d0705050500002f2f00110d0d0d0d0e000000000000000c0d0e07070600000005050506000000000a05090509090905000000000000000000300811330a0505090905080000002f2f
+05090505080000110d0d0d10100d0d0d10140013100d0d14070a0000000000130d100d12000000000000000000000000000000000000070a0509090506002f2f000c0d0d0d0d00000000000000000c0d0e0505050600000509050500000000000509090909050834000000000000000000110d0d120a05050508000033002f2f
 0a0508000000000d0d140000000000000000000000000a050508000a0000000000000c0d000000000000110d0d12000000000000000005090909050800002f2f110d0d0d0d1400000000000000000c0d0e0505050500000505090500000000000a050509090500000000000000110d0d330d6a22246c24240d0f0d1200002f2f
 000000000000130d14000000000000000000000000000000000000000000000000000c0d1200000000000d0d0d0d0d120000000000000a05050508000a002f2f130d0d0d0d0000000000000000000c0d0e0a050505000005090905000a0000000000050505080000000000110d0d0d0d0d0d22222424242424240d0d0d122f2f
-000000000000000000000000000000000000000000000000000000000000000000000c0d1400000000110d17190d0d0d0d120000000000000000001112002f2f06130d0d0e0000000000000000000c0d0d0d12050800000a050505060000000000000a05080000003300110d0d0d0d17181c2440221a1c4422220d0d0d0d2f2f
+000000000000000000000000000000000000000000000000000000000000000000000c0d1400000000110d17190d0d0d0d120000000000000000001112002f2f06130d0d0e0000000000000000000c0d0d0d12050800000a050505060000000000000a05080000000000110d0d0d0d17181c2440221a1c4422220d0d0d0d2f2f
 000000000000000000000000000000000000000000000000000000000000000000110d0d00000000000d0d1d1f0d0d0d0d14000000000000000000130d0f2f2f05060c0d0e0000000000000000000c0d0d0d0d0f0d120000000000000405050600000000000000000000130d0d340d1d1f2424222224242222220d100d0d2f2f
-0000000000000000000000000000000000000000000000000000000000000000110d0d140000000000130d0d0d0d0d0d0d000000000000000000000000132f2f050a0d0d0d1200000000000000000c0d0d0e0000130d0d0d1200000005050a00000000000000000000000000130d0d6022244222422268222414340000002f2f
+0000000000000000000000000000000000000000000000000000000000000000110d0d140000000000130d0d0d0d0d0d0d000000000000000000000000132f2f050a0d0d0d1200000000000000000c0d0d0e0000130d0d0d1200000005050a00003300000000000000000000130d0d6022244222422268222414340000002f2f
 0d0f0d12000000000000000000000000000000110f0d0d1200000000000000000c1400000000000000000c0d0d0d0d0d14000000000000000000000000002f2f00000c0d0d0d0d120000000000110d0d0d14000000130d0d0d1400000a0505060000000000000000000000000000132222242222222222221400000000002f2f
 0d0d0d0d1200000000000000000000000000110d0d0d0d0d140000000000001114000000000000000000130d0d0d0d0d00000000000000000000000000002f2f0000130d0d0d0d140000000000000c0d1400000000000c0d14000000000505050000000000000000000000000000000000000000003100000000000000002f2f
 0d0d0d0d14000000000000000000000000000d0d0d0d0d0e00000000000000000000000000000000000000130d0d0d1400000000000000000000000000002f2f05060000000000000000000000001314000000000000131400000000000a05080000000000000000000000000000000000000033000000000000000000002f2f
