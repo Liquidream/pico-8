@@ -297,8 +297,8 @@ function load_level(num)
  
 
  --debug
- num=3
- p_fact=3 -- (1=atreides, 2=ordos, 3-harkonen)
+ --num=3
+ --p_fact=3 -- (1=atreides, 2=ordos, 3-harkonen)
 
  -- printh("in load_level("..num..")...")
  -- printh("p_fact = "..p_fact)
