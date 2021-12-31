@@ -17,7 +17,7 @@ faction_cols = {
  { 12, 1}, -- 1 = Atreides
  { 11, 3}, -- 2 = Ordos
  { 8,  2}, -- 3 = Harkonnen
- { 14, 2}, -- 4 = Emperor?
+ { 14, 2}, -- 4 = Emperor
 }
 
 -- cart modes
@@ -26,7 +26,6 @@ houseselect_mode=2
 levelintro_mode=3
 levelend_mode=4
 levelselect_mode=5
-
 
 
 mission_data={
@@ -142,17 +141,17 @@ function _init()
  --mode = houseselect_mode
  --mode = levelselect_mode
  --mode = levelintro_mode
- --mode = levelend_mode 
-
+ --mode = levelend_mode
+ --p_fact=2
+ --p_level=2
 
  if (mode==title_mode) init_title()
  if (mode==houseselect_mode) init_houseselect()
  if (mode==levelintro_mode)  init_levelintro() 
  if (mode==levelend_mode)  init_levelend()
  if (mode==levelselect_mode) init_levelselect() 
- --if (mode==levelselect_mode) p_fact=3 p_level=2 init_levelselect() 
 
-  menuitem(1,"!wipe save data!",reset_saved_data)
+ menuitem(1,"!wipe save data!",reset_saved_data)
 
 end
 
@@ -294,7 +293,6 @@ end
 
 
 function load_level(num)
- 
 
  --debug
  --num=3
@@ -672,15 +670,18 @@ function init_levelend()
  pal()
  pal(3, 137, 1)
 
+ p_col1 = faction_cols[p_fact][1]
+ p_col2 = faction_cols[p_fact][2]
+
  -- debug testing
- -- p_score=500
+ -- p_score=1019
  -- p_time=5000 
- -- p_harvested=30000
- -- ai_harvested=25000
- -- p_units=302
- -- ai_units=75
- -- p_buildings=74
- -- ai_buildings=13
+ -- p_harvested=13587 --1/4
+ -- ai_harvested=13245.75 --1/4
+ -- p_units=213
+ -- ai_units=25
+ -- p_buildings=49
+ -- ai_buildings=9
 
  local hours = flr(p_time / 3600 )
  p_time = p_time - hours * 3600
@@ -699,11 +700,11 @@ function init_levelend()
  dset(40, 0) -- clear endstate
 
  stats={
- 	{ 0, p_harvested, 62, 8, 60, p_harvested },
+ 	{ 0, p_harvested, 62, p_col1, 60, p_harvested },
  	{ 0, ai_harvested, 68, 6, 60, p_harvested },
-  { 0, p_units, 85, 8, 40, p_units },
+  { 0, p_units, 85, p_col1, 40, p_units },
   { 0, ai_units, 91, 6, 40, p_units },
-  { 0, p_buildings, 107, 8, 20, p_buildings},
+  { 0, p_buildings, 107, p_col1, 20, p_buildings},
   { 0, ai_buildings, 113, 6, 20, p_buildings }
   }
  curr_stat=1
@@ -743,7 +744,6 @@ end
 
 function draw_levelend()
  cls()
-
  --
  -- init custom screen palette
  --
@@ -768,8 +768,17 @@ function draw_levelend()
 	line(26,56,100,56,9)
  sprint("SPICE HARVESTED BY",28,53)
  sprint("  YOU:\nENEMY:",11,61)
- sprint(flr(stats[1][1]).."\n"..flr(stats[2][1]),100,61)
- 
+
+ -- handle big numbers
+ temp={0,0}
+ for i=1,2 do
+  temp[i]=stats[i][1]>>16
+  for j=1,3 do
+   temp[i]+=stats[i][1]>>16
+  end
+ end  
+ sprint(tostr(temp[1],0x2).."\n"..tostr(temp[2],0x2),100,61)
+  
  rect(8,79,120,98,4)
  line(26,79,100,79,9)
  sprint("UNITS DESTROYED BY",28,76)
@@ -884,7 +893,6 @@ function play_map_sequence(seqnum)
  pal(12, 140, 1) -- light blue > royal blue
  pal(11, 139, 1) -- light green > grass green
  pal(10, 3, 1)   -- yellow > rough green
- --pal(8, 136, 1) -- red > cherry
  pal(6, 143, 1)  -- skin > peach
  pal(13, 134, 1) -- greyblue > beige
  pal(5, 142, 1)  -- dark red > peach2
@@ -892,10 +900,6 @@ function play_map_sequence(seqnum)
  printo("your next conquest",28,7,8,0) 
  ssprint("your next conquest",28,7, 8,0,5) 
  
--- for i=0,15 do 
---  rectfill(i*8,20,i*8+7,28,i)
--- end
-
  if seqnum > 2 then
   setmap(0, map_cols[col_borderline])
  end
@@ -1338,7 +1342,7 @@ end
 
 
 -->8
--- 3d funcs
+-- 3d funcs (by freds72)
 
 function v2_dot(a,b)
  return a[1]*b[1]+a[2]*b[2]
@@ -1441,7 +1445,7 @@ end
 
 function wait(num)
  for i=1,num do
- yield()--flip()
+ yield()
  end 
 end
 
@@ -1524,17 +1528,11 @@ function load_gfx_page(gfx_num)
  req_gfx_num = gfx_num
 end
 
--- skip through compressed data
--- blocks and load the one at
--- index
 function load_gfx(index,x,y)
  local offset=0x0000 -- screen memory
  for i=0,index-1 do
   offset += peek(offset+0) + peek(offset+1)*256 + 2
  end
- -- use sget,sset to write back
- -- to the spritesheet instead
- -- of the screen
  px9_decomp(x,y,offset+2,pget,pset)
 end
 
@@ -1612,7 +1610,6 @@ end
                 end
                 pr[a]=l
             end
-
 
             local v=l[predict and 1 or gnp"2"]
 
