@@ -11,7 +11,7 @@ __lua__
 -- constants
 --debug=true
 
-game_cart = "pico-dune.p8" --_fmt.p8"
+game_cart = "pico-dune.p8" --_min
 
 faction_cols = {
  { 12, 1}, -- 1 = Atreides
@@ -143,7 +143,7 @@ function _init()
  --mode = levelintro_mode
  --mode = levelend_mode
  --p_fact=2
- --p_level=2
+ --p_level=3
 
  if (mode==title_mode) init_title()
  if (mode==houseselect_mode) init_houseselect()
@@ -676,10 +676,10 @@ function init_levelend()
  -- debug testing
  -- p_score=1019
  -- p_time=5000 
- -- p_harvested=13587 --1/4
+ -- p_harvested=1587 --1/4
  -- ai_harvested=13245.75 --1/4
- -- p_units=213
- -- ai_units=25
+ -- p_units=21
+ -- ai_units=225
  -- p_buildings=49
  -- ai_buildings=9
 
@@ -698,14 +698,17 @@ function init_levelend()
  printh("p_level now set to = "..p_level)
  dset(0, p_level)
  dset(40, 0) -- clear endstate
-
+ 
+ local max_harvested=max(p_harvested,ai_harvested)
+ local max_units=max(p_units,ai_units)
+ local max_buildings=max(p_buildings,ai_buildings)
  stats={
- 	{ 0, p_harvested, 62, p_col1, 60, p_harvested },
- 	{ 0, ai_harvested, 68, 6, 60, p_harvested },
-  { 0, p_units, 85, p_col1, 40, p_units },
-  { 0, ai_units, 91, 6, 40, p_units },
-  { 0, p_buildings, 107, p_col1, 20, p_buildings},
-  { 0, ai_buildings, 113, 6, 20, p_buildings }
+ 	{ 0, p_harvested, 62, p_col1, 60, max_harvested },
+ 	{ 0, ai_harvested, 68, 6, 60, max_harvested },
+  { 0, p_units, 85, p_col1, 40, max_units },
+  { 0, ai_units, 91, 6, 40, max_units },
+  { 0, p_buildings, 107, p_col1, 20, max_buildings},
+  { 0, ai_buildings, 113, 6, 20, max_buildings }
   }
  curr_stat=1
  stat_delay=100

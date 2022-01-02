@@ -47,7 +47,7 @@ if(_k==_c) _af()
 if(_k==_d) _al()
 if(_k==_e)  _at()
 if(_k==_f)  _a8()
-if(_k==_g) _bm()
+if(_k==_g) _bp()
 menuitem(1,"!wipe save data!",_p)
 end
 function _update60()
@@ -65,16 +65,16 @@ end
 elseif _k==_e then
 _ax()
 elseif _k==_f then
-_bi()
+_bl()
 if _q() then
 if _v<=9 then
-_bm()
+_bp()
 else
 _at()
 end
 end
 elseif _k==_g then
-_by()
+_b1()
 if _q() then
 _at()
 end
@@ -82,11 +82,11 @@ end
 t_+=1
 end
 function _draw()
-if _dd !=_o then
+if _dg !=_o then
 reload()
-_db(_dd,0,0)
+_de(_dg,0,0)
 memcpy(0x0000,0x6000,0x2000)
-_o=_dd
+_o=_dg
 cls()
 end
 if _k==_c then
@@ -96,9 +96,9 @@ _an()
 elseif _k==_e then
 _a0()
 elseif _k==_g then
-_bz()
+_b2()
 elseif _k==_f then
-_bj()
+_bm()
 end
 end
 function _p()
@@ -194,7 +194,7 @@ printh("[" ..i.."] " ..tostr(dget(i)))
 end
 end
 function _af()
-_c9(0)
+_dc(0)
 _ah,cy=0.25,-96
 end
 function _ag()
@@ -209,28 +209,28 @@ end
 function _ai()
 cls()
 if _ah~=0 then
-_co(0,0,123,20,cy,_ah,1)
+_cr(0,0,123,20,cy,_ah,1)
 else
 spr(0, 3,38, 15,3)
 end
 local start⧗=375
 if t_>start⧗ then
-local _aj="the demaking of a dynasty" _cp(_aj,12,62, (t_-start⧗)/5,3)
-_cp(_aj,12,61, (t_-start⧗)/5)
-_cp(" bY pAUL nICHOLAS  liquidream",4,104, (t_-start⧗)/5, 5)
-_cp("♪cHRIS dONNELLY  gruber_music",4,112, (t_-start⧗)/5, 4)
-_cp("\^.⁶	\r¹⁶\0\0\0",75,104, (t_-start⧗)/5, 5)
-_cp("\^.⁶	\r¹⁶\0\0\0",71,112, (t_-start⧗)/5, 4)
-_cp("(oRIGINAL BY wESTWOOD sTUDIOS)" .._j,4-max(t_/2-250), 120,(t_-start⧗)/5, 3)
+local _aj="the demaking of a dynasty" _cs(_aj,12,62, (t_-start⧗)/5,3)
+_cs(_aj,12,61, (t_-start⧗)/5)
+_cs(" bY pAUL nICHOLAS  liquidream",4,104, (t_-start⧗)/5, 5)
+_cs("♪cHRIS dONNELLY  gruber_music",4,112, (t_-start⧗)/5, 4)
+_cs("\^.⁶	\r¹⁶\0\0\0",75,104, (t_-start⧗)/5, 5)
+_cs("\^.⁶	\r¹⁶\0\0\0",71,112, (t_-start⧗)/5, 4)
+_cs("(oRIGINAL BY wESTWOOD sTUDIOS)" .._j,4-max(t_/2-250), 120,(t_-start⧗)/5, 3)
 end
 if t_>start⧗+1 then
 local _ak="❎ / \^.⁶	>.>\"\"、 TO " ..(_n>0 and"cONTINUE" or"sTART")
-if(t_\60%2==0) _cv(_ak,52-(#_ak*2)/2,78,7,3)
+if(t_\60%2==0) _cy(_ak,52-(#_ak*2)/2,78,7,3)
 end
 end
 function _al()
 _k=_d
-_c9(0)
+_dc(0)
 _ao=1
 t_=0
 end
@@ -245,7 +245,7 @@ pal()
 pal(10,139,1)
 pal(14,140,1)
 pal(15,130,1)
-_c2("select your house",28,28, 9,2,7)
+_c5("select your house",28,28, 9,2,7)
 spr(48, 5,47,  4,4)
 spr(52, 47,47, 4,4)
 spr(56, 89,47, 4,4)
@@ -262,14 +262,14 @@ rect(_aq+_ar,84,41+_aq+_ar,94,_ao==i+1 and 7 or 0)
 ?_ap[i+1],4+_aq+_ar,87,1
 end
 local _as=_b[_ao]
-_cv("press ❎ to select",30,108,_as[1],1)
+_cy("press ❎ to select",30,108,_as[1],1)
 end
 function _at()
 _k=_e
 _au=nil
 _av=false
 cls()
-_c9(max(2,_n+1))
+_dc(max(2,_n+1))
 music(_n==0 and 2 or 6)
 printh("p_level=" ..tostr(_v))
 _aw()
@@ -303,7 +303,7 @@ else
 if _m==3 then
 _m=0
 if _v>1 then
-_bm()
+_bp()
 else
 _at()
 end
@@ -322,7 +322,7 @@ cls()
 _a1={[0]=0,-1,1,2,3,-1,0}
 _a2(_n==0 and _a1[_az] or 0)
 if(_au) _a5()
-_cv("pRESS ❎/\^.⁶	>.>\"\"、",80,120,7,10)
+_cy("pRESS ❎/\^.⁶	>.>\"\"、",80,120,7,10)
 end
 function _a2(_a3)
 pal({[0]=0,1,3,4,5,6,9,13,15,128,129,132,10,140,142,143},1)
@@ -397,7 +397,7 @@ _update_buttons()
 end
 end
 function _a8()
-_c9(1)
+_dc(1)
 pal()
 pal(3, 137, 1)
 _6=_b[_n][1]
@@ -413,82 +413,85 @@ _v +=1
 printh("p_level now set to = " .._v)
 dset(0, _v)
 dset(40, 0)
-_bd={
-{ 0, _y, 62, _6, 60, _y },{ 0, _z, 68, 6, 60, _y },{ 0, _0, 85, _6, 40, _0 },{ 0, _1, 91, 6, 40, _0 },{ 0, _2, 107, _6, 20, _2},{ 0, _3, 113, 6, 20, _2 }
+local _bd=max(_y,_z)
+local _be=max(_0,_1)
+local _bf=max(_2,_3)
+_bg={
+{ 0, _y, 62, _6, 60, _bd },{ 0, _z, 68, 6, 60, _bd },{ 0, _0, 85, _6, 40, _be },{ 0, _1, 91, 6, 40, _be },{ 0, _2, 107, _6, 20, _bf},{ 0, _3, 113, 6, 20, _bf }
 }
-_be=1
-_bf=100
+_bh=1
+_bi=100
 end
 function _bc()
-_bg=split"25,sAND sNAKE,50,dESERT mONGOOSE,100,sAND wARRIOR,150,dUNE tROOPER,200,sQUAD lEADER,400,oUTPOST cOMMANDER,500,bASE cOMMANDER,700,wARLORD,1000,cHIEF wARLORD,1400,rULER OF aRRAKIS,18000,eMPEROR" _bh="sAND fLEA" for i=1,#_bg,2 do
-if _w>=_bg[i] then
-_bh=_bg[i+1]
+_bj=split"25,sAND sNAKE,50,dESERT mONGOOSE,100,sAND wARRIOR,150,dUNE tROOPER,200,sQUAD lEADER,400,oUTPOST cOMMANDER,500,bASE cOMMANDER,700,wARLORD,1000,cHIEF wARLORD,1400,rULER OF aRRAKIS,18000,eMPEROR" _bk="sAND fLEA" for i=1,#_bj,2 do
+if _w>=_bj[i] then
+_bk=_bj[i+1]
 end
 end
-return _bh
+return _bk
 end
-function _bi()
-if _bf > 0 then
-_bf-=1
+function _bl()
+if _bi > 0 then
+_bi-=1
 return
 end
-if _be <=#_bd then
-_bd[_be][1] +=(_bd[_be][6]/_bd[_be][5])/3
-if _bd[_be][1] >=_bd[_be][2] then
-_bd[_be][1]=_bd[_be][2]
-_be+=1
-_bf=50
+if _bh <=#_bg then
+_bg[_bh][1] +=(_bg[_bh][6]/_bg[_bh][5])/3
+if _bg[_bh][1] >=_bg[_bh][2] then
+_bg[_bh][1]=_bg[_bh][2]
+_bh+=1
+_bi=50
 end
 end
 end
-function _bj()
+function _bm()
 cls()
 palt(0,false)
 pal(14, 137, 1)
 pal(6, 14, 1)
 map()
 map(17,1,8,2,14,6)
-local _bk=3+(3*_n)
-spr(_bk,1,22,3,3)
-spr(_bk,103,22,3,3)
-_c0("sCORE:" .._w,16,7,7)
-_c0("tIME:" .._x,70,7)
-_c0("yOU'VE ATTAINED\n  THE RANK OF",36,24)
-_c0(_bb,65-#_bb*2,37,8)
+local _bn=3+(3*_n)
+spr(_bn,1,22,3,3)
+spr(_bn,103,22,3,3)
+_c3("sCORE:" .._w,16,7,7)
+_c3("tIME:" .._x,70,7)
+_c3("yOU'VE ATTAINED\n  THE RANK OF",36,24)
+_c3(_bb,65-#_bb*2,37,8)
 rect(8,56,120,75,4)
 line(26,56,100,56,9)
-_c0("SPICE HARVESTED BY",28,53)
-_c0("  YOU:\nENEMY:",11,61)
-_bl={0,0}
+_c3("SPICE HARVESTED BY",28,53)
+_c3("  YOU:\nENEMY:",11,61)
+_bo={0,0}
 for i=1,2 do
-_bl[i]=_bd[i][1]>>16
+_bo[i]=_bg[i][1]>>16
 for j=1,3 do
-_bl[i]+=_bd[i][1]>>16
+_bo[i]+=_bg[i][1]>>16
 end
 end
-_c0(tostr(_bl[1],0x2).."\n" ..tostr(_bl[2],0x2),100,61)
+_c3(tostr(_bo[1],0x2).."\n" ..tostr(_bo[2],0x2),100,61)
 rect(8,79,120,98,4)
 line(26,79,100,79,9)
-_c0("UNITS DESTROYED BY",28,76)
-_c0("  YOU:\nENEMY:",11,84)
-_c0(flr(_bd[3][1]).."\n" ..flr(_bd[4][1]),100,84)
+_c3("UNITS DESTROYED BY",28,76)
+_c3("  YOU:\nENEMY:",11,84)
+_c3(flr(_bg[3][1]).."\n" ..flr(_bg[4][1]),100,84)
 rect(8,102,120,120,4)
 line(18,102,108,102,9)
-_c0("BUILDINGS DESTROYED BY",20,99)
-_c0("  YOU:\nENEMY:",11,106)
-_c0(flr(_bd[5][1]).."\n" ..flr(_bd[6][1]),100,106)
-for i=1,#_bd do
-_c4(
-35,_bd[i][3],_bd[i][5],_bd[i][1],_bd[i][6],_bd[i][4])
+_c3("BUILDINGS DESTROYED BY",20,99)
+_c3("  YOU:\nENEMY:",11,106)
+_c3(flr(_bg[5][1]).."\n" ..flr(_bg[6][1]),100,106)
+for i=1,#_bg do
+_c7(
+35,_bg[i][3],_bg[i][5],_bg[i][1],_bg[i][6],_bg[i][4])
 end
-if(_be>6) _cv("pRESS ❎ / \^.⁶	>.>\"\"、",40,120,7,0)
+if(_bh>6) _cy("pRESS ❎ / \^.⁶	>.>\"\"、",40,120,7,0)
 end
-function _bm()
+function _bp()
 _k=_g
-_c9(1)
+_dc(1)
 music(12)
-_bn=_b6(_c8,",","\n")
-_bo={
+_bq=_b9(_db,",","\n")
+_br={
 [-1]={6,5,13},
 [0]={0,0,0},
 {12,1,0},
@@ -496,29 +499,29 @@ _bo={
 {8,2,1,5,5},
 {5,2,0}
 }
-_bp=-1
-_bq=0
-_br=1
-_bs=2
-_bt=3
-_bu=4
-_bv="" _bw="" _bx=0
+_bs=-1
+_bt=0
+_bu=1
+_bv=2
+_bw=3
+_bx=4
+_by="" _bz="" _b0=0
 t_=0
-_l=cocreate(_b0)
+_l=cocreate(_b3)
 end
-function _by()
+function _b1()
 _set_fps(60)
 if _l and costatus(_l)~="dead" then
 assert(coresume(_l, _v))
 end
 end
-function _bz()
+function _b2()
 end
-function _b0(_b1)
-printh("seqnum = " .._b1)
+function _b3(_b4)
+printh("seqnum = " .._b4)
 yield()
-local _b2
-local _b3
+local _b5
+local _b6
 cls()
 pal()
 pal(1,6)
@@ -526,9 +529,9 @@ pal(2,5)
 pal(3,13)
 map(32,0,0,0)
 spr(48,4,20,15,8)
-local _bk=3+(3*_n)
-spr(_bk,0,96,3,3)
-spr(_bk,104,96,3,3)
+local _bn=3+(3*_n)
+spr(_bn,0,96,3,3)
+spr(_bn,104,96,3,3)
 pal()
 palt(0,false)
 pal(14, 137, 1)
@@ -538,334 +541,334 @@ pal(10, 3, 1)
 pal(6, 143, 1)
 pal(13, 134, 1)
 pal(5, 142, 1)
-_cv("your next conquest",28,7,8,0)
-_c2("your next conquest",28,7, 8,0,5)
-if _b1 > 2 then
-_ci(0, _bo[_bq])
+_cy("your next conquest",28,7,8,0)
+_c5("your next conquest",28,7, 8,0,5)
+if _b4 > 2 then
+_cl(0, _br[_bt])
 end
 if _n==1 then
-if _b1==1 then
-elseif _b1==2 then
-_b5()
-_c7(20)
-_b4("tHREE hOUSES HAVE\nCOME TO dUNE.")
-_b4("tHE LAND HAS\nBECOME DIVIDED.")
-_b8(0,  _bo[_bq])
-_b5()
-_b4("aTREIDES CLAIMED\nSTRATEGIC REGIONS")
-_b8({13,7,20,14,21,22}, _bo[_br])
-_b5()
-_b4("oRDOS MOVED IN\nFROM THE EAST.")
-_b8({19,27,26,25,24,23}, _bo[_bs])
-_b5()
-_b4("hARKONNEN INVADED\nFROM THE NORTH.")
-_b8({6,5,4,10,3,9}, _bo[_bt])
-_b2=23
-_b3=_bo[_bs]
-elseif _b1==3 then
-_ci({13,7,20,14,21,22}, _bo[_br])
-_ci({19,27,26,25,24,23}, _bo[_bs])
-_ci({6,5,4,10,3,9}, _bo[_bt])
-_b4("aTREIDES CAPTURED\nMORE TERRITORY...")
-_b8({8,15},  _bo[_br])
-_b4("...AND DROVE THE\noRDOS OUT.")
-_b8({23}, _bo[_br])
-_b4("oRDOS HEADED\nFOR hARKONNEN.")
-_b8({12,18,16,17}, _bo[_bs])
-_b4("hARKONNEN EXPANDED\nTHEIR BORDERS.")
-_b8({1,2,11}, _bo[_bt])
-_b2=2
-_b3=_bo[_bt]
-elseif _b1==4 then
-_ci({13,7,20,14,21,22,8,15,23}, _bo[_br])
-_ci({19,27,26,25,24,12,18,16,17}, _bo[_bs])
-_ci({6,5,4,10,3,9,1,2,11}, _bo[_bt])
-_b4("hARKONEN BORDERS\nWERE WEAK...")
-_b8({1,2,3}, _bo[_br])
-_b8({11}, _bo[_bs])
-_b4("...EXCEPT FOR\nONE OUTPOST.")
-_b8({16}, _bo[_bt])
-_b2=9
-_b3=_bo[_bt]
-elseif _b1==5 then
-_ci({13,7,20,14,21,22,8,15,23,1,2,3}, _bo[_br])
-_ci({19,27,26,25,24,12,18,17,11}, _bo[_bs])
-_ci({6,5,4,10,9,16}, _bo[_bt])
-_b4("hARKONEN CONTINUED\nTO RETREAT.")
-_b8({4,9,16}, _bo[_br])
-_b4("...INTO TERRITORY\nOF THE oRDOS.")
-_b8({11}, _bo[_bt])
-_b2=25
-_b3=_bo[_bs]
-elseif _b1==6 then
-_ci({13,7,20,14,21,22,8,15,23,1,2,3,4,9,16}, _bo[_br])
-_ci({19,27,26,25,24,12,18,17}, _bo[_bs])
-_ci({6,5,10,11}, _bo[_bt])
-_b4("aLL FORCES WERE\nAIMED AT oRDOS.")
-_b8({17,25,24}, _bo[_br])
-_b8({18}, _bo[_bt])
-_b2=11
-_b3=_bo[_bt]
-elseif _b1==7 then
-_ci({13,7,20,14,21,22,8,15,23,1,2,3,4,9,16,17,25,24}, _bo[_br])
-_ci({19,27,26,12}, _bo[_bs])
-_ci({6,5,10,11,18}, _bo[_bt])
-_b4("aTREIDES PUSHED\nhARKONNEN BACK.")
-_b8({10,11,18}, _bo[_br])
-_b2=26
-_b3=_bo[_bs]
-elseif _b1==8 then
-_ci({13,7,20,14,21,22,8,15,23,1,2,3,4,9,16,17,25,24,10,11,18}, _bo[_br])
-_ci({19,27,26,12}, _bo[_bs])
-_ci({6,5}, _bo[_bt])
-_b4("oRDOS WERE NEARLY\nWIPED OUT.")
-_b8({26,27,19}, _bo[_br])
-_b2=5
-_b3=_bo[_bt]
-elseif _b1==9 then
-_ci({13,7,20,14,21,22,8,15,23,1,2,3,4,9,16,17,25,24,10,11,18,26,27,19}, _bo[_br])
-_ci({12}, _bo[_bs])
-_ci({6,5}, _bo[_bt])
-_b4("oNLY THE eMPEROR'S\nFORCES REMAIN.")
-_b8({5,12}, _bo[_br])
-_b8({6}, _bo[_bu])
-_b2=6
-_b3=_bo[_bu]
+if _b4==1 then
+elseif _b4==2 then
+_b8()
+_da(20)
+_b7("tHREE hOUSES HAVE\nCOME TO dUNE.")
+_b7("tHE LAND HAS\nBECOME DIVIDED.")
+_cb(0,  _br[_bt])
+_b8()
+_b7("aTREIDES CLAIMED\nSTRATEGIC REGIONS")
+_cb({13,7,20,14,21,22}, _br[_bu])
+_b8()
+_b7("oRDOS MOVED IN\nFROM THE EAST.")
+_cb({19,27,26,25,24,23}, _br[_bv])
+_b8()
+_b7("hARKONNEN INVADED\nFROM THE NORTH.")
+_cb({6,5,4,10,3,9}, _br[_bw])
+_b5=23
+_b6=_br[_bv]
+elseif _b4==3 then
+_cl({13,7,20,14,21,22}, _br[_bu])
+_cl({19,27,26,25,24,23}, _br[_bv])
+_cl({6,5,4,10,3,9}, _br[_bw])
+_b7("aTREIDES CAPTURED\nMORE TERRITORY...")
+_cb({8,15},  _br[_bu])
+_b7("...AND DROVE THE\noRDOS OUT.")
+_cb({23}, _br[_bu])
+_b7("oRDOS HEADED\nFOR hARKONNEN.")
+_cb({12,18,16,17}, _br[_bv])
+_b7("hARKONNEN EXPANDED\nTHEIR BORDERS.")
+_cb({1,2,11}, _br[_bw])
+_b5=2
+_b6=_br[_bw]
+elseif _b4==4 then
+_cl({13,7,20,14,21,22,8,15,23}, _br[_bu])
+_cl({19,27,26,25,24,12,18,16,17}, _br[_bv])
+_cl({6,5,4,10,3,9,1,2,11}, _br[_bw])
+_b7("hARKONEN BORDERS\nWERE WEAK...")
+_cb({1,2,3}, _br[_bu])
+_cb({11}, _br[_bv])
+_b7("...EXCEPT FOR\nONE OUTPOST.")
+_cb({16}, _br[_bw])
+_b5=9
+_b6=_br[_bw]
+elseif _b4==5 then
+_cl({13,7,20,14,21,22,8,15,23,1,2,3}, _br[_bu])
+_cl({19,27,26,25,24,12,18,17,11}, _br[_bv])
+_cl({6,5,4,10,9,16}, _br[_bw])
+_b7("hARKONEN CONTINUED\nTO RETREAT.")
+_cb({4,9,16}, _br[_bu])
+_b7("...INTO TERRITORY\nOF THE oRDOS.")
+_cb({11}, _br[_bw])
+_b5=25
+_b6=_br[_bv]
+elseif _b4==6 then
+_cl({13,7,20,14,21,22,8,15,23,1,2,3,4,9,16}, _br[_bu])
+_cl({19,27,26,25,24,12,18,17}, _br[_bv])
+_cl({6,5,10,11}, _br[_bw])
+_b7("aLL FORCES WERE\nAIMED AT oRDOS.")
+_cb({17,25,24}, _br[_bu])
+_cb({18}, _br[_bw])
+_b5=11
+_b6=_br[_bw]
+elseif _b4==7 then
+_cl({13,7,20,14,21,22,8,15,23,1,2,3,4,9,16,17,25,24}, _br[_bu])
+_cl({19,27,26,12}, _br[_bv])
+_cl({6,5,10,11,18}, _br[_bw])
+_b7("aTREIDES PUSHED\nhARKONNEN BACK.")
+_cb({10,11,18}, _br[_bu])
+_b5=26
+_b6=_br[_bv]
+elseif _b4==8 then
+_cl({13,7,20,14,21,22,8,15,23,1,2,3,4,9,16,17,25,24,10,11,18}, _br[_bu])
+_cl({19,27,26,12}, _br[_bv])
+_cl({6,5}, _br[_bw])
+_b7("oRDOS WERE NEARLY\nWIPED OUT.")
+_cb({26,27,19}, _br[_bu])
+_b5=5
+_b6=_br[_bw]
+elseif _b4==9 then
+_cl({13,7,20,14,21,22,8,15,23,1,2,3,4,9,16,17,25,24,10,11,18,26,27,19}, _br[_bu])
+_cl({12}, _br[_bv])
+_cl({6,5}, _br[_bw])
+_b7("oNLY THE eMPEROR'S\nFORCES REMAIN.")
+_cb({5,12}, _br[_bu])
+_cb({6}, _br[_bx])
+_b5=6
+_b6=_br[_bx]
 end
 elseif _n==2 then
-if _b1==1 then
-elseif _b1==2 then
-_b5()
-_c7(20)
-_b4("tHREE hOUSES HAVE\nCOME TO dUNE.")
-_b4("tHE LAND HAS\nBECOME DIVIDED.")
-_b8(0,  _bo[_bq])
-_b5()
-_b4("oRDOS TOOK THE\nBEST LAND")
-_b8({19,27,26,25,24,23}, _bo[_bs])
-_b5()
-_b4("hARKONNEN ARE\nA THREAT.")
-_b8({6,5,4,10,3,9}, _bo[_bt])
-_b5()
-_b4("hOUSE aTREIDES\nIS NEARBY.")
-_b8({13,7,20,14,21,22}, _bo[_br])
-_b2=16
-_b3=_bo[_bp]
-elseif _b1==3 then
-_ci({19,27,26,25,24,23}, _bo[_bs])
-_ci({6,5,4,10,3,9}, _bo[_bt])
-_ci({13,7,20,14,21,22}, _bo[_br])
-_b4("oRDOS ADVANCED\nWITHOUT CHALLENGE.")
-_b8({15,16,17},  _bo[_bs])
-_b4("tHE hARKONNEN\nDREW CLOSER.")
-_b8({11,12,18}, _bo[_bt])
-_b4("tHE aTREIDES\nSPREAD TOO THIN.")
-_b8({1,2,8}, _bo[_br])
-_b2=14
-_b3=_bo[_br]
-elseif _b1==4 then
-_ci({19,27,26,25,24,23,15,16,17}, _bo[_bs])
-_ci({6,5,4,10,3,9,11,12,18}, _bo[_bt])
-_ci({13,7,20,14,21,22,1,2,8}, _bo[_br])
-_b4("aLL ATTACKS WERE\nAIMED AT aTREIDES.")
-_b8({8,14,22}, _bo[_bs])
-_b8({2}, _bo[_bt])
-_b2=13
-_b3=_bo[_br]
-elseif _b1==5 then
-_ci({19,27,26,25,24,23,15,16,17,8,14,22}, _bo[_bs])
-_ci({6,5,4,10,3,9,11,12,18,2}, _bo[_bt])
-_ci({13,7,20,21,1}, _bo[_br])
-_b4("oRDOS OVERPOWERED\nTHE aTREIDES...")
-_b8({21,20,13}, _bo[_bs])
-_b4("...WHILE THEY WERE\nFIGHTING hARKONNEN")
-_b8({2,3}, _bo[_br])
-_b2=18
-_b3=_bo[_bt]
-elseif _b1==6 then
-_ci({19,27,26,25,24,23,15,16,17,8,14,22,21,20,13}, _bo[_bs])
-_ci({6,5,4,10,9,11,12,18}, _bo[_bt])
-_ci({7,1,2,3}, _bo[_br])
-_b4("hARKONNEN HAD TO\nBE TURNED BACK.")
-_b8({18,11,12}, _bo[_bs])
-_b2=2
-_b3=_bo[_br]
-elseif _b1==7 then
-_ci({19,27,26,25,24,23,15,16,17,8,14,22,21,20,13,18,11,12}, _bo[_bs])
-_ci({6,5,4,10,9}, _bo[_bt])
-_ci({7,1,2,3}, _bo[_br])
-_b4("oRDOS KILLED OFF\nMOST OF aTREIDES")
-_b8({7,1,2}, _bo[_bs])
-_b2=6
-_b3=_bo[_bt]
-elseif _b1==8 then
-_ci({19,27,26,25,24,23,15,16,17,8,14,22,21,20,13,18,11,12,7,1,2}, _bo[_bs])
-_ci({6,5,4,10,9}, _bo[_bt])
-_ci({3}, _bo[_br])
-_b4("oRDOS GAINED MORE\nhARKONNEN LAND.")
-_b8({6,5,10}, _bo[_bs])
-_b2=3
-_b3=_bo[_br]
-elseif _b1==9 then
-_ci({19,27,26,25,24,23,15,16,17,8,14,22,21,20,13,18,11,12,7,1,2,6,5,10}, _bo[_bs])
-_ci({4,9}, _bo[_bt])
-_ci({3}, _bo[_br])
-_b4("sOON oRDOS WILL\nRULE ALL OF dUNE.")
-_b8({3,9}, _bo[_bs])
-_b8({4}, _bo[_bu])
-_b2=4
-_b3=_bo[_bu]
+if _b4==1 then
+elseif _b4==2 then
+_b8()
+_da(20)
+_b7("tHREE hOUSES HAVE\nCOME TO dUNE.")
+_b7("tHE LAND HAS\nBECOME DIVIDED.")
+_cb(0,  _br[_bt])
+_b8()
+_b7("oRDOS TOOK THE\nBEST LAND")
+_cb({19,27,26,25,24,23}, _br[_bv])
+_b8()
+_b7("hARKONNEN ARE\nA THREAT.")
+_cb({6,5,4,10,3,9}, _br[_bw])
+_b8()
+_b7("hOUSE aTREIDES\nIS NEARBY.")
+_cb({13,7,20,14,21,22}, _br[_bu])
+_b5=16
+_b6=_br[_bs]
+elseif _b4==3 then
+_cl({19,27,26,25,24,23}, _br[_bv])
+_cl({6,5,4,10,3,9}, _br[_bw])
+_cl({13,7,20,14,21,22}, _br[_bu])
+_b7("oRDOS ADVANCED\nWITHOUT CHALLENGE.")
+_cb({15,16,17},  _br[_bv])
+_b7("tHE hARKONNEN\nDREW CLOSER.")
+_cb({11,12,18}, _br[_bw])
+_b7("tHE aTREIDES\nSPREAD TOO THIN.")
+_cb({1,2,8}, _br[_bu])
+_b5=14
+_b6=_br[_bu]
+elseif _b4==4 then
+_cl({19,27,26,25,24,23,15,16,17}, _br[_bv])
+_cl({6,5,4,10,3,9,11,12,18}, _br[_bw])
+_cl({13,7,20,14,21,22,1,2,8}, _br[_bu])
+_b7("aLL ATTACKS WERE\nAIMED AT aTREIDES.")
+_cb({8,14,22}, _br[_bv])
+_cb({2}, _br[_bw])
+_b5=13
+_b6=_br[_bu]
+elseif _b4==5 then
+_cl({19,27,26,25,24,23,15,16,17,8,14,22}, _br[_bv])
+_cl({6,5,4,10,3,9,11,12,18,2}, _br[_bw])
+_cl({13,7,20,21,1}, _br[_bu])
+_b7("oRDOS OVERPOWERED\nTHE aTREIDES...")
+_cb({21,20,13}, _br[_bv])
+_b7("...WHILE THEY WERE\nFIGHTING hARKONNEN")
+_cb({2,3}, _br[_bu])
+_b5=18
+_b6=_br[_bw]
+elseif _b4==6 then
+_cl({19,27,26,25,24,23,15,16,17,8,14,22,21,20,13}, _br[_bv])
+_cl({6,5,4,10,9,11,12,18}, _br[_bw])
+_cl({7,1,2,3}, _br[_bu])
+_b7("hARKONNEN HAD TO\nBE TURNED BACK.")
+_cb({18,11,12}, _br[_bv])
+_b5=2
+_b6=_br[_bu]
+elseif _b4==7 then
+_cl({19,27,26,25,24,23,15,16,17,8,14,22,21,20,13,18,11,12}, _br[_bv])
+_cl({6,5,4,10,9}, _br[_bw])
+_cl({7,1,2,3}, _br[_bu])
+_b7("oRDOS KILLED OFF\nMOST OF aTREIDES")
+_cb({7,1,2}, _br[_bv])
+_b5=6
+_b6=_br[_bw]
+elseif _b4==8 then
+_cl({19,27,26,25,24,23,15,16,17,8,14,22,21,20,13,18,11,12,7,1,2}, _br[_bv])
+_cl({6,5,4,10,9}, _br[_bw])
+_cl({3}, _br[_bu])
+_b7("oRDOS GAINED MORE\nhARKONNEN LAND.")
+_cb({6,5,10}, _br[_bv])
+_b5=3
+_b6=_br[_bu]
+elseif _b4==9 then
+_cl({19,27,26,25,24,23,15,16,17,8,14,22,21,20,13,18,11,12,7,1,2,6,5,10}, _br[_bv])
+_cl({4,9}, _br[_bw])
+_cl({3}, _br[_bu])
+_b7("sOON oRDOS WILL\nRULE ALL OF dUNE.")
+_cb({3,9}, _br[_bv])
+_cb({4}, _br[_bx])
+_b5=4
+_b6=_br[_bx]
 end
 elseif _n==3 then
-if _b1==1 then
-elseif _b1==2 then
-_b5()
-_c7(20)
-_b4("tHREE hOUSES HAVE\nCOME TO dUNE.")
-_b4("tHE LAND HAS\nBECOME DIVIDED.")
-_b8(0,  _bo[_bq])
-_b5()
-_b4("hARKONNEN ARRIVED\nFIRST.")
-_b8({6,5,4,10,3,9}, _bo[_bt])
-_b5()
-_b4("tHE WEAK aTREIDES\nWILL BE EASY.")
-_b8({13,7,20,14,21,22}, _bo[_br])
-_b5()
-_b4("tHE oRDOS ARE\nGETTING CLOSER.")
-_b8({19,27,26,25,24,23}, _bo[_bs])
-_b2=2
-_b3=_bo[_bp]
-elseif _b1==3 then
-_ci({6,5,4,10,3,9}, _bo[_bt])
-_ci({13,7,20,14,21,22}, _bo[_br])
-_ci({19,27,26,25,24,23}, _bo[_bs])
-_b4("hARKONNEN SPREAD\nOUT STRONG FORCES.")
-_b8({2,1,8},  _bo[_bt])
-_b4("aTREIDES WENT\nAFTER oRDOS.")
-_b8({15,16,23}, _bo[_br])
-_b4("oRDOS STOLE EVEN\nMORE LAND.")
-_b8({17,11,18,12}, _bo[_bs])
-_b2=11
-_b3=_bo[_bs]
-elseif _b1==4 then
-_ci({6,5,4,10,3,9,2,1,8}, _bo[_bt])
-_ci({13,7,20,14,21,22,15,16,23}, _bo[_br])
-_ci({19,27,26,25,24,17,11,18,12}, _bo[_bs])
-_b4("oRDOS DID NOT\nSTAND A CHANCE.")
-_b8({17,11,12}, _bo[_bt])
-_b4("aTREIDES AND oRDOS\nTRADED LAND.")
-_b8({24}, _bo[_br])
-_b8({16}, _bo[_bs])
-_b2=18
-_b3=_bo[_bs]
-elseif _b1==5 then
-_ci({6,5,4,10,3,9,2,1,8,17,11,12}, _bo[_bt])
-_ci({13,7,20,14,21,22,15,23,24}, _bo[_br])
-_ci({19,27,26,25,18,16}, _bo[_bs])
-_b8(25,  _bo[_bt])
-_b4("aN oRDOS OUTPOST\nWAS SURROUNDED.")
-_b8({18,19},  _bo[_bt])
-_b4("tHE oRDOS BROKE\nTHROUGH aTREIDES.")
-_b8(24, _bo[_bs])
-_b2=7
-_b3=_bo[_br]
-elseif _b1==6 then
-_ci({6,5,4,10,3,9,2,1,8,17,11,12,25,18,19}, _bo[_bt])
-_ci({13,7,20,14,21,22,15,23}, _bo[_br])
-_ci({27,26,16,24}, _bo[_bs])
-_b4("sOON tHE aTREIDES\nWILL BE EXTINCT.")
-_b8({7,14,13}, _bo[_bt])
-_b8({23}, _bo[_bs])
-_b2=26
-_b3=_bo[_bs]
-elseif _b1==7 then
-_ci({6,5,4,10,3,9,2,1,8,17,11,12,25,18,19,7,14,13}, _bo[_bt])
-_ci({20,21,22,15}, _bo[_br])
-_ci({27,26,16,24,23}, _bo[_bs])
-_b4("hARKONNEN CRUSHED\nMOST OF THE oRDOS.")
-_b8({24,26,27},  _bo[_bt])
-_b4("aTREIDES RECLAIMED\nITS LAND.")
-_b8(23, _bo[_br])
-_b2=21
-_b3=_bo[_br]
-elseif _b1==8 then
-_ci({6,5,4,10,3,9,2,1,8,17,11,12,25,18,19,7,14,13,24,26,27}, _bo[_bt])
-_ci({20,21,22,15,23}, _bo[_br])
-_ci({16}, _bo[_bs])
-_b4("hARKONNEN CRUSHED\nTHE aTREIDES.")
-_b8({20,21,22},  _bo[_bt])
-_b2=16
-_b3=_bo[_bs]
-elseif _b1==9 then
-_ci({6,5,4,10,3,9,2,1,8,17,11,12,25,18,19,7,14,13,24,26,27,20,21,22}, _bo[_bt])
-_ci({15,23}, _bo[_br])
-_ci({16}, _bo[_bs])
-_b4("oNLY THE hARKONNEN\nWILL PREVAIL.")
-_b8({16,23},  _bo[_bt])
-_b8({15},  _bo[_bu])
-_b2=15
-_b3=_bo[_bu]
+if _b4==1 then
+elseif _b4==2 then
+_b8()
+_da(20)
+_b7("tHREE hOUSES HAVE\nCOME TO dUNE.")
+_b7("tHE LAND HAS\nBECOME DIVIDED.")
+_cb(0,  _br[_bt])
+_b8()
+_b7("hARKONNEN ARRIVED\nFIRST.")
+_cb({6,5,4,10,3,9}, _br[_bw])
+_b8()
+_b7("tHE WEAK aTREIDES\nWILL BE EASY.")
+_cb({13,7,20,14,21,22}, _br[_bu])
+_b8()
+_b7("tHE oRDOS ARE\nGETTING CLOSER.")
+_cb({19,27,26,25,24,23}, _br[_bv])
+_b5=2
+_b6=_br[_bs]
+elseif _b4==3 then
+_cl({6,5,4,10,3,9}, _br[_bw])
+_cl({13,7,20,14,21,22}, _br[_bu])
+_cl({19,27,26,25,24,23}, _br[_bv])
+_b7("hARKONNEN SPREAD\nOUT STRONG FORCES.")
+_cb({2,1,8},  _br[_bw])
+_b7("aTREIDES WENT\nAFTER oRDOS.")
+_cb({15,16,23}, _br[_bu])
+_b7("oRDOS STOLE EVEN\nMORE LAND.")
+_cb({17,11,18,12}, _br[_bv])
+_b5=11
+_b6=_br[_bv]
+elseif _b4==4 then
+_cl({6,5,4,10,3,9,2,1,8}, _br[_bw])
+_cl({13,7,20,14,21,22,15,16,23}, _br[_bu])
+_cl({19,27,26,25,24,17,11,18,12}, _br[_bv])
+_b7("oRDOS DID NOT\nSTAND A CHANCE.")
+_cb({17,11,12}, _br[_bw])
+_b7("aTREIDES AND oRDOS\nTRADED LAND.")
+_cb({24}, _br[_bu])
+_cb({16}, _br[_bv])
+_b5=18
+_b6=_br[_bv]
+elseif _b4==5 then
+_cl({6,5,4,10,3,9,2,1,8,17,11,12}, _br[_bw])
+_cl({13,7,20,14,21,22,15,23,24}, _br[_bu])
+_cl({19,27,26,25,18,16}, _br[_bv])
+_cb(25,  _br[_bw])
+_b7("aN oRDOS OUTPOST\nWAS SURROUNDED.")
+_cb({18,19},  _br[_bw])
+_b7("tHE oRDOS BROKE\nTHROUGH aTREIDES.")
+_cb(24, _br[_bv])
+_b5=7
+_b6=_br[_bu]
+elseif _b4==6 then
+_cl({6,5,4,10,3,9,2,1,8,17,11,12,25,18,19}, _br[_bw])
+_cl({13,7,20,14,21,22,15,23}, _br[_bu])
+_cl({27,26,16,24}, _br[_bv])
+_b7("sOON tHE aTREIDES\nWILL BE EXTINCT.")
+_cb({7,14,13}, _br[_bw])
+_cb({23}, _br[_bv])
+_b5=26
+_b6=_br[_bv]
+elseif _b4==7 then
+_cl({6,5,4,10,3,9,2,1,8,17,11,12,25,18,19,7,14,13}, _br[_bw])
+_cl({20,21,22,15}, _br[_bu])
+_cl({27,26,16,24,23}, _br[_bv])
+_b7("hARKONNEN CRUSHED\nMOST OF THE oRDOS.")
+_cb({24,26,27},  _br[_bw])
+_b7("aTREIDES RECLAIMED\nITS LAND.")
+_cb(23, _br[_bu])
+_b5=21
+_b6=_br[_bu]
+elseif _b4==8 then
+_cl({6,5,4,10,3,9,2,1,8,17,11,12,25,18,19,7,14,13,24,26,27}, _br[_bw])
+_cl({20,21,22,15,23}, _br[_bu])
+_cl({16}, _br[_bv])
+_b7("hARKONNEN CRUSHED\nTHE aTREIDES.")
+_cb({20,21,22},  _br[_bw])
+_b5=16
+_b6=_br[_bv]
+elseif _b4==9 then
+_cl({6,5,4,10,3,9,2,1,8,17,11,12,25,18,19,7,14,13,24,26,27,20,21,22}, _br[_bw])
+_cl({15,23}, _br[_bu])
+_cl({16}, _br[_bv])
+_b7("oNLY THE hARKONNEN\nWILL PREVAIL.")
+_cb({16,23},  _br[_bw])
+_cb({15},  _br[_bx])
+_b5=15
+_b6=_br[_bx]
 end
 end
-_b4(" ❎/\^.⁶	>.>\"\"、 tO sTART")
+_b7(" ❎/\^.⁶	>.>\"\"、 tO sTART")
 while true do
-_ci(_b2, _bo[_n])
-_c7(20)
-_ci(_b2, _b3)
-_c7(20)
+_cl(_b5, _br[_n])
+_da(20)
+_cl(_b5, _b6)
+_da(20)
 end
 end
-function _b4(_ak)
-_bw=_bv
-_bv=_ak
-_bx=80
+function _b7(_ak)
+_bz=_by
+_by=_ak
+_b0=80
 clip(27,99,75,18)
 for i=1,85 do
-_b5()
-?_bv,29,_bx,0
-?_bw,29,_bx+22,0
+_b8()
+?_by,29,_b0,0
+?_bz,29,_b0+22,0
 yield()
-if(i<46) _bx+=.5
+if(i<46) _b0+=.5
 end
 clip()
 end
-function _b5()
+function _b8()
 rectfill(27,99,101,116,9)
 end
-function _b6(_b7,d,dd)
+function _b9(_ca,d,dd)
 d=d or","
-if(dd) _b7=split(_b7,dd)
-if type(_b7)=="table" then
+if(dd) _ca=split(_ca,dd)
+if type(_ca)=="table" then
 local t={}
-while #_b7>0 do
-local s=_b7[1]
+while #_ca>0 do
+local s=_ca[1]
 add(t,split(s,d))
-del(_b7,s)
+del(_ca,s)
 end
 return t
 else
-return split(_b7,d)
+return split(_ca,d)
 end
 end
-function _b8(_b9, _ca)
+function _cb(_cc, _cd)
 sx=0
 sy=20
 sw=119
 sh=64
 dx=4
 dy=20
-_cb=0
-_cc=4
-_cd=3
+_ce=0
+_cf=4
+_cg=3
 _5=0
-_ce=0x3006
-_cf=0x3fff
-if type(_b9)=="table" then
-_cg=_b9
+_ch=0x3006
+_ci=0x3fff
+if type(_cc)=="table" then
+_cj=_cc
 else
-_cg={_b9}
+_cj={_cc}
 end
-for _b9 in all(_cg) do
+for _cc in all(_cj) do
 for _x=0,127 do
 for _y=0,127 do
 _5+=1
@@ -873,36 +876,36 @@ if(_5==0x4000) then
 _5=0
 x,y=0,0
 end
-x,y=band(_cf,0x7f),flr(lshr(_cf,7))
-_cf=bxor(flr(lshr(_cf,1)),band(-band(_cf,1),_ce))
+x,y=band(_ci,0x7f),flr(lshr(_ci,7))
+_ci=bxor(flr(lshr(_ci,1)),band(-band(_ci,1),_ch))
 if x>=sx and x<=sx+sw
 and y>=sy and y<=sy+sh
 then
-if not _b9 or _bn[y-sy+1][x-sx+1]==_b9
+if not _cc or _bq[y-sy+1][x-sx+1]==_cc
 then
-local _ch=sget(x+_cb,y+_cc)
-pset(dx-sx+x,dy-sy+y, _ca[_ch])
+local _ck=sget(x+_ce,y+_cf)
+pset(dx-sx+x,dy-sy+y, _cd[_ck])
 end
 end
 end
-if(_x%_cd==0)yield()
+if(_x%_cg==0)yield()
 end
 end
 end
-function _ci(_b9, _ca)
+function _cl(_cc, _cd)
 sx=0
 sy=20
 sw=119
 sh=64
 dx=4
 dy=20
-_cb=0
-_cc=4
-_cg=nil
-if type(_b9)=="table" then
-_cg={}
-for k in all(_b9) do
-_cg[k]=k
+_ce=0
+_cf=4
+_cj=nil
+if type(_cc)=="table" then
+_cj={}
+for k in all(_cc) do
+_cj[k]=k
 end
 end
 for x=0,127 do
@@ -910,89 +913,89 @@ for y=0,127 do
 if x>=sx and x<=sx+sw
 and y>=sy and y<=sy+sh
 then
-if not _b9
-or (_cg and _cg[_bn[y-sy+1][x-sx+1]])
-or _bn[y-sy+1][x-sx+1]==_b9
+if not _cc
+or (_cj and _cj[_bq[y-sy+1][x-sx+1]])
+or _bq[y-sy+1][x-sx+1]==_cc
 then
-local _ch=sget(x+_cb,y+_cc)
-pset(dx-sx+x,dy-sy+y, _ca[_ch])
+local _ck=sget(x+_ce,y+_cf)
+pset(dx-sx+x,dy-sy+y, _cd[_ck])
 end
 end
 end
 end
 end
-function _cj(a,b)
+function _cm(a,b)
 return a[1]*b[1]+a[2]*b[2]
 end
-function _ck(a,b)
+function _cn(a,b)
 return {b[1]-a[1],b[2]-a[2]}
 end
-function _cl(a)
+function _co(a)
 local x,z=a[1],a[2]
 local d=sqrt(x*x+z*z)
 return {
 x/d,z/d
 },d
 end
-function _cm(a,b,_cn)
-_cn=_cn or 1
+function _cp(a,b,_cq)
+_cq=_cq or 1
 return {
-a[1]+_cn*b[1],a[2]+_cn*b[2]}
+a[1]+_cq*b[1],a[2]+_cq*b[2]}
 end
-function _co(sx,sy,sw,sh,y,_ah,_cn)
+function _cr(sx,sy,sw,sh,y,_ah,_cq)
 local c={0,sw}
 local v={sin(_ah),-cos(_ah)}
 local u={-v[2],v[1]}
 for i=0,127 do
-local n,d=_cl(_ck(c,{i-63.5,0}))
-local t0=(-_cj(c,v))/_cj(n,v)
+local n,d=_co(_cn(c,{i-63.5,0}))
+local t0=(-_cm(c,v))/_cm(n,v)
 if t0>0 then
-local x=_cm(c,n,t0)
-local t1=_cj(x,u)/(_cn*sw)+0.5
+local x=_cp(c,n,t0)
+local t1=_cm(x,u)/(_cq*sw)+0.5
 if t1>=0 and t1<1 then
-local w=_cn*d/t0
+local w=_cq*d/t0
 local y0=63.5-(sh/2-y)*w
 sspr(sx+sw*t1,sy,1,sh,i,y0,1,sh*w+y0%1)
 end
 end
 end
 end
-_ct={0,128,130,2,136,8}
-pal(_ct,1)
-function _cp(_cq, x, y, _cr, _cs)
-local _cu=mid(0,flr(_cr),_cs or #_ct)
-print(_cq, x, y, _cu)
+_cw={0,128,130,2,136,8}
+pal(_cw,1)
+function _cs(_ct, x, y, _cu, _cv)
+local _cx=mid(0,flr(_cu),_cv or #_cw)
+print(_ct, x, y, _cx)
 end
-function _cv(_b7,_cw,_cx,_cy,_cz)
+function _cy(_ca,_cz,_c0,_c1,_c2)
 for xx=-1, 1 do
 for yy=-1, 1 do
-print(_b7, _cw+xx, _cx+yy, _cz)
+print(_ca, _cz+xx, _c0+yy, _c2)
 end
 end
-print(_b7,_cw,_cx,_cy)
+print(_ca,_cz,_c0,_c1)
 end
-function _c0(_b7,x,y,_cy,_c1)
-print(_b7, x, y+1, _c1 or 2)
-print(_b7, x, y,    _cy or 7)
+function _c3(_ca,x,y,_c1,_c4)
+print(_ca, x, y+1, _c4 or 2)
+print(_ca, x, y,    _c1 or 7)
 end
-function _c2(_b7,x,y,_cy,_c1,_c3)
-_c0(_b7,x,y,_cy,_c1)
-clip(x,y+1,#_b7*4,3)
-print(_b7,x,y,_c3)
+function _c5(_ca,x,y,_c1,_c4,_c6)
+_c3(_ca,x,y,_c1,_c4)
+clip(x,y+1,#_ca*4,3)
+print(_ca,x,y,_c6)
 clip()
 end
-function _c4(x,y,_c5,_s,_c6,_cy)
+function _c7(x,y,_c8,_s,_c9,_c1)
 if(_s <=0) return
-local w=mid(0,_s/_c6*_c5,_c5)
+local w=mid(0,_s/_c9*_c8,_c8)
 rectfill(x+1,y+1,x+w+1,y+4,2)
-rectfill(x,y,x+w,y+3,_cy)
+rectfill(x,y,x+w,y+3,_c1)
 end
-function _c7(_5)
+function _da(_5)
 for i=1,_5 do
 yield()
 end
 end
-_c8=[[
+_db=[[
 1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,0,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,0,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,0,0,5,5,5,5,5,5,5,5,5,5,0,0,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6
 1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,0,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,0,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,0,5,5,5,5,5,5,5,5,5,5,5,0,0,0,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6
 1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,1,0,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,0,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,0,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,0,0,5,5,5,5,5,5,5,5,5,5,5,5,0,0,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6
@@ -1058,20 +1061,20 @@ _c8=[[
 20,20,20,20,20,20,20,0,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,0,22,22,22,22,22,22,22,22,22,22,0,15,15,15,15,15,15,15,15,15,15,15,0,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,0,24,24,24,24,24,24,24,24,24,24,0,0,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,0,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27
 20,20,20,20,20,20,20,0,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,0,22,22,22,22,22,22,22,22,22,22,22,0,15,15,15,15,15,15,15,15,15,15,0,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,0,24,24,24,24,24,24,24,24,24,24,0,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,0,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27
 ]]
-_dd=-1
+_dg=-1
 _o=-1
-function _c9(_da)
-_dd=_da
+function _dc(_dd)
+_dg=_dd
 end
-function _db(_dc,x,y)
-local _de=0x0000
-for i=0,_dc-1 do
-_de +=peek(_de+0) + peek(_de+1)*256 + 2
+function _de(_df,x,y)
+local _dh=0x0000
+for i=0,_df-1 do
+_dh +=peek(_dh+0) + peek(_dh+1)*256 + 2
 end
-_df(x,y,_de+2,pget,pset)
+_di(x,y,_dh+2,pget,pset)
 end
-function _df(x0,y0,_dg,_dh,_di)
-local function _dj(l, _s)
+function _di(x0,y0,_dj,_dk,_dl)
+local function _dm(l, _s)
 local v,i=l[1],1
 while v!=_s do
 i+=1
@@ -1079,41 +1082,41 @@ v,l[i]=l[i],v
 end
 l[1]=_s
 end
-local _dm,_dn=0,0
-function _dk(_dl)
-if _dn<16 then
-_dm+=%_dg>>>16-_dn
-_dn+=16
-_dg+=2
+local _dp,_dq=0,0
+function _dn(_do)
+if _dq<16 then
+_dp+=%_dj>>>16-_dq
+_dq+=16
+_dj+=2
 end
-local _s=_dm<<32-_dl>>>16-_dl
-_dm=_dm>>>_dl
-_dn-=_dl
+local _s=_dp<<32-_do>>>16-_do
+_dp=_dp>>>_do
+_dq-=_do
 return _s
 end
-function _do(n)
-local _dl=0
+function _dr(n)
+local _do=0
 repeat
-_dl+=1
-local vv=_dk(_dl)
+_do+=1
+local vv=_dn(_do)
 n+=vv
-until vv<(1<<_dl)-1
+until vv<(1<<_do)-1
 return n
 end
 local
-w,h_1,eb,el,pr,x,y,_dp,_dq
+w,h_1,eb,el,pr,x,y,_ds,_dt
 =
-_do"1",_do"0",_do"1",{},{},0,0,0
-for i=1,_do"1" do
-add(el,_dk(eb))
+_dr"1",_dr"0",_dr"1",{},{},0,0,0
+for i=1,_dr"1" do
+add(el,_dn(eb))
 end
 for y=y0,y0+h_1 do
 for x=x0,x0+w-1 do
-_dp-=1
-if(_dp<1) then
-_dp,_dq=_do"1",not _dq
+_ds-=1
+if(_ds<1) then
+_ds,_dt=_dr"1",not _dt
 end
-local a=y>y0 and _dh(x,y-1) or 0
+local a=y>y0 and _dk(x,y-1) or 0
 local l=pr[a]
 if not l then
 l={}
@@ -1122,10 +1125,10 @@ add(l,e)
 end
 pr[a]=l
 end
-local v=l[_dq and 1 or _do"2" ]
-_dj(l, v)
-_dj(el, v)
-_di(x,y,v)
+local v=l[_dt and 1 or _dr"2" ]
+_dm(l, v)
+_dm(el, v)
+_dl(x,y,v)
 end
 end
 end
