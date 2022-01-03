@@ -142,8 +142,8 @@ function _init()
  --mode = levelselect_mode
  --mode = levelintro_mode
  --mode = levelend_mode
- --p_fact=2
- --p_level=3
+ -- p_fact=2
+ -- p_level=9
 
  if (mode==title_mode) init_title()
  if (mode==houseselect_mode) init_houseselect()
