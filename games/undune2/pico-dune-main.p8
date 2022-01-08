@@ -142,8 +142,8 @@ function _init()
  --mode = levelselect_mode
  --mode = levelintro_mode
  --mode = levelend_mode
-  -- p_fact=2
-  -- p_level=6
+ -- p_fact=2
+ -- p_level=9
 
  if (mode==title_mode) init_title()
  if (mode==houseselect_mode) init_houseselect()
@@ -898,7 +898,7 @@ function play_map_sequence(seqnum)
  pal(10, 3, 1)   -- yellow > rough green
  pal(6, 143, 1)  -- skin > peach
  pal(13, 134, 1) -- greyblue > beige
- pal(5, 142, 1)  -- dark red > peach2
+ pal(5, 14, 1)  -- grey > normal pink
   
  printo("your next conquest",28,7,8,0) 
  ssprint("your next conquest",28,7, 8,0,5) 

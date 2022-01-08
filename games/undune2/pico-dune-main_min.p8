@@ -536,7 +536,7 @@ pal(11, 139, 1)
 pal(10, 3, 1)
 pal(6, 143, 1)
 pal(13, 134, 1)
-pal(5, 142, 1)
+pal(5, 14, 1)
 _cy("your next conquest",28,7,8,0)
 _c5("your next conquest",28,7, 8,0,5)
 if _b4 > 2 then
