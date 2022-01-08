@@ -886,50 +886,54 @@ function _update60()
   -- ai overall decision making (attack, build, repair, etc. - not individual units)
   --update_ai()
   -- depending on ai level...
-  if t()%ai_level==0 then
    --printh("ai credits="..credits[2])
-   --
-   -- unit attacks
-   -- 
-   -- find the first ai unit and attack player  
-   local ai_unit=rnd(units)
-   if ai_unit.owner==2 and ai_awake[ai_unit.faction] and ai_unit.arms and ai_unit.state==0 then
-    -- select a random target (building)
-    attack_rnd_enemy(ai_unit)
-   end
+  if t()%ai_level==0 then
    
-   -- build units/repair
-   -- 
-   local ai_building=rnd(buildings) 
-   -- if ai owned...
-   --  is factory, builds units and is not already building...
-   if ai_building.owner==2    
-     and (not ai_building.build_obj or ai_building.build_obj.process!=1) then    
-     -- select a random unit to build
-     local u=rnd(ai_building.build_objs)
-     if u and u.ai_build then
-      --printh("  > building:"..u.name)
-      u:func_onclick()
-     end    
+   for i=1,4 do
 
-     -- repair?
-     if ai_building.life<ai_building.hitpoint and ai_building.process!=2 then
-      -- auto-repair
-      --printh("  > repairing:"..ai_building.name)
-      process_click(ai_building, 2)
-     end
+    -- attacks
+    --
+    -- find the first ai unit and attack player  
+    local ai_unit=rnd(units)
+    if ai_unit.owner==2 and ai_awake[ai_unit.faction] and ai_unit.arms and ai_unit.state==0 then
+     -- select a random target (building)
+     attack_rnd_enemy(ai_unit)
+    end
+    
+    -- build units/repair
+    -- 
+    local ai_building=rnd(buildings) 
+    -- if ai owned, factory, builds units + not already building...
+    if ai_building.owner==2    
+      and (not ai_building.build_obj or ai_building.build_obj.process!=1) then    
+      -- select a random unit to build
+      local u=rnd(ai_building.build_objs)
+      if u and u.ai_build then
+       --printh("  > building:"..u.name)
+       u:func_onclick()
+      end
+
+      -- repair?
+      if ai_building.life<ai_building.hitpoint and ai_building.process!=2 then
+       -- auto-repair
+       --printh("  > repairing:"..ai_building.name)
+       process_click(ai_building, 2)
+      end
+    end
+
+    -- fire palace weapons
+    -- 
+    local ai_palace = safe_rnd(has_obj[2][19])
+    if ai_palace 
+     and ai_awake[ai_palace.faction]
+     and ai_palace.fire_cooldown<=0 
+     then
+      attack_rnd_enemy(ai_palace)
+     --and p_target and p_target.type==2 then -- any player building    
+     -- do_attack(ai_palace, p_target)
+    end
+
    end
-
-   -- fire palace weapons
-   -- 
-   local ai_palace = safe_rnd(has_obj[2][19])
-   if ai_palace 
-    and ai_awake[ai_palace.faction]
-    and ai_palace.fire_cooldown<=0   
-    and p_target and p_target.type==2 then -- any player building
-     do_attack(ai_palace, p_target)
-   end
-
   end
 
   -- sandworm
@@ -1413,8 +1417,13 @@ function do_guard(unit, start_state)
      mid(flr(self.orig_y+rnd"32")-16,64))
    end
 
-   -- be on look-out
-   if rnd"250"<1 and self.arms and self.state!=8 then
+   -- ornithopter?
+   if self.id==34 then
+     -- select a random target (building)
+     attack_rnd_enemy(self)
+     
+   -- all other units, be on look-out
+   elseif rnd"250"<1 and self.arms and self.state!=8 then
     -- is danger tile?
     local gx,gy = self:get_tile_pos()
     ping(self,gx,gy,
@@ -1425,12 +1434,8 @@ function do_guard(unit, start_state)
        return true
       end
      end,
-     max(4,self.range))     
+     max(4,self.range))
 
-   -- ornithopter?
-   elseif self.id==34 then
-     -- select a random target (building)
-     attack_rnd_enemy(self)
    end
 
 
@@ -1949,15 +1954,10 @@ worm_life=0
 
 
 function attack_rnd_enemy(obj)
- --printh"attack_rnd_enemy()"
  -- find rnd enemy building to attack
- -- note: leave p_target global for palace attacks
- repeat
-  -- find player building to attack
-  -- (units will get attacked just by guarding)
-  p_target = rnd(buildings)
- until p_target.created_by!=obj.created_by
- if (is_visible(p_target)) do_attack(obj, p_target)
+ -- (units will get attacked just by guarding)
+ local target = rnd(buildings)
+ if (target.created_by!=obj.created_by and is_visible(target)) do_attack(obj, target)
 end
 
 function is_visible(obj)
@@ -2327,7 +2327,7 @@ __map__
 24151524240e0037000000000000000a05050505050707050505050509090909090909090905050500000c0d0d1200000000110d0d1200000000000000002f2f00110d0d0f1200000000000000050909050506130d0d0d0d0d0d0d0d0d360d420d0115440d0d1014000000000000000a05050505050505060000000000000000
 2424242424241200000000350000000000000000050905050505050909090909090909090905050800110d0d0d0e00000000130d0d0d12000000000000002f2f110d0d0d0d0d120000110f0d120a0505050505060c0d0d0d0d0d0d0d0d0d0d0d0d15150d0d140000000000000000000000000a05050905000000000000000000
 13421524621515120000000000000000000000000505090500000505090909090909090509090500000c0d0d0d0e000000000013478544150012000000002f2f0d0d10100d0d0d0f0f0d0d0d0e00000a05050505130d0d0d0d0d10101010106a0d800d0d1400000405060b0b0b000000000000000a0508000000000000000000
-00151524151515240000350000000000000000040505050000000a05050505090905050505050800000c0d0d0d0e000000000000138515150062151500002f2f0d140000130d0d0d0d17190d0d12000000000a0506130d0d0d140000000000130d0d0d0e000000050505060b0b00000000000000000000000000000000000000
+00151524151515240000350000000000000000040505050000000a05050505090905050505050800000c0d0d0d0e000000000000138515150062151500002f2f0d140000130d0d0d0d17190d0d12000000000a0506130d0d0d140000000000130d0d0d0e280000050505060b0b00000000000000000000000000000000000000
 11242424242424244700000000000000000000000000000000000000000005050508000000000000000c0d0d0d0e000000000000008585858515151524122f2f00000000000c0d17181b1b190d0e0000000000000000131014000000000000000c680d0e00000005090905060000000000000000000000000000000000000000
 0d242424246e1524241200000000000000000000000000000000000000000a05080000000000000000130d0d370d120000000000350013578585242424242f2f0000000000130d1d1e1e1e1f0d0d0f12000000000000000000000000000000110d0d0d0d12000405050505050000000000000000000000000000000000000000
 0d85421524151524858585000000000000000000000000000000000000000b0b0b000000000000000000130d0d350d1200000000003500000000242442152f2f0000000000000c0d0d0d0d0d0d0d0d0d0f12000000000000000000000000110d0d0d0d0d0d120a050509050a0000000000000000000000000000000000000000
@@ -2339,7 +2339,7 @@ __map__
 0d0d0d370d0d0d340d0e000000130d1400000000000000000000000000000000000c0d0d0d120000000011120000000034000408000011242424242465002f2f0000000000000000000000000000000000000000000004050600000000000c0d0d0d0d0d12050505000000000000000000000000000000000000000000000000
 0d0d0d0d0d0d0d0d0d0e0000000000000000000000000000000000000000000000130d0d0d0d120000110d0d1200000000000000000057858580151500002f2f0000000000000000000000000000000000000000000005050506000000000c0d0d0d0d0d0e0a0508000000000000000000000000000011120000000000000000
 0d0d0d0d0d0d0d0d0d0e0000000000000000000000000000000000000000000000000c0d0d0d0d0f0f0d0d0d0d1200000000000000000c248515151585852f2f00000000110f0f0f0f0f12000000000000000000000005050905060000000c0d0d0d0d0d0e00000000000000000000000405050600110d0d1200000000000000
-0d0d0d0d0d0d0d0d0d0d12000034000000000000110f0f0f0f0f12000000000000000c0d0d0d0d0d0d0d0d0d0d0d0f1200000000000013248585242457242f2f000000000c0d0d0d180d0d120000000000000000000005090505050506000c0d0d0d0d0d0e0000000000000000110f0f1205050506130d0d0e00000000000000
+0d0d0d0d0d0d0d0d0d0d12000034000000000000110f0f0f0f0f12000000000000000c0d0d0d0d0d0d0d0d0d0d0d0f1200002800000013248585242457242f2f000000000c0d0d0d180d0d120000000000000000000005090505050506000c0d0d0d0d0d0e0000000000000000110f0f1205050506130d0d0e00000000000000
 0d0d0d0d0d0d0d0d10100e0000000000000000110d0d1010100d0d1200000a0000000c0d0d0d0d101010101010101014000000000000001324242437240d2f2f00000000130d0d0d1e0d0d0d120000000000000000000a050505050505060c0d0d0d0d0d0e00000000000000000c0d0d0e05090505000c0d0e00000405060000
 0d0d0d0d0d10101400000c12000000000000110d0d14000000130d0d1200000405060c0d0d0d14040505060000000000000000000000340013242424100d2f2f05050600000c0d0d0d0d0d0d0d12000000000000000000000a0505090905130d0d0d0d0d0e00000000000000000c0d0d0e0505090a0013101400000505050000
 0d0d0d0d0e00000000000c0d1200000000000c0d0e00000000000c0d0e00000505050c0d0d0e0405090905000000000000000000000000000405050506132f2f0905050000130d0d0d0d0d0d0d0d0f1200000000000011120005050505080013100d0d0d0e00000000000000110d0d0d0d0a0505080000000000000509050000
