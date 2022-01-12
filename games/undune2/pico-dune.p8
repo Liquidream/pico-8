@@ -296,7 +296,8 @@ function _init()
       mval|=val<<4 poke(0x4300+off,mval) mval=0 off+=1
      end
     end
-    yield()
+    if (yy%2==0) yield()
+    --yield()
    end
 
    -- check end states
@@ -1216,7 +1217,7 @@ function _draw()
  local cx,cy=ceil(92+camx/16),ceil(92+camy/16)
  rect(cx,cy, cx+7,cy+7, 7)
 
- if radar_frame>0 and radar_frame<60 then
+ if radar_frame>0 and radar_frame<77 then
    radar_frame+=1
    -- draw radar anim   
    rectfill(92,92,122,122,0)
