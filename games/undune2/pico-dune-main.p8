@@ -8,9 +8,6 @@ __lua__
 -- =======================================
 -- main cart (title menu, level select)
 -- 
--- constants
---debug=true
-
 game_cart = "pico-dune.p8" --_min
 
 faction_cols = {
@@ -142,8 +139,8 @@ function _init()
  --mode = levelselect_mode
  --mode = levelintro_mode
  --mode = levelend_mode
- -- p_fact=2
- -- p_level=9
+  -- p_fact=1
+  -- p_level=9
 
  if (mode==title_mode) init_title()
  if (mode==houseselect_mode) init_houseselect()
@@ -152,7 +149,17 @@ function _init()
  if (mode==levelselect_mode) init_levelselect() 
 
  menuitem(1,"!wipe save data!",reset_saved_data)
+ menuitem(2,"level: ⬅️ "..p_level.." ➡️",level_warp)
+end
 
+
+
+function level_warp(b)
+ if (b&1>0) p_level=max(p_level-1,1)
+ if (b&2>0) p_level=min(p_level+1,9)
+ if (b&32>0) init_levelintro() printh">>>" return false
+ menuitem(2,"level: ⬅️ "..p_level.." ➡️",level_warp)
+ return true
 end
 
 function _update60()
@@ -219,8 +226,6 @@ function _draw()
   cls()
  end
 
- --print("-main cart-",0,0,8)
-
  if mode == title_mode then
   draw_title()
 
@@ -254,12 +259,9 @@ end
 
 function load_data()
  -- load saved data to determine current "state"
-
  p_fact = dget(6)
  p_level = max(1, dget(0))
- --p_level = 9
  endstate = dget(40)  -- (0=none, 1=credit target, 2=enemy defeated, 3=player lost)
- 
  
  if endstate>0 then
   if endstate==3 then
@@ -293,11 +295,6 @@ end
 
 
 function load_level(num)
-
- --debug
- --num=3
- --p_fact=3 -- (1=atreides, 2=ordos, 3-harkonen)
-
  -- printh("in load_level("..num..")...")
  -- printh("p_fact = "..p_fact)
 
@@ -320,21 +317,18 @@ function load_level(num)
  dset(9, mdata[6]) -- player base x-pos
  dset(10,mdata[7]) -- player base y-pos
 
- --ai1_fact = 1
  dset(11, ai1_fact) -- ai_faction
  dset(12, ai1_fact and faction_cols[ai1_fact][1] or nil)
  dset(13, ai1_fact and faction_cols[ai1_fact][2] or nil)
  dset(14, mdata[9])  -- ai1 base x-pos
  dset(15, mdata[10]) -- ai1 base y-pos 
 
- --ai2_fact = 1
  dset(16, ai2_fact)
  dset(17, ai2_fact and faction_cols[ai2_fact][1] or nil)
  dset(18, ai2_fact and faction_cols[ai2_fact][2] or nil)
  dset(19, mdata[12]) -- ai2 base x-pos
  dset(20, mdata[13]) -- ai2 base y-pos
 
- --ai3_fact = 1
  dset(21, ai3_fact)
  dset(22, ai3_fact and faction_cols[ai3_fact][1] or nil)
  dset(23, ai3_fact and faction_cols[ai3_fact][2] or nil)
@@ -346,12 +340,12 @@ function load_level(num)
  dset(36, mdata[3]) -- target credits
 
  dset(41, 0) -- playing time
- dset(42, 0) -- harvested
- dset(43, 0) -- ai harvested
- dset(44, 0) -- units destroyed
- dset(45, 0) -- ai units destroyed
- dset(46, 0) -- buildings destroyed
- dset(47, 0) -- ai buildings destroyed
+ dset(42, 0) -- player harvested
+ dset(43, 0) -- ai ...
+ dset(44, 0) -- player units destroyed
+ dset(45, 0) -- ai ...
+ dset(46, 0) -- player buildings destroyed
+ dset(47, 0) -- ai ...
 
  log_cartdata()
 
@@ -364,6 +358,10 @@ function load_level(num)
  cstore(0x2000, 0x4300, 0x1000, game_cart) -- write map data
  reload(0x4300, 0x3100, 0x1199, mapfile)   -- read music+sfx data
  cstore(0x3100, 0x4300, 0x1199, game_cart) -- write music+sfx data
+ 
+ -- clear all user data to avoid garbage on radar init
+ memset(0x4300, 0, 0x1b00) 
+ 
  load(game_cart)
 end
 
@@ -397,9 +395,6 @@ end
 
 function draw_title()
  cls()
-	-- draw orginal sprite when
-	-- not rotating (as rotation
-	-- code distorts slightly)
 	if angle~=0 then 
 	 spr3d(0,0,123,20,cy,angle,1)
 	else
@@ -673,16 +668,6 @@ function init_levelend()
  p_col1 = faction_cols[p_fact][1]
  p_col2 = faction_cols[p_fact][2]
 
- -- debug testing
- -- p_score=1019
- -- p_time=5000 
- -- p_harvested=1587 --1/4
- -- ai_harvested=13245.75 --1/4
- -- p_units=21
- -- ai_units=225
- -- p_buildings=49
- -- ai_buildings=9
-
  local hours = flr(p_time / 3600 )
  p_time = p_time - hours * 3600
  local minutes = flr(p_time / 60)
@@ -826,7 +811,7 @@ function init_levelselect()
   {12,1,0},     -- attreides
   {11,10,1},    -- ordos
   {8,2,1,5,5},  -- harkonnen
-  {5,2,0}     -- emperor
+  {5,2,0}       -- emperor
  } 
 
  col_origmap=-1
@@ -908,7 +893,6 @@ function play_map_sequence(seqnum)
  end
 
  if p_fact == 1 then
-  -- =========================================================
   -- atreides
   if seqnum == 1 then
    -- intro anim?
@@ -1010,7 +994,6 @@ function play_map_sequence(seqnum)
   end
 
  elseif p_fact == 2 then
-  -- =========================================================
   -- ordos
   if seqnum == 1 then
    -- intro anim?
@@ -1107,7 +1090,6 @@ function play_map_sequence(seqnum)
   end
 
  elseif p_fact == 3 then 
-  -- =========================================================
   -- harkonnen
   if seqnum == 1 then
    -- intro anim?
@@ -1301,7 +1283,7 @@ function fizzlemap(rnum, cols)
      end
     end
    end
-   if(_x%speed==0)yield()--flip()
+   if(_x%speed==0)yield()
   end
  end
 end
