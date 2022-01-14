@@ -135,6 +135,7 @@ function _init()
  load_data()
 
  -- debug!!!
+ --p_level=9
  --mode = houseselect_mode
  --mode = levelselect_mode
  --mode = levelintro_mode
@@ -879,7 +880,11 @@ function play_map_sequence(seqnum)
  pal(10, 3, 1)   -- yellow > rough green
  pal(6, 143, 1)  -- skin > peach
  pal(13, 134, 1) -- greyblue > beige
- pal(5, 14, 1)  -- grey > normal pink
+ if p_level < 9 then
+  pal(5, 142, 1)  -- grey > peach2 (sand col)
+ else
+  pal(5, 14, 1)  -- grey > normal pink (emporor col)
+ end
   
  printo("your next conquest",28,7,8,0) 
  ssprint("your next conquest",28,7, 8,0,5) 
