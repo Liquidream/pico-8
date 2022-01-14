@@ -139,9 +139,7 @@ function _init()
  --mode = levelselect_mode
  --mode = levelintro_mode
  --mode = levelend_mode
-  -- p_fact=1
-  -- p_level=9
-
+ 
  if (mode==title_mode) init_title()
  if (mode==houseselect_mode) init_houseselect()
  if (mode==levelintro_mode)  init_levelintro() 
@@ -152,12 +150,10 @@ function _init()
  menuitem(2,"level: ⬅️ "..p_level.." ➡️",level_warp)
 end
 
-
-
 function level_warp(b)
  if (b&1>0) p_level=max(p_level-1,1)
  if (b&2>0) p_level=min(p_level+1,9)
- if (b&32>0) init_levelintro() printh">>>" return false
+ if (b&32>0) init_levelintro() return false
  menuitem(2,"level: ⬅️ "..p_level.." ➡️",level_warp)
  return true
 end
