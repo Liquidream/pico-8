@@ -341,7 +341,7 @@ end
 function m_map_obj_tree(objref, x,y, owner, factory) 
   local newobj=m_obj_from_ref(objref, x,y, objref.type, nil, g_[objref.func_init], g_[objref.func_draw], nil)
   -- 0=auto, 1=player, 2=computer/ai
-  newobj.ico_obj,newobj.life,placement_damage,newobj.owner = m_obj_from_ref(objref, 109,0, 3, newobj, nil, nil, g_[objref.func_onclick]), placement_damage and objref.hitpoint/2 or objref.hitpoint, false, newobj.owner or owner
+  newobj.ico_obj,newobj.life,placement_damage,newobj.owner = m_obj_from_ref(objref, 107,0, 3, newobj, nil, nil, g_[objref.func_onclick]), placement_damage and objref.hitpoint/2 or objref.hitpoint, false, newobj.owner or owner
   if factory then
    --created by factory
    newobj.base_idx=factory.base_idx
@@ -375,7 +375,7 @@ function m_map_obj_tree(objref, x,y, owner, factory)
      and fact_allowed(o,new_faction)
     then
       add(newobj.build_objs,
-        m_obj_from_ref(o, 109,0, 4, newobj, nil, nil, function(self)
+        m_obj_from_ref(o, 107,0, 4, newobj, nil, nil, function(self)
           -- building icon clicked
           if show_menu then
             -- select building
@@ -409,8 +409,10 @@ function m_map_obj_tree(objref, x,y, owner, factory)
     local slabs=objref.obj_spr==22
     for xx=0,objref.w-1 do
       for yy=0,objref.h-1 do
-       -- block map under building (diff tiles for player/ai-owned)
-       wrap_mset(xpos+xx, ypos+yy, slabs and 22 or newobj.owner==1 and 81 or 103)
+       local val=wrap_mget(xpos+xx, ypos+yy)
+       if not slabs or (val>=12 and val<=21) then
+        wrap_mset(xpos+xx, ypos+yy, slabs and 22 or newobj.owner==1 and 81 or 103)
+       end
       end
     end
     if (not slabs) add(buildings,newobj)
@@ -436,7 +438,7 @@ function m_map_obj_tree(objref, x,y, owner, factory)
        reveal_fow(self)
      end
      -- rocket/cannon turret?
-     if (not newobj.moves) wrap_mset(xpos,ypos,21)
+     if (not newobj.moves) wrap_mset(xpos,ypos,newobj.owner==1 and 22 or 36) --21
     end
 
     -- remember fact, if refinery
@@ -498,7 +500,7 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
        if ty>2 and ty<5 then
          local this = ty==4 and self or self.parent
          -- bg
-         rectfill(x-1,y-1,x+16,y+19, 0)
+         rectfill(x-1,y-1,x+16,y+19,0)
          -- draw health/progress
          local hp = this.hitpoint
          local val = self.process==1 and this.life/6.666 or 15*(this.life/hp)
@@ -581,9 +583,7 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
     end --abort if off-screen
    end,
    update=function(self)
-     local life=self.life
-     local ty=self.type
-     local id=self.id
+     local life,ty,id = self.life,self.type,self.id     
      -- update targeting flash
      self.flash_count=max(self.flash_count-.4,1)
      -- check for attack (unless spice bloom)
@@ -593,7 +593,7 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
        -- set/reinstate loop
        set_loop(true) -- must stay boolean
        -- switch music (if passed the loop point)
-       if (stat(54)>5) music"0"
+       if (stat"54">5) music"0"
        -- can we retaliate (unit/turret)?
        if (self.arms and self.state==0) do_attack(self, self.hitby)
        -- lose soldiers
@@ -636,7 +636,7 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
         if(selected_obj==self) selected_obj=nil
       else
         -- dying
-        if (rnd(ty==2 and 2 or 8)<1) make_explosion(self.x+rnd(self.w),self.y+rnd(self.h))
+        if (chance(ty==2 and 2 or 8)) make_explosion(self.x+rnd(self.w),self.y+rnd(self.h))
       end
      end
 
@@ -850,10 +850,10 @@ function _update60()
  --
  if not show_menu then 
   -- auto-scroll (pan) map
-  if (cursx<4) camx-=2
-  if (cursx>123) camx+=2
-  if (cursy<4) camy-=2
-  if (cursy>123) camy+=2
+  if (cursx<2) camx-=2
+  if (cursx>125) camx+=2
+  if (cursy<2) camy-=2
+  if (cursy>125) camy+=2
 
   -- lock cam to map + calc score
   camx,camy,strnum = mid(camx,cam_max),mid(-10,camy,cam_max),tostr(credits[1])
@@ -1227,14 +1227,14 @@ function _draw()
 
  -- object menu icon/buttons? 
  if selected_obj and selected_obj.ico_spr then
-  selected_obj.ico_obj:set_pos(109,20)
+  selected_obj.ico_obj:set_pos(107,20)
   selected_obj.ico_obj:draw()  
   -- player icons (build, actions, etc.)
   repair_obj,launch_obj=nil,nil
   if selected_obj.owner==1 then   
    -- build
    if sel_build_obj then
-    sel_build_obj:set_pos(109,44)
+    sel_build_obj:set_pos(107,44)
     sel_build_obj:draw()    
    end
    -- repair? 
@@ -1242,7 +1242,7 @@ function _draw()
     and selected_obj.id!=4
     and (selected_obj.type==2
       or not selected_obj.moves) then
-     repair_obj=m_obj_from_ref(obj_data[80], 117,28, 5, {}, nil,draw_action, function()
+     repair_obj=m_obj_from_ref(obj_data[80], 115,28, 5, {}, nil,draw_action, function()
       process_click(last_selected_obj, 2)
      end)     
      repair_obj:draw()
@@ -1252,7 +1252,7 @@ function _draw()
     and selected_obj.fire_cooldown<=0)
      or selected_obj.id==35
     then
-     launch_obj=m_obj_from_ref(obj_data[81], 109,29, 5, {}, nil,draw_action, function()
+     launch_obj=m_obj_from_ref(obj_data[81], 107,29, 5, {}, nil,draw_action, function()
       -- palace? 
       if last_selected_obj.id!=35 then
        -- go into launch mode 
@@ -1302,7 +1302,7 @@ function _draw()
      end
     end
   end
-  if (placement_inner_invalid)placement_pos_ok=false
+  if (placement_inner_invalid and sel_build_obj.ref.obj_spr!=22)placement_pos_ok=false
 
   fillp"0b1110110110110111.1"
   rectfill(sxpos, sypos,
@@ -1783,8 +1783,8 @@ function move_unit_pos(unit,x,y,dist_to_keep,try_hail,start_state)
    count+=1
    if count%4==0 then
     yield()
-    -- "unreachable destination" check
-    if (count>3000 or stat(0)/2048>.8) goto end_pathfinding
+    -- "unreachable dest" + mem check
+    if (count>3000 or stat"0"/2048>.8) goto end_pathfinding
    end
   end
 
@@ -1815,8 +1815,7 @@ function move_unit_pos(unit,x,y,dist_to_keep,try_hail,start_state)
       -- move to new position      
       local scaled_speed,distance = unit.speed or .5, sqrt((node.x*8-unit.x)^2+(node.y*8-unit.y)^2)
       
-      -- don't remove these!
-      -- (must capture _outside_ the for..loop below)
+      -- don't move these!
       local step_x,step_y = scaled_speed * (node.x*8 - unit.x) / distance, scaled_speed * (node.y*8 - unit.y) / distance
       
       for i = 0, distance/scaled_speed-1 do
@@ -2339,13 +2338,13 @@ __map__
 0e04050905050506000000000000001314000000000000000000000000001357570e000000000000000000000000040506000c242400000000000c8585852f2f0005090505060000000c0d0d1200000000000c0d0d0d0d0d0f0f0f370d0d0d0d0e000000000a05050509051112000000000000000000000000000a0505090000
 0e05090905050505000000000000000000000000000000000000000000000057570e00000000000000000000000a050505002442000000000000131057372f2f0005050905050000000c0d0d0d00000020000c0d0d0d0d0d0d0d0d420d01220d360000000000000a0505080c0e00000000000000000000000000110e05090000
 0e0a05050505050800000000000000000000000000000000000000000000110d0d140000000000000000000505050509050057000012000000150000000d2f2f0005090909050000000c0d0d0d12000000110d0d0d0d0d0d0d0d360d0d22220d0e000000000000000000000c0d12000000000000000000000000000405050000
-0d0f0f120a000000000000000000000004050600000000000000000000110d0d14000000000000110f0d0f120509050505002457440000240e00000000132f2f0005090909050000000c0d0d0d0d0f0f0f0d0d0d0d0d0d0d0d0d0d0d0d6a0d0d37000000000000000000000c0d0d0f1200000000000000000000000a05080000
+0d0f0f120a000000000000000000000004050600000000000000000000110d0d14000000000000110f0d0f120509050505002457440000240e00000000132f2f0005090909050000000c0d0d0d0d0f0f0f0d0d0d0d0d0d0d0d0d3a0d0d6a0d0d37000033000000000000000c0d0d0f1200000000000000000000000a05080000
 0d0d0d0e00000000000000000000040505050500000000000a00110f0f0d0d14000000000000000c0d0d0d0e0509090905001324000000240000000000002f2f0a05050505080000000c0d0d0d0d0d0d0d0d1400130d0d0d0d0d0d340d0d0d0d0e0000000000000000000013100d0d0d12000000000000000000000000000000
 1010101400000000000000000405050909090500000000000000130d10101400000000000000000c0d0d1014050509050800000c140000000000000000002f2f0000000000000000000c0d0d0d0d0d1014000000000c0d0d0d0d100d100d38390e000000000000000000000000130d0d0e000000000000000000000000000000
 0000000000000000000000000509090905050506000000070000000000000000000000000000000c0d1400040505050800000000000000000000000000002f2f0000000000000000000c0d0d0d0d14000000000000130d0d0d1400000013440d0e00000000000000000000000406130d0e000000000000000000000000000000
 0000000000000000000000000a05090905080b0b000000050000000000000000000000000000110d140000000a050800000000000a0000040506000000002f2f000000000000000000130d0d0d1400000000000000000c0d140000000000130d14000000000000110e040505050506130d0f1200000000000000000000000000
 000000000000000000000000000a0505080b0b0b000000050600000000000000000000110d0d0d0e000000000000000000000000000405050505050506002f2f00110f0e0000000000001310140000000000000000001314000000000000000004050a0000000000000509050505050506130d0e000000000000000000000000
-0000000000000000000000000000000b0b0b0000000000000000000000000000000000130d0d0d14000004050505060000000000000005090905050505062f2f00000000000000000000000000000000000000000000000000000000000005050505050600000000040509090509090905000000000000000000000000000000
+0000000000000000000000000000000b0b0b0000000000000000000000000042000000130d0d0d14000004050505060000000000000005090905050505062f2f00000000000000000000000000000000000000000000000000000000000005050505050600000000040509090509090905000000000000000000000000000000
 0000000000000000000000000000000000000000000000000000000000000000000000000000000000000005050505000000000a00000a050909090909052f2f0000000000000000000000000000000000000000000000000004050507000a050505080b0b000000050505050505050508000004050505060000000000000000
 0000000000000000040505060000000000000000000000000000000000000000000000000000000000040505050508110f0e0000000000050505050905082f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f
 000000000004050505090505060000000000000000000000000000000000000000000000000000000000110f0f0f0f0d14000000000000050505090905002f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f
