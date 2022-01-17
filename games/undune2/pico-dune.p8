@@ -8,7 +8,7 @@ __lua__
 cartdata"pn_undune2"
 
 -- data flags
-p_level,ai_level,p_col1,p_col2,mapsize,bases,credits = dget"0",dget"1",dget"7",dget"8",dget"26",{},
+local p_level,ai_level,p_col1,p_col2,mapsize,bases,credits = dget"0",dget"1",dget"7",dget"8",dget"26",{},
 {
  dget"35", -- p credits
  dget"35", -- ai credits (same)
@@ -25,10 +25,10 @@ end
 
 
 -- fields
-g_,buildings,units,object_tiles,radar_data,spice_tiles,particles,has_obj,start_time,t_,build_dest,unit_dest,keyx,keyy,hq,radar_frame,msgcount,fow,cam_max={},{},{},{},{},{},{},{{},{}},t(),0,{0,0},{0,0},0,0,false,0,0,{},mapsize*8-128
-last_hq,total_spice=hq,{0,0}
+local g_,buildings,units,object_tiles,radar_data,spice_tiles,particles,has_obj,start_time,t_,build_dest,unit_dest,keyx,keyy,hq,radar_frame,msgcount,fow,cam_max={},{},{},{},{},{},{},{{},{}},t(),0,{0,0},{0,0},0,0,false,0,0,{},mapsize*8-128
+local last_hq,total_spice=hq,{0,0}
 
-ai_awake={}
+local ai_awake={}
 
 g_.factory_click=function(self)
   menu_pos,selected_subobj,ui_controls=1,nil,{}
@@ -70,7 +70,7 @@ g_.draw_refinery=function(self)
    self.col_cycle_pos=1
   end
 end
-draw_action=function(self)
+local draw_action=function(self)
  pal(7,8)
  if (self.id==80 and selected_obj.process==2 and not selected_obj.procpaused) pal(7,11)
 end
@@ -82,7 +82,7 @@ function process_click(self, mode)
 end
 
 -- object data
-obj_data=[[id|obj_spr|ico_spr|type|w|h|z|trans_col|parent_id|parent2_id|owner|col1|col2|icol1|icol2|ico_w|ico_h|req_id|req_level|req_faction|max|cost|power|arms|hitpoint|speed|range|fire_type|fire_rate|fire_sfx|death_sfx|norotate|altframe|framecount|life|frame|process|spent|fire_cooldown|hit|flash_count|col_cycle_pos|col_cycle_src|storage|capacity|repairable_unit|ai_build|moves|col_cycle|name|description|func_draw|func_onclick
+local obj_data=[[id|obj_spr|ico_spr|type|w|h|z|trans_col|parent_id|parent2_id|owner|col1|col2|icol1|icol2|ico_w|ico_h|req_id|req_level|req_faction|max|cost|power|arms|hitpoint|speed|range|fire_type|fire_rate|fire_sfx|death_sfx|norotate|altframe|framecount|life|frame|process|spent|fire_cooldown|hit|flash_count|col_cycle_pos|col_cycle_src|storage|capacity|repairable_unit|ai_build|moves|col_cycle|name|description|func_draw|func_onclick
 1|64|170|2|2|2|0||nil|||||||2|2|nil|1|||100|0|0|1600|0|||||53||||0|0|0|0|0|0|1|1||0|nil|nil|nil|nil||cONSTRUCTION yARD|aLL STRUCTURES ARE~BUILT BY THE~CONSTRUCTION YARD.||factory_click
 2|22|162|2|2|2|0||1|||||7|5|2|2|1|4|||20|0|0|0|0|||||||||0|0|0|0|0|0|1|1||0|nil|nil|nil|nil||lARGE cONCRETE sLAB|uSE CONCRETE TO MAKE A~STURDY FOUNDATION FOR~YOUR STRUCTURES.||
 3|22|162|2|1|1|0||1|||||6|6|2|2|1|1|||5|0|0|0|0|||||||||0|0|0|0|0|0|1|1||0|nil|nil|nil|nil||sMALL cONCRETE sLAB|uSE CONCRETE TO MAKE A~STURDY FOUNDATION FOR~YOUR STRUCTURES.||
@@ -231,7 +231,7 @@ function _init()
 
    -- update_radar_data()
    -- 
-   new_radar_data={}
+   local new_radar_data={}
    -- landscape/fow
    if hq then
     for i=0,62,2 do
@@ -824,7 +824,7 @@ function _update60()
 
  -- update_level()
  -- mouse control
- mouse_x,mouse_y,mouse_btn=stat"32",stat"33",stat"34"
+ local mouse_x,mouse_y,mouse_btn=stat"32",stat"33",stat"34"
  left_button_clicked,left_button_down,right_button_clicked = (mouse_btn==1 and last_mouse_btn != mouse_btn) or btnp"5", (mouse_btn>0) or btn"5", (mouse_btn==2 and last_mouse_btn != mouse_btn) or btnp"4"
  
  if cursx==nil then
@@ -1644,7 +1644,6 @@ end
 
 -- ping out from initial pos, calling func for each "ripple"
 -- until func returns true, then return position
--- source = unit doing ping
 function ping(unit,x,y,func,max_dist,skip_yield)
  for t=0,max_dist or 4,.04 do
  	local xx,yy=mid(flr(x+t*cos(t)),61),mid(flr(y+t*sin(t)),61)

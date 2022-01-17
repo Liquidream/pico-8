@@ -9,7 +9,7 @@ __lua__
 -- main cart (title menu, level select)
 -- =======================================
 cartdata"pn_undune2"
-_a,_b,_c,_d,_e,_f,_g=dget"0",dget"1",dget"7",dget"8",dget"26",{},{
+local _a,_b,_c,_d,_e,_f,_g=dget"0",dget"1",dget"7",dget"8",dget"26",{},{
 dget"35",
 dget"35",
 dget"36"
@@ -21,9 +21,9 @@ _h[j]=dget(i*5+j)
 end
 add(_f,_h)
 end
-g_,_i,_j,_k,_l,_m,_n,_o,_p,t_,_q,_r,_s,_t,hq,_u,_v,_w,_x={},{},{},{},{},{},{},{{},{}},t(),0,{0,0},{0,0},0,0,false,0,0,{},_e*8-128
-_y,_z=hq,{0,0}
-_0={}
+local g_,_i,_j,_k,_l,_m,_n,_o,_p,t_,_q,_r,_s,_t,hq,_u,_v,_w,_x={},{},{},{},{},{},{},{{},{}},t(),0,{0,0},{0,0},0,0,false,0,0,{},_e*8-128
+local _y,_z=hq,{0,0}
+local _0={}
 g_._4=function(self)
 _1,_2,_3=1,nil,{}
 _f5(6,"⬆️",function()
@@ -58,7 +58,7 @@ pal(11,self.col1)
 self._ad=1
 end
 end
-_ab=function(self)
+local _ab=function(self)
 pal(7,8)
 if(self.id==80 and _bm._ae==2 and not _bm._af) pal(7,11)
 end
@@ -67,7 +67,7 @@ self._cx,self.last_process,self._ae=0,self._ae,_9
 if(self._cm>=0 and self.last_process>0) self._af=not self._af
 if(_9==1) self._by._ag=true self._by._ah=self
 end
-_ai=[[id|_av|ico_spr|type|w|h|z|trans_col|_bk|_bl|_aq|col1|_aa|icol1|icol2|ico_w|ico_h|req_id|req_level|req_faction|max|_fs|power|_e4|_b3|_f4|range|_ci|fire_rate|fire_sfx|death_sfx|norotate|altframe|framecount|_cm|_cs|_ae|spent|_cy|_ck|_cn|_ad|col_cycle_src|storage|capacity|repairable_unit|ai_build|moves|_b9|_cz|description|_b0|_bn
+local _ai=[[id|_av|ico_spr|type|w|h|z|trans_col|_bk|_bl|_aq|col1|_aa|icol1|icol2|ico_w|ico_h|req_id|req_level|req_faction|max|_fs|power|_e4|_b3|_f4|range|_ci|fire_rate|fire_sfx|death_sfx|norotate|altframe|framecount|_cm|_cs|_ae|spent|_cy|_ck|_cn|_ad|col_cycle_src|storage|capacity|repairable_unit|ai_build|moves|_b9|_cz|description|_b0|_bn
 1|64|170|2|2|2|0||nil|||||||2|2|nil|1|||100|0|0|1600|0|||||53||||0|0|0|0|0|0|1|1||0|nil|nil|nil|nil||cONSTRUCTION yARD|aLL STRUCTURES ARE~BUILT BY THE~CONSTRUCTION YARD.||_4
 2|22|162|2|2|2|0||1|||||7|5|2|2|1|4|||20|0|0|0|0|||||||||0|0|0|0|0|0|1|1||0|nil|nil|nil|nil||lARGE cONCRETE sLAB|uSE CONCRETE TO MAKE A~STURDY FOUNDATION FOR~YOUR STRUCTURES.||
 3|22|162|2|1|1|0||1|||||6|6|2|2|1|1|||5|0|0|0|0|||||||||0|0|0|0|0|0|1|1||0|nil|nil|nil|nil||sMALL cONCRETE sLAB|uSE CONCRETE TO MAKE A~STURDY FOUNDATION FOR~YOUR STRUCTURES.||
@@ -170,7 +170,7 @@ _k={}
 for _cr in all(_j) do
 _k[_cr:_c1()]=_cr
 end
-_ax={}
+local _ax={}
 if hq then
 for i=0,62,2 do
 for l=0,62,2 do
@@ -551,7 +551,7 @@ end
 end
 end
 function _update60()
-_dc,_dd,_de=stat"32",stat"33",stat"34" _df,_dg,_dh=(_de==1 and _d5 !=_de) or btnp"5", (_de>0) or btn"5", (_de==2 and _d5 !=_de) or btnp"4"
+local _dc,_dd,_de=stat"32",stat"33",stat"34" _df,_dg,_dh=(_de==1 and _d5 !=_de) or btnp"5", (_de>0) or btn"5", (_de==2 and _d5 !=_de) or btnp"4"
 if _di==nil then
 _di,_dj=64,64
 elseif _dc==_dk and _dd==_dl then
