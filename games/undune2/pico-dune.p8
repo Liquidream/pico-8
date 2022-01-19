@@ -82,52 +82,53 @@ function process_click(self, mode)
 end
 
 -- object data
-local obj_data=[[id|obj_spr|ico_spr|type|w|h|z|trans_col|parent_id|parent2_id|owner|col1|col2|icol1|icol2|ico_w|ico_h|req_id|req_level|req_faction|max|cost|power|arms|hitpoint|speed|range|fire_type|fire_rate|fire_sfx|death_sfx|norotate|altframe|framecount|life|frame|process|spent|fire_cooldown|hit|flash_count|col_cycle_pos|col_cycle_src|storage|capacity|repairable_unit|ai_build|moves|col_cycle|name|description|func_draw|func_onclick
-1|64|170|2|2|2|0||nil|||||||2|2|nil|1|||100|0|0|1600|0|||||53||||0|0|0|0|0|0|1|1||0|nil|nil|nil|nil||cONSTRUCTION yARD|aLL STRUCTURES ARE~BUILT BY THE~CONSTRUCTION YARD.||factory_click
-2|22|162|2|2|2|0||1|||||7|5|2|2|1|4|||20|0|0|0|0|||||||||0|0|0|0|0|0|1|1||0|nil|nil|nil|nil||lARGE cONCRETE sLAB|uSE CONCRETE TO MAKE A~STURDY FOUNDATION FOR~YOUR STRUCTURES.||
-3|22|162|2|1|1|0||1|||||6|6|2|2|1|1|||5|0|0|0|0|||||||||0|0|0|0|0|0|1|1||0|nil|nil|nil|nil||sMALL cONCRETE sLAB|uSE CONCRETE TO MAKE A~STURDY FOUNDATION FOR~YOUR STRUCTURES.||
-4|133|164|2|1|1|0||1|||||||2|2|7|4|||50|0|0|200|0|||||53||164||0|0|0|0|0|0|1|1||0|nil|nil|nil|nil||dEFENSIVE wALL|tHE wALL IS USED FOR~PASSIVE DEFENSE.||
-5|66|172|2|2|2|0||1|||||||2|2|1|1|||300|-100|0|800|0|||||53|||1|0|0|0|0|0|0|1|1|11|0|nil|nil|nil|nil|0,0,0,0,0,0,0,0,1,13,12,12,12,12,12,12,12,12,12,12,13,1|wINDTRAP|tHE WINDTRAP SUPPLIES~POWER TO YOUR BASE.~wITHOUT POWER YOUR~STRUCTURES WILL DECAY.||
-6|68|174|2|3|2|0||1|||||||2|2|5|1|||400|30|0|1800|0|||||53|||2|0|0|0|0|0|0|1|1|11|1000|nil|nil|nil|nil|11,10,8,8|sPICE rEFINERY|tHE rEFINERY CONVERTS~SPICE INTO CREDITS.|draw_refinery|
-7|106|136|2|2|2|0||1|||||||2|2|5|2|||400|30|0|2000|0|||||53|||1|0|0|0|0|0|0|1|1|11|0|nil|nil|nil|nil|8,0,8,0,0,0|rADAR oUTPOST|tHE oUTPOST PROVIDES~RADAR AND AIDS CONTROL~OF DISTANT VEHICLES.||
-8|104|134|2|2|2|0||1|||||||2|2|6|2|||150|5|0|600|0|||||53||||0|0|0|0|0|0|1|1||1000|nil|nil|nil|nil||sPICE sTORAGE sILO|tHE sPICE SILO IS USED ~TO STORE REFINED SPICE.||
-9|108|168|2|2|2|0||1|||||11|3|2|2|7|2|-3||300|10|0|1200|0|||||53||||0|0|0|0|0|0|1|1||0|nil|nil|nil|nil||bARRACKS|tHE bARRACKS IS USED TO~TRAIN YOUR lIGHT ~INFANTRY.||factory_click
-10|110|138|2|2|2|0||1|||||||2|2|7|2|||400|10|0|1600|0|||||53||||0|0|0|0|0|0|1|1||0|nil|nil|nil|nil||wor tROOPER fACILITY|wor IS USED TO TRAIN~YOUR hEAVY INFANTRY.||factory_click
-11|96|140|2|2|2|0||1|||||||2|2|6|2|||400|20|0|1400|0|||||53||||0|0|0|0|0|0|1|1||0|nil|nil|nil|nil||lIGHT vEHICLE fACTORY|tHE lIGHT fACTORY~PRODUCES LIGHT ATTACK~VEHICLES.||factory_click
-12|98|142|2|3|2|0||1|||||||2|2|6|3|||600|20|0|800|0|||||53||||0|0|0|0|0|0|1|1||0|nil|nil|nil|nil||hEAVY vEHICLE fACTORY|tHE hEAVY fACTORY~PRODUCES HEAVY ATTACK~VEHICLES.||factory_click
-13|101|166|2|3|2|0||1|||||||2|2|12|5|||500|35|0|1600|0|||||53||||0|0|0|0|0|0|1|1||0|nil|nil|nil|nil||hI-tECH fACTORY|tHE hI-tECH fACTORY~PRODUCES FLYING~VEHICLES.||factory_click
-14|128|230|2|3|2|0||1|||||||2|2|12|5|||700|20|0|800|0|||||53|||0|0|0|0|0|0|0|1|1|8|0|nil|nil|nil|nil|0|rEPAIR fACILITY|tHE rEPAIR fACILITY~IS USED TO REPAIR YOUR~VEHICLES.||
-15|71|232|1|1|1|1|11|1|||||||2|2|7|5|||125|10|80|800|0|5|1|27|58|53||||0|0|0|0|0|0|1|1||0|nil|nil|nil|nil||cANNON tURRET|tHE cANNON tURRET IS~USED FOR SHORT RANGE~ACTIVE DEFENSE.||
-16|87|234|1|1|1|1|11|1|||||||2|2|7|6|||250|20|240|800|0|10|2|40|59|53||||0|0|0|0|0|0|1|1||0|nil|nil|nil|nil||rOCKET tURRET|tHE rOCKET TURRET IS~USED FOR MEDIUM RANGE~ACTIVE DEFENSE.||
-17|61|228|2|3|3|0||1|||||11|3|2|2|6|6||1|500|50|0|2000|0|||||53|||2|0|0|0|0|0|0|1|1|11|0|nil|nil|nil|nil|11,10,8,8|sTARPORT|tHE sTARPORT IS USED TO~ORDER AND RECEIVED~SHIPMENTS FROM~c.h.o.a.m.|draw_refinery|factory_click
-18|131|224|2|2|2|0||1|||||||2|2|12|5|||500|40|0|1600|0|||||53||||0|0|0|0|0|0|1|1||0|nil|nil|nil|nil||hOUSE OF ix|tHE ix rESEARCH~fACILITY ADVANCES YOUR~hOUSE'S TECHNOLOGY.||
-19|58|226|2|3|3|0||1|||||||2|2|17|8||1|999|80|0|4000|0|||2,400||53||||0|0|0|0|0|0|1|1||0|nil|nil|nil|nil||pALACE|tHIS IS YOUR pALACE.||
-20|49|236|1|0.5|0.5|1|11|9|||||15|3|2|2||2|-3||60||24|80|0.05|3|1|15|60|57|1|48|10|0|0|0|0|0|0|1|1||0|nil|nil|1|1||iNFANTRY sOLDIER|iNFANTRY ARE LIGHTLY~ARMOURED FOOTSOLDIERS,~WITH LIMITED FIRING~RANGE AND SPEED.||
-21|48|236|1|1|1|1|11|9|||||15|3|2|2||2|-3||100||16|200|0.05|3|1|15|60|57|1|49|10|0|0|0|0|0|0|1|1||0|nil|nil|1|1||lIGHT iNFANTRY sQUAD|iNFANTRY ARE LIGHTLY~ARMOURED FOOTSOLDIERS,~WITH LIMITED FIRING~RANGE AND SPEED.||
-22|49|194|1|0.5|0.5|1|11|10|||||||2|2||3|-1||100||16|180|0.1|7|2|17|59|57|1|48|10|0|0|0|0|0|0|1|1||0|nil|nil|1|1||hEAVY tROOPER|tROOPERS ARE HEAVILY~ARMOURED FOOTSOLDIERS,~WITH IMPROVED FIRING~RANGE AND SPEED.||
-23|48|194|1|1|1|1|11|10|||||||2|2||3|-1||200||32|440|0.1|7|2|17|59|57|1|49|10|0|0|0|0|0|0|1|1||0|nil|nil|1|1||hEAVY tROOPERS|tROOPERS ARE HEAVILY~ARMOURED FOOTSOLDIERS,~WITH IMPROVED FIRING~RANGE AND SPEED.||
-24|48|236|1|1|1|1|11|||0|9|4|9|1|2|2||8|1||0||64|440|0.1|4|1|17|60|57|1|49|10|0|0|0|0|0|0|1|1||0|nil|nil|nil|1||fREMEN|tHE fREMEN ARE NATIVE~TO dUNE. eLITE FIGHTERS~IN ALLIANCE WITH THE~aTREIDES.||
-25|48|236|1|0.5|0.5|1|11|||0|1|0|13|1|2|2||8|2||0||1600|40|0.4|1|1|800|60|57|1|49|10|0|0|0|0|0|0|1|1||0|nil|nil|nil|1||sABOTEUR|tHE sABOTEUR IS A~SPECIAL MILITARY UNIT,~TRAINED AT AN oRDOS~pALACE. cAN DESTROY~ALMOST ANY STRUCTURE OR~VEHICLE.||
-26|48|236|1|1|1|1|11|||0|14|2|14|2|2|2||4|||0||64|440|0.1|2|2|17|59|57||||0|0|0|0|0|0|1|1||0|nil|nil|nil|1||sARDAUKAR|tHE sARDUKAR ARE THE~eMPEROR'S ELITE TROOPS.~WITH SUPERIOR FIREPOWER~AND ARMOUR.||
-27|51|204|1|1|1|1|11|11|17||||15|4|2|2||2|||150||32|400|0.6|4|1|17|60|54||||0|0|0|0|0|0|1|1||0|nil|1|1|1||tRIKE|tHE tRIKE IS A LIGHTLY-~ARMOURED, 3-WHEELED~VEHICLE, WITH LIMITED~FIRING RANGE, BUT RAPID~SPEED.||
-28|52|206|1|1|1|1|11|11|17||||||2|2||3|||200||56|520|0.5|4|1|17|60|54||||0|0|0|0|0|0|1|1||0|nil|1|1|1||qUAD|tHE qUAD IS A LIGHTLY-~ARMOURED, 4-WHEELED~VEHICLE. sLOWER THAN~THE tRIKE, BUT STRONGER~ARMOUR AND FIREPOWER.||
-29|53|196|1|1|1|1|11|12|17||||||2|2|7|4|||300||100|800|0.25|5|1|27|58|54||||0|0|0|0|0|0|1|1||0|nil|1|1|1||cOMBAT tANK|tHE cOMBAT tANK IS A~MEDIUM ARMOURED TANK,~FIRES HIGH-EXPLOSIVE~ROUNDS.||
-30|55|198|1|1|1|1|11|12|17||||15|4|2|2|7|6|||600||240|1200|0.2|6|1|30|58|54||||0|0|0|0|0|0|1|1||0|nil|1|1|1||sIEGE tANK|tHE mISSILE tANK IS A~MEDIUM ARMOURED TANK,~WHICH FIRES MISSILES.~lONG-RANGE, BUT~INACCURATE.||
-31|54|202|1|1|1|1|11|12|17||||15|4|2|2|7|5|||450||600|400|0.3|10|2|40|59|54||||0|0|0|0|0|0|1|1||0|nil|1|1|1||rOCKET lAUNCHER|tHE sIEGE tANK IS A~HEAVY ARMOURED TANK,~WHICH HAS DUAL CANNONS,~BUT IS SLOW.||
-32|50|192|1|1|1|1|11|12|17||||12|12|2|2||2|||300||nil|600|0.1|0||0||54||||0|0|0|0|0|0|1|1||0|0|1|1|1||hARVESTER|tHE hARVESTER SEPARATES~SPICE FROM THE SAND &~RETURNS RAW SPICE TO~THE rEFINERY FOR~PROCESSING.||
-33|73|238|1|1|1|8|11|13|||||11|3|2|2|13|5|||800||nil|400|0.75|0||0||54||||0|0|0|0|0|0|1|1||0|nil|nil|nil|1||cARRYALL|tHE cARRYALL IS A~LIGHTLY ARMOURED~AIRCRAFT WITH NO~WEAPONS. mAINLY USED~TO LIFT+TRANSPORT~hARVESTERS.||
-34|40|160|1|1|1|4|11|13|17||||||2|2|18|7|-3||600||296|4|1|10|2|33|59|54||41|5|0|0|0|0|0|0|1|1||0|nil|nil|1|1||oRNITHOPTER|tHE oRNITHOPTER IS A~LIGHTLY ARMOURED~AIRCRAFT THAT FIRES~ROCKETS.hIGHLY~MANOUVERABLE + FASTEST~AIRCRAFT ON dUNE.||
-35|38|192|1|1|1|1|11|12|17||||0|5|2|2|7|4|||900||nil|600|0.1|0||0||54||||0|0|0|0|0|0|1|1||0|nil|1|nil|1||mcv|tHE mcv (mOBILE~cONSTRUCTION vEHICLE)~SCOUT VEHICLE IS USED~TO FIND AND DEPLOY NEW~BASE LOCATIONS.||
-36|57|198|1|1|1|1|11|12|||||12|9|2|2|18|7|1||600||240|440|0.3|9|3|27|52|54||||0|0|0|0|0|0|1|1||0|nil|1|1|1||sONIC tANK|dEVELOPED BY THE~aTREIDES,THIS ENHANCED~TANK FIRES POWERFUL~BLAST WAVES OF SONIC~ENERGY.||
-37|56|200|1|1|1|1|11|12|||||||2|2|18|8|3||800||320|1600|0.1|8|1|33|58|54||||0|0|0|0|0|0|1|1||0|nil|1|1|1||dEVASTATOR|tHE dEVESTATOR IS A~NUCLEAR-POWERED TANK,~WHICH FIRES DUAL PLASMA~CHARGES. mOST POWERFUL~TANK ON dUNE, BUT~POTENTIALLY UNSTABLE~IN COMBAT.||
-38|72||1|1|1|8|11|||0|||||2|2|13|8|3||0||1600|40|1|0|20|800|59|54||||0|0|0|0|0|0|1|1||0|nil|nil|0|1||dEATH hAND|tHE dEATH hAND IS A~SPECIAL hARKONNEN~pALACE WEAPON. aN~INACCURATE, BUT VERY~DESTRUCTIVE BALLISTIC~MISSILE.||
-38.5|72||1|1|1|8|11|||0|||||2|2|13|8|4||0||1600|40|1|0|20|800|59|54||||0|0|0|0|0|0|1|1||0|nil|nil|nil|1||dEATH hAND|tHE dEATH hAND IS A~SPECIAL hARKONNEN~pALACE WEAPON. aN~INACCURATE, BUT VERY~DESTRUCTIVE BALLISTIC~MISSILE.||
-39|51|204|1|1|1|1|11|11|||||11|1|2|2||2|2||150||40|320|0.75|4|1|17|60|54||||0|0|0|0|0|0|1|1||0|nil|1|1|1||rAIDER|tHE oRDOS rAIDER IS~SIMILAR TO THE STANDARD~tRIKE, BUT WITH LESS~ARMOUR IN FAVOUR OF~SPEED.||
-40|54|202|1|1|1|1|11|12|||||11|3|2|2|18|7|2||750||0|480|0.3|9|1.9|60|59|54||||0|0|0|0|0|0|1|1||0|nil|1|1|1||dEVIATOR|tHE oRDOS dEVIATOR IS A~STANDARD mISSILE tANK,~WHICH FIRES UNIQUE~NERVE GAS MISSILES THAT~MAY TEMPORARILY CHANGE~ENEMY LOYALTY.||
-41|88||9|1|1|1|11||||||||2|2||3|||0||300|4000|0.35|0|30|7|50|||||0|0|0|0|0|0|1|1||0|nil|nil|nil|1||sANDWORM|tHE sAND wORMS ARE~INDIGEONOUS TO dUNE.~aTTRACTED BY VIBRATIONS~ALMOST IMPOSSIBLE TO~DESTROY, WILL CONSUME~ANYTHING THAT MOVES.||
-42|32||1|1|1|1|11|||2|||||1|1|||||||nil|4|0.1|||||53|1|||0|0|0|0|0|0|1|1||0|nil|nil|nil|nil||sPICE bLOOM|||
-80|3|3|5|1|1|0|11||||||||1|1|||||||0|0||||||||||0|0|0|0|0|0|1|1||0|nil|nil|nil|nil||rEPAIR||draw_action|action_click
-81|1|1|5|1|1|0|11||||||||1|1|||||||0|0||||||||||0|0|0|0|0|0|1|1||0|nil|nil|nil|nil||lAUNCH||draw_action|action_click]]
+local obj_data=[[id|obj_spr|ico_spr|type|w|h|z|trans_col|parent_id|parent2_id|owner|col1|col2|icol1|icol2|ico_w|ico_h|req_id|req_level|req_faction|max|cost|power|arms|hitpoint|speed|range|fire_type|fire_rate|fire_sfx|death_sfx|norotate|altframe|framecount|life|frame|process|spent|fire_cooldown|hit|flash_count|col_cycle_pos|col_cycle_src|storage|capacity|repairable_unit|ai_build|moves|tracked|onfoot|col_cycle|name|description|func_draw|func_onclick
+1|64|170|2|2|2|0||nil|||||||2|2|nil|1|||100|0|0|1600|0|||||53||||0|0|0|0|0|0|1|1||0|nil|nil|nil|nil||||cONSTRUCTION yARD|aLL STRUCTURES ARE~BUILT BY THE~CONSTRUCTION YARD.||factory_click
+2|22|162|2|2|2|0||1|||||7|5|2|2|1|4|||20|0|0|0|0|||||||||0|0|0|0|0|0|1|1||0|nil|nil|nil|nil||||lARGE cONCRETE sLAB|uSE CONCRETE TO MAKE A~STURDY FOUNDATION FOR~YOUR STRUCTURES.||
+3|22|162|2|1|1|0||1|||||6|6|2|2|1|1|||5|0|0|0|0|||||||||0|0|0|0|0|0|1|1||0|nil|nil|nil|nil||||sMALL cONCRETE sLAB|uSE CONCRETE TO MAKE A~STURDY FOUNDATION FOR~YOUR STRUCTURES.||
+4|133|164|2|1|1|0||1|||||||2|2|7|4|||50|0|0|200|0|||||53||164||0|0|0|0|0|0|1|1||0|nil|nil|nil|nil||||dEFENSIVE wALL|tHE wALL IS USED FOR~PASSIVE DEFENSE.||
+5|66|172|2|2|2|0||1|||||||2|2|1|1|||300|-100|0|800|0|||||53|||1|0|0|0|0|0|0|1|1|11|0|nil|nil|nil|nil|||12,12,12,12,12,12,12,12,12,12,13,1,0,0,0,0,0,0,0,0,1,13|wINDTRAP|tHE WINDTRAP SUPPLIES~POWER TO YOUR BASE.~wITHOUT POWER YOUR~STRUCTURES WILL DECAY.||
+6|68|174|2|3|2|0||1|||||||2|2|5|1|||400|30|0|1800|0|||||53|||2|0|0|0|0|0|0|1|1|11|1000|nil|nil|nil|nil|||11,10,8,8|sPICE rEFINERY|tHE rEFINERY CONVERTS~SPICE INTO CREDITS.|draw_refinery|
+7|106|136|2|2|2|0||1|||||||2|2|5|2|||400|30|0|2000|0|||||53|||1|0|0|0|0|0|0|1|1|11|0|nil|nil|nil|nil|||8,0,8,0,0,0|rADAR oUTPOST|tHE oUTPOST PROVIDES~RADAR AND AIDS CONTROL~OF DISTANT VEHICLES.||
+8|104|134|2|2|2|0||1|||||||2|2|6|2|||150|5|0|600|0|||||53||||0|0|0|0|0|0|1|1||1000|nil|nil|nil|nil||||sPICE sTORAGE sILO|tHE sPICE SILO IS USED ~TO STORE REFINED SPICE.||
+9|108|168|2|2|2|0||1|||||11|3|2|2|7|2|-3||300|10|0|1200|0|||||53||||0|0|0|0|0|0|1|1||0|nil|nil|nil|nil||||bARRACKS|tHE bARRACKS IS USED TO~TRAIN YOUR lIGHT ~INFANTRY.||factory_click
+10|110|138|2|2|2|0||1|||||||2|2|7|2|||400|10|0|1600|0|||||53||||0|0|0|0|0|0|1|1||0|nil|nil|nil|nil||||wor tROOPER fACILITY|wor IS USED TO TRAIN~YOUR hEAVY INFANTRY.||factory_click
+11|96|140|2|2|2|0||1|||||||2|2|6|2|||400|20|0|1400|0|||||53||||0|0|0|0|0|0|1|1||0|nil|nil|nil|nil||||lIGHT vEHICLE fACTORY|tHE lIGHT fACTORY~PRODUCES LIGHT ATTACK~VEHICLES.||factory_click
+12|98|142|2|3|2|0||1|||||||2|2|6|3|||600|20|0|800|0|||||53||||0|0|0|0|0|0|1|1||0|nil|nil|nil|nil||||hEAVY vEHICLE fACTORY|tHE hEAVY fACTORY~PRODUCES HEAVY ATTACK~VEHICLES.||factory_click
+13|101|166|2|3|2|0||1|||||||2|2|12|5|||500|35|0|1600|0|||||53||||0|0|0|0|0|0|1|1||0|nil|nil|nil|nil||||hI-tECH fACTORY|tHE hI-tECH fACTORY~PRODUCES FLYING~VEHICLES.||factory_click
+14|128|230|2|3|2|0||1|||||||2|2|12|5|||700|20|0|800|0|||||53|||0|0|0|0|0|0|0|1|1|8|0|nil|nil|nil|nil|||0|rEPAIR fACILITY|tHE rEPAIR fACILITY~IS USED TO REPAIR YOUR~VEHICLES.||
+15|71|232|1|1|1|1|11|1|||||||2|2|7|5|||125|10|80|800|0|5|1|27|58|53||||0|0|0|0|0|0|1|1||0|nil|nil|nil|nil||||cANNON tURRET|tHE cANNON tURRET IS~USED FOR SHORT RANGE~ACTIVE DEFENSE.||
+16|87|234|1|1|1|1|11|1|||||||2|2|7|6|||250|20|240|800|0|10|2|40|59|53||||0|0|0|0|0|0|1|1||0|nil|nil|nil|nil||||rOCKET tURRET|tHE rOCKET TURRET IS~USED FOR MEDIUM RANGE~ACTIVE DEFENSE.||
+17|61|228|2|3|3|0||1|||||11|3|2|2|6|6||1|500|50|0|2000|0|||||53|||2|0|0|0|0|0|0|1|1|11|0|nil|nil|nil|nil|||11,10,8,8|sTARPORT|tHE sTARPORT IS USED TO~ORDER AND RECEIVED~SHIPMENTS FROM~c.h.o.a.m.|draw_refinery|factory_click
+18|131|224|2|2|2|0||1|||||||2|2|12|5|||500|40|0|1600|0|||||53||||0|0|0|0|0|0|1|1||0|nil|nil|nil|nil||||hOUSE OF ix|tHE ix rESEARCH~fACILITY ADVANCES YOUR~hOUSE'S TECHNOLOGY.||
+19|58|226|2|3|3|0||1|||||||2|2|17|8||1|999|80|0|4000|0|||2,400||53||||0|0|0|0|0|0|1|1||0|nil|nil|nil|nil||||pALACE|tHIS IS YOUR pALACE.||
+20|49|236|1|0.5|0.5|1|11|9|||||15|3|2|2||2|-3||60||24|80|0.05|3|1|15|60|57|1|48|10|0|0|0|0|0|0|1|1||0|nil|nil|1|1|nil|1||iNFANTRY sOLDIER|iNFANTRY ARE LIGHTLY~ARMOURED FOOTSOLDIERS,~WITH LIMITED FIRING~RANGE AND SPEED.||
+21|48|236|1|1|1|1|11|9|||||15|3|2|2||2|-3||100||16|200|0.05|3|1|15|60|57|1|49|10|0|0|0|0|0|0|1|1||0|nil|nil|1|1|nil|1||lIGHT iNFANTRY sQUAD|iNFANTRY ARE LIGHTLY~ARMOURED FOOTSOLDIERS,~WITH LIMITED FIRING~RANGE AND SPEED.||
+22|49|194|1|0.5|0.5|1|11|10|||||||2|2||3|-1||100||16|180|0.1|7|2|17|59|57|1|48|10|0|0|0|0|0|0|1|1||0|nil|nil|1|1|nil|1||hEAVY tROOPER|tROOPERS ARE HEAVILY~ARMOURED FOOTSOLDIERS,~WITH IMPROVED FIRING~RANGE AND SPEED.||
+23|48|194|1|1|1|1|11|10|||||||2|2||3|-1||200||32|440|0.1|7|2|17|59|57|1|49|10|0|0|0|0|0|0|1|1||0|nil|nil|1|1|nil|1||hEAVY tROOPERS|tROOPERS ARE HEAVILY~ARMOURED FOOTSOLDIERS,~WITH IMPROVED FIRING~RANGE AND SPEED.||
+24|48|236|1|1|1|1|11|||0|9|4|9|1|2|2||8|1||0||64|440|0.1|4|1|17|60|57|1|49|10|0|0|0|0|0|0|1|1||0|nil|nil|nil|1|nil|1||fREMEN|tHE fREMEN ARE NATIVE~TO dUNE. eLITE FIGHTERS~IN ALLIANCE WITH THE~aTREIDES.||
+25|48|236|1|0.5|0.5|1|11|||0|1|0|13|1|2|2||8|2||0||1600|40|0.4|1|1|800|60|57|1|49|10|0|0|0|0|0|0|1|1||0|nil|nil|nil|1|nil|1||sABOTEUR|tHE sABOTEUR IS A~SPECIAL MILITARY UNIT,~TRAINED AT AN oRDOS~pALACE. cAN DESTROY~ALMOST ANY STRUCTURE OR~VEHICLE.||
+26|48|236|1|1|1|1|11|||0|14|2|14|2|2|2||4|||0||64|440|0.1|2|2|17|59|57||||0|0|0|0|0|0|1|1||0|nil|nil|nil|1|nil|1||sARDAUKAR|tHE sARDUKAR ARE THE~eMPEROR'S ELITE TROOPS.~WITH SUPERIOR FIREPOWER~AND ARMOUR.||
+27|51|204|1|1|1|1|11|11|17||||15|4|2|2||2|||150||32|400|0.6|4|1|17|60|54||||0|0|0|0|0|0|1|1||0|nil|1|1|1|nil|nil||tRIKE|tHE tRIKE IS A LIGHTLY-~ARMOURED, 3-WHEELED~VEHICLE, WITH LIMITED~FIRING RANGE, BUT RAPID~SPEED.||
+28|52|206|1|1|1|1|11|11|17||||||2|2||3|||200||56|520|0.5|4|1|17|60|54||||0|0|0|0|0|0|1|1||0|nil|1|1|1|nil|nil||qUAD|tHE qUAD IS A LIGHTLY-~ARMOURED, 4-WHEELED~VEHICLE. sLOWER THAN~THE tRIKE, BUT STRONGER~ARMOUR AND FIREPOWER.||
+29|53|196|1|1|1|1|11|12|17||||||2|2|7|4|||300||100|800|0.25|5|1|27|58|54||||0|0|0|0|0|0|1|1||0|nil|1|1|1|1|nil||cOMBAT tANK|tHE cOMBAT tANK IS A~MEDIUM ARMOURED TANK,~FIRES HIGH-EXPLOSIVE~ROUNDS.||
+30|55|198|1|1|1|1|11|12|17||||15|4|2|2|7|6|||600||240|1200|0.2|6|1|30|58|54||||0|0|0|0|0|0|1|1||0|nil|1|1|1|1|nil||sIEGE tANK|tHE mISSILE tANK IS A~MEDIUM ARMOURED TANK,~WHICH FIRES MISSILES.~lONG-RANGE, BUT~INACCURATE.||
+31|54|202|1|1|1|1|11|12|17||||15|4|2|2|7|5|||450||600|400|0.3|10|2|40|59|54||||0|0|0|0|0|0|1|1||0|nil|1|1|1|1|nil||rOCKET lAUNCHER|tHE sIEGE tANK IS A~HEAVY ARMOURED TANK,~WHICH HAS DUAL CANNONS,~BUT IS SLOW.||
+32|50|192|1|1|1|1|11|12|17||||12|12|2|2||2|||300||nil|600|0.1|0||0||54||||0|0|0|0|0|0|1|1||0|0|1|1|1|1|nil||hARVESTER|tHE hARVESTER SEPARATES~SPICE FROM THE SAND &~RETURNS RAW SPICE TO~THE rEFINERY FOR~PROCESSING.||
+33|73|238|1|1|1|8|11|13|||||11|3|2|2|13|5|||800||nil|400|0.75|0||0||54||||0|0|0|0|0|0|1|1||0|nil|nil|nil|1|nil|nil||cARRYALL|tHE cARRYALL IS A~LIGHTLY ARMOURED~AIRCRAFT WITH NO~WEAPONS. mAINLY USED~TO LIFT+TRANSPORT~hARVESTERS.||
+34|40|160|1|1|1|4|11|13|17||||||2|2|18|7|-3||600||296|4|1|10|2|33|59|54||41|5|0|0|0|0|0|0|1|1||0|nil|nil|1|1|nil|nil||oRNITHOPTER|tHE oRNITHOPTER IS A~LIGHTLY ARMOURED~AIRCRAFT THAT FIRES~ROCKETS.hIGHLY~MANOUVERABLE + FASTEST~AIRCRAFT ON dUNE.||
+35|38|192|1|1|1|1|11|12|17||||0|5|2|2|7|4|||900||nil|600|0.1|0||0||54||||0|0|0|0|0|0|1|1||0|nil|1|nil|1|nil|nil||mcv|tHE mcv (mOBILE~cONSTRUCTION vEHICLE)~SCOUT VEHICLE IS USED~TO FIND AND DEPLOY NEW~BASE LOCATIONS.||
+36|57|198|1|1|1|1|11|12|||||12|9|2|2|18|7|1||600||240|440|0.3|9|3|27|52|54||||0|0|0|0|0|0|1|1||0|nil|1|1|1|1|nil||sONIC tANK|dEVELOPED BY THE~aTREIDES,THIS ENHANCED~TANK FIRES POWERFUL~BLAST WAVES OF SONIC~ENERGY.||
+37|56|200|1|1|1|1|11|12|||||||2|2|18|8|3||800||320|1600|0.1|8|1|33|58|54||||0|0|0|0|0|0|1|1||0|nil|1|1|1|1|nil||dEVASTATOR|tHE dEVESTATOR IS A~NUCLEAR-POWERED TANK,~WHICH FIRES DUAL PLASMA~CHARGES. mOST POWERFUL~TANK ON dUNE, BUT~POTENTIALLY UNSTABLE~IN COMBAT.||
+38|72||1|1|1|8|11|||0|||||2|2|13|8|3||0||1600|40|1|0|20|800|59|54||||0|0|0|0|0|0|1|1||0|nil|nil|0|1|nil|nil||dEATH hAND|tHE dEATH hAND IS A~SPECIAL hARKONNEN~pALACE WEAPON. aN~INACCURATE, BUT VERY~DESTRUCTIVE BALLISTIC~MISSILE.||
+38.5|72||1|1|1|8|11|||0|||||2|2|13|8|4||0||1600|40|1|0|20|800|59|54||||0|0|0|0|0|0|1|1||0|nil|nil|nil|1|nil|nil||dEATH hAND|tHE dEATH hAND IS A~SPECIAL hARKONNEN~pALACE WEAPON. aN~INACCURATE, BUT VERY~DESTRUCTIVE BALLISTIC~MISSILE.||
+39|51|204|1|1|1|1|11|11|||||11|1|2|2||2|2||150||40|320|0.75|4|1|17|60|54||||0|0|0|0|0|0|1|1||0|nil|1|1|1|nil|nil||rAIDER|tHE oRDOS rAIDER IS~SIMILAR TO THE STANDARD~tRIKE, BUT WITH LESS~ARMOUR IN FAVOUR OF~SPEED.||
+40|54|202|1|1|1|1|11|12|||||11|3|2|2|18|7|2||750||0|480|0.3|9|1.9|60|59|54||||0|0|0|0|0|0|1|1||0|nil|1|1|1|1|nil||dEVIATOR|tHE oRDOS dEVIATOR IS A~STANDARD mISSILE tANK,~WHICH FIRES UNIQUE~NERVE GAS MISSILES THAT~MAY TEMPORARILY CHANGE~ENEMY LOYALTY.||
+41|88||9|1|1|1|11||||||||2|2||3|||0||300|4000|0.35|0|30|7|50|||||0|0|0|0|0|0|1|1||0|nil|nil|nil|1|nil|nil||sANDWORM|tHE sAND wORMS ARE~INDIGEONOUS TO dUNE.~aTTRACTED BY VIBRATIONS~ALMOST IMPOSSIBLE TO~DESTROY, WILL CONSUME~ANYTHING THAT MOVES.||
+42|32||1|1|1|1|11|||2|||||1|1|||||||nil|4|0.1|||||53|1|||0|0|0|0|0|0|1|1||0|nil|nil|nil|nil|nil|nil||sPICE bLOOM|||
+80|3|3|5|1|1|0|11||||||||1|1|||||||0|0||||||||||0|0|0|0|0|0|1|1||0|nil|nil|nil|nil||||rEPAIR||draw_action|action_click
+81|1|1|5|1|1|0|11||||||||1|1|||||||0|0||||||||||0|0|0|0|0|0|1|1||0|nil|nil|nil|nil||||lAUNCH||draw_action|action_click]]
+
 -->8
 --p8 functions
 --
@@ -150,11 +151,11 @@ function _init()
  for i=2,46 do
   local new_obj={}
   -- loop all properties
-  for j=1,53 do
+  for j=1,55 do
    local val=str_arrays[i][j]
    -- convert all but the text columns to numbers
-   if (j<49) val=tonum(val)
-   if j==51 then
+   if (j<51) val=tonum(val)
+   if j==53 then
     --restore new lines
     str_breaks,val=split2d(val,"~"),""
     for line in all(str_breaks) do
@@ -550,7 +551,6 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
          if ty>2 then
           -- icon
           spr(self.ico_spr, x, y, self.ico_w, self.ico_h)
-          --draw_hitbox(self)
          else
           -- building/non-rotational unit
           spr(self.obj_spr, self.x, self.y, self.spr_w, self.spr_h)
@@ -561,7 +561,7 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
        if self.bullet_x then      
         if self.fire_type==1 then
          -- shell
-         pset(self.bullet_x,self.bullet_y, chance"2" and 8 or 9)
+         pset(self.bullet_x,self.bullet_y, rnd{8,9})
         else
          -- missile/sonic wave
          local is_missile = self.fire_type<=2
@@ -572,11 +572,11 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
           0,
           is_missile and 10 or 2.5, 
           is_missile and split2d"7,10,9,8,2" or {15},
-          chance"2" and 0xa5a5.8 or 0)
+          rnd{0xa5a5.8,0})
         end
        end
        -- smoking?
-       if (self.life<self.hitpoint*.33 and not self.altframe and chance"10" and ty<=2) add_particle(self.x+3.5,y+3.5, 1, .1,-.02,.05, -.002, 80,split2d"10,8,9,6", chance"2" and 0xa5a5.8 or 0)
+       if (self.life<self.hitpoint*.33 and not self.onfoot and chance"10" and ty<=2) add_particle(self.x+3.5,y+3.5, 1, .1,-.02,.05, -.002, 80,split2d"10,8,9,6", rnd{0xa5a5.8,0})
        -- reset hit flag
        self.hit=0
     end --abort if off-screen
@@ -936,8 +936,6 @@ function _update60()
      and ai_palace.fire_cooldown<=0 
      then
       attack_rnd_enemy(ai_palace)
-     --and p_target and p_target.type==2 then -- any player building    
-     -- do_attack(ai_palace, p_target)
     end
 
    end
@@ -974,14 +972,12 @@ function _update60()
    if (#worm_segs>30) del(worm_segs,worm_segs[1])
    if (worm_frame>0) worm_frame+=1 add_spice_cloud(head_worm_x,head_worm_y,rnd"1")
    worm_frame%=200
-   --if (worm_life>worm_life_start-128 or worm_life<128) add_spice_cloud(head_worm_x,head_worm_y,rnd"1")
   end
   
   -- bg work
   assert(coresume(worker_cor))
- end -- no menu
+ end
  
- --update_collisions()
  -- check all collisions
  clickedsomething=false 
  -- selected obj ui collision
@@ -1024,11 +1020,11 @@ function _update60()
      selected_obj=last_selected_obj     
      goto skip_collisions --return
     end
-    -- click button?
+    -- button?
     if (show_menu and selected_subobj.text and selected_subobj.func_onclick) selected_subobj:func_onclick()
-    -- clicked own unit, first time?
+    -- own unit, first time?
     if (selected_obj.owner==1 and selected_obj.type==1 and selected_obj!=last_selected_obj and selected_obj.moves) ssfx"62"    
-    -- clicked enemy object, last clicked ours (unit or palace)?... attack!
+    -- enemy object, last clicked ours (unit or palace)?... attack!
     if (selected_obj.created_by!=1 and last_selected_obj and (last_selected_obj.type==1 or (last_selected_obj.id==19 and target_mode)) and last_selected_obj.owner==1) selected_obj.flash_count=10 do_attack(last_selected_obj, selected_obj) selected_obj=nil
 
   -- deselect?
@@ -1066,7 +1062,7 @@ function _update60()
  elseif right_button_clicked and not show_menu then
   -- cancel selection
   selected_obj,target_mode = nil,false
- end --if buttonclicked
+ end
 
  ::skip_collisions::
 
@@ -1089,7 +1085,6 @@ function create_harvester(fact)
 end
 
 function _draw()
- -- draw the map, objects - everything except ui
 	cls"15"
  
  -- cam position (+ any "shaking")
@@ -1161,18 +1156,16 @@ function _draw()
  palt(11,true)
  for xx=mapx-1,mapx+16 do
   for yy=mapy-1,mapy+16 do
-    local gx,gy=xx*8,yy*8
-    if fow[xx][yy]!=0 and fow[xx][yy]!=16 then
-     spr(fow[xx][yy]+31,gx,gy)
-    elseif fow[xx][yy]<16 then
+    local gx,gy,fow_tile=xx*8,yy*8,fow[xx][yy]
+    if fow_tile!=0 and fow_tile!=16 then
+     spr(fow_tile+31,gx,gy)
+    elseif fow_tile<16 then
      rectfill(gx, gy, gx+7, gy+7, 0)
     end
   end
  end
-
-
  
- -- draw ui (score, mouse, etc.)
+ -- draw ui
  camera()
  pal()
  palt(0,false)
@@ -1189,7 +1182,7 @@ function _draw()
 
  -- turn on/off radar
  if hq!=last_hq then
-  radar_frame = 1
+  radar_frame=1
   if last_hq then set_message"pOWER LOW.bUILD wINDTRAP" end
   ssfx"55"
  end  
@@ -1209,17 +1202,12 @@ function _draw()
  rect(cx,cy, cx+7,cy+7, 7)
 
  if radar_frame>0 and radar_frame<77 then
-   radar_frame+=1
    -- draw radar anim   
-   rectfill(92,92,122,122,0)
-   -- clip(
-   --   max(108-radar_frame,92),
-   --   max(108-(radar_frame>20 and radar_frame-20 or 0),92),
-   --   min(radar_frame*2,32),
-   --   min((radar_frame>20 and radar_frame-20 or 1)*2,32))
+   --rectfill(92,92,122,122,0)
    for i=1,300 do
      pset(92+rnd"31",92+rnd"31",5+rnd"3")
    end
+   radar_frame+=1
  end
 
  local sel_build_obj = selected_obj and selected_obj.build_obj 
@@ -1241,7 +1229,7 @@ function _draw()
     and selected_obj.id!=4
     and (selected_obj.type==2
       or not selected_obj.moves) then
-     repair_obj=m_obj_from_ref(obj_data[80], 115,28, 5, {}, nil,draw_action, function()
+     repair_obj=m_obj_from_ref(obj_data[80], 115,28, 5, {}, nil, draw_action, function()
       process_click(last_selected_obj, 2)
      end)     
      repair_obj:draw()
@@ -1251,7 +1239,7 @@ function _draw()
     and selected_obj.fire_cooldown<=0)
      or selected_obj.id==35
     then
-     launch_obj=m_obj_from_ref(obj_data[81], 107,29, 5, {}, nil,draw_action, function()
+     launch_obj=m_obj_from_ref(obj_data[81], 107,29, 5, {}, nil, draw_action, function()
       -- palace? 
       if last_selected_obj.id!=35 then
        -- go into launch mode 
@@ -1263,10 +1251,10 @@ function _draw()
        local val=wrap_mget(mx,my)
        if val>=12 and val<=22 then
         last_selected_obj.life=0
+        last_selected_obj=nil
         m_map_obj_tree(obj_data[1],mx*8,my*8,1)
         ssfx"61"
        end
-       last_selected_obj=nil
       end
      end) 
      launch_obj:draw()  
@@ -1297,11 +1285,11 @@ function _draw()
      else
       -- check inner      
       if (val>=12 and val<=21) placement_damage=true
-      if (object_tiles[mxpos+xx..","..mypos+yy] or val==0 or val<=11 or val>=23) placement_inner_invalid=true
+      if (get_tile_obj(mxpos+xx,mypos+yy) or val==0 or val<=11 or val>=23) placement_inner_invalid=true
      end
     end
   end
-  if (placement_inner_invalid and sel_build_obj.ref.obj_spr!=22)placement_pos_ok=false
+  if (placement_inner_invalid and sel_build_obj.ref.obj_spr!=22) placement_pos_ok=false
 
   fillp"0b1110110110110111.1"
   rectfill(sxpos, sypos,
@@ -1353,9 +1341,7 @@ function _draw()
   end -- has build obs
 
   -- ui elements (buttons)?
-  for controls in all(ui_controls) do
-    controls:draw()
-  end
+  foreach(ui_controls, function(c) c:draw() end)
  end  -- if show_menu
 
  -- cursor
@@ -1370,13 +1356,10 @@ end
 
 -- https://www.lexaloffle.com/bbs/?tid=30902
 function test_tile(x,y) 
- -- bail (outside testtile bounds)
- if (x<0 or x>#fow or y<0 or y>#fow) return
-	
- -- figure out bitmask
- local mask = 0
-
-	if fow[x][y]!=0 then  
+	if x>=0 and x<=66 and y>=0 and y<=66 -- bail (outside testtile bounds)
+  and fow[x][y]!=0 then
+  -- figure out bitmask
+  local mask = 0
     -- north has tile?
 		if (fow[x][y-1]>0) mask+=1
     -- east has tile?
@@ -1426,7 +1409,7 @@ function do_guard(unit, start_state)
     local gx,gy = self:get_tile_pos()
     ping(self,gx,gy,
      function (unit,x,y)
-      local target=object_tiles[x..","..y]
+      local target=get_tile_obj(x,y)
       if target!=null and target.created_by!=unit.created_by and fow[x][y]==16 and target.z==1 then
        do_attack(unit,target) 
        return true
@@ -1442,7 +1425,7 @@ function do_guard(unit, start_state)
    -- if a harvester only
    if self.id==32 then
     
-    self.name="hARVESTER ("..flr(self.capacity/1500*100).."%)"
+    self.name="hARVESTER ("..flr(self.capacity*0.0667).."%)"
 
     if self.state==0 or self.state==9 then
     
@@ -1458,9 +1441,8 @@ function do_guard(unit, start_state)
         -- look for nearest spice
         ping(self,tx,ty,
           function(unit,x,y)
-            if is_spice_tile(x,y) and chance"2" then
-            --found spice
-            sx,sy=x,y
+            if is_spice_tile(x,y) and chance"2" then            
+            sx,sy=x,y --found spice
             return true
             end
           end,
@@ -1477,8 +1459,6 @@ function do_guard(unit, start_state)
         -- landed on spice tile? switch to harvesting        
         if (is_spice_tile(unit:get_tile_pos())) unit.state=6
       end
-
-     --end -- state 0 or 9
 
      -- are we full?
      elseif self.capacity >= 1500
@@ -1599,9 +1579,9 @@ function do_attack(unit, target)
      -- saboteur or death hand?
      if unit.arms==1600 then
       unit.life=0
-       for i=1,unit.id/3 do
-        make_explosion(unit.x+rnd"32"-16,unit.y+rnd"32"-16, 2)
-       end
+      for i=1,unit.id/3 do
+       make_explosion(unit.x+rnd"32"-16,unit.y+rnd"32"-16, 2)
+      end
       --end
       target.life-=(1000+rnd"600")
       target.hitby=unit
@@ -1616,8 +1596,8 @@ function do_attack(unit, target)
      end
     end
     -- 3) commence firing
-    if dist(unit.x,unit.y,target.x,target.y)<=firing_range then
-     if (unit.fire_cooldown<=0 and not unit.bullet_x and target.life>0) unit.fire(unit) unit.fire_cooldown=unit.fire_rate
+    if dist(unit.x,unit.y,target.x,target.y)<=firing_range then     
+     if (unit.fire_cooldown<=0 and not unit.bullet_x and target.life>0) unit.fire(unit) unit.fire_cooldown=unit.fire_rate     
     elseif not unit.moves then
      -- turrets default to guard if out of range
      do_guard(unit)
@@ -1638,7 +1618,7 @@ function do_attack(unit, target)
   --
   -- palace weapons
   do_attack(m_map_obj_tree(obj_data[({24,25,38,38.5})[unit.faction]], unit.x,unit.y, unit.owner, unit), target)      
-  unit.fire_cooldown = 1750 --350=1m (so 1750 = 5mins for palace weapon again, avg for all factions)
+  unit.fire_cooldown=1750 --350=1m (so 1750 = 5mins for palace weapon again, avg for all factions)
  end
 end
 
@@ -1665,16 +1645,16 @@ function wrap_mset(mx,my,value)
 end
 
 function is_free_tile(unit,x,y)
+ local obj_tile=get_tile_obj(x,y)
  return not fget(wrap_mget(x,y),0)
-   and not object_tiles[x..","..y]
+   and (not obj_tile or (obj_tile.onfoot and unit.tracked and obj_tile.created_by!=unit.created_by))
 end
 
-function move_unit_pos(unit,x,y,dist_to_keep,try_hail,start_state)
-  
+function move_unit_pos(unit,x,y,dist_to_keep,try_hail,start_state)  
   local flying = unit.z>1
   -- before moving, can a carryall take us?  
   if try_hail then
-   local carryall=has_obj and safe_rnd(has_obj[unit.created_by][33])
+   local carryall=safe_rnd(has_obj[unit.created_by][33])
    if carryall and not carryall.link and carryall.faction==unit.faction then
      -- link them and set unit to "moving" to wait for pickup
      carryall.link,unit.link,unit.state, carryall.cor = unit,carryall,2, cocreate(function(unit_c)     
@@ -1721,7 +1701,7 @@ function move_unit_pos(unit,x,y,dist_to_keep,try_hail,start_state)
   local frontier, frontier_len, goal_id, max_number, count = {shortest}, 1, node_to_id(goal), 32767.99, 0
   while frontier_len > 0 do
    -- find and extract the shortest path
-   local cost, index_of_min = max_number
+   local cost = max_number
    for i = 1, frontier_len do
     local temp = frontier[i].cost_from_start + frontier[i].cost_to_goal
     if (temp <= cost) index_of_min,cost = i,temp
@@ -1743,13 +1723,12 @@ function move_unit_pos(unit,x,y,dist_to_keep,try_hail,start_state)
    local neighbors = {}
    for xx = -1, 1 do
     for yy = -1, 1 do
-     local nx=p.x+xx
-     local ny=p.y+yy
+     local nx,ny = p.x+xx,p.y+yy
+     local obj_tile=get_tile_obj(nx,ny) 
      if (xx!=0 or yy!=0)
       --maybe_add
       and flying or not fget(wrap_mget(nx,ny),0) 
-      and not fget(wrap_mget(nx,ny),7) 
-      and not object_tiles[nx..","..ny] 
+      and is_free_tile(unit,nx,ny)
       and nx>=0 and ny>=0 and nx<=63 and ny<=63 then
        add(neighbors, {x=nx, y=ny})
      end
@@ -1780,8 +1759,8 @@ function move_unit_pos(unit,x,y,dist_to_keep,try_hail,start_state)
    count+=1
    if count%4==0 then
     yield()
-    -- "unreachable dest" + mem check
-    if (count>3000 or stat"0"/2048>.8) goto end_pathfinding
+    -- "unreachable dest" + 80% mem check
+    if (count>3000 or stat"0">1638) goto end_pathfinding
    end
   end
 
@@ -1795,29 +1774,33 @@ function move_unit_pos(unit,x,y,dist_to_keep,try_hail,start_state)
 
      for i=#unit.path-1,1,-1 do
       local node=unit.path[i]
-
+      local nx,ny,ux,uy = node.x,node.y,unit.x,unit.y
       if not unit.norotate then
         -- rotate to angle
         local a=atan2(
-         unit.x-(node.x*8),  --dx
-         unit.y-(node.y*8) ) --dy
+         ux-(nx*8),  --dx
+         uy-(ny*8) ) --dy
         while (unit.r != a) do
           turntowardtarget(unit, a)
         end
       end
       
       -- check new position/tile is still free (if not flying)
-      if(not flying and not is_free_tile(nil,node.x,node.y)) goto restart_move_unit
+      if(not flying and not is_free_tile(unit,nx,ny)) goto restart_move_unit
       
       -- move to new position      
-      local scaled_speed,distance = unit.speed or .5, sqrt((node.x*8-unit.x)^2+(node.y*8-unit.y)^2)
+      local scaled_speed,distance = unit.speed or .5, sqrt((nx*8-ux)^2+(ny*8-uy)^2)
       
       -- don't move these!
-      local step_x,step_y = scaled_speed * (node.x*8 - unit.x) / distance, scaled_speed * (node.y*8 - unit.y) / distance
+      local step_x,step_y = scaled_speed * (nx*8 - ux) / distance, scaled_speed * (ny*8 - uy) / distance
       
+      -- check for squish
+      local prev_nunit=get_tile_obj(nx,ny)      
+      if (prev_nunit and prev_nunit.onfoot and unit.tracked) prev_nunit.life=0
+
       for i = 0, distance/scaled_speed-1 do
         -- declare intentions (do it here so always present)
-        object_tiles[node.x..","..node.y]=unit
+        object_tiles[nx..","..ny]=unit
         unit.x+=step_x
         unit.y+=step_y
 
@@ -1833,8 +1816,9 @@ function move_unit_pos(unit,x,y,dist_to_keep,try_hail,start_state)
 
         yield()
       end
+      
       -- update tile blocking
-      unit.x,unit.y,object_tiles[node.x..","..node.y] = node.x*8, node.y*8,unit
+      unit.x,unit.y,object_tiles[nx..","..ny] = nx*8,ny*8,unit
       
       -- reveal fog?
       reveal_fow(unit)
@@ -1854,7 +1838,9 @@ function move_unit_pos(unit,x,y,dist_to_keep,try_hail,start_state)
   return true
 end
 
-
+function get_tile_obj(tx,ty)
+ return object_tiles[tx..","..ty]
+end
 
 -->8
 -- draw related 
@@ -1873,7 +1859,6 @@ function m_button(x,text,func_onclick,_w)
     local c=self.hover and 7 or 6
     if(#text>1)rectfill(self.x,83,self.x+self.w,91, c)
     ?self.text,self.x+2,85,#text>1 and 0 or c
-    --draw_hitbox(self)
   end,
   func_onclick = func_onclick
  })
@@ -1910,7 +1895,7 @@ function check_hover_select(obj)
     -- or clicking a harvester unloading or unit repairing?
     if (obj.type<=2 and fow[(cursor.x+camx)\8][(cursor.y+camy)\8]!=16 or obj.state==8) return
     
-     -- was our harvester selected before clicking a refinery/repair?
+     -- was our harvester/unit selected before clicking our refinery/repair?
     if selected_obj
      and last_selected_obj
      and (obj.id==6 and last_selected_obj.id==32 
@@ -1952,7 +1937,7 @@ end
 worm_life=0
 
 function attack_rnd_enemy(obj)
- -- find rnd enemy building to attack
+ -- find rnd enemy building
  local target = rnd(buildings)
  if (target.created_by!=obj.created_by and is_visible(target)) do_attack(obj, target) --printh"attack!"
 end
@@ -2001,7 +1986,7 @@ function safe_rnd(table)
 end
 
 
--- fixed sqrt to avoid overflow
+-- fix to avoid overflow
 -- (thx @jamesedge)
 function dist(x1,y1,x2,y2)
  return sqrt(((x1-x2)>>10)^2+((y1-y2)>>10)^2)<<10
@@ -2015,7 +2000,7 @@ function turntowardtarget(unit, targetangle)
   local diff = targetangle-unit.r  
   -- skip?
   if (unit.z>1) unit.r = targetangle
-  -- never turn more than 180
+  -- never turn > 180
   if diff > 0.5 then
    diff -= 1
   elseif diff < -0.5 then
@@ -2310,41 +2295,41 @@ __label__
 00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 
 __gff__
-040080000c0c0c0c0c0c0c0e0808080808080808080a08090909090909090909060e0e000800000000000000000000010000000000000000000001010101010101010001000102010000010101020201010101000001020101010101010202010101010101010101010101010101010101010101010101010101010101010101
+040000000c0c0c0c0c0c0c0e0808080808080808080a08090909090909090909060e0e000800000000000000000000010000000000000000000001010101010101010001000102010000010101020201010101000001020101010101010202010101010101010101010101010101010101010101010101010101010101010101
 0101010101010000000001010000000001010101010000000000010100000000000000000000000001010000000000000000000000000000010100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 __map__
-000000000000000000000b0b0b0000000000000000000000040506000004050600136822850000000000000000000004050600000b0b0b0b0b0b0b0b0b002f2f00000000000c0d0d0e00000000000c0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d120a0508110d0d0d0d1200110d0d0d0d0d0000
-0000000000000000000b0b0b0b0b0b0000000000000000000a090a00000a050a0000222285120000300000000004050505050506000b0b0b0b0b0b0b00002f2f00000000110d0d0d0d0f0d0d0d0f0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0f0d0d0d0d0d0d0d0d0d0d140000130000
-00000000000004050a050600000b0b0b0030000000000405050905070a050905050600682240220a000a0000000509090509050a0b0b0b0b0b0b0b0000002f2f000000000c0d0d0d0d0d0d0d0d0d0d17190d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d1400130d0d0d0d0d0d0d0d0d0d0d0d0d1400130d0d0d0d14000000000000
-000000000000050505050505060b0b0b0b00331112000505090905050909090909050622222222850e00000000050509090909050b0b0b0b0b0b000000002f2f0000110d0d0d0d0d0d0d0d0d1718181c1e0d1400000c0d0d0d0d0d0d0d0d0d0d0d0e00000000130d0d0d0d0d0d0d0d0d0d140000000c0d0d0e00000000000000
-0000000000000a050505090905000b0b0b0000130d120a050509090909090905050a44222285858504050506000a050509090905060b0b0b0b0b000000002f2f0d0d0d0e0000130d0d0d0d0d1d1e1e1f0d0d000000130d0d0d0d0d0d0d0d0d0d0d0e000000000000130d0d0d0d0d0d1400000000000c0d0d0d00000000000000
-0b0000000000000a05050505080b0b0b0b040506130d120a050505050505050a2424222222000000000505050000050909090508000b0b0b0b0b000000002f2f0d0d0d0d00000000040a130d0d0d0d0d0d14000000000c0d0d14000007130d0d0d0d120000000000000000131400000000000000110d0d0d0d00000000000000
-0b000000110d0d0d0e0a050a000b0b0b0b05050506130d856a222462222242222442226022003500000a050a0000050909050a000000000b0b00000000002f2f0d0d0d0e000000000505050506130d0d0e00000000000c0d0e0004050506130d0d0d0d12000000000000000000000000000000110d0d0d0d0d00000000000000
-000000110d0d0d1404050505000b0b0b0b05090905061385222224222222222224222222221200000000000000000a0505081112000000000000000000002f2f0d0d0d0d120000000505090505060c0d0d00000000000c0d14000509090506130d0d0d0d1200000000000000000000000000110d0d0d0d0d0e00000000000000
-0000001314040505050905080b0b0b0b0b0a050505050600000013858585858524858585856e2200340000000000000000110d0d12000000000a000000002f2f00130d0d0d12000005090909050a0c0d0d120000000013140000050905050500130d0d0d0e000000000000000000000000110d0d0d0d0d0d1400000000000000
-0000000000050909090905000b0b300b0b0b0a0505050a00003000000000000000000000242222850000000000000000110d0d0d0d0f00000000000000002f2f00000c0d0d0d12000a05090905110d0d0d0e00000000000000000a0505050a0000000c0d0d120000000000000000110d0d0d1400001310100000000000000000
-0b000000000a05090905080b0b0b0b0b0b0b0b0b350b0b0b000000000000000035000030008585850e000000000000110d0d0d0d0d0d0d0d0f0d0d0f00002f2f00000c0d0d0d0d0d12050505050c0d0d0d0e000000000000000000050905000000000d0d0d0d0f0f0e00000000000c0d0d140000000000000000000000000000
-0b0000000000050505080b0b0b0b0b0b0b0b040506000b330b00000000000000000000000000131400330b0b000000130d0d0d0d0d0d0d100d100d0d0a002f2f0000130d0d0d0d0d0d12050505130d0d0d14000000000000000b0b0a050a000000000d0d0d0d0d0d140000000000130d14000000000000000000000000000000
-0000000000000a05080b0b0b0b0b0b0b04050505050600000000350000003300000000000035000000000b0b0b00000000130d0d100000000000001000002f2f000000130d0d0d0d0d0d0a050a00130d140000000000000000000b0b0b00000000000d0d0d0d0d14000000000000000000000000000000000000000000000000
-0000000000000000000b0b0b0b0b0b0b0b0505050505000000000000000000000000000000000000000b0b0b0b0b00000000130d000000000000000000002f2f0000000000130d0d0d0d1200000000000000000000000000000000000000000000000c0d0d14070505060000000000000000000b0b0b0000000b0b0b00000000
-0000000000000000000b0b0b0b0b0b0b0b0a0505050a0000110d0d1200000000000000003400000b0b0b0b00000b0b000000000c0000000000000a0000002f2f0b0000000000130d0d0d0d1200000000000b0b0b0b000000000000000000000000000d0d0d040505050a00000000000000000b0b0b0b0b0b0b0b0b0b0b0b0000
-0000000000000000000b0b0b0b0b0b0b00000000000000000d0d0d0d0e0000000a0011120000000b0b00000000000b0b0000110d120000000a0b0b0000002f2f0b0b0b0b000000130d0d0d0d120000000b0b0b0b0b0b0000000000000000200000000c0d0e0a0509090500000000000000000b0b0b0b0b0b0b0b0b0b0b0b0000
-0000000000000000000b0b0b0b0b0b0b00000000000000000000130e000000000000130d12000000000000000000000000000c0d0e0000000000000000002f2f0b0b0b0b0b000000130d0d0d0d12000000000b0b00000000000000000000000000000c0d0d1205050905000000000000000b0b0b0b0b0b0b0b0b0b0b0b0b0000
-0000000000000000000b0b0b0b0b0b0b000b0b0b0b0000000000000000000004050600131400000000000000000000000000130d0d0f00000000000000002f2f0b0b0b0b0b0b00000000130d0d0d1200000000000000000000000000000000000000130d0d1405050508000000000000000b0b0b0b0b0b0b0b0b0b0b0b0b0000
-04050505060000000b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0000000000000005090530000000000000000f0e000000000000000c0d0e00000000000a00002f2f0b0b0b00000b0b000000000c0d0d0d12000000000000110d0d0d1200000000000000001310000a000000000000000b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0000
-050505090500000000000b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0000000000000a0508000000000000000f0d0d0e0000000000000c0d0d0f000000000000002f2f0b0b000000000b0b000000130d0d0d0d0f0d0d0d0f0f0d0d360d100000000000000000000000000000000000000b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0000
-0505090905000000000b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0000000000000000000000000000000c0d10000000000000000d0d0d0d0f0000000000002f2f0b00000000000b0b00000000130d0d0d0d0d0d0d0d0d0d340d14000000000000000000000000000000000000000b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0000
-05050505050000000000000000000b0b0b0b0b0405060b0b0b0b000000000000000000000000000000000000000000000000000d0d0d0d0d0f00000000002f2f0000000000000b0b0000000000130d0d0d0d0d0d340d0d0d0d3400000000000000000000000000000000000705060b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0000
-0d0d12050a000000000000000000000000000005050505050506000011330d0f0f0f0d0d1200000000000000000000000000000c0d0d0d0d0d00000000002f2f0b0b0b0b0b0b0b0b0000000000000c0d0d0d0d0d0d0d01220d0000000000000d0f0d0e0000000b0b0b0405050505060b0b0b0b0b0b00000b0b0b0b0b0b0b0000
-0d0d0d0d1200000000110d0d120000000000000a05050909090506110d0d0d330d0d0d0d0d12000000000000000000000000110d0d0d0d0d1000000000002f2f0b0b0b0b0b0b0b0b0b0b0b000000130d0d0d0d300d0d2222143000000000000c0d14000000000000000a0505090905060b0b0b0b000000000000000000000000
-0d0d0d0d0d0d0f0f0d0d0d0d0e00000000000000040909050505050c0d0d0d0d0d0d0d0d0d0d1200000000000000000000000c0d0d0d0d100000000000002f2f0b0b0b0b0b0b0b0b0b0b0b0b000000130d0d0d0d0d340d0d00000000000000131400000000000000000a0905090505050b0b0b0b000000000000000000000000
-0d0d0d0d0d0d0d0d0d0d0d0d140000000b0b00000509090505050a130d0d0d0d0d14000000130d0f0f0d0d120000000000000d0d140000000000000000002f2f0b0b0b0b0b0b0b0b0b0b0b000a00000000000c0d0d0d300d00000000000000000000000000000a000004050509090905060b0b0b00000000000000000b0b0000
-0d0d0d0d0d0d0d0d0d0d0d0d0000000b0b0b0b0b050905050a000000130d0d0d0d00000000000c0d0d0d0d0d0d120000000000000000000000000000110d2f2f0b0b0b0b0b0b0b0b0b0b00000000000000000c0d0d0d0d140000000000000000000000000a0000110e0a050509090905000b0b0b000000000000000b0b0b0000
-0d0d0d0d0d0d0d0d0d0d0d140000000b0b0b0b0b0a0505050a000000000c0d0d0e0042000000130d0d0d0d0d0d0e00000000000000000000000000110d0d2f2f0b0b0b0b0b0b0b0b0b0b000000000a000000130d0d0d1400000000000000000000000b0b0000000000000509090905050b0b0b0b0b0000000000000b0b0b0000
-0d0d0d0d0d0d0d0d0d0d140000000000000000000000000000000000000c0d0d0d0000000000000c0d0d0d0d0d14040506000000000000000000110d0d0d2f2f0b0b0b0b0b0b0b0b0b0b0b000000000000000000000000000000000000000000000b0b0b0b00000000000a05090909050b0b0b0b0b00000000000b0b0b0b0000
-0d0d0d100d0d0d0d0d1400000000000000000000000000000000110d0d0d0d0d0e0000000000110d0d0d0d0d0e040505050600111200000000000d0d0d0d2f2f0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0a0000000000000000000000000000000b0b0b0b0b0b0b0000000b0b05050505080b0b0b0b0b0b0000000b0b0b0b0b0000
-0d140000000c0d0d0e0000000000110d0d0f0f0d0d0f0f0d0d0d0d0d0d0d0d0d0d0d0d1200110d0d0d0d0d0d0d0509090905000d0e00000000110d0d0d0d2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f
-14000000000c0d0d0e00000000000c0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0e0a0509050a110d0d120000000d0d0d0d0d2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f
+0d0d0d000000000000000000130d14000a000a000000000000000000000004052f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f
+0d0d140000000000000000000000000000000000000000000000000000000a052f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f
+000000000000000a0000000000000000000000002000000000000000000000002f2f00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+0000001112000a00000000000000000000000a000000000000000000000000002f2f00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+0000110d0d0e05050506000000000000300000000000000000000000000000002f2f00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+00110d0d140405090905000000000000000000003300000000000000000000002f2f00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+0d0d0d0d0005090905060000442424244224240f0000001112000000000000002f2f00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+0d0d0d140405050508003024242424242424246c24240f0d0d0d12000000110d2f2f00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+0d0d0d04050505080000002442240d18181c24242424340d0d0d0d0d0d0d0d0d2f2f00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+0d0d140509050800330011242424241d1e6a242424240d0d0d0d0d0d0d0d0d0d2f2f00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+0d0d0405090906000011340d0d0d300d0d24240d0d0d0d300d0d0d000000130d2f2f00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+0d14050909090600110d0d0d0d0d0d0d0d1407063400130d0d0d14000000000c2f2f00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+14040509090506110d0d140000000c340e070506000a000c0d1400000000000c2f2f00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+00000505050800130d0d000000000c0d0e0a050830000013140000000000000c2f2f00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+000000300000000013140000110d0d0d0d12000000000000000000000000000c2f2f00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000110d0d0d0d0d0d120000000000200000000000110d2f2f00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+07070600000000000000000c0d0d0d0d0d0d0e00000000000000000705070c0d2f2f00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+09090600000000000000000c0d0d0d0d0d0d0e0000000000070505050505130d2f2f00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+05090600000000000000000c0d0d0d0d0d0d0d1200110f0f0f120a050505060c2f2f00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+05050600000000000000000c0d0d0d0d0d0d0d0d0d0d0d0d0d0e05050505050c2f2f00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+05060000000000000000000c0d0d0d0d0d0d0d0d0d0d0d0d0d0e05050505050c2f2f00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+1200000000002000000000130d0d0d0d0d0d0d0d0d0d0d0d0d0e05050505050c2f2f00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+0d12000000000000000000000d0d0d1718190d0d0d0d0d0d0d0e05050505080c2f2f00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+0d0e00000000000000000000130d0d1d1b1b19310d0d0d0d0d0e0a050508110d2f2f00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+0d140000000000000000000000130d341d1e1f0d0d0d0d0d0d100f0f0f0f0d0d2f2f00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+1400000000070505070000000000130d420d010d6a0d0d143100130d0d0d14002f2f00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+0000000000050909050700000000000c0d0d0d0d0d0d0e340000000c0d0e00002f2f00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+000000000005050905050000000000130d0d0d0d0d0d0e000000000c0d0e00002f2f00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+00000000000405090905000000000031130d0d0d0d340e000000000c0d0e00002f2f00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+0000000011120505050a000000000000341310100d0d1400000000130d0d12002f2f00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+000000110d0d0f0f120000070507000000000000000000000705070000130d0d2f2f00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+0000000c0d0d0d0d0d0d12050505000000000000000000000a0505050507130d2f2f00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 __sfx__
 010c0004246152461524615246250c000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 010200020c4100c210000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
