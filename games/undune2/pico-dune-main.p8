@@ -404,10 +404,15 @@ function draw_title()
 	 local tagline="the demaking of a dynasty"
 		fadeprint(tagline,12,62, (t_-start⧗)/5,3)
 		fadeprint(tagline,12,61, (t_-start⧗)/5)
+  
+  fadeprint("v1.1",96,72, (t_-start⧗)/5,3)
+
   fadeprint(" bY pAUL nICHOLAS  liquidream",4,104, (t_-start⧗)/5, 5)
   fadeprint("♪cHRIS dONNELLY  gruber_music",4,112, (t_-start⧗)/5, 4)
   fadeprint("\^.⁶	\r¹⁶\0\0\0",75,104, (t_-start⧗)/5, 5)
   fadeprint("\^.⁶	\r¹⁶\0\0\0",71,112, (t_-start⧗)/5, 4)
+  -- fadeprint(" bY pAUL nICHOLAS \^.⁶	\r¹⁶\0\0\0liquidream",4,104, (t_-start⧗)/5, 5)
+  -- fadeprint("♪cHRIS dONNELLY \^.⁶	\r¹⁶\0\0\0gruber_music",4,112, (t_-start⧗)/5, 4)
     
   fadeprint("(oRIGINAL BY wESTWOOD sTUDIOS)"..patreon_thanks,
    4-max(t_/2-250), 120,
@@ -417,7 +422,7 @@ function draw_title()
  
  if t_>start⧗+1 then
   local msg = "❎ / \^.⁶	>.>\"\"、 TO "..(p_fact>0 and "cONTINUE" or "sTART")
-  if(t_\60%2==0) printo(msg,52-(#msg*2)/2,78,7,3)
+  if(t_\60%2==0) printo(msg,52-(#msg*2)/2,82,7,3)
  end
 
 end

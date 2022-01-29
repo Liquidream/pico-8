@@ -222,6 +222,7 @@ local start⧗=375
 if t_>start⧗ then
 local _ak="the demaking of a dynasty" _ct(_ak,12,62, (t_-start⧗)/5,3)
 _ct(_ak,12,61, (t_-start⧗)/5)
+_ct("v1.1",96,72, (t_-start⧗)/5,3)
 _ct(" bY pAUL nICHOLAS  liquidream",4,104, (t_-start⧗)/5, 5)
 _ct("♪cHRIS dONNELLY  gruber_music",4,112, (t_-start⧗)/5, 4)
 _ct("\^.⁶	\r¹⁶\0\0\0",75,104, (t_-start⧗)/5, 5)
@@ -230,7 +231,7 @@ _ct("(oRIGINAL BY wESTWOOD sTUDIOS)" .._j,4-max(t_/2-250), 120,(t_-start⧗)/5, 
 end
 if t_>start⧗+1 then
 local _al="❎ / \^.⁶	>.>\"\"、 TO " ..(_p>0 and"cONTINUE" or"sTART")
-if(t_\60%2==0) _cz(_al,52-(#_al*2)/2,78,7,3)
+if(t_\60%2==0) _cz(_al,52-(#_al*2)/2,82,7,3)
 end
 end
 function _am()
