@@ -173,7 +173,7 @@ function _update60()
   -- switch to level intro
   if input_pressed() then
    -- set player faction 
-   p_fact = ui_cursor -- (1=atreides, 2=ordos, 3-harkonen)
+   p_fact = ui_cursor -- (1=atreides, 2=ordos, 3-harkonnen)
    init_levelintro()
   end
 
@@ -405,7 +405,7 @@ function draw_title()
 		fadeprint(tagline,12,62, (t_-start⧗)/5,3)
 		fadeprint(tagline,12,61, (t_-start⧗)/5)
   
-  fadeprint("v1.1",96,72, (t_-start⧗)/5,3)
+  fadeprint("v1.2",96,72, (t_-start⧗)/5,3)
 
   fadeprint(" bY pAUL nICHOLAS  liquidream",4,104, (t_-start⧗)/5, 5)
   fadeprint("♪cHRIS dONNELLY  gruber_music",4,112, (t_-start⧗)/5, 4)
@@ -940,7 +940,7 @@ function play_map_sequence(seqnum)
    setmap({13,7,20,14,21,22,8,15,23}, map_cols[col_attreides])
    setmap({19,27,26,25,24,12,18,16,17}, map_cols[col_ordos])
    setmap({6,5,4,10,3,9,1,2,11}, map_cols[col_harkonnen])
-   show_message("hARKONEN BORDERS\nWERE WEAK...")
+   show_message("hARKONNEN BORDERS\nWERE WEAK...")
    fizzlemap({1,2,3}, map_cols[col_attreides])
    fizzlemap({11}, map_cols[col_ordos])
    show_message("...EXCEPT FOR\nONE OUTPOST.")
@@ -952,7 +952,7 @@ function play_map_sequence(seqnum)
    setmap({13,7,20,14,21,22,8,15,23,1,2,3}, map_cols[col_attreides])
    setmap({19,27,26,25,24,12,18,17,11}, map_cols[col_ordos])
    setmap({6,5,4,10,9,16}, map_cols[col_harkonnen])
-   show_message("hARKONEN CONTINUED\nTO RETREAT.")
+   show_message("hARKONNEN CONTINUED\nTO RETREAT.")
    fizzlemap({4,9,16}, map_cols[col_attreides])
    show_message("...INTO TERRITORY\nOF THE oRDOS.")
    fizzlemap({11}, map_cols[col_harkonnen])
