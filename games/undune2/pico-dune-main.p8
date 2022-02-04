@@ -405,7 +405,7 @@ function draw_title()
 		fadeprint(tagline,12,62, (t_-start⧗)/5,3)
 		fadeprint(tagline,12,61, (t_-start⧗)/5)
   
-  fadeprint("v1.2",96,72, (t_-start⧗)/5,3)
+  fadeprint("v1.3",96,72, (t_-start⧗)/5,3)
 
   fadeprint(" bY pAUL nICHOLAS  liquidream",4,104, (t_-start⧗)/5, 5)
   fadeprint("♪cHRIS dONNELLY  gruber_music",4,112, (t_-start⧗)/5, 4)

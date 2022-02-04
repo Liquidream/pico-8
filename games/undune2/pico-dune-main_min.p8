@@ -222,7 +222,7 @@ local start⧗=375
 if t_>start⧗ then
 local _ak="the demaking of a dynasty" _ct(_ak,12,62, (t_-start⧗)/5,3)
 _ct(_ak,12,61, (t_-start⧗)/5)
-_ct("v1.2",96,72, (t_-start⧗)/5,3)
+_ct("v1.3",96,72, (t_-start⧗)/5,3)
 _ct(" bY pAUL nICHOLAS  liquidream",4,104, (t_-start⧗)/5, 5)
 _ct("♪cHRIS dONNELLY  gruber_music",4,112, (t_-start⧗)/5, 4)
 _ct("\^.⁶	\r¹⁶\0\0\0",75,104, (t_-start⧗)/5, 5)
