@@ -546,7 +546,7 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
          if ty>2 then
           -- icon
           spr(self.ico_spr, x, y, self.ico_w, self.ico_h)
-          if (self.procpaused and not show_menu) ?"\^jsc\f8\^:⁶:33333333333333"
+          if (self.procpaused and not show_menu) ?"\^jsc\f0\^:⁶:00666666666666\f8\vt\^:⁶:00666666666666"
          else
           -- building/non-rotational unit
           spr(self.obj_spr, self.x, self.y, self.spr_w, self.spr_h)
