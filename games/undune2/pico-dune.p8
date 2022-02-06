@@ -76,7 +76,7 @@ end
 function process_click(self, mode)
   -- toggle/switch mode
   self.procstep,self.last_process,self.process=0,self.process,mode
-  if (self.life>=0 and self.last_process>0) self.procpaused=not self.procpaused  
+  if (self.life>=0 and self.last_process>0) self.procpaused=not self.procpaused  -- and not self.done
   if (mode==1) self.parent.incoming=true self.parent.build_obj=self
 end
 
@@ -546,6 +546,7 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
          if ty>2 then
           -- icon
           spr(self.ico_spr, x, y, self.ico_w, self.ico_h)
+          if (self.procpaused and not show_menu) ?"\^jsc\f8\^:⁶:33333333333333"
          else
           -- building/non-rotational unit
           spr(self.obj_spr, self.x, self.y, self.spr_w, self.spr_h)
@@ -791,8 +792,8 @@ function reveal_fow(object)
  -- > player
  -- > firing ai
  
- if(object.owner<=0 or object.id==42) return -- show all bases (for demos!)
- --if(object.owner!=1 and object.state!=4) return
+ --if(object.owner<=0 or object.id==42) return -- show all bases (for demos!)
+ if(object.owner!=1 and object.state!=4) return
 
  local size = object.type+1
  -- clear group of tiles
@@ -1751,12 +1752,10 @@ function move_unit_pos(unit,x,y,dist_to_keep,try_hail,start_state)
     end
    end   
    count+=1
-   -- (removed - always yield, for perf final levels?)
-   --if count%4==0 then 
-    yield()
-    -- "unreachable dest" + 80% mem check
-    if (count>3000 or stat"0">1638) goto end_pathfinding
-   --end
+   -- (now always yield, for perf final levels)
+   yield()
+   -- "unreachable dest" + 80% mem check
+   if (count>3000 or stat"0">1638) goto end_pathfinding
   end
 
   ::end_pathfinding::
@@ -1934,7 +1933,7 @@ worm_life=0
 function attack_rnd_enemy(obj)
  -- find rnd enemy building
  local target = rnd(buildings)
- if (target.created_by!=obj.created_by and is_visible(target)) do_attack(obj, target) --printh"attack!"
+ if (target.created_by!=obj.created_by and is_visible(target)) do_attack(obj, target)
 end
 
 function is_visible(obj)
