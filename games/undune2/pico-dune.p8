@@ -10,7 +10,7 @@ cartdata"pn_undune2"
 local p_level,ai_level,p_col1,p_col2,mapsize,bases,credits = dget"0",dget"1",dget"7",dget"8",dget"26",{},
 {
  dget"35", -- p credits
- dget"35", -- ai credits (same)
+ 2500,     -- ai credits (fixed)
  dget"36"  -- targ credits
 }
 
@@ -38,10 +38,9 @@ g_.factory_click=function(self)
    if (sel_build_item_idx<menu_pos) menu_pos-=1
   end, 10)
   m_button(17,"⬇️",function()
-   local len=#selected_obj.valid_build_objs
-   sel_build_item_idx=mid(1,sel_build_item_idx+1,len)
+   sel_build_item_idx=mid(1,sel_build_item_idx+1,#selected_obj.valid_build_objs)
    selected_subobj = selected_obj.valid_build_objs[sel_build_item_idx]   
-   if (sel_build_item_idx>menu_pos+2) menu_pos=min(menu_pos+1,len-2)
+   if (sel_build_item_idx>menu_pos+2) menu_pos=min(menu_pos+1,#selected_obj.valid_build_objs-2)
   end, 10)
   m_button(32,"build",function()
    show_menu=nil
@@ -55,13 +54,7 @@ g_.factory_click=function(self)
 end
 g_.draw_refinery=function(self)
   local col2=self.col2
-  pal{
-   [8]=col2,
-   [10]=col2,
-   [11]=col2,
-   [12]=self.col1,
-   [14]=col2
-  }  
+  pal({nil,nil,nil,nil,nil,nil,nil,col2,nil,col2,col2,self.col1,nil,col2})
   if self.incoming then
    pal(self.col_cycle[self.col_cycle_pos], self.col1)
   else
@@ -246,7 +239,7 @@ function _init()
     if building.id!=4 then
      -- if our building, or ai not under fog of war
      if building.owner==1 or (hq and is_visible(building)) then
-      new_radar_data[(building.x\2\8)..","..building.y\2\8] = building.col1
+      new_radar_data[(building.x\16)..","..building.y\16] = building.col1
      end
      -- track power/radar
      if building.owner==1 then
@@ -267,7 +260,7 @@ function _init()
    for unit in all(units) do
     -- if our unit, or ai not under fog of war
     if hq and (unit.owner==1 or is_visible(unit) and unit.z==1) then
-     new_radar_data[(unit.x\2\8)..","..unit.y\2\8] = unit.col1
+     new_radar_data[(unit.x\16)..","..unit.y\16] = unit.col1
     end
     if (unit.created_by>0) add_with_init(has_obj[unit.created_by], unit.id, unit)
    end
@@ -307,8 +300,7 @@ function _init()
      offset+=1
     end 
     rectfill(30,54,104,70,0)
-    ?"mission "..(endstate<3 and "complete" or "failed"),36,60,p_col1
-    flip()
+    ?"\^d2\^jaf\-cmission "..(endstate<3 and "complete" or "failed"),p_col1
     load"pico-dune-main"
    end  
   end --alt?
@@ -447,7 +439,7 @@ function m_map_obj_tree(objref, x,y, owner, factory)
    
     add(units,newobj)
     -- default to guard
-    do_guard(newobj)
+    do_guard(newobj, nil, true)
   end
   reveal_fow(newobj)
   return newobj
@@ -866,14 +858,12 @@ function _update60()
 
   -- movement/turning
   if t_%6<1 and worm_frame==0 then
-   while #worm_segs<31 do
     if (chance"18") worm_turn=rnd".04"-.02
     -- ref to head
     head_worm_x,head_worm_y=worm_segs[#worm_segs][1],worm_segs[#worm_segs][2]
     add(worm_segs,{head_worm_x+sin(worm_dir),head_worm_y-cos(worm_dir)})
     worm_dir+=worm_turn
    end   
-  end
   if (#worm_segs>30) del(worm_segs,worm_segs[1])
   if (worm_frame>0) worm_frame+=1 add_spice_cloud(head_worm_x,head_worm_y,rnd"1")
   worm_frame%=200
@@ -1006,7 +996,7 @@ function _update60()
     -- own unit, first time?
     if (selected_obj.owner==1 and selected_obj.is_unit and selected_obj!=last_selected_obj and selected_obj.moves) ssfx"62"    
     -- enemy object, last clicked ours (unit or palace)?... attack!
-    if (selected_obj.created_by!=1 and last_selected_obj and (last_selected_obj.is_unit or (last_selected_obj.id==19 and target_mode)) and last_selected_obj.owner==1) selected_obj.flash_count=10 do_attack(last_selected_obj, selected_obj) selected_obj=nil
+    if (selected_obj.created_by!=1 and last_selected_obj and (last_selected_obj.is_unit or (last_selected_obj.id==19 and target_mode)) and last_selected_obj.owner==1) selected_obj.flash_count=10 do_attack(last_selected_obj, selected_obj, true) selected_obj=nil
 
   -- deselect?
   else
@@ -1121,6 +1111,8 @@ function _draw()
    end
   end
  end
+
+ pal() 
 
  -- particles
  for p in all(particles) do
@@ -1332,21 +1324,15 @@ end
 -- init related
 --
 
--- https://www.lexaloffle.com/bbs/?tid=30902
 function test_tile(x,y) 
-	if x>=0 and x<=66 and y>=0 and y<=66 -- bail (outside testtile bounds)
+	if x>=0 and x<=66 and y>=0 and y<=66 -- bail (outside test_tile bounds)
   and fow[x][y]!=0 then
   -- figure out bitmask
   local mask = 0
-    -- north has tile?
-		if (fow[x][y-1]>0) mask+=1
-    -- east has tile?
-		if (fow[x-1][y]>0) mask+=2
-    -- south has tile?
-		if (fow[x+1][y]>0) mask+=4
-    -- west has tile?
-		if (fow[x][y+1]>0) mask+=8
-		
+		if (fow[x][y-1]>0) mask+=1 -- north
+		if (fow[x-1][y]>0) mask+=2 -- east
+		if (fow[x+1][y]>0) mask+=4 -- south
+		if (fow[x][y+1]>0) mask+=8 -- west
   fow[x][y]=1 + mask
 	end
 
@@ -1362,15 +1348,18 @@ function is_spice_tile(x,y)
   return val>=4 and val<=10
 end
 
-function do_guard(unit, start_state)
+function do_guard(unit, start_state, hold_pos)
  -- 0=idle/guarding, 1=pathfinding, 2=moving, 3=attacking, 4=firing, 5=exploding, 
  --(6=harvesting, 7=returning, 8=unloading/repairing, 9=ready-to-unload/repair, 
  unit.state,unit.link,unit.last_move_result = start_state or 0,nil,true
+ 
+ if (hold_pos) unit.gx,unit.gy = unit.x,unit.y
+
  unit.cor = cocreate(function(self)
   while true do
-   -- if carryall/ornithopter only
+   -- carryall/ornithopter only
    if self.z>1 then
-    -- move around origin point (but keep to map boundary!)
+    -- move around origin point
     move_unit_pos(self, 
      mid(flr(self.orig_x+rnd"32")-16,64), 
      mid(flr(self.orig_y+rnd"32")-16,64))
@@ -1378,7 +1367,7 @@ function do_guard(unit, start_state)
 
    -- ornithopter?
    if self.id==34 then
-     -- select a random target (building)
+     -- (building)
      attack_rnd_enemy(self)
      
    -- all other units, be on look-out
@@ -1544,16 +1533,21 @@ function add_spice_cloud(x,y,r)
  if (chance"5") add_particle(x+ sin(r)*5.5 +3.5,y+ -cos(r)*5.5 +3.5, rnd"2", .15,0,.1, -.01, 25,split2d"2,4,9,15", 0xa5a5.8)
 end
 
-function do_attack(unit, target)
+function do_attack(unit, target, manual_attack)
  -- normal attack?
  if unit.id!=19 then 
    local firing_range = unit.range*5 --keep local!
-   unit.state,unit.target,unit.cor = 3,target, cocreate(function(self)
+   unit.state,unit.target,unit.manual_attack,unit.cor = 3,target,manual_attack, cocreate(function(self)
    -- while still alive and not repairing/unloading...
    while target.life>0 and target.state!=8 do
     --  1) move to within firing range of target
     if dist(unit.x,unit.y,target.x,target.y) > firing_range
       and unit.moves then
+     -- should we pursue?
+     if not unit.manual_attack and dist(unit.x,unit.y,unit.gx,unit.gy) > 10 then
+      -- too far away from guard pos
+      goto exit_attack
+     end
      -- move to within firing range of target
      move_unit_pos(unit,(target.x+rnd(target.w))\8,(target.y+rnd(target.h))\8,firing_range)
      -- saboteur or death hand?
@@ -1583,12 +1577,14 @@ function do_attack(unit, target)
      do_guard(unit)
     end
     yield()
-    -- deviators should only fire once, per attack
-    -- likewise, abort attack if unit becomes converted to "our" side
+    -- deviators only fire once, per attack
+    -- (+abort attack if unit=converted to "our" side)
     if (unit.id==40 or unit.id==34 or target.faction==unit.faction or target.link) break
    end -- 4) repeat 1-3 until target destroyed
 
    -- reset to guard
+   ::exit_attack::
+   if (not unit.manual_attack) move_unit_pos(unit,unit.gx\8,unit.gy\8)
    do_guard(unit)
   end)
   
@@ -1911,7 +1907,7 @@ end
 function attack_rnd_enemy(obj)
  -- find rnd enemy building
  local target = rnd(buildings)
- if (target.created_by!=obj.created_by and is_visible(target)) do_attack(obj, target)
+ if (target.created_by!=obj.created_by and is_visible(target)) do_attack(obj, target, true)
 end
 
 function is_visible(obj)
@@ -2290,12 +2286,12 @@ __map__
 0000000000000000000b0b0b0b0b0b0b000b0b0b0b0000000000000000000004050600131400000000000000000000000000130d0d0f00000000000000002f2f0b0b0b0b0b0b00000000130d0d0d1200000000000000000000000000000000000000130d0d1405050508000000000000000b0b0b0b0b0b0b0b0b0b0b0b0b2f2f
 04050505060000000b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0000000000000005090500000000000000000f0e000000000000000c0d0e00000000000a00002f2f0b0b0b00000b0b000000000c0d0d0d12000000000000110d0d0d1200000000000000001310000a000000000000000b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b2f2f
 050505090500000000000b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0000000000000a0508000000000000000f0d0d0e0000000000000c0d0d0f000000000000002f2f0b0b000000000b0b000000130d0d0d0d0f0d0d0d0f0f0d0d0d0d100000000000000000000000000000000000000b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b2f2f
-0505090905000000000b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0000000000000000000000000000000c0d10000000000000000d0d0d0d0f0000000000002f2f0b00000000000b0b00000000130d0d0d0d0d0d0d0d0d0d330d14000000000000000000000000000000000000000b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b2f2f
-05050505050000000000000000000b0b0b0b0b0405060b0b0b0b000000000000000000000000000000000000000000000000000d0d0d0d0d0f00000000002f2f0000000000000b0b0000000000130d0d0d0d0d0d000d0d0d0d0000000000000000000000000000000000000705060b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b2f2f
-0d0d12050a000000000000000000000000000005050505050506000011000d0f0f0f0d0d1200000000000000000000000000000c0d0d0d0d0d00000000002f2f0b0b0b0b0b0b0b0b0000000000000c0d0d0d0d0d0d0d01220d0000000000000d0f0d0e0000000b0b0b0405050505060b0b0b0b0b0b00000b0b0b0b0b0b0b2f2f
-0d0d0d0d1200000000110d0d120000000000000a05050909090506110d0d0d000d0d0d0d0d12000000000000000000000000110d0d0d0d0d1000000000002f2f0b0b0b0b0b0b0b0b0b0b0b000000130d0d0d0d000d0d2222140000000000000c0d14000000000000000a0505090905060b0b0b0b000000000000000000002f2f
-0d0d0d0d0d0d0f0f0d0d0d0d0e00000000000000040909050505050c0d0d0d0d0d0d0d0d0d0d1200000000000000000000000c0d0d0d0d100000000000002f2f0b0b0b0b0b0b0b0b0b0b0b0b000000130d0d0d0d0d000d0d00000000000000131400000000000000000a0905090505050b0b0b0b000000000000000000002f2f
-0d0d0d0d0d0d0d0d0d0d0d0d140000000b0b00000509090505050a130d0d0d0d0d14000000130d0f0f0d0d120000000000000d0d140000000000000000002f2f0b0b0b0b0b0b0b0b0b0b0b000a00000000000c0d0d0d000d00000000000000000000000000000a000004050509090905060b0b0b00000000000000000b0b2f2f
+0505090905000000000b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0000000000000000000000000000000c0d10000000000000000d0d0d0d0f0000000000002f2f0b00000000000b0b00000000130d0d3333333333333333333314000000000000000000000000000000000000000b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b2f2f
+05050505050000000000000000000b0b0b0b0b0405060b0b0b0b000000000000000000000000000000000000000000000000000d0d0d0d0d0f00000000002f2f0000000000000b0b0000000000130d0d0d0d0d0d0d0d0d0d0d0000000000000000000000000000000000000705060b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b2f2f
+0d0d12050a000000000000000000000000000005050505050506000011000d0f0f0f0d0d1200000000000000000000000000000c0d0d0d0d0d00000000002f2f0b0b0b0b0b0b0b0b0000000000000c440d0d0d0d420d01220d0000000000000d0f0d0e0000000b0b0b0405050505060b0b0b0b0b0b00000b0b0b0b0b0b0b2f2f
+0d0d0d0d1200000000110d0d120000000000000a0505090909050611333333333333330d0d12000000000000000000000000110d0d0d0d0d1000000000002f2f0b0b0b0b0b0b0b0b0b0b0b000000130d0d0d0d0d0d0d2222140000000000000c0d14000000000000000a0505090905060b0b0b0b000000000000000000002f2f
+0d0d0d0d0d0d0f0f0d0d0d0d0e00000000000000040909050505050c0d0d0d0d0d0d0d0d0d0d1200000000000000000000000c0d0d0d0d100000000000002f2f0b0b0b0b0b0b0b0b0b0b0b0b000000130d0d0d0d6a0d0d0d00000000000000131400000000000000000a0905090505050b0b0b0b000000000000000000002f2f
+0d0d0d0d0d0d0d0d0d0d0d0d140000000b0b00000509090505050a130d0d0d0d0d14000000130d0f0f0d0d120000000000000d0d140000000000000000002f2f0b0b0b0b0b0b0b0b0b0b0b000a00000000000c0d0d0d0d0d00000000000000000000000000000a000004050509090905060b0b0b00000000000000000b0b2f2f
 0d0d0d0d0d0d0d0d0d0d0d0d0000000b0b0b0b0b050905050a000000130d0d0d0d00000000000c0d0d0d0d0d0d120000000000000000000000000000110d2f2f0b0b0b0b0b0b0b0b0b0b00000000000000000c0d0d0d0d140000000000000000000000000a0000110e0a050509090905000b0b0b000000000000000b0b0b2f2f
 0d0d0d0d0d0d0d0d0d0d0d140000000b0b0b0b0b0a0505050a000000000c0d0d0e0000000000130d0d0d0d0d0d0e00000000000000000000000000110d0d2f2f0b0b0b0b0b0b0b0b0b0b000000000a000000130d0d0d1400000000000000000000000b0b0000000000000509090905050b0b0b0b0b0000000000000b0b0b2f2f
 0d0d0d0d0d0d0d0d0d0d140000000000000000000000000000000000000c0d0d0d0000000000000c0d0d0d0d0d14040506000000000000000000110d0d0d2f2f0b0b0b0b0b0b0b0b0b0b0b000000000000000000000000000000000000000000000b0b0b0b00000000000a05090909050b0b0b0b0b00000000000b0b0b0b2f2f
