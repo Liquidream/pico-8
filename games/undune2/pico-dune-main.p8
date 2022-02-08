@@ -5,7 +5,7 @@ __lua__
 -- by paul nicholas
 -- (with support from my patrons)
 
--- =======================================
+-- 
 -- main cart (title menu, level select)
 -- 
 game_cart = "pico-dune.p8" --_min
@@ -135,11 +135,7 @@ function _init()
  load_data()
 
  -- debug!!!
- --p_level=9
  --mode = houseselect_mode
- --mode = levelselect_mode
- --mode = levelintro_mode
- --mode = levelend_mode
  
  if (mode==title_mode) init_title()
  if (mode==houseselect_mode) init_houseselect()
@@ -1444,9 +1440,7 @@ end
 --- ### anti-copy protection
 local test=tostr(stat"102") 
 if (test!="\48" and test!="\118\54\112\57\100\57\116\52\46\115\115\108\46\104\119\99\100\110\46\110\101\116") stop()
- --if (test!="\48" and test!="\119\119\119\46\108\101\120\97\108\111\102\102\108\101\46\99\111\109") stop()
- --if (test!="0" and test!="v6p9d9t4.ssl.hwcdn.net") stop()
- --if (test!="0" and test!="www.lexaloffle.com") stop()
+
 
 -->8
 spr_data=[[
