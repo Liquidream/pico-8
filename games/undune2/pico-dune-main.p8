@@ -27,37 +27,37 @@ levelselect_mode=5
 
 mission_data={
 { -- atredies missions
- {1,999,1000,4,1,88,72,2,24,64,2,160,64,2,160,152,40,32},
- {2,1200,2700,2,1,144,200,2,120,96,nil,nil,nil,nil,nil,nil,16,32},
- {3,1500,nil,2,1,176,112,3,408,440,nil,nil,nil,nil,nil,nil,14,62},
- {4,1500,nil,3,1,176,432,3,296,16,4,320,0,nil,nil,nil,12,62},
- {5,1500,nil,2,1,88,200,2,448,288,nil,nil,nil,nil,nil,nil,10,62},
- {6,1700,nil,3,1,264,312,3,8,24,3,480,136,nil,nil,nil,8,62},
- {7,2000,nil,4,1,200,72,2,280,408,nil,nil,nil,nil,nil,nil,6,62},
- {8,2000,nil,4,1,192,240,3,328,8,2,248,448,2,424,424,4,62},
- {9,2500,nil,4,1,232,416,4,360,40,3,112,40,2,408,136,2,62},
+    {1,999,1000,4,1,88,72,2,24,64,2,160,64,2,160,152,5,32},
+    {2,1200,2700,2,1,144,200,2,120,96,nil,nil,nil,nil,nil,nil,2,32},
+    {3,1500,nil,2,1,176,112,3,408,440,nil,nil,nil,nil,nil,nil,1.75,62},
+    {4,1500,nil,3,1,176,432,3,296,16,4,320,0,nil,nil,nil,1.5,62},
+    {5,1500,nil,2,1,88,200,2,448,288,nil,nil,nil,nil,nil,nil,1.25,62},
+    {6,1700,nil,3,1,264,312,3,8,24,3,480,136,nil,nil,nil,1,62},
+    {7,2000,nil,4,1,200,72,2,280,408,nil,nil,nil,nil,nil,nil,0.75,62},
+    {8,2000,nil,4,1,192,240,3,328,8,2,248,448,2,424,424,0.5,62},
+    {9,2500,nil,4,1,232,416,4,360,40,3,112,40,2,408,136,0.25,62},
 },
 { -- ordos missions
- {1,999,1000,4,2,88,72,3,24,64,3,160,64,3,160,152,40,32},
- {2,1200,2700,2,2,144,200,3,120,96,nil,nil,nil,nil,nil,nil,16,32},
- {3,1500,nil,2,2,176,112,1,408,440,nil,nil,nil,nil,nil,nil,0,62},
- {4,1500,nil,3,2,176,432,1,296,16,4,320,0,nil,nil,nil,12,62},
- {5,1500,nil,2,2,88,200,3,448,288,nil,nil,nil,nil,nil,nil,10,62},
- {6,1700,nil,3,2,264,312,1,8,24,1,480,136,nil,nil,nil,8,62},
- {7,2000,nil,4,2,200,72,3,280,408,nil,nil,nil,nil,nil,nil,6,62},
- {8,2000,nil,4,2,192,240,3,328,8,1,248,448,1,424,424,4,62},
- {9,2500,nil,4,2,232,416,4,360,40,3,112,40,1,408,136,2,62},
+    {1,999,1000,4,2,88,72,3,24,64,3,160,64,3,160,152,5,32},
+    {2,1200,2700,2,2,144,200,3,120,96,nil,nil,nil,nil,nil,nil,2,32},
+    {3,1500,nil,2,2,176,112,1,408,440,nil,nil,nil,nil,nil,nil,0,62},
+    {4,1500,nil,3,2,176,432,1,296,16,4,320,0,nil,nil,nil,1.5,62},
+    {5,1500,nil,2,2,88,200,3,448,288,nil,nil,nil,nil,nil,nil,1.25,62},
+    {6,1700,nil,3,2,264,312,1,8,24,1,480,136,nil,nil,nil,1,62},
+    {7,2000,nil,4,2,200,72,3,280,408,nil,nil,nil,nil,nil,nil,0.75,62},
+    {8,2000,nil,4,2,192,240,3,328,8,1,248,448,1,424,424,0.5,62},
+    {9,2500,nil,4,2,232,416,4,360,40,3,112,40,1,408,136,0.25,62},
 },
 { -- harkonnen missions
- {1,999,1000,4,3,88,72,1,24,64,1,160,64,1,160,152,40,32},
- {2,1200,2700,2,3,144,200,1,120,96,nil,nil,nil,nil,nil,nil,16,32},
- {3,1500,nil,2,3,176,112,2,408,440,nil,nil,nil,nil,nil,nil,0,62},
- {4,1500,nil,3,3,176,432,2,296,16,4,320,0,nil,nil,nil,12,62},
- {5,1500,nil,2,3,88,200,1,448,288,nil,nil,nil,nil,nil,nil,10,62},
- {6,1700,nil,3,3,264,312,2,8,24,2,480,136,nil,nil,nil,8,62},
- {7,2000,nil,4,3,200,72,1,280,408,nil,nil,nil,nil,nil,nil,6,62},
- {8,2000,nil,4,3,192,240,2,328,8,1,248,448,1,424,424,4,62},
- {9,2500,nil,4,3,232,416,4,360,40,2,112,40,1,408,136,2,62},
+    {1,999,1000,4,3,88,72,1,24,64,1,160,64,1,160,152,5,32},
+    {2,1200,2700,2,3,144,200,1,120,96,nil,nil,nil,nil,nil,nil,2,32},
+    {3,1500,nil,2,3,176,112,2,408,440,nil,nil,nil,nil,nil,nil,0,62},
+    {4,1500,nil,3,3,176,432,2,296,16,4,320,0,nil,nil,nil,1.5,62},
+    {5,1500,nil,2,3,88,200,1,448,288,nil,nil,nil,nil,nil,nil,1.25,62},
+    {6,1700,nil,3,3,264,312,2,8,24,2,480,136,nil,nil,nil,1,62},
+    {7,2000,nil,4,3,200,72,1,280,408,nil,nil,nil,nil,nil,nil,0.75,62},
+    {8,2000,nil,4,3,192,240,2,328,8,1,248,448,1,424,424,0.5,62},
+    {9,2500,nil,4,3,232,416,4,360,40,2,112,40,1,408,136,0.25,62},
 }
 }
 
@@ -118,16 +118,12 @@ patreon_thanks="   ♥ sUPPORTER tHANKS: ★ tHATtOMhALL ★ vITORIO mILIANO ★
 mode = title_mode
 seq_cor = nil
 t_=0
--- title vars
-
--- level-end vars
 endstate = 0
-
 
 function _init()
  cartdata("pn_undune2")
 
- -- Enable "locked" mouse pointer
+ -- "lock" mouse
  poke(0x5f2d, 0x5)
 
  log_cartdata()
@@ -202,7 +198,7 @@ end
 
 
 function _draw()
- --## don't clear here - as routines handle own clearing
+ --## don't - routines handle own clearing
  --cls()
 
  -- check for gfx change
@@ -262,15 +258,15 @@ function load_data()
   else
    mode = levelend_mode
   end
-  -- get level end data
+  -- get level end data (see below for desc's)
   p_score = dget(2)  
-  p_time = flr(dget(41)) -- playing time 
-  p_harvested = dget(42) -- spice harvested by player
-  ai_harvested = dget(43) -- harvested by ai
-  p_units = dget(44) -- units destroyed by player
-  ai_units = dget(45) -- units destroyed by ai
-  p_buildings = dget(46) -- buildings destroyed by player
-  ai_buildings = dget(47) -- buildings destroyed by ai  
+  p_time = flr(dget(41))
+  p_harvested = dget(42)
+  ai_harvested = dget(43)
+  p_units = dget(44)
+  ai_units = dget(45)
+  p_buildings = dget(46)
+  ai_buildings = dget(47)
   --
   if endstate < 3 then 
    -- play "win" music
@@ -288,8 +284,6 @@ end
 
 
 function load_level(num)
- -- printh("in load_level("..num..")...")
- -- printh("p_fact = "..p_fact)
 
  p_col1 = faction_cols[p_fact][1]
  p_col2 = faction_cols[p_fact][2]
