@@ -1871,7 +1871,7 @@ function check_hover_select(obj)
    else
     -- is object hidden by fow?
     -- or clicking a harvester unloading or unit repairing?
-    if (obj.type<=2 and fow[(cursor.x+camx)\8][(cursor.y+camy)\8]!=16 or obj.state==8) return
+    if (obj.type<=2 and fow[(cursor.x+camx)\8][(cursor.y+camy)\8]==0 or obj.state==8) return
     
      -- was our harvester/unit selected before clicking our refinery/repair?
     if selected_obj
