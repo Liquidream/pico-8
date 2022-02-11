@@ -89,8 +89,8 @@ local obj_data=[[id|obj_spr|map_spr|ico_spr|type|w|h|z|trans_col|parent_id|paren
 12|98|98|142|2|3|2|0||1|||||||2|2|11|3|||600|20|0|800|0|||||53|nil|||0|0|0|0|0|0|1|1||0|nil|nil|nil|nil|||1|nil|nil|1|||hEAVY vEHICLE fACTORY|tHE hEAVY fACTORY~PRODUCES HEAVY ATTACK~VEHICLES.||factory_click
 13|101|101|166|2|3|2|0||1|||||||2|2|12|5|||500|35|0|1600|0|||||53|nil|||0|0|0|0|0|0|1|1||0|nil|nil|nil|nil|||1|nil|nil|1|||hI-tECH fACTORY|tHE hI-tECH fACTORY~PRODUCES FLYING~VEHICLES.||factory_click
 14|128|128|230|2|3|2|0||1|||||||2|2|12|5|||700|20|0|800|0|||||53|nil||2|0|0|0|0|0|0|1|1|8|0|nil|nil|nil|nil|||1|nil|1|1||0|rEPAIR fACILITY|tHE rEPAIR fACILITY~IS USED TO REPAIR YOUR~VEHICLES.||
-15|71|71|232|1|1|1|1|11|1|||||||2|2|7|5|||125|10|80|800|0|5|1|27|58|53|nil|||0|0|0|0|0|0|1|1||0|nil|nil|nil|nil|||nil|1|nil|1|||cANNON tURRET|tHE cANNON tURRET IS~USED FOR SHORT RANGE~ACTIVE DEFENSE.||
-16|87|87|234|1|1|1|1|11|1|||||||2|2|7|6|||250|20|240|800|0|10|2|40|59|53|nil|||0|0|0|0|0|0|1|1||0|nil|nil|nil|nil|||nil|1|nil|1|||rOCKET tURRET|tHE rOCKET TURRET IS~USED FOR MEDIUM RANGE~ACTIVE DEFENSE.||
+15|71|71|232|1|1|1|1|11|1|||||||2|2|7|5|||125|10|80|800|0|5|1|27|58|53|nil|||0|0|0|0|0|0|1|1||0|nil|nil|nil|nil|||1|1|nil|1|||cANNON tURRET|tHE cANNON tURRET IS~USED FOR SHORT RANGE~ACTIVE DEFENSE.||
+16|87|87|234|1|1|1|1|11|1|||||||2|2|7|6|||250|20|240|800|0|10|2|40|59|53|nil|||0|0|0|0|0|0|1|1||0|nil|nil|nil|nil|||1|1|nil|1|||rOCKET tURRET|tHE rOCKET TURRET IS~USED FOR MEDIUM RANGE~ACTIVE DEFENSE.||
 17|61|61|228|2|3|3|0||1|||||11|3|2|2|11|6||1|500|50|0|2000|0|||||53|nil||4|0|0|0|0|0|0|1|1|11|0|nil|nil|nil|nil|||1|nil|nil|1||11,10,8,8|sTARPORT|tHE sTARPORT IS USED TO~ORDER AND RECEIVE~SHIPMENTS FROM~c.h.o.a.m.|draw_refinery|factory_click
 18|131|131|224|2|2|2|0||1|||||||2|2|12|7|||500|40|0|1600|0|||||53|nil|||0|0|0|0|0|0|1|1||0|nil|nil|nil|nil|||1|nil|nil|nil|||hOUSE OF ix|tHE ix rESEARCH~fACILITY ADVANCES YOUR~hOUSE'S TECHNOLOGY.||
 19|58|58|226|2|3|3|0||1|||||||2|2|17|8||1|999|80|0|4000|0|||2,400||53|nil|||0|0|0|0|0|0|1|1||0|nil|nil|nil|nil|||1|nil|nil|nil|||pALACE|tHIS IS YOUR pALACE.||
@@ -120,6 +120,7 @@ local obj_data=[[id|obj_spr|map_spr|ico_spr|type|w|h|z|trans_col|parent_id|paren
 42|32|32||1|1|1|1|11|||2|||||1|1|||||||nil|4|0.1|||||53|1|||0|0|0|0|0|0|1|1||0|nil|nil|nil|nil|nil|nil|nil|nil|nil||nil||sPICE bLOOM|||
 80|3|3|3|3|1|1|0|11||||||||1|1|||||||0|0|||||||nil|||0|0|0|0|0|0|1|1||0|nil|nil|nil|nil|||nil|nil|nil||nil||rEPAIR||draw_action|action_click
 81|1|1|1|3|1|1|0|11||||||||1|1|||||||0|0|||||||nil|||0|0|0|0|0|0|1|1||0|nil|nil|nil|nil|||nil|nil|nil||nil||lAUNCH||draw_action|action_click]]
+
 
 -->8
 --p8 functions
@@ -392,7 +393,7 @@ function m_map_obj_tree(objref, x,y, owner, factory)
   local xpos,ypos = x\8,y\8
   
   -- building props?
-  if objref.is_building then
+  if objref.is_building and not objref.is_unit then
     -- prepare the map?
     local slabs = objref.obj_spr==22
     for xx=0,objref.w-1 do
@@ -542,10 +543,10 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
          if in_type>2 then
           -- icon
           spr(self.ico_spr, x, y, self.ico_w, self.ico_h)
-          if in_type==5 then
-           clip(x+10,y+10,self.spr_w*1.75,self.spr_h*1.75)
-           ?"\#6\f8\^:1500150015000000",x+10,y+10
-           clip()
+          if in_type==5 and ref_obj.is_building then
+           fillp"0XAFAF"
+           rectfill(x+15,y+15,x+15-(self.spr_w*2),y+15-(self.spr_h*2),245)
+           fillp()
            if (self.procpaused and not show_menu) ?"\^jsc\f0\^:⁶:00666666666666\f8\vt\^:⁶:00666666666666"
           end
          else
@@ -1175,11 +1176,11 @@ function _draw()
 
  -- top/header bar
  rectfill(0,0,127,8,9)
- --line(0,9,127,9,4)
+ line(0,9,127,9,4)
  
  -- update/draw message
  msgcount-=1
- --?(msgcount>0 and message or selected_obj and selected_obj.name or ""),2,2,0
+ ?(msgcount>0 and message or selected_obj and selected_obj.name or ""),2,2,0
  -- score
  ?sub("00000", #strnum)..strnum, 103,2, p_col2
 
@@ -1228,8 +1229,7 @@ function _draw()
    -- repair? 
    if selected_obj.life<selected_obj.hitpoint   
     and selected_obj.id!=4
-    and (selected_obj.is_building
-      or not selected_obj.moves) then
+    and selected_obj.is_building then
      repair_obj=m_obj_from_ref(obj_data[80], 115,28, 3, {}, nil, draw_action, function()
       process_click(last_selected_obj, 2)
      end)     
@@ -1271,13 +1271,13 @@ function _draw()
   fillp(▒)
   rectfill(unpack(split"0,0,127,127,0"))
   fillp()  
-  rectfill(3,22,124,95,p_col2)
-  rect(3,22,124,95,p_col1) 
+  rectfill(3,22,124,96,p_col2)
+  rect(3,22,124,96,p_col1) 
 
   -- build menu?  
   if selected_obj.build_objs then
     selected_obj.valid_build_objs={}
-    rectfill(unpack(split"6,25,27,92,0"))
+    rectfill(unpack(split"6,25,27,93,0"))
     local icount=1
     for i=1,#selected_obj.build_objs do
      local curr_item=selected_obj.build_objs[i]
@@ -1287,7 +1287,7 @@ function _draw()
      then
       selected_obj.valid_build_objs[icount]=curr_item
       if icount>=menu_pos and icount<=menu_pos+2 then
-        curr_item:set_pos(9,28+(icount-menu_pos)*19)
+        curr_item:set_pos(9,28+(icount-menu_pos)*20)
         curr_item:draw()
       else
         curr_item.x=-16
@@ -1298,7 +1298,7 @@ function _draw()
         sel_build_item_idx=icount
         rect(curr_item.x-2, curr_item.y-2,
             curr_item.x+17, curr_item.y+17,7)
-        ?"\^j87\-e\|e\^h\f7"..selected_subobj.name.."\^jl8\-h\|h\f9cOST:"..selected_subobj.cost.."\n\|h\f6"..selected_subobj.description
+        ?"\^j87\-f\|e\^h\f7"..selected_subobj.name.."\^jl8\-h\|h\f9cOST:"..selected_subobj.cost.."\n\|h\f6"..selected_subobj.description
       end
       icount+=1
      end -- unlocked
@@ -1819,7 +1819,7 @@ end
 function m_button(x,text,func_onclick,_w)
  add(ui_controls,{
   x=x,
-  y=83,
+  y=85,
   w=_w or 22,
   h=8,
   text=text,
@@ -1828,8 +1828,8 @@ function m_button(x,text,func_onclick,_w)
    end,
   draw=function(self)
     local c=self.hover and 7 or 6
-    if(#text>1)rectfill(x,83,x+self.w,91, c)
-    ?text,x+2,85,#text>1 and 0 or c
+    if(#text>1)rectfill(x,85,x+self.w,93, c)
+    ?text,x+2,87,#text>1 and 0 or c
   end,
   func_onclick = func_onclick
  })
@@ -2286,9 +2286,9 @@ __map__
 0e04050905050506000000000000001314000000000000000000000000001357570e000000000000000000000000040506000c242400000000000c8585852f2f0005090505060000000c0d0d1200000000000c0d0d0d0d0d3d0f0f370d0d0d0d0e000000000a05050509051112000000000000000000000000000a0505092f2f
 0e05090905050505000000000000000000000000000000000000000000000057570e00000000000000000000000a050505002442000000000000131057372f2f0005050905050000000c0d0d0d00000020000c0d0d0d0d0d0d0d0d420d01220d0e0000000000000a0505080c0e00000000000000000000000000110e05092f2f
 0e0a05050505050800000000000000000000000000000000000000000000110d0d140000000000000000000505050509050057000012000000150000000d2f2f0005090909050000000c0d0d0d12000000110d0d0d0d0d0d0d0d0d0d0d22220d0e000000000000000000000c0d12000000000000000000000000000405052f2f
-0d0f0f120a000000000000000000000004050600000000000000000000110d0d14000000000000110f0d0f120509050505002457440000240e00000000132f2f0005090909050000000c0d0d0d0d0f0f0f0d0d0d0d0d0d0d0d830d6a0d0d440d0e000000000000000000000c0d0d0f1200000000000000000000000a05082f2f
+0d0f0f120a000000000000000000000004050600000000000000000000110d0d14000000000000110f0d0f120509050505002457440000240e00000000132f2f0005090909050000000c0d0d0d0d0f0f0f0d0d0d0d0d0d600d830d6a0d0d440d0e000000000000000000000c0d0d0f1200000000000000000000000a05082f2f
 0d0d0d0e00000000000000000000040505050500000000000a00110f0f0d0d14000000000000000c0d0d0d0e0509090905001324000000240000000000002f2f0a05050505080000000c0d0d0d0d0d0d0d0d1400130d0d0d0d0d0d0d0d0d0d0d0e0000000000000000000013100d0d0d12000000000000000000000000002f2f
-1010101400000000000000000405050909090500000000000000130d10101400000000000000000c0d0d1014050509050800000c140000000000000000002f2f0000000000000000000c0d0d0d0d0d1014000000000c0d0d0d0d100d100d0d0d0e000000000000000000000000130d0d0e000000000000000000000000002f2f
+1010101400000000000000000405050909090500000000000000130d10101400000000000000000c0d0d1014050509050800000c140000000000000000002f2f0000000000000000000c0d0d0d0d0d1014000000000c0d0d0d0d100d100d620d0e000000000000000000000000130d0d0e000000000000000000000000002f2f
 0000000000000000000000000509090905050506000000070000000000000000000000000000000c0d1400040505050800000000000000000000000000002f2f0000000000000000000c0d0d0d0d14000000000000130d0d0d14000000130d0d0e00000000000000000000000406130d0e000000000000000000000000002f2f
 0000000000000000000000000a05090905080b0b000000050000000000000000000000000000110d140000000a050800000000000a0000040506000000002f2f000000000000000000130d0d0d1400000000000000000c0d140000000000130d14000000000000110e040505050506130d0f1200000000000000000000002f2f
 000000000000000000000000000a0505080b0b0b000000050600000000000000000000110d0d0d0e000000000000000000000000000405050505050506002f2f00110f0e0000000000001310140000000000000000001314000000000000000004050a0000000000000509050505050506130d0e000000000000000000002f2f
