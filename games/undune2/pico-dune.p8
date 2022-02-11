@@ -74,26 +74,26 @@ function process_click(self, mode)
 end
 
 -- object data
-local obj_data=[[id|obj_spr|map_spr|ico_spr|type|w|h|z|trans_col|parent_id|parent2_id|owner|col1|col2|icol1|icol2|ico_w|ico_h|req_id|req_level|req_faction|max|cost|power|arms|hitpoint|speed|range|fire_type|fire_rate|fire_sfx|death_sfx|norotate|altframe|framecount|life|frame|process|spent|fire_cooldown|hit|flash_count|col_cycle_pos|col_cycle_src|storage|capacity|repairable_unit|ai_build|moves|tracked|onfoot|is_building|is_unit|is_dockable|capturable|can_capture|col_cycle|name|description|func_draw|func_onclick
-1|64|64|170|2|2|2|0||nil|||||||2|2|nil|1|||100|0|0|1600|0|||||53|nil|||0|0|0|0|0|0|1|1||0|nil|nil|nil|nil|||1|nil|nil|1|||cONSTRUCTION yARD|aLL STRUCTURES ARE~BUILT BY THE~CONSTRUCTION YARD.||factory_click
+local obj_data=[[id|obj_spr|map_spr|ico_spr|type|w|h|z|trans_col|parent_id|parent2_id|owner|col1|col2|icol1|icol2|ico_w|ico_h|req_id|req_level|req_faction|max|cost|power|arms|hitpoint|speed|range|fire_type|fire_rate|fire_sfx|death_sfx|norotate|altframe|framecount|life|frame|process|spent|fire_cooldown|hit|flash_count|col_cycle_pos|col_cycle_src|storage|capacity|is_repairable|ai_build|moves|tracked|onfoot|is_building|is_unit|is_dockable|capturable|can_capture|col_cycle|name|description|func_draw|func_onclick
+1|64|64|170|2|2|2|0||nil|||||||2|2|nil|1|||100|0|0|1600|0|||||53|nil|||0|0|0|0|0|0|1|1||0|nil|1|nil|nil|||1|nil|nil|1|||cONSTRUCTION yARD|aLL STRUCTURES ARE~BUILT BY THE~CONSTRUCTION YARD.||factory_click
 2|22|22|162|2|2|2|0||1|||||7|5|2|2|1|4|||20|0|0|0|0||||||nil|||0|0|0|0|0|0|1|1||0|nil|nil|nil|nil|||1|nil|nil|nil|||lARGE cONCRETE sLAB|uSE CONCRETE TO MAKE A~STURDY FOUNDATION FOR~YOUR STRUCTURES.||
 3|22|22|162|2|1|1|0||1|||||6|6|2|2|1|1|||5|0|0|0|0||||||nil|||0|0|0|0|0|0|1|1||0|nil|nil|nil|nil|||1|nil|nil|nil|||sMALL cONCRETE sLAB|uSE CONCRETE TO MAKE A~STURDY FOUNDATION FOR~YOUR STRUCTURES.||
 4|133|133|164|2|1|1|0||1|||||||2|2|7|4|||50|0|0|200|0|||||53|nil|164||0|0|0|0|0|0|1|1||0|nil|nil|nil|nil|||1|nil|nil|nil|||dEFENSIVE wALL|tHE wALL IS USED FOR~PASSIVE DEFENSE.||
-5|66|66|172|2|2|2|0||1|||||||2|2|1|1|||300|-100|0|800|0|||||53|nil||2|0|0|0|0|0|0|1|1|11|0|nil|nil|nil|nil|||1|nil|nil|1||12,12,12,12,12,12,12,12,12,12,13,1,0,0,0,0,0,0,0,0,1,13|wINDTRAP|tHE WINDTRAP SUPPLIES~POWER TO YOUR BASE.~wITHOUT POWER YOUR~STRUCTURES WILL DECAY.||
-6|68|68|174|2|3|2|0||1|||||||2|2|5|1|||400|30|0|1800|0|||||53|nil||4|0|0|0|0|0|0|1|1|11|1000|nil|nil|nil|nil|||1|nil|1|1||11,10,8,8|sPICE rEFINERY|tHE rEFINERY CONVERTS~SPICE INTO CREDITS.|draw_refinery|
-7|106|106|136|2|2|2|0||1|||||||2|2|5|2|||400|30|0|2000|0|||||53|nil||2|0|0|0|0|0|0|1|1|11|0|nil|nil|nil|nil|||1|nil|nil|nil||8,0,8,0,0,0|rADAR oUTPOST|tHE oUTPOST PROVIDES~RADAR AND AIDS CONTROL~OF DISTANT VEHICLES.||
-8|104|104|134|2|2|2|0||1|||||||2|2|6|2|||150|5|0|600|0|||||53|nil|||0|0|0|0|0|0|1|1||1000|nil|nil|nil|nil|||1|nil|nil|1|||sPICE sTORAGE sILO|tHE sPICE SILO IS USED ~TO STORE REFINED SPICE.||
-9|108|108|168|2|2|2|0||1|||||11|3|2|2|7|2|-3||300|10|0|1200|0|||||53|nil|||0|0|0|0|0|0|1|1||0|nil|nil|nil|nil|||1|nil|nil|nil|||bARRACKS|tHE bARRACKS IS USED TO~TRAIN YOUR lIGHT ~INFANTRY.||factory_click
-10|110|110|138|2|2|2|0||1|||||||2|2|7|2|-1||400|10|0|1600|0|||||53|nil|||0|0|0|0|0|0|1|1||0|nil|nil|nil|nil|||1|nil|nil|nil|||wor tROOPER fACILITY|wor IS USED TO TRAIN~YOUR hEAVY INFANTRY.||factory_click
-11|96|96|140|2|2|2|0||1|||||||2|2|6|2|||400|20|0|1400|0|||||53|nil|||0|0|0|0|0|0|1|1||0|nil|nil|nil|nil|||1|nil|nil|1|||lIGHT vEHICLE fACTORY|tHE lIGHT fACTORY~PRODUCES LIGHT ATTACK~VEHICLES.||factory_click
-12|98|98|142|2|3|2|0||1|||||||2|2|11|3|||600|20|0|800|0|||||53|nil|||0|0|0|0|0|0|1|1||0|nil|nil|nil|nil|||1|nil|nil|1|||hEAVY vEHICLE fACTORY|tHE hEAVY fACTORY~PRODUCES HEAVY ATTACK~VEHICLES.||factory_click
-13|101|101|166|2|3|2|0||1|||||||2|2|12|5|||500|35|0|1600|0|||||53|nil|||0|0|0|0|0|0|1|1||0|nil|nil|nil|nil|||1|nil|nil|1|||hI-tECH fACTORY|tHE hI-tECH fACTORY~PRODUCES FLYING~VEHICLES.||factory_click
-14|128|128|230|2|3|2|0||1|||||||2|2|12|5|||700|20|0|800|0|||||53|nil||2|0|0|0|0|0|0|1|1|8|0|nil|nil|nil|nil|||1|nil|1|1||0|rEPAIR fACILITY|tHE rEPAIR fACILITY~IS USED TO REPAIR YOUR~VEHICLES.||
-15|71|71|232|1|1|1|1|11|1|||||||2|2|7|5|||125|10|80|800|0|5|1|27|58|53|nil|||0|0|0|0|0|0|1|1||0|nil|nil|nil|nil|||1|1|nil|1|||cANNON tURRET|tHE cANNON tURRET IS~USED FOR SHORT RANGE~ACTIVE DEFENSE.||
-16|87|87|234|1|1|1|1|11|1|||||||2|2|7|6|||250|20|240|800|0|10|2|40|59|53|nil|||0|0|0|0|0|0|1|1||0|nil|nil|nil|nil|||1|1|nil|1|||rOCKET tURRET|tHE rOCKET TURRET IS~USED FOR MEDIUM RANGE~ACTIVE DEFENSE.||
-17|61|61|228|2|3|3|0||1|||||11|3|2|2|11|6||1|500|50|0|2000|0|||||53|nil||4|0|0|0|0|0|0|1|1|11|0|nil|nil|nil|nil|||1|nil|nil|1||11,10,8,8|sTARPORT|tHE sTARPORT IS USED TO~ORDER AND RECEIVE~SHIPMENTS FROM~c.h.o.a.m.|draw_refinery|factory_click
-18|131|131|224|2|2|2|0||1|||||||2|2|12|7|||500|40|0|1600|0|||||53|nil|||0|0|0|0|0|0|1|1||0|nil|nil|nil|nil|||1|nil|nil|nil|||hOUSE OF ix|tHE ix rESEARCH~fACILITY ADVANCES YOUR~hOUSE'S TECHNOLOGY.||
-19|58|58|226|2|3|3|0||1|||||||2|2|17|8||1|999|80|0|4000|0|||2,400||53|nil|||0|0|0|0|0|0|1|1||0|nil|nil|nil|nil|||1|nil|nil|nil|||pALACE|tHIS IS YOUR pALACE.||
+5|66|66|172|2|2|2|0||1|||||||2|2|1|1|||300|-100|0|800|0|||||53|nil||2|0|0|0|0|0|0|1|1|11|0|nil|1|nil|nil|||1|nil|nil|1||12,12,12,12,12,12,12,12,12,12,13,1,0,0,0,0,0,0,0,0,1,13|wINDTRAP|tHE WINDTRAP SUPPLIES~POWER TO YOUR BASE.~wITHOUT POWER YOUR~STRUCTURES WILL DECAY.||
+6|68|68|174|2|3|2|0||1|||||||2|2|5|1|||400|30|0|1800|0|||||53|nil||4|0|0|0|0|0|0|1|1|11|1000|nil|1|nil|nil|||1|nil|1|1||11,10,8,8|sPICE rEFINERY|tHE rEFINERY CONVERTS~SPICE INTO CREDITS.|draw_refinery|
+7|106|106|136|2|2|2|0||1|||||||2|2|5|2|||400|30|0|2000|0|||||53|nil||2|0|0|0|0|0|0|1|1|11|0|nil|1|nil|nil|||1|nil|nil|nil||8,0,8,0,0,0|rADAR oUTPOST|tHE oUTPOST PROVIDES~RADAR AND AIDS CONTROL~OF DISTANT VEHICLES.||
+8|104|104|134|2|2|2|0||1|||||||2|2|6|2|||150|5|0|600|0|||||53|nil|||0|0|0|0|0|0|1|1||1000|nil|1|nil|nil|||1|nil|nil|1|||sPICE sTORAGE sILO|tHE sPICE SILO IS USED ~TO STORE REFINED SPICE.||
+9|108|108|168|2|2|2|0||1|||||11|3|2|2|7|2|-3||300|10|0|1200|0|||||53|nil|||0|0|0|0|0|0|1|1||0|nil|1|nil|nil|||1|nil|nil|nil|||bARRACKS|tHE bARRACKS IS USED TO~TRAIN YOUR lIGHT ~INFANTRY.||factory_click
+10|110|110|138|2|2|2|0||1|||||||2|2|7|2|-1||400|10|0|1600|0|||||53|nil|||0|0|0|0|0|0|1|1||0|nil|1|nil|nil|||1|nil|nil|nil|||wor tROOPER fACILITY|wor IS USED TO TRAIN~YOUR hEAVY INFANTRY.||factory_click
+11|96|96|140|2|2|2|0||1|||||||2|2|6|2|||400|20|0|1400|0|||||53|nil|||0|0|0|0|0|0|1|1||0|nil|1|nil|nil|||1|nil|nil|1|||lIGHT vEHICLE fACTORY|tHE lIGHT fACTORY~PRODUCES LIGHT ATTACK~VEHICLES.||factory_click
+12|98|98|142|2|3|2|0||1|||||||2|2|11|3|||600|20|0|800|0|||||53|nil|||0|0|0|0|0|0|1|1||0|nil|1|nil|nil|||1|nil|nil|1|||hEAVY vEHICLE fACTORY|tHE hEAVY fACTORY~PRODUCES HEAVY ATTACK~VEHICLES.||factory_click
+13|101|101|166|2|3|2|0||1|||||||2|2|12|5|||500|35|0|1600|0|||||53|nil|||0|0|0|0|0|0|1|1||0|nil|1|nil|nil|||1|nil|nil|1|||hI-tECH fACTORY|tHE hI-tECH fACTORY~PRODUCES FLYING~VEHICLES.||factory_click
+14|128|128|230|2|3|2|0||1|||||||2|2|12|5|||700|20|0|800|0|||||53|nil||2|0|0|0|0|0|0|1|1|8|0|nil|1|nil|nil|||1|nil|1|1||0|rEPAIR fACILITY|tHE rEPAIR fACILITY~IS USED TO REPAIR YOUR~VEHICLES.||
+15|71|71|232|1|1|1|1|11|1|||||||2|2|7|5|||125|10|80|800|0|5|1|27|58|53|nil|||0|0|0|0|0|0|1|1||0|nil|1|nil|nil|||1|1|nil|1|||cANNON tURRET|tHE cANNON tURRET IS~USED FOR SHORT RANGE~ACTIVE DEFENSE.||
+16|87|87|234|1|1|1|1|11|1|||||||2|2|7|6|||250|20|240|800|0|10|2|40|59|53|nil|||0|0|0|0|0|0|1|1||0|nil|1|nil|nil|||1|1|nil|1|||rOCKET tURRET|tHE rOCKET TURRET IS~USED FOR MEDIUM RANGE~ACTIVE DEFENSE.||
+17|61|61|228|2|3|3|0||1|||||11|3|2|2|11|6||1|500|50|0|2000|0|||||53|nil||4|0|0|0|0|0|0|1|1|11|0|nil|1|nil|nil|||1|nil|nil|1||11,10,8,8|sTARPORT|tHE sTARPORT IS USED TO~ORDER AND RECEIVE~SHIPMENTS FROM~c.h.o.a.m.|draw_refinery|factory_click
+18|131|131|224|2|2|2|0||1|||||||2|2|12|7|||500|40|0|1600|0|||||53|nil|||0|0|0|0|0|0|1|1||0|nil|1|nil|nil|||1|nil|nil|nil|||hOUSE OF ix|tHE ix rESEARCH~fACILITY ADVANCES YOUR~hOUSE'S TECHNOLOGY.||
+19|58|58|226|2|3|3|0||1|||||||2|2|17|8||1|999|80|0|4000|0|||2,400||53|nil|||0|0|0|0|0|0|1|1||0|nil|1|nil|nil|||1|nil|nil|nil|||pALACE|tHIS IS YOUR pALACE.||
 20|49|49|236|1|0.5|0.5|1|11|9|||||15|3|2|2||2|-3||60||24|80|0.05|3|1|15|60|57|1|48|20|0|0|0|0|0|0|1|1||0|nil|nil|1|1|nil|1|nil|1|nil||1||iNFANTRY sOLDIER|iNFANTRY ARE LIGHTLY~ARMOURED FOOTSOLDIERS,~WITH LIMITED FIRING~RANGE AND SPEED.||
 21|48|48|236|1|1|1|1|11|9|||||15|3|2|2||2|-3||100||16|200|0.05|3|1|15|60|57|1|49|20|0|0|0|0|0|0|1|1||0|nil|nil|1|1|nil|1|nil|1|nil||1||iNFANTRY sQUAD|iNFANTRY ARE LIGHTLY~ARMOURED FOOTSOLDIERS,~WITH LIMITED FIRING~RANGE AND SPEED.||
 22|49|111|194|1|0.5|0.5|1|11|10|||||||2|2||3|-1||100||16|180|0.1|7|2|17|59|57|1|48|20|0|0|0|0|0|0|1|1||0|nil|nil|1|1|nil|1|nil|1|nil||1||hEAVY tROOPER|tROOPERS ARE HEAVILY~ARMOURED FOOTSOLDIERS,~WITH IMPROVED FIRING~RANGE AND SPEED.||
@@ -120,7 +120,6 @@ local obj_data=[[id|obj_spr|map_spr|ico_spr|type|w|h|z|trans_col|parent_id|paren
 42|32|32||1|1|1|1|11|||2|||||1|1|||||||nil|4|0.1|||||53|1|||0|0|0|0|0|0|1|1||0|nil|nil|nil|nil|nil|nil|nil|nil|nil||nil||sPICE bLOOM|||
 80|3|3|3|3|1|1|0|11||||||||1|1|||||||0|0|||||||nil|||0|0|0|0|0|0|1|1||0|nil|nil|nil|nil|||nil|nil|nil||nil||rEPAIR||draw_action|action_click
 81|1|1|1|3|1|1|0|11||||||||1|1|||||||0|0|||||||nil|||0|0|0|0|0|0|1|1||0|nil|nil|nil|nil|||nil|nil|nil||nil||lAUNCH||draw_action|action_click]]
-
 
 -->8
 --p8 functions
@@ -595,7 +594,7 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
        -- lose soldiers
        if (self.obj_spr<=49 and life<100) self.spr_w,self.spr_h=0.5,0.5
        -- req repair pickup
-       if (self.repairable_unit and life<75 and self.state<=6) return_to_fact(self,safe_rnd(has_obj[self.created_by][14]) or self.last_fact)
+       if (self.is_repairable and not self.is_building and life<75 and self.state<=6) return_to_fact(self,safe_rnd(has_obj[self.created_by][14]) or self.last_fact)
      end
      -- check for death
      if (in_type<=2 and life<=0 and not self.death_time) self.state=5 self.cor=nil self.death_time=.25 ssfx(self.death_sfx) shake+=(in_type==2 or self.id==38) and .25 or 0
@@ -1228,7 +1227,7 @@ function _draw()
    end
    -- repair? 
    if selected_obj.life<selected_obj.hitpoint   
-    and selected_obj.id!=4
+    and selected_obj.is_repairable
     and selected_obj.is_building then
      repair_obj=m_obj_from_ref(obj_data[80], 115,28, 3, {}, nil, draw_action, function()
       process_click(last_selected_obj, 2)
