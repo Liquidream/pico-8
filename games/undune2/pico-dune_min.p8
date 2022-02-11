@@ -431,7 +431,7 @@ del(_i,self)
 _q[self._c0._bq]+=1
 else
 local gx,gy=self:_c7()
-if(_ff(gx,gy)<9) _fg(gx,gy,33)
+if(_ff(gx,gy)==0) _fg(gx,gy,33)
 if(id<=16) _fg(gx,gy,21)
 if(self._b9) self._b9._af=false
 if(self._ex and self._ex.id==14) self._ex._cf={0}

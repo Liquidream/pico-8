@@ -617,7 +617,7 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
         else
          -- unit
          local gx,gy = self:get_tile_pos()
-         if (wrap_mget(gx,gy)<9) wrap_mset(gx,gy,33) --scorch sand
+         if (wrap_mget(gx,gy)==0) wrap_mset(gx,gy,33) --scorch sand
          if (id<=16) wrap_mset(gx,gy,21)
          if (self.last_fact) self.last_fact.incoming=false
          if (self.return_to and self.return_to.id==14) self.return_to.col_cycle={0}
