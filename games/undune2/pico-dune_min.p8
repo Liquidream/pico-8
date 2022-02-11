@@ -381,10 +381,14 @@ end
 else
 if _b2>2 then
 spr(self.ico_spr, x, y, self.ico_w, self.ico_h)
-if _b2==5 and _b1.is_building then
+if _b2==5 then
+if _b1.is_building then
 fillp"0XAFAF" rectfill(x+15,y+15,x+15-(self._cd*2),y+15-(self._ce*2),245)
 fillp()
-if(self._ae and not _6) ?"\^jsc\f0\^:⁶:00666666666666\f8\vt\^:⁶:00666666666666" 
+end
+if self._ae and not _6 then
+?"\^jsc\f0\^:⁶:00666666666666\f8\vt\^:⁶:00666666666666" 
+end
 end
 else
 spr(self._bv, x, y, self._cd, self._ce)

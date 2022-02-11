@@ -542,11 +542,15 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
          if in_type>2 then
           -- icon
           spr(self.ico_spr, x, y, self.ico_w, self.ico_h)
-          if in_type==5 and ref_obj.is_building then
-           fillp"0XAFAF"
-           rectfill(x+15,y+15,x+15-(self.spr_w*2),y+15-(self.spr_h*2),245)
-           fillp()
-           if (self.procpaused and not show_menu) ?"\^jsc\f0\^:⁶:00666666666666\f8\vt\^:⁶:00666666666666"
+          if in_type==5 then
+           if ref_obj.is_building then
+            fillp"0XAFAF"
+            rectfill(x+15,y+15,x+15-(self.spr_w*2),y+15-(self.spr_h*2),245)
+            fillp()
+           end
+           if self.procpaused and not show_menu then
+            ?"\^jsc\f0\^:⁶:00666666666666\f8\vt\^:⁶:00666666666666"
+           end
           end
          else
           -- unit/obj
@@ -1654,7 +1658,6 @@ function move_unit_pos(unit,x,y,dist_to_keep,try_hail,start_state)
   
   ::restart_move_unit::
 
-  -- check target valid
   if not flying and not is_free_tile(unit,x,y) then   
     -- target tile occupied, move as close as possible
     x,y=ping(unit,x,y,is_free_tile)
@@ -1758,7 +1761,7 @@ function move_unit_pos(unit,x,y,dist_to_keep,try_hail,start_state)
         end
       end
       
-      -- check new position/tile is still free (if not flying)
+      -- check new position/tile is still free
       if(not flying and not is_free_tile(unit,nx,ny)) goto restart_move_unit
       
       -- move to new position      
@@ -1864,7 +1867,7 @@ function check_hover_select(obj)
     -- or clicking a harvester unloading or unit repairing?
     if (obj.type<=2 and fow[(cursor.x+camx)\8][(cursor.y+camy)\8]==0 or obj.state==8) return
     
-     -- was our harvester/unit selected before clicking our refinery/repair?
+     -- was our unit selected before clicking our refinery/repair?
     if selected_obj
      and last_selected_obj
      and (obj.id==6 and last_selected_obj.id==32 
