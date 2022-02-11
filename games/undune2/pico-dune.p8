@@ -144,7 +144,7 @@ function _init()
     --restore new lines
     str_breaks,val=split2d(val,"~"),""
     for line in all(str_breaks) do
-      val..="\n"..line
+      val..=line.."\n"
     end
    end
    new_obj[str_arrays[1][j]]=val
@@ -467,16 +467,15 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
     return {
      x=self.x,
      y=self.y-self.z,
-     w=(self.type>3 and 16 or self.w),
-     h=(self.type>3 and 16 or self.h)
+     w=(in_type>3 and 16 or self.w),
+     h=(in_type>3 and 16 or self.h)
     }
    end,
    draw=function(self)
      local x=self.x
      local y=self.y
-     local ty=self.type
      -- skips if off-screen
-     if ty>2
+     if in_type>2
       or (x+self.w>=camx
        and x<=camx+127
        and y+self.h>=camy
@@ -484,13 +483,13 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
      then
        pal()
        palt(0,false)
-       if (self.trans_col and ty<=3) palt(self.trans_col,true)   
+       if (self.trans_col and in_type<=3) palt(self.trans_col,true)   
        -- faction? (if not IX)
        if (self.faction and self.id!=18) pal(12,self.col1) pal(14,self.col2)
        
        -- icon mode
-       if ty>3 then
-         local this = ty==5 and self or self.parent
+       if in_type>3 then
+         local this = in_type==5 and self or self.parent
          -- bg
          rectfill(x-1,y-1,x+16,y+19,0)
          -- draw health/progress
@@ -542,7 +541,7 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
        -- norm sprite
        else       
          -- non-rotational sprite
-         if ty>2 then
+         if in_type>2 then
           -- icon
           spr(self.ico_spr, x, y, self.ico_w, self.ico_h)
           if (self.procpaused and not show_menu) ?"\^jsc\f0\^:⁶:00666666666666\f8\vt\^:⁶:00666666666666"
@@ -571,12 +570,12 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
         end
        end
        -- smoking?
-       if (self.life<self.hitpoint/3 and not self.onfoot and chance"10" and ty<=2) add_particle(x+3.5,y+3.5, 1, .1,-.02,.05, -.002, 80,split2d"10,8,9,6", rnd{0xa5a5.8,0})
+       if (self.life<self.hitpoint/3 and not self.onfoot and chance"10" and in_type<=2) add_particle(x+3.5,y+3.5, 1, .1,-.02,.05, -.002, 80,split2d"10,8,9,6", rnd{0xa5a5.8,0})
        self.hit=0
     end
    end,
    update=function(self)
-     local life,ty,id = self.life,self.type,self.id     
+     local life,id = self.life,self.id     
      -- update targeting flash
      self.flash_count=max(self.flash_count-.4,1)
      -- check for attack (unless spice bloom)
@@ -595,11 +594,11 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
        if (self.repairable_unit and life<75 and self.state<=6) return_to_fact(self,safe_rnd(has_obj[self.created_by][14]) or self.last_fact)
      end
      -- check for death
-     if (ty<=2 and life<=0 and not self.death_time) self.state=5 self.cor=nil self.death_time=.25 ssfx(self.death_sfx) shake+=(ty==2 or self.id==38) and .25 or 0
+     if (in_type<=2 and life<=0 and not self.death_time) self.state=5 self.cor=nil self.death_time=.25 ssfx(self.death_sfx) shake+=(in_type==2 or self.id==38) and .25 or 0
      if self.death_time then
       self.death_time-=.025
       if self.death_time<=0 then
-        if ty==2 then         
+        if in_type==2 then         
          -- building?         
          for xx=0,self.spr_w-1 do
            for yy=0,self.spr_h-1 do
@@ -629,7 +628,7 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
         self:deselect_check()
       else
         -- dying
-        if (chance(ty==2 and 1 or 8)) make_explosion(self.x+rnd(self.w),self.y+rnd(self.h))
+        if (chance(in_type==2 and 1 or 8)) make_explosion(self.x+rnd(self.w),self.y+rnd(self.h))
       end
      end
 
@@ -716,7 +715,7 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
         -- repair complete
         self.process=0
         -- move unit to safe place?
-        if ty==1 and self.moves then
+        if in_type==1 and self.moves then
          -- stop flashing while repairing
          -- go back to guard
          -- find nearest point to factory
@@ -1179,7 +1178,7 @@ function _draw()
  msgcount-=1
  ?(msgcount>0 and message or selected_obj and selected_obj.name or ""),2,2,0
  -- score
- ?sub("000000", #strnum+1)..strnum, 103,2, p_col2
+ ?sub("00000", #strnum)..strnum, 103,2, p_col2
 
  -- turn on/off radar
  if hq!=last_hq then
@@ -1267,7 +1266,7 @@ function _draw()
 
  if show_menu then  
   fillp(▒)
-  rectfill(0,0,127,127,0)
+  rectfill(unpack(split"0,0,127,127,0"))
   fillp()  
   rectfill(3,22,124,95,p_col2)
   rect(3,22,124,95,p_col1) 
@@ -1275,7 +1274,7 @@ function _draw()
   -- build menu?  
   if selected_obj.build_objs then
     selected_obj.valid_build_objs={}
-    rectfill(6,25,27,92,0)
+    rectfill(unpack(split"6,25,27,92,0"))
     local icount=1
     for i=1,#selected_obj.build_objs do
      local curr_item=selected_obj.build_objs[i]
@@ -1288,19 +1287,15 @@ function _draw()
         curr_item:set_pos(9,28+(icount-menu_pos)*19)
         curr_item:draw()
       else
-        -- hide!
-        curr_item:set_pos(-16,16)
+        curr_item.x=-16
       end
-      -- default selection
       selected_subobj = selected_subobj or selected_obj.valid_build_objs[1]
       -- draw selected reticule
       if selected_subobj == curr_item then 
         sel_build_item_idx=icount
         rect(curr_item.x-2, curr_item.y-2, 
-            curr_item.x+17, curr_item.y+17,7)
-        ?selected_subobj.name,30,26
-        ?"cOST:"..selected_subobj.cost,85,33,9
-        ?selected_subobj.description,30,34,6
+            curr_item.x+17, curr_item.y+17,7)                
+        ?"\^j87\-e\|e\^h\f7"..selected_subobj.name.."\^jl8\-h\|h\f9cOST:"..selected_subobj.cost.."\n\|h\f6"..selected_subobj.description
       end
       icount+=1
      end -- unlocked
@@ -1832,8 +1827,8 @@ function m_button(x,text,func_onclick,_w)
    end,
   draw=function(self)
     local c=self.hover and 7 or 6
-    if(#text>1)rectfill(self.x,83,self.x+self.w,91, c)
-    ?self.text,self.x+2,85,#text>1 and 0 or c
+    if(#text>1)rectfill(x,83,x+self.w,91, c)
+    ?text,x+2,85,#text>1 and 0 or c
   end,
   func_onclick = func_onclick
  })
