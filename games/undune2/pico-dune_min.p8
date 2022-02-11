@@ -387,7 +387,7 @@ fillp"0XAFAF" rectfill(x+15,y+15,x+15-(self._cd*2),y+15-(self._ce*2),245)
 fillp()
 end
 if self._ae and not _6 then
-?"\^jsc\f0\^:⁶:00666666666666\f8\vt\^:⁶:00666666666666" 
+?"\^jsc\f0\^:⁶:00666666666666\f8\vt\^:⁶:00666666666666"
 end
 end
 else
