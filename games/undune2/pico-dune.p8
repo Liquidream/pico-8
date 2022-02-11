@@ -795,7 +795,7 @@ function reveal_fow(object)
  -- > player
  -- > firing ai
  
- --if(object.owner<=0 or object.id==42) return -- show all bases (for demos!)
+ --if(object.owner<=0 or object.id==42) return -- demo mode!
  if(object.owner!=1 and object.state!=4) return
 
  local size = object.type+1
@@ -903,7 +903,7 @@ function _update60()
     
   -- ai overall decision making (attack, build, repair, etc. - not individual units)
   if t()%ai_level==0 then
-    --printh"update_ai()"
+    --printh("update_ai()"..t())
 
     -- attacks
     --
@@ -924,6 +924,7 @@ function _update60()
     -- select a random unit to build
     local u=rnd(ai_building.build_objs)
     if u and u.ai_build then
+     --printh">>>"
      u:func_onclick()
     end
 
