@@ -1684,6 +1684,8 @@ function move_unit_pos(unit,x,y,dist_to_keep,try_hail,start_state)
      add(p, shortest.last)
     end
     unit.path = p
+    -- free mem!
+    frontier,best_table,p,shortest,neighbors=nil,nil,nil,nil,nil
     goto end_pathfinding
    end
    -- map neighbors
