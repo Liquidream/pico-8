@@ -1657,80 +1657,81 @@ function move_unit_pos(unit,x,y,dist_to_keep,try_hail,start_state)
   unit.tx,unit.ty,unit.prev_state,unit.state,unit.path = x*8,y*8,unit.state,1,nil
   
   -- (pn-minified/modified) "pathfinder"
-  local start, goal, node_to_id = { x = unit.x\8, y = unit.y\8}, {x = x, y = y}, function (node) return (node.y<<8) + node.x end
-  local shortest, 
-  best_table = {
-   last = start,
-   cost_from_start = 0,
-   cost_to_goal = manhattan_distance(start, goal)
-  }, {} 
-  best_table[node_to_id(start)] = shortest
-  local frontier, frontier_len, goal_id, max_number, count = {shortest}, 1, node_to_id(goal), 32767.99, 0
-  while frontier_len > 0 do
-   -- find and extract the shortest path
-   local cost = max_number
-   for i = 1, frontier_len do
-    local temp = frontier[i].cost_from_start + frontier[i].cost_to_goal
-    if (temp <= cost) index_of_min,cost = i,temp
-   end
-   shortest = frontier[index_of_min]
-   frontier[index_of_min], shortest.dead = frontier[frontier_len], true
-   frontier_len -= 1
-   local p = shortest.last
-   if node_to_id(p) == goal_id then
-    p = {goal}
-    while shortest.prev do
-     shortest = best_table[node_to_id(shortest.prev)]
-     add(p, shortest.last)
+  if true then --used to scope locals (free mem!)
+   local start, goal, node_to_id = { x = unit.x\8, y = unit.y\8}, {x = x, y = y}, function (node) return (node.y<<8) + node.x end
+   local shortest, 
+   best_table = {
+    last = start,
+    cost_from_start = 0,
+    cost_to_goal = manhattan_distance(start, goal)
+   }, {} 
+   best_table[node_to_id(start)] = shortest
+   local frontier, frontier_len, goal_id, max_number, count = {shortest}, 1, node_to_id(goal), 32767.99, 0
+   while frontier_len > 0 do
+    -- find and extract the shortest path
+    local cost = max_number
+    for i = 1, frontier_len do
+     local temp = frontier[i].cost_from_start + frontier[i].cost_to_goal
+     if (temp <= cost) index_of_min,cost = i,temp
     end
-    unit.path = p
-    -- free mem!
-    frontier,best_table,p,shortest,neighbors=nil,nil,nil,nil,nil
-    goto end_pathfinding
-   end
-   -- map neighbors
-   local neighbors = {}
-   for xx = -1, 1 do
-    for yy = -1, 1 do
-     local nx,ny = p.x+xx,p.y+yy
-     local obj_tile=get_tile_obj(nx,ny) 
-     if (xx!=0 or yy!=0)
-      --maybe_add
-      and flying or not fget(wrap_mget(nx,ny),0) 
-      and is_free_tile(unit,nx,ny)
-      and nx>=0 and ny>=0 and nx<=63 and ny<=63 then
-       add(neighbors, {x=nx, y=ny})
+    shortest = frontier[index_of_min]
+    frontier[index_of_min], shortest.dead = frontier[frontier_len], true
+    frontier_len -= 1
+    local p = shortest.last
+    if node_to_id(p) == goal_id then
+     p = {goal}
+     while shortest.prev do
+      shortest = best_table[node_to_id(shortest.prev)]
+      add(p, shortest.last)
+     end
+     unit.path = p
+     goto end_pathfinding
+    end
+    -- map neighbors
+    local neighbors = {}
+    for xx = -1, 1 do
+     for yy = -1, 1 do
+      local nx,ny = p.x+xx,p.y+yy
+      local obj_tile=get_tile_obj(nx,ny) 
+      if (xx!=0 or yy!=0)
+       --maybe_add
+       and flying or not fget(wrap_mget(nx,ny),0) 
+       and is_free_tile(unit,nx,ny)
+       and nx>=0 and ny>=0 and nx<=63 and ny<=63 then
+        add(neighbors, {x=nx, y=ny})
+      end
      end
     end
-   end
-   --
-   for n in all(neighbors) do
-    local id = node_to_id(n)
-    local curr_cost = not flying and fget(wrap_mget(n.x, n.y), 1) and 4 or 1
-    if (p.x != n.x and p.y != n.y) curr_cost+=.2
+    --
+    for n in all(neighbors) do
+     local id = node_to_id(n)
+     local curr_cost = not flying and fget(wrap_mget(n.x, n.y), 1) and 4 or 1
+     if (p.x != n.x and p.y != n.y) curr_cost+=.2
 
-    local old_best, new_cost_from_start =
-     best_table[id],
-     shortest.cost_from_start + curr_cost    
-    if not old_best then     
-     old_best = {
-      last = n,
-      cost_from_start = max_number,
-      cost_to_goal = manhattan_distance(n, goal)
-     }
-     frontier_len += 1
-     frontier[frontier_len], best_table[id] = old_best, old_best
-    end
-    if not old_best.dead and old_best.cost_from_start > new_cost_from_start then
-     old_best.cost_from_start, old_best.prev = new_cost_from_start, p
-    end
-   end   
-   count+=1
-   -- (now always yield, for perf final levels)
-   yield()
-   -- "unreachable dest" + 80% mem check
-   if (count>3000 or stat"0">1638) goto end_pathfinding
-  end
+     local old_best, new_cost_from_start =
+      best_table[id],
+      shortest.cost_from_start + curr_cost    
+     if not old_best then     
+      old_best = {
+       last = n,
+       cost_from_start = max_number,
+       cost_to_goal = manhattan_distance(n, goal)
+      }
+      frontier_len += 1
+      frontier[frontier_len], best_table[id] = old_best, old_best
+     end
+     if not old_best.dead and old_best.cost_from_start > new_cost_from_start then
+      old_best.cost_from_start, old_best.prev = new_cost_from_start, p
+     end
+    end   
+    count+=1
+    -- (now always yield, for perf final levels)
+    yield()
+    -- "unreachable dest" + 80% mem check
+    if (count>3000 or stat"0">1638) goto end_pathfinding
+   end
+
+  end  
 
   ::end_pathfinding::
 
