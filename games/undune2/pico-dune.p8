@@ -473,8 +473,7 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
     }
    end,
    draw=function(self)
-     local x=self.x
-     local y=self.y
+     local x,y,rot=self.x\1,self.y\1,self.r
      -- skips if off-screen
      if in_type>2
       or (x+self.w>=camx
@@ -483,7 +482,7 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
        and y<camy+127+self.z)
      then
        -- shadow
-       if self.r then        
+       if rot then
         ovalfill(x+2, y+2, x+7, y+6, 1)
        end
        pal()
@@ -516,9 +515,17 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
        if (func_draw) func_draw(self)
 
        -- rotating obj?
-       if self.r then
+       if rot then
         if not self.death_time or self.death_time>.025 then
-         draw_rotated_square(x+3.5, y-self.z+3.5, self.r,  127, self.my, 1)
+         local cs,ss,ssx,ssy,cx,cy,dx,dy = cos(rot),sin(rot),126.7,self.my-0.3,127.5,self.my+.5,x+3.5,y-self.z+3.5
+         ssy -=cy
+         ssx -=cx
+         local sx,sy,delta_px =cs*ssx+cx,-ss*ssx+cy,-ssx*8 
+         for py = dy-delta_px, dy+delta_px do
+          tline(dx-delta_px,py,dx+delta_px,py,sx+ss*ssy,sy+cs*ssy,cs/8,-ss/8)
+          ssy+=.125
+         end
+         --
         end
        else       
          if in_type>2 then
@@ -1983,17 +1990,6 @@ function add_particle(x, y, r, dx, dy, dr, ddy, life, cols, pattern)
     y_orig=y, life_orig=life }, 1)
 end
 
---106 tokens
-function draw_rotated_square(x,y,sw_rot,mx,my,r)    
- local cs,ss,ssx,ssy,cx,cy = cos(sw_rot),sin(sw_rot),mx-0.3,my-0.3,mx+r/2,my+r/2
- ssy -=cy
- ssx -=cx
- local sx,sy,delta_px =cs*ssx+cx,-ss*ssx+cy,-ssx*8 
- for py = y-delta_px, y+delta_px do
-  tline(x-delta_px,py,x+delta_px,py,sx+ss*ssy,sy+cs*ssy,cs/8,-ss/8)
-  ssy+=1/8
- end
-end
 
 
 
