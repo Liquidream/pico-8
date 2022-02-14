@@ -26,11 +26,10 @@ end
 -- fields
 local g_,buildings,units,object_tiles,radar_data,spice_tiles,particles,has_obj,start_time,t_,build_dest,unit_dest,keyx,keyy,hq,radar_frame,msgcount,fow,cam_max={},{},{},{},{},{},{},{{},{}},t(),0,{0,0},{0,0},0,0,false,0,0,{},mapsize*8-128
 local last_hq,total_spice=hq,{0,0}
-
 local ai_awake={}
 
 g_.factory_click=function(self)
-  menu_pos,selected_subobj,ui_controls=1,nil,{}
+  menu_pos,ui_controls,selected_subobj=1,{}
   -- ui buttons
   m_button(6,"⬆️",function()
    sel_build_item_idx=mid(1,sel_build_item_idx-1,#selected_obj.valid_build_objs)
@@ -180,7 +179,7 @@ function _init()
  -- discover_objs()
  for my=0,31 do
    for mx=0,125 do
-     local objref,spr_val = nil,mget(mx,my)
+     local spr_val,objref = mget(mx,my)
      -- handle player start pos (const yard)
      if (spr_val==1) camx,camy,objref=bases[1][4]-56,bases[1][5]-56,obj_data[1]
 
@@ -670,10 +669,9 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
          do_guard(self) 
         elseif target.old_fact_data then
          -- revert back to orig faction
-         target.old_fact_data,
-         target.faction,target.owner,target.created_by,target.col1,target.col2
-         =
-         nil,
+         target.faction,target.owner,target.created_by,target.col1,target.col2,
+         target.old_fact_data
+         =         
          unpack(target.old_fact_data)
          --
          do_guard(target)
@@ -779,8 +777,8 @@ function reveal_fow(object)
  -- > player
  -- > firing ai
  
- if(object.owner<=0 or object.id==42) return -- demo mode!
- --if(object.owner!=1 and object.state!=4) return
+ --if(object.owner<=0 or object.id==42) return -- demo mode!
+ if(object.owner!=1 and object.state!=4) return
 
  local size = object.type+1
  -- clear group of tiles
@@ -807,7 +805,11 @@ function _update60()
  -- mouse control
  local mouse_x,mouse_y,mouse_btn=stat"32",stat"33",stat"34"
  --
- left_button_clicked,left_button_down,right_button_clicked = (mouse_btn==1 and last_mouse_btn != mouse_btn) or btnp"5", (mouse_btn>0) or btn"5", (mouse_btn==2 and last_mouse_btn != mouse_btn) or btnp"4"
+ left_button_clicked,
+ right_button_clicked
+  = 
+ (mouse_btn==1 and last_mouse_btn != mouse_btn) or btnp"5", 
+ (mouse_btn==2 and last_mouse_btn != mouse_btn) or btnp"4"
  
  if not cursx then
   -- initial pos
@@ -958,18 +960,19 @@ function _update60()
   
   
  -- check for radar click
- if left_button_down
+ if (stat"34">0 or btn()>0)
     and not show_menu 
     and cursx>91 and cursx<123
     and cursy>91 and cursy<123 then
       -- clicked radar
       selected_obj=last_selected_obj -- always do this, in case an obj under rader will select
       -- move via radar?
-      if selected_obj then
-       move_selected_unit_pos_with_cor((cursx-91)*2, (cursy-91)*2)
+      if stat"34"==1 and can_move_selected_unit_pos_with_cor((cursx-91)*2, (cursy-91)*2) then       
+       -- done
       else
        camx,camy = mid((cursx-96)*16, cam_max),mid(-10,(cursy-97)*16, cam_max)
       end
+
  -- clicked something?
  elseif left_button_clicked then
  
@@ -992,15 +995,9 @@ function _update60()
 
   -- deselect?
   else
-    -- do we have a unit selected?
-    if selected_obj 
-     and selected_obj.owner==1 
-     and selected_obj.moves 
-     and selected_obj.state!=7 
-    then
-     move_selected_unit_pos_with_cor((camx+cursx)\8, (camy+cursy)\8)     
-    end
-    
+    -- do we have a unit selected?    
+    can_move_selected_unit_pos_with_cor((camx+cursx)\8, (camy+cursy)\8)     
+        
     -- placement?
     local sel_build_obj = selected_obj and selected_obj.build_obj 
     if sel_build_obj
@@ -1021,7 +1018,7 @@ function _update60()
   
  elseif right_button_clicked and not show_menu then
   -- cancel selection
-  selected_obj,target_mode = nil,false
+  target_mode,selected_obj = false
  end
 
  ::skip_collisions::
@@ -1030,11 +1027,22 @@ function _update60()
  t_+=1
 end
 
-function move_selected_unit_pos_with_cor(x,y)
- selected_obj.cor = cocreate(function(unit)
-  move_unit_pos(unit, x, y)
-  do_guard(unit, nil, true)
- end)
+function can_move_selected_unit_pos_with_cor(x,y)
+ --printh(left_button_clicked)
+ -- do we have a unit selected?
+ if selected_obj 
+  and selected_obj.owner==1 
+  and selected_obj.moves 
+  and selected_obj.state!=7 
+ then
+  selected_obj.cor = cocreate(function(unit)
+   move_unit_pos(unit, x, y)
+   do_guard(unit, nil, true)  
+  end)
+  --selected_obj=nil
+  return true
+ end
+ return false
 end
 
 function delete_unit(unit)
@@ -1213,7 +1221,7 @@ function _draw()
   selected_obj.ico_obj:set_pos(107,20)
   selected_obj.ico_obj:draw()  
   -- player icons (build, actions, etc.)
-  repair_obj,launch_obj=nil,nil
+  repair_obj,launch_obj=nil
   if selected_obj.owner==1 then
    -- build
    if sel_build_obj then
@@ -1245,8 +1253,7 @@ function _draw()
        local mx,my=last_selected_obj:get_tile_pos()
        local val=wrap_mget(mx,my)
        if val>=12 and val<=22 then
-        last_selected_obj.life=0
-        last_selected_obj=nil
+        last_selected_obj.life,last_selected_obj=0
         m_map_obj_tree(obj_data[1],mx*8,my*8,1)
         ssfx"61"
        end
@@ -1339,7 +1346,7 @@ end
 function do_guard(unit, start_state, hold_pos)
  -- 0=idle/guarding, 1=pathfinding, 2=moving, 3=attacking, 4=firing, 5=exploding, 
  --(6=harvesting, 7=returning, 8=unloading/repairing, 9=ready-to-unload/repair, 
- unit.state,unit.link,unit.last_move_result = start_state or 0,nil,true
+ unit.state,unit.last_move_result,unit.link = start_state or 0,true
  
  if (hold_pos) unit.gx,unit.gy = unit.x,unit.y
 
@@ -1480,7 +1487,7 @@ function do_guard(unit, start_state, hold_pos)
         yield()
        end
        -- go back to guard (search for spice) mode      
-       self.capacity,last_fact.occupied,self.state = 0,nil,0
+       self.capacity,self.state,last_fact.occupied = 0,0
        if self.sx then 
         move_unit_pos(self, self.sx, self.sy, 0, true)      
        else
@@ -2273,7 +2280,7 @@ __map__
 0e000000000057571405050500000c0d0d0e0000000013101024380d120a050909050c0d0e0000000000110d0d370d0d0d12000a37110f856000650000242f2f0d1014000004050909050505050509090506110d0e00040505050c0d0d0d0000130d0d0d0e0000000000000000000000000a050508000b0b0b00000000002d00
 0d120000000004050505050500000c0d370e000000000000002424240d12050905080c0d0d12000000110d0d0d0d0d5724242412000a13850000000000242f2f1400000000000a05050800050505050508110d0d0e0005090905130d0d140000000c0d0d0d1200000000000000000000000000000000000b0b00000000002d36
 0d0d1200000005090909050500000c0d0d0d12000000000000001324240e0a0508110d0d0d0d0f0f0f0d0d100d0d0d243a000024000000008585858585852f2f00000000000000000000000a05050508110d0d0d0e000509090505060000000000130d0d0d0d12000000000000000000000000000000000b0b00000000002d00
-0d0d0d1200000a05090505050000130d0d0d0d12000000000000000c24240f1200000000130d0d0d0d14000000130d2400000024123700000013856200002f2f0000000000000000000000000000110f0d0d0d0d0e0005050934050500000000000000130d0d0d0f12000000000000000000000000000b0b0b0b0b0000002d32
+0d0d0d1200000a05090505050000130d0d0d0d12000000000000000c24240f1200000000130d0d0d0d14000000130d2400000024123700000013856200002f2f0000000000000000000000000000110f0d0d0d0d0e0005050934050500260000000000130d0d0d0f12000000000000000000000000000b0b0b0b0b0000002d32
 0d0d0d0d12000005050505080000000c0d0d0d0e000000000000000c0d24240d120000000000130d1400000000001324000000240e0000000000850000002f2f0000000000000000000000000015100d0d0d0d0d0e00000a05050508340000340000000000130d101407000000000000000000000000000b0b0b000004052d00
 0d0d0d0d0e00000a080000000000000c0d0d0d1400000020000000130d0d24240e00000000000000000000000000005724242424240028000000242424242f2f000000000000000000000000000000130d0d0d0d0d1200000a0508000037000000000000040505050505050506000000000000000000000b0b0b040505052d49
 0d0d10100e000000000000000000000c0d0d1400000000000000000000130d240d120000000000000000200000000000000024400049000037000c246e242f2f00000000000000000000110f0000000000000c34343412007f003400000038383838380005050509090905050500000000000000000000000000050909092d00
