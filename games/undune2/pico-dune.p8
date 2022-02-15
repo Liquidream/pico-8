@@ -112,7 +112,7 @@ local obj_data=[[id|obj_spr|map_spr|my|ico_spr|type|w|h|z|trans_col|parent_id|pa
 34|20|40|20|160|1|1|1|4|11|13|||||||2|2|18|7|-3||600||128|4|1|7|2|33|59|54|nil|22|8|0|0|0|0|0|1|1||0|nil|nil|1|1|nil|nil|nil|1|nil||nil|nil|nil||oRNITHOPTER|tHE oRNITHOPTER IS A~LIGHTLY ARMOURED~AIRCRAFT THAT FIRES~ROCKETS.hIGHLY~MANOUVERABLE + FASTEST~AIRCRAFT ON dUNE.||
 35|38|38|24|192|1|1|1|1|11|12|17||||0|5|2|2|7|4|||900||nil|600|0.1333333333|0||0||54|nil|||0|0|0|0|0|1|1||0|nil|1|nil|1|nil|nil|nil|1|nil||nil|1|nil||mcv|tHE mcv (mOBILE~cONSTRUCTION vEHICLE)~SCOUT VEHICLE IS USED~TO FIND AND DEPLOY NEW~BASE LOCATIONS.||
 36|57|57|26|198|1|1|1|1|11|12|||||12|9|2|2|18|7|1||600||240|440|0.2|9|3|27|52|54|nil|||0|0|0|0|0|1|1||0|nil|1|1|1|1|nil|nil|1|nil||nil|1|nil||sONIC tANK|dEVELOPED BY THE~aTREIDES,THIS ENHANCED~TANK FIRES POWERFUL~BLAST WAVES OF SONIC~ENERGY.||
-37|56|56|28|200|1|1|1|1|11|12|||||||2|2|18|8|3||800||320|1600|0.06666666667|8|1|33|58|54|nil|||0|0|0|0|0|1|1||0|nil|1|1|1|1|nil|nil|1|nil||nil|1|nil||dEVASTATOR|tHE dEVESTATOR IS A~NUCLEAR-POWERED TANK,~WHICH FIRES DUAL PLASMA~CHARGES. mOST POWERFUL~TANK ON dUNE, BUT~POTENTIALLY UNSTABLE~IN COMBAT.||
+37|56|56|28|200|1|1|1|1|11|12|||12||||2|2|18|8|3||800||320|1600|0.06666666667|8|1|33|58|54|nil|||0|0|0|0|0|1|1||0|nil|1|1|1|1|nil|nil|1|nil||nil|1|nil||dEVASTATOR|tHE dEVESTATOR IS A~NUCLEAR-POWERED TANK,~WHICH FIRES DUAL PLASMA~CHARGES. mOST POWERFUL~TANK ON dUNE, BUT~POTENTIALLY UNSTABLE~IN COMBAT.||
 38|72|72|30||1|1|1|8|11|||0|||||2|2|13|8|3||0||1600|40|1.333333333|0|20|800|59|54|nil|||0|0|0|0|0|1|1||0|nil|nil|0|1|nil|nil|nil|1|nil||nil|nil|nil||dEATH hAND|tHE dEATH hAND IS A~SPECIAL hARKONNEN~pALACE WEAPON. aN~INACCURATE, BUT VERY~DESTRUCTIVE BALLISTIC~MISSILE.||
 38.5|72|72|30||1|1|1|8|11|||0|||||2|2|13|8|4||0||1600|40|1.333333333|0|20|800|59|54|nil|||0|0|0|0|0|1|1||0|nil|nil|nil|1|nil|nil|nil|1|nil||nil|nil|nil||dEATH hAND|tHE dEATH hAND IS A~SPECIAL hARKONNEN~pALACE WEAPON. aN~INACCURATE, BUT VERY~DESTRUCTIVE BALLISTIC~MISSILE.||
 39|51|205|4|204|1|1|1|1|11|11|||||11|1|2|2||2|2||150||40|320|0.4|4|1|17|60|54|nil|||0|0|0|0|0|1|1||0|nil|1|1|1|nil|nil|nil|1|nil||nil|1|nil||rAIDER tRIKE|tHE oRDOS rAIDER IS~SIMILAR TO THE STANDARD~tRIKE, BUT WITH LESS~ARMOUR IN FAVOUR OF~SPEED.||
@@ -121,8 +121,6 @@ local obj_data=[[id|obj_spr|map_spr|my|ico_spr|type|w|h|z|trans_col|parent_id|pa
 42|32|32|||1|1|1|1|11|||2|||||1|1|||||||nil|4|0.1|||||53|1|||0|0|0|0|0|1|1||0|nil|nil|nil|nil|nil|nil|nil|nil|nil||nil|nil|nil||sPICE bLOOM|||
 80|3|3||3|3|1|1|0|11||||||||1|1|||||||nil|0|0||||||nil|||0|0|0|0|0|1|1||0|nil|nil|nil|nil|||nil|nil|nil||nil|nil|nil||rEPAIR||draw_action|action_click
 81|1|1||1|3|1|1|0|11||||||||1|1|||||||nil|0|0||||||nil|||0|0|0|0|0|1|1||0|nil|nil|nil|nil|||nil|nil|nil||nil|nil|nil||lAUNCH||draw_action|action_click]]
-
-
 
 
 -->8
@@ -600,8 +598,9 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
            for yy=0,self.spr_h-1 do
              wrap_mset(self.x/8+xx, self.y/8+yy, 21)
            end
-         end
+         end         
          del(buildings,self)
+         -- todo: create soldiers (but not all factions can do infantry!)
          build_dest[self.hitby.created_by]+=1
         else
          -- unit
@@ -1736,7 +1735,7 @@ function move_unit_pos(unit,x,y,dist_to_keep,try_hail,start_state)
     if (count>3000 or stat"0">1638) goto end_pathfinding
    end
 
-  end  
+  end
 
   ::end_pathfinding::
 
@@ -2025,13 +2024,13 @@ bb79994bb6d55d6bbbbb555bbbbbb1b0d55555550b1bbbbbcdc7766ebbbbbbbbbbb76b6bbbb6eb6b
 bb79944bb66dd66bbbbb5d5bbb5b1b00d555555500b1b5bb050b5050bbb5b5bbbbbebbbbbbbb6bbbbbbbb5b0bbbbbb100b5bbbbb0bbbbbbbbbbbbbbb00000000
 bbb444bbbb6666bbbbbb555bb5b1b000d5555555000b1b5bbbbbbbbbbb1b1b1bbbb7bbbbbbbbbbbbbbbbbb51bbbbbbb115bbbbbb01bbbbbbbbbbbbbb00000000
 bbbbbbbbb9bbbbbbbbbbbbbbb1000000d55555550000001bbbbbbbbbb1000005bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb5bbbbbbbbbbbbbbb00000000
-b7bbb7bbb7bbb7bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb0eee00bbbbbbbbbdddddddddddddddddddddddddfff61ffddddd999dddddddd
-bcbbbcbbbcbbbcbbb00ee00bbbbbb00bbb00b00bb677776bb6cccc6bb0eecce0b0cecccebd6666dbd555555555555544c4555555df44414ff559999999555765
-bebbbebbbebbbebbedeccccebb6ccdebb6cccdebbeccddcbbe076dcbbecd66dcbc066eccbe9ddcebd5555555555554a904455555dfff4144f54499999445f66f
-b0bbb0bb0b0b0b0bceccccceb00c76cbbbc776ebbe0667dbbecccdcb0666777dbcceccccba947debd4c455444444549904499c95df444444f52449494425dffd
-bbb7bbbbbbb7bbbbcecccccebb6ccdebb6cccdebbeccddcbbe076dcb0666777dbc066eccbe9ddceb4a042499999442424297a094dffffffff5424444424556d5
-bbbcbbbbbbbcbbbbedeccccebbbbb00bbb00b00bb677776bb6cccc6bbecd66dcb0cecccebd6666db49029999c0994422229aa094d44444444522424244255425
-bbbebbbbbbbebbbbb00ee00bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb0eecce0b0eee00bbbbbbbbb242499aee099942dd1499942d41441144554224224555425
+b7bbb7bbb7bbb7bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb022200bbbbbbbbbdddddddddddddddddddddddddfff61ffddddd999dddddddd
+bcbbbcbbbcbbbcbbb00ee00bbbbbb00bbb00b00bb677776bb6cccc6bb0eecce0b082d882bd6666dbd555555555555544c4555555df44414ff559999999555765
+bebbbebbbebbbebbedeccccebb6ccdebb6cccdebbeccddcbbe076dcbbecd66dcb807c288be9ddcebd5555555555554a904455555dfff4144f54499999445f66f
+b0bbb0bb0b0b0b0bceccccceb00c76cbbbc776ebbe0667dbbecccdcb0666777db882d888ba947debd4c455444444549904499c95df444444f52449494425dffd
+bbb7bbbbbbb7bbbbcecccccebb6ccdebb6cccdebbeccddcbbe076dcb0666777db807c288be9ddceb4a042499999442424297a094dffffffff5424444424556d5
+bbbcbbbbbbbcbbbbedeccccebbbbb00bbb00b00bb677776bb6cccc6bbecd66dcb082d882bd6666db49029999c0994422229aa094d44444444522424244255425
+bbbebbbbbbbebbbbb00ee00bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb0eecce0b022200bbbbbbbbb242499aee099942dd1499942d41441144554224224555425
 bbb0bbbbbb0b0bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbd2499a77a0a99442d1542425d44411114555224225ff2225
 d77dd77d67d6fffdd6dddddd6ddddddddddcddddddddddddddddddddbbbbbbbbbbbbbbbbbbbccbbbd1499a77aaa99422d15242f5d55555555555555555f44225
 76667666561ffff1dd577765d5555555d560d55555555555d5555555bbbbbbbbbbbbbbbbbbb77bb5d1299aaaaaa99442d551414fdddddbbdddbbdd5d5fff4445
@@ -2097,15 +2096,15 @@ dff67d775d567100ffffffffffffffffdd76666666766666ffdddd6fff778787421557fffffffffd
 9444546444516449fffffffffffffffffffffffddd766666ffffffff67777d88955554444777fff64554444544544454555555559999f9999944677667767698
 9999944444499999fffffffffffffffffffffffffffddd66ffffffff66776d22999554444444777f54445544554545449f9999f9999999f99977777777679887
 9999999999999999ffffffffffffffffffffffffffffffddfffffffff666d2229999955544444447455454554555544599fffffff9f999994777776677988977
-cccccccccbb3ccccccccccccccccccccccccccccccccccccddddddddddddddddccccccccccccccccddddddddddddddddddddddddddddddddcccccccccccccccc
-ccccccccbbc3ccccccccccccccccccccccccccccccccccccddddddddddddddddccccccccccccccccddddddddddddddddddddddddddddddddcccccccccccccccc
-cccccccbbcc3ccccccccccccccccccccccccccccccccccccddddddddddddddddccccccccccccccccddddddd70dddddddddddddddddddddddcccccccccccccccc
-ccccccbbccccccccccccccf7ccccccccccccccccccccccccddddddddddddddddccccccccccccccccddddddbb70ddddddddddddddddddddddcccccccccccccccc
-cccc7755555555ccccccc5f01cccccccccccccccccccccccddddddddddddddddccccccccccccccccddddbbb53dddddddddddddddddddddddcccccc006ccccccc
-ccc76753355335cccccc055ffccccccccccccc4ff75550ccdddddddd7773330dcccc2888887660ccdd3bb53dddddddddddddd7bbd355550dccc7f000005550cc
-cc76667555dd555ccccc0f7557ccccccccccc4ffff7fccccddddd4bbbb75550dccc288888887ccccddd53dddddbb5ddddddd33bbbb3ddddd4fffffffff4ccccc
-cd66d6755dddd55ccccc0f7fff7ccccccc54454444444f7cdd45444444444dddcc5225222222287cdd35555dd3bbbbdddd50005333533ddd45005444455005cc
-c5dd66655555555ccccc0ff000550cccc555fffffffff55cd54bbbbbbbbbbb5dc55588888888855cd53bbbbbbbbbbb5dd5000005bbbb505d5016054ff501605c
+cccccccccbb3ccccccccccccccccccccccccccccccccccccddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddcccccccccccccccc
+ccccccccbbc3ccccccccccccccccccccccccccccccccccccddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddcccccccccccccccc
+cccccccbbcc3ccccccccccccccccccccccccccccccccccccddddddddddddddddddddddddddddddddddddddd70dddddddddddddddddddddddcccccccccccccccc
+ccccccbbccccccccccccccf7ccccccccccccccccccccccccddddddddddddddddddddddddddddddddddddddbb70ddddddddddddddddddddddcccccccccccccccc
+cccc7755555555ccccccc5f01cccccccccccccccccccccccddddddddddddddddddddddddddddddddddddbbb53dddddddddddddddddddddddcccccc006ccccccc
+ccc76753355335cccccc055ffccccccccccccc4ff75550ccdddddddd7773330ddddd28888dc660dddd3bb53dddddddddddddd7bbd355550dccc7f000005550cc
+cc76667555dd555ccccc0f7557ccccccccccc4ffff7fccccddddd4bbbb75550dddd2888888dcddddddd53dddddbb5ddddddd33bbbb3ddddd4fffffffff4ccccc
+cd66d6755dddd55ccccc0f7fff7ccccccc54454444444f7cdd45444444444ddddd5225222222287ddd35555dd3bbbbdddd50005333533ddd45005444455005cc
+c5dd66655555555ccccc0ff000550cccc555fffffffff55cd54bbbbbbbbbbb5dd55588888888855dd53bbbbbbbbbbb5dd5000005bbbb505d5016054ff501605c
 9166660001110009cccc00df00cccccc950600000000065995040000000004599506000000000659950360000000635995000005999300095061052995061059
 f90500000444000999999900ff999999995555255555559999555555555555999955555555555599995555555555559999500052222250599500522222500599
 999999999999999f44999df9dff9f999f99999999999999f9999999999999999f99999999999999f9999999999999999f99999999999999f99999999999999ff
