@@ -852,7 +852,7 @@ function _update60()
     worm_dir+=worm_turn
     -- check collision
     local unit=get_tile_obj(head_worm_x\8,head_worm_y\8)
-    if unit and fget(wrap_mget(unit:get_tile_pos()),2) then
+    if unit and unit.z==1 and fget(wrap_mget(unit:get_tile_pos()),2) then
      delete_unit(unit)
      worm_frame=1
      ssfx"50"
@@ -1581,6 +1581,7 @@ function do_attack(unit, target, manual_attack)
   
  else
   -- palace weapons
+  --printh(t()..": palace fire!")
   do_attack(m_map_obj_tree(obj_data[({24,25,38,38.5})[unit.faction]], unit.x,unit.y, unit.owner, unit), target)      
   unit.fire_cooldown=583
  end
