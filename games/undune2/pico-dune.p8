@@ -25,8 +25,7 @@ end
 
 -- fields
 local g_,buildings,units,object_tiles,radar_data,spice_tiles,particles,has_obj,start_time,t_,build_dest,unit_dest,keyx,keyy,hq,radar_frame,msgcount,fow,cam_max,sel_build_item_idx={},{},{},{},{},{},{},{{},{}},t(),0,{0,0},{0,0},0,0,false,0,0,{},mapsize*8-128,0
-local last_hq,total_spice=hq,{0,0}
-local ai_awake={}
+local last_hq,total_spice,ai_awake,last_cmd_time=hq,{0,0},{},0
 
 g_.factory_click=function(self)
  if self.parent.owner==1 then
@@ -825,6 +824,8 @@ function _update60()
  cursx,cursy = mid(cursx,127),mid(cursy,127)
  cursor.x,cursor.y,lastmx,lastmy = cursx,cursy,mouse_x,mouse_y 
  cx,cy=(camx+cursx)\8,(camy+cursy)\8
+ 
+ last_cmd_time+=1
 
  --
  -- game mode
@@ -963,7 +964,7 @@ function _update60()
       -- move via radar?
       if (stat"34"==1 or left_button_clicked) and can_move_selected_unit_pos_with_cor((cursx-91)*2, (cursy-91)*2) then       
        -- done
-      else
+      elseif last_cmd_time>10 then
        camx,camy = mid((cursx-96)*16, cam_max),mid(-10,(cursy-97)*16, cam_max)
       end
 
@@ -1030,6 +1031,8 @@ function can_move_selected_unit_pos_with_cor(x,y)
    move_unit_pos(unit, x, y)
    do_guard(unit, nil, true)  
   end)
+  selected_obj:deselect_check()
+  last_cmd_time=0
   return true
  end
  return false
@@ -1261,13 +1264,13 @@ function _draw()
   fillp(▒)
   rectfill(unpack(split"0,0,127,127,0"))
   fillp()  
-  rectfill(3,22,124,96,p_col2)
-  rect(3,22,124,96,p_col1) 
+  rectfill(3,18,124,92,p_col2)
+  rect(3,18,124,92,p_col1) 
 
   -- build menu?  
   if selected_obj.build_objs then
     selected_obj.valid_build_objs={}
-    rectfill(unpack(split"6,25,27,93,0"))
+    rectfill(unpack(split"6,21,27,89,0"))
     local icount=1
     for i=1,#selected_obj.build_objs do
      local curr_item=selected_obj.build_objs[i]
@@ -1278,7 +1281,7 @@ function _draw()
      then
       selected_obj.valid_build_objs[icount]=curr_item
       if icount>=menu_pos and icount<=menu_pos+2 then
-        curr_item:set_pos(9,28+(icount-menu_pos)*20)
+        curr_item:set_pos(9,24+(icount-menu_pos)*20)
         curr_item:draw()
       else
         curr_item.x=-16
@@ -1289,7 +1292,7 @@ function _draw()
         sel_build_item_idx=icount
         rect(curr_item.x-2, curr_item.y-2,
             curr_item.x+17, curr_item.y+17,7)
-        ?"\^j87\-f\|e\^h\f7"..selected_subobj.name.."\^jl8\-h\|h\f9cOST:"..selected_subobj.cost.."\n\|h\f6"..selected_subobj.description
+        ?"\^j87\-f\|b\^h\f7"..selected_subobj.name.."\^jl8\-h\|e\f9cOST:"..selected_subobj.cost.."\n\|g\f6"..selected_subobj.description
       end
       icount+=1
      end
@@ -1807,7 +1810,7 @@ end
 function m_button(x,text,func_onclick,_w)
  add(ui_controls,{
   x=x,
-  y=85,
+  y=81,
   w=_w or 22,
   h=8,
   text=text,
@@ -1816,8 +1819,8 @@ function m_button(x,text,func_onclick,_w)
    end,
   draw=function(self)
     local c=self.hover and 7 or 6
-    if(#text>1)rectfill(x,85,x+self.w,93, c)
-    ?text,x+2,87,#text>1 and 0 or c
+    if(#text>1)rectfill(x,81,x+self.w,89, c)
+    ?text,x+2,83,#text>1 and 0 or c
   end,
   func_onclick = func_onclick
  })
