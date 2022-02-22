@@ -99,7 +99,7 @@ local obj_data=[[id|obj_spr|map_spr|my|ico_spr|type|w|h|z|trans_col|parent_id|pa
 22|49|111||194|1|0.5|0.5|1|11|10|||||||2|2||3|-1||100||16|180|0.06666666667|7|2|17|59|57|1|48|16|0|0|0|0|0|1|1||0|nil|nil|1|1|nil|1|nil|1|nil||1|nil|nil||||hEAVY tROOPER|tROOPERS ARE HEAVILY~ARMOURED FOOTSOLDIERS,~WITH IMPROVED FIRING~RANGE AND SPEED.||
 23|48|127||194|1|1|1|1|11|10|||||||2|2||3|-1||200||32|440|0.1|7|2|17|59|57|1|49|16|0|0|0|0|0|1|1||0|nil|nil|1|1|nil|1|nil|1|nil||1|nil|nil||||hEAVY tROOPERS|tROOPERS ARE HEAVILY~ARMOURED FOOTSOLDIERS,~WITH IMPROVED FIRING~RANGE AND SPEED.||
 24|48|253||236|1|1|1|1|11|||0|9|4|9|1|2|2||8|1||0||64|440|0.1|4|1|17|60|57|1|49|16|0|0|0|0|0|1|1||0|nil|nil|nil|1|nil|1|nil|1|nil||nil|nil|nil||||fREMEN|tHE fREMEN ARE NATIVE~TO dUNE. eLITE FIGHTERS~IN ALLIANCE WITH THE~aTREIDES.||
-25|48|48||236|1|0.5|0.5|1|11|||0|1|0|13|1|2|2||8|2||0||1600|40|0.2666666667|1|1|800|60|57|1|49|16|0|0|0|0|0|1|1||0|nil|nil|nil|1|nil|1|nil|1|nil||nil|nil|nil||||sABOTEUR|tHE sABOTEUR IS A~SPECIAL MILITARY UNIT,~TRAINED AT AN oRDOS~pALACE. cAN DESTROY~ALMOST ANY STRUCTURE OR~VEHICLE.||
+25|48|48||236|1|0.5|0.5|1|11|||0|1|0|13|1|2|2||8|2||0||1600|40|0.2666666667|1|1|800|60|57|1|49|8|0|0|0|0|0|1|1||0|nil|nil|nil|1|nil|1|nil|1|nil||nil|nil|nil||||sABOTEUR|tHE sABOTEUR IS A~SPECIAL MILITARY UNIT,~TRAINED AT AN oRDOS~pALACE. cAN DESTROY~ALMOST ANY STRUCTURE OR~VEHICLE.||
 26|48|48||236|1|1|1|1|11|||0|14|2|14|2|2|2||4|||0||64|440|0.1|2|2|17|59|57|nil|||0|0|0|0|0|1|1||0|nil|nil|nil|1|nil|1|nil|1|nil||nil|nil|nil||||tROOPERS|tHE sARDUKAR ARE THE~eMPEROR'S ELITE TROOPS.~WITH SUPERIOR FIREPOWER~AND ARMOUR.||
 27|51|51|4|204|1|1|1|1|11|11|17||||15|4|2|2||2|1||150||32|400|0.3|4|1|17|60|54|nil|||0|0|0|0|0|1|1||0|nil|1|1|1|nil|nil|nil|1|nil||nil|1|nil|6|6||tRIKE|tHE tRIKE IS A LIGHTLY-~ARMOURED, 3-WHEELED~VEHICLE, WITH LIMITED~FIRING RANGE, BUT RAPID~SPEED.||
 28|52|52|6|206|1|1|1|1|11|11|17||||||2|2||3|||200||56|520|0.2666666667|4|1|17|60|54|nil|||0|0|0|0|0|1|1||0|nil|1|1|1|nil|nil|nil|1|nil||nil|1|nil|6|6||qUAD|tHE qUAD IS A LIGHTLY-~ARMOURED, 4-WHEELED~VEHICLE. sLOWER THAN~THE tRIKE, BUT STRONGER~ARMOUR AND FIREPOWER.||
@@ -1538,9 +1538,9 @@ function do_attack(unit, target, manual_attack)
       goto exit_attack
      end
      -- move to within firing range of target
-     move_unit_pos(unit,(target.x+rnd(target.w))\8,(target.y+rnd(target.h))\8,firing_range)
-     -- saboteur or death hand?
-     if unit.arms==1600 then
+     if move_unit_pos(unit,(target.x+rnd(target.w))\8,(target.y+rnd(target.h))\8,firing_range) 
+      and unit.arms==1600 -- ...and if successful AND saboteur or death hand? Boom!
+     then
       unit.life=0
       for i=1,unit.id/3 do
        make_explosion(unit.x+rnd"32"-16,unit.y+rnd"32"-16, 2)
