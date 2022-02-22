@@ -111,7 +111,7 @@ local obj_data=[[id|obj_spr|map_spr|my|ico_spr|type|w|h|z|trans_col|parent_id|pa
 34|20|40|20|160|1|1|1|4|11|13|||||||2|2|18|7|-3||600||128|4|1|7|2|33|59|54|nil|22|8|0|0|0|0|0|1|1||0|nil|nil|1|1|nil|nil|nil|1|nil||nil|nil|nil|6|6||oRNITHOPTER|tHE oRNITHOPTER IS A~LIGHTLY ARMOURED~AIRCRAFT THAT FIRES~ROCKETS.hIGHLY~MANOUVERABLE + FASTEST~AIRCRAFT ON dUNE.||
 35|38|38|24|192|1|1|1|1|11|12|17||||0|5|2|2|7|4|||900||nil|600|0.1333333333|0||0||54|nil|||0|0|0|0|0|1|1||0|nil|1|nil|1|nil|nil|nil|1|nil||nil|1|nil|8|7||mcv|tHE mcv (mOBILE~cONSTRUCTION vEHICLE)~SCOUT VEHICLE IS USED~TO FIND AND DEPLOY NEW~BASE LOCATIONS.||
 36|57|57|26|198|1|1|1|1|11|12|||||12|9|2|2|18|7|1||600||240|440|0.2|9|3|27|52|54|nil|||0|0|0|0|0|1|1||0|nil|1|1|1|1|nil|nil|1|nil||nil|1|nil|7|6||sONIC tANK|dEVELOPED BY THE~aTREIDES,THIS ENHANCED~TANK FIRES POWERFUL~BLAST WAVES OF SONIC~ENERGY.||
-37|56|56|28|200|1|1|1|1|11|12|||8|12|||2|2|18|8|3||800||320|1600|0.06666666667|8|1|33|61|54|nil|||0|0|0|0|0|1|1||0|nil|1|1|1|1|nil|nil|1|nil||nil|1|nil|8|7||dEVASTATOR|tHE dEVESTATOR IS A~NUCLEAR-POWERED TANK,~WHICH FIRES DUAL PLASMA~CHARGES. mOST POWERFUL~TANK ON dUNE, BUT~POTENTIALLY UNSTABLE~IN COMBAT.||
+37|56|56|28|200|1|1|1|1|11|12|||8|12|||2|2|18|8|3||800||320|1600|0.06666666667|8|1|33|61|54|nil|||0|0|0|0|0|1|1||0|nil|1|1|1|1|nil|nil|1|nil||nil|1|nil|8|7||dEVASTATOR|||
 38|72|72|30||1|1|1|8|11|||0|||||2|2|13|8|3||0||1600|40|0.6666666667|0|20|800|59|54|nil|||0|0|0|0|0|1|1||0|nil|nil|0|1|nil|nil|nil|1|nil||nil|nil|nil|6|6||dEATH hAND|tHE dEATH hAND IS A~SPECIAL hARKONNEN~pALACE WEAPON. aN~INACCURATE, BUT VERY~DESTRUCTIVE BALLISTIC~MISSILE.||
 38.5|72|72|30||1|1|1|8|11|||0|||||2|2|13|8|4||0||1600|40|0.6666666667|0|20|800|59|54|nil|||0|0|0|0|0|1|1||0|nil|nil|nil|1|nil|nil|nil|1|nil||nil|nil|nil|6|6||dEATH hAND|tHE dEATH hAND IS A~SPECIAL hARKONNEN~pALACE WEAPON. aN~INACCURATE, BUT VERY~DESTRUCTIVE BALLISTIC~MISSILE.||
 39|51|205|4|204|1|1|1|1|11|11|||||11|1|2|2||2|2||150||40|320|0.4|4|1|17|60|54|nil|||0|0|0|0|0|1|1||0|nil|1|1|1|nil|nil|nil|1|nil||nil|1|nil|6|6||rAIDER tRIKE|tHE oRDOS rAIDER IS~SIMILAR TO THE STANDARD~tRIKE, BUT WITH LESS~ARMOUR IN FAVOUR OF~SPEED.||
@@ -181,12 +181,12 @@ function _init()
    for mx=0,125 do
      local spr_val,objref = mget(mx,my)
      -- handle player start pos (const yard)
-     if (spr_val==1) camx,camy,objref=bases[1][4]-56,bases[1][5]-56,obj_data[1]
+     if (spr_val==171) camx,camy,objref=bases[1][4]-56,bases[1][5]-56,obj_data[1]
 
      for o in all(obj_data) do         
       if (o.map_spr==spr_val) objref=o break       
      end
-     if objref and (spr_val==1 or spr_val>=32) then --don't create "concrete" as objs
+     if objref and spr_val>=32 then --don't create "concrete" as objs
        local ox,oy=mx,my
        if (ox>63) oy+=32 ox-=64
        mset(mx,my,wrap_mget(mx,my+1))
@@ -209,7 +209,7 @@ function _init()
    -- update positions of pathfinding "blocker" objects 
    object_tiles={}
    for unit in all(units) do
-    object_tiles[unit:get_tile_pos_index()]=unit
+    object_tiles[get_tile_pos_index(unit)]=unit
    end
 
    -- update_radar_data()
@@ -247,7 +247,7 @@ function _init()
      building_count[building.owner]+=1
      add_with_init(has_obj[building.created_by], building.id, building)
      -- allow buildings to be "found" by units     
-     object_tiles[building:get_tile_pos_index()]=building
+     object_tiles[get_tile_pos_index(building)]=building
     end
    end
       
@@ -602,7 +602,7 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
          build_dest[hitby.created_by]+=1
         else
          -- unit
-         local gx,gy = self:get_tile_pos()
+         local gx,gy = get_tile_pos(self)
          if (wrap_mget(gx,gy)==0) wrap_mset(gx,gy,33)
          if (id<=16) wrap_mset(gx,gy,21)
          if (self.last_fact) self.last_fact.incoming=false
@@ -618,7 +618,7 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
          end
          if (hitby) unit_dest[hitby.created_by]+=1
         end
-        self:deselect_check()
+        deselect_check(self)
       else
         -- dying
         if (chance(in_type==2 and 1 or 4) and not self.onfoot) make_explosion(self.x+rnd(self.w),self.y+rnd(self.h))
@@ -707,7 +707,7 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
          -- go back to guard
          -- find nearest point to factory
          self.return_to.col_cycle,self.state={0},0
-         self:set_pos(nearest_space_to_object(self))
+         set_pos(self,nearest_space_to_object(self))
         end
       else
         -- continue...
@@ -732,19 +732,6 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
       if (id==5) self.name="wINDTRAP (∧"..power_bal..")"
       if (self.storage>0) self.name=ref_obj.name.." ("..flr(strnum/total_storage*100).."%)"
      end
-   end,
-   set_pos=function(self,x,y)
-    self.x,self.y=x,y
-   end,
-   get_tile_pos_index=function(self)
-    local x,y = self:get_tile_pos()
-    return x..","..y
-   end,
-   get_tile_pos=function(self)
-    return (self.x+4)\8,(self.y+4)\8
-   end,
-   deselect_check=function(self)
-    if(selected_obj==self) selected_obj=nil
    end
   }
 
@@ -756,6 +743,23 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
  end
 
  return obj
+end
+
+function set_pos(obj,x,y)
+ obj.x,obj.y=x,y
+end 
+
+function get_tile_pos_index(self)
+ local x,y = get_tile_pos(self)
+ return x..","..y
+end  
+
+function get_tile_pos(obj)
+ return (obj.x+4)\8,(obj.y+4)\8
+end
+
+function deselect_check(obj)
+ if(selected_obj==obj) selected_obj=nil
 end
 
 function transact(diff, obj)
@@ -853,7 +857,7 @@ function _update60()
     worm_dir+=worm_turn
     -- check collision
     local unit=get_tile_obj(head_worm_x\8,head_worm_y\8)
-    if unit and unit.z==1 and fget(wrap_mget(unit:get_tile_pos()),2) then
+    if unit and unit.z==1 and fget(wrap_mget(get_tile_pos(unit)),2) then
      delete_unit(unit)
      worm_frame=1
      ssfx"50"
@@ -1031,7 +1035,7 @@ function can_move_selected_unit_pos_with_cor(x,y)
    move_unit_pos(unit, x, y)
    do_guard(unit, nil, true)  
   end)
-  selected_obj:deselect_check()
+  deselect_check(selected_obj)
   last_cmd_time=0
   return true
  end
@@ -1211,14 +1215,14 @@ function _draw()
 
  -- object menu icon/buttons? 
  if selected_obj and selected_obj.ico_spr then
-  selected_obj.ico_obj:set_pos(107,20)
+  set_pos(selected_obj.ico_obj,107,20)
   selected_obj.ico_obj:draw()  
   -- player icons (build, actions, etc.)
   repair_obj,launch_obj=nil
   if selected_obj.owner==1 then
    -- build
    if sel_build_obj then
-    sel_build_obj:set_pos(107,44)
+    set_pos(sel_build_obj,107,44)
     sel_build_obj:draw()    
    end
    -- repair? 
@@ -1243,7 +1247,7 @@ function _draw()
        target_mode=true
       else
        -- mcv mode
-       local mx,my=last_selected_obj:get_tile_pos()
+       local mx,my=get_tile_pos(last_selected_obj)
        local val=wrap_mget(mx,my)
        if val>=12 and val<=22 then
         last_selected_obj.life,last_selected_obj=0
@@ -1281,7 +1285,7 @@ function _draw()
      then
       selected_obj.valid_build_objs[icount]=curr_item
       if icount>=menu_pos and icount<=menu_pos+2 then
-        curr_item:set_pos(9,24+(icount-menu_pos)*20)
+        set_pos(curr_item, 9, 24+(icount-menu_pos)*20)
         curr_item:draw()
       else
         curr_item.x=-16
@@ -1292,7 +1296,7 @@ function _draw()
         sel_build_item_idx=icount
         rect(curr_item.x-2, curr_item.y-2,
             curr_item.x+17, curr_item.y+17,7)
-        ?"\^j87\-f\|b\^h\f7"..selected_subobj.name.."\^jl8\-h\|e\f9cOST:"..selected_subobj.cost.."\n\|g\f6"..selected_subobj.description
+        ?"\^j87\-f\|b\^h\f7"..selected_subobj.name.."\^jl8\-h\|e\f9cOST:"..selected_subobj.cost.."\n\|h\f6"..selected_subobj.description
       end
       icount+=1
      end
@@ -1361,7 +1365,7 @@ function do_guard(unit, start_state, hold_pos)
    -- all other units, be on look-out
    elseif chance"250" and self.arms and self.state!=8 then
     -- is danger tile?
-    local gx,gy = self:get_tile_pos()
+    local gx,gy = get_tile_pos(self)
     ping(self,gx,gy,
      function (unit,x,y)
       local target=get_tile_obj(x,y)
@@ -1386,7 +1390,7 @@ function do_guard(unit, start_state, hold_pos)
       -- clear last fact visit
       self.return_to=nil
       local sx,sy
-      local tx,ty=self:get_tile_pos()
+      local tx,ty=get_tile_pos(self)
       if is_spice_tile(tx,ty) and not self.newspot then
         sx,sy=tx,ty
       else
@@ -1406,17 +1410,17 @@ function do_guard(unit, start_state, hold_pos)
         -- if stuck and no carryall...
         if not unit.last_move_result and not safe_rnd_has_obj(unit.created_by,33) then
          -- harvester prob trapped, move to safe spot
-         self:set_pos(nearest_space_to_object(self))
+         set_pos(self,nearest_space_to_object(self))
         end
         -- landed on spice tile? switch to harvesting        
-        if (is_spice_tile(unit:get_tile_pos())) unit.state=6
+        if (is_spice_tile(get_tile_pos(unit))) unit.state=6
       end
 
      -- are we full?
      elseif self.capacity >= 1500
       and self.state<7 then
        -- return to refinery when full
-       self.sx,self.sy=self:get_tile_pos() -- remember pos!
+       self.sx,self.sy=get_tile_pos(self) -- remember pos!
        return_to_fact(self,last_fact or safe_rnd_has_obj(unit.created_by,6))
      end
      -- harvesting spice
@@ -1426,12 +1430,12 @@ function do_guard(unit, start_state, hold_pos)
      add_spice_cloud(unit.x, unit.y, unit.r+.75+rnd".2"-.1)
 
      -- update spice tile state
-     local unit_pos = unit:get_tile_pos_index()
+     local unit_pos = get_tile_pos_index(unit)
      self.capacity+=.5
      spice_tiles[unit_pos] = (spice_tiles[unit_pos] or 1000)-1
      -- done current spot?
      if spice_tiles[unit_pos] <= 0 then      
-      local xpos,ypos=self:get_tile_pos()
+      local xpos,ypos=get_tile_pos(self)
       for yy=-1,1 do
        for xx=-1,1 do
         val=wrap_mget(xpos+xx,ypos+yy)        
@@ -1457,9 +1461,9 @@ function do_guard(unit, start_state, hold_pos)
      if last_fact.life>0 and not last_fact.occupied and self.life>0 then      
       -- dock
       last_fact.incoming,self.state,self.r = false,8,.25
-      self:set_pos(last_fact.x+16,last_fact.y+4)
+      set_pos(self,last_fact.x+16,last_fact.y+4)
 
-      self:deselect_check()
+      deselect_check(self)
       
       -- is this a harvester & refinery?
       if self.capacity and last_fact.id==6 then 
@@ -1483,7 +1487,7 @@ function do_guard(unit, start_state, hold_pos)
        if self.sx then 
         move_unit_pos(self, self.sx, self.sy, 0, true)      
        else
-        self:set_pos(nearest_space_to_object(self)) -- ensure don't get stuck
+        set_pos(self,nearest_space_to_object(self)) -- ensure don't get stuck
        end
       else
        -- spark flash while repairing       
@@ -1631,12 +1635,12 @@ function move_unit_pos(unit,x,y,dist_to_keep,try_hail,start_state)
      -- link them + set unit to "moving" to wait for pickup
      carryall.link,unit.link,unit.state, carryall.cor = unit,carryall,2, cocreate(function(unit_c)     
       move_unit_pos(unit_c,unit.x\8,unit.y\8)
-      unit:deselect_check()
+      deselect_check(unit)
       if unit.life>0 then
        carryall.my=18
        del(units,unit)
        move_unit_pos(carryall,x,y)
-       unit:set_pos(carryall.x,carryall.y)
+       set_pos(unit,carryall.x,carryall.y)
        add(units, unit)
        do_guard(unit,start_state)
       end
@@ -1754,7 +1758,7 @@ function move_unit_pos(unit,x,y,dist_to_keep,try_hail,start_state)
       if(not flying and not is_free_tile(unit,nx,ny)) goto restart_move_unit
       
       -- move to new position      
-      local scaled_speed,distance = unit.speed or .5, dist(mx,my,ux,uy)
+      local scaled_speed,distance = unit.speed, dist(mx,my,ux,uy)
       
       -- don't move these!
       local step_x,step_y = scaled_speed * (mx-ux) / distance, scaled_speed * (my-uy) / distance
@@ -1782,7 +1786,7 @@ function move_unit_pos(unit,x,y,dist_to_keep,try_hail,start_state)
         yield()
       end
       
-      unit:set_pos(mx,my)
+      set_pos(unit,mx,my)
       object_tiles[nx..","..ny]=unit      
       reveal_fow(unit)
 
@@ -1863,7 +1867,7 @@ function check_hover_select(obj)
      and obj.owner==1 and last_selected_obj.owner==1
     then
      return_to_fact(last_selected_obj,obj)
-     return -- register "no click"
+     return -- "no click"
 
     else 
      -- something else clicked, so select it
@@ -1893,13 +1897,13 @@ end
 -->8
 -- ai-related code
 
-function attack_rnd_enemy(obj) --buildings
+function attack_rnd_enemy(obj)
  local target = rnd(buildings)
  if (target.created_by!=obj.created_by and is_visible(target)) do_attack(obj, target, true)
 end
 
 function is_visible(obj)
- local x,y = obj:get_tile_pos()
+ local x,y = get_tile_pos(obj)
  return fow[x][y]==16
 end
 
@@ -2273,7 +2277,7 @@ __map__
 0d0d10100e000000000000000000000c0d0d1400000000000000000000130d240d120000000000000000000000000000000024400049000037000c246e242f2f00000000000000000000110f0000000000000c0d0d57570031313100000000115757000005050509090905050500000000000000000000000000050909092d00
 0d14040505062100000000000000000c0d140000000000000000000000000c240d0e0000000000000000000000000000000024000000000000000c2424242f2f000405050600000000110d0d0000000000000c0d0d16161200000016164216161616000405050909050505050800000000000000002000000000050909092d95
 0e04050905050506000000000000001314000000000000000000000000001357570e000000000000000000000000040506000c242428282828280c8585852f2f0005090505060000000c0d0d1200000000000c0d0d620d0d0f620f0d1616161616000034000a05050509051112000000000000000000000000000a0505092d00
-0e05090905050505000000000000000000000000000000000000000000000057570e00000000000000000000000a050505002442000000000000131057372f2f0005050905050000000c0d0d0d00000020000c0d0d0d0d0d0d0d0d0d160122420e0000000000000a0505080c0e00000000000000000000000000110e05092d28
+0e05090905050505000000000000000000000000000000000000000000000057570e00000000000000000000000a050505002442000000000000131057372f2f0005050905050000000c0d0d0d00000020000c0d0d0d0d0d0d0d0d0d16ab22420e0000000000000a0505080c0e00000000000000000000000000110e05092d28
 0e0a05050505050800000000000000000000000000000000000000000000110d0d140000000000000000000505050509050057000012000000150000000d2f2f0005090909050000000c0d0d0d120000006a0d830d161616161616161622220d0e000039000000000000000c0d12000000000000000000000000000405052d00
 0d0f0f120a000000000000000000000004050600000000000000000000110d0d14000000000000110f0d0f120509050505002457440000240e00000000132f2f000509090905000000680d680d16440f0f0d0d0d0d1616620d0d16600d6a0d420e000000370000000000000c0d0d0f1200000000000000000000000a05082d29
 0d0d0d0e00000000000000000000040505050500000000000a00110f0f0d0d14000000000000000c0d0d0d0e0509090905001324000000240000000000002f2f0a05050505080000000c0d0d0d160d0d0d0d14001316160d0d0d160d0d0d0d0d0e0000390000000000000013100d0d0d12000000000000000000000000002d00
