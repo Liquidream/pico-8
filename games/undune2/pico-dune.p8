@@ -1166,19 +1166,14 @@ function _draw()
  end
 
  -- top/header bar
- --rectfill(0,0,127,8,9)
- --line(0,9,127,9,4)
+ rectfill(0,0,127,8,9)
+ line(0,9,127,9,4)
  
  -- update/draw message
  msgcount-=1
- --?(msgcount>0 and message or selected_obj and selected_obj.name or ""),2,2,0
+ ?(msgcount>0 and message or selected_obj and selected_obj.name or ""),2,2,0
  -- score
- --?sub("00000", #strnum)..strnum, 103,2, p_col2
-
---debug base awake status
-for i=1,#bases do
-?bases[i][1].." awake? "..tostr(ai_awake[bases[i][1]]),0,i*6,8
-end
+ ?sub("00000", #strnum)..strnum, 103,2, p_col2
 
  -- turn on/off radar
  if hq!=last_hq then
@@ -1543,8 +1538,6 @@ function do_attack(unit, target, manual_attack)
       target.life-=(1000+rnd"600")
       target.hitby=unit
       return
-     -- else
-     --  printh(t()..": can't move "..unit.name.." to target "..(target.x\8)..","..(target.y\8))
      end
     end
     -- 2) turn to face target
@@ -1586,7 +1579,6 @@ function do_attack(unit, target, manual_attack)
   
  else
   -- palace weapons
-  --printh(t()..": palace fire! "..unit.faction)
   do_attack(m_map_obj_tree(obj_data[({24,25,38,38.5})[unit.faction]], unit.x,unit.y, unit.owner, unit), target)      
   unit.fire_cooldown=583
  end
@@ -1654,7 +1646,6 @@ function move_unit_pos(unit,x,y,dist_to_keep,try_hail,start_state)
   if not flying and not is_free_tile(unit,x,y) then   
     -- target tile occupied, move as close as possible
     x,y=ping(unit,x,y,is_free_tile)
-    --printh("found closest point"..(x\8)..","..(y\8))
   end
 
   -- use coroutine to find path
@@ -1905,7 +1896,7 @@ function attack_rnd_enemy(obj)
    target,best_priority=building,building.ai_priority
   end
  end
- if (target) do_attack(obj, target, true) printh("ai attack: "..obj.name.." > "..target.name)
+ if (target) do_attack(obj, target, true)
 end
 
 function is_visible(obj)
