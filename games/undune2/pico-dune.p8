@@ -41,7 +41,7 @@ g_.factory_click=function(self)
    selected_subobj = selected_obj.valid_build_objs[sel_build_item_idx]   
    if (sel_build_item_idx>menu_pos+2) menu_pos=min(menu_pos+1,#selected_obj.valid_build_objs-2)
   end, 10)
-  m_button(32,"build",function()
+  m_button(32,selected_obj.id==17 and "order" or "build",function()
    show_menu=nil
    if (last_selected_subobj) last_selected_subobj:func_onclick()
   end)
@@ -212,8 +212,6 @@ function _init()
     object_tiles[get_tile_pos_index(unit)]=unit
    end
 
-   -- update_radar_data()
-   -- 
    local new_radar_data={}
    -- landscape/fow
    if hq then
@@ -455,6 +453,7 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
   spr_w=ref_obj.w, -- defaults
   spr_h=ref_obj.h, --
   col_cycle=split(ref_obj.col_cycle),
+  orig_cost=ref_obj.cost,
   get_hitbox=function(self)
     return {
      x=self.x,
@@ -567,7 +566,6 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
      self.flash_count=max(self.flash_count-.4,1)
      -- check for attack (not bloom)
      if self.hit>0 and self.created_by>0 and id!=42 then        
-       -- set/reinstate loop
        set_loop(true) -- must stay boolean
        -- switch music (if passed the loop point)
        if (stat"54">5) music"0"
@@ -575,7 +573,7 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
        if (self.is_repairable and self.moves and life<99 and self.state<=6) return_to_fact(self,safe_rnd_has_obj(self.created_by,14) or self.last_fact)
        -- lose soldiers
        if (self.obj_spr<=49 and life<100) self.spr_w,self.spr_h=0.5,0.5
-       -- can we retaliate (unit/turret)?
+       -- can we retaliate?
        if (self.can_fire and self.state==0) do_attack(self, hitby)
      end
      -- check for death
@@ -1188,7 +1186,6 @@ function _draw()
  end
  rect(91,91,123,123,p_col2)
 
- -- draw "view" bounds
  local cx,cy=ceil(92+camx/16),ceil(92+camy/16)
  rect(cx,cy, cx+7,cy+7, 7)
 
@@ -1278,9 +1275,10 @@ function _draw()
         curr_item.x=-16
       end
       selected_subobj = selected_subobj or selected_obj.valid_build_objs[1]
-      -- draw selected info
-      if selected_subobj == curr_item then 
+      if selected_subobj == curr_item then
         sel_build_item_idx=icount
+        -- adj price
+        if (selected_obj.id==17) srand(t_\3600) selected_subobj.cost=selected_subobj.orig_cost \ (rnd"1.334"+0.666)
         ?"\f7\^x3\-f\|c\*6-\n\-d\|d|    \^x4 |\^x3\n\-d\|f|    \^x4 |\^x3\n\-d\|f|    \^x4 |\^x3\n\-d\|d|    \^x4 |\^x3\n\^x3\-f\|d\*6-",9,curr_item.y        
         ?"\^j87\-f\|a\^h\f7"..selected_subobj.name.."\n\|h\f9\^:041f051f141f0400\-f\|h"..selected_subobj.cost.."\^je8\|d\fd\^:1f1b111b1f0e0400\|h"..selected_subobj.hitpoint..(selected_subobj.is_building and "\^jl8\|d\fa\^:0804061f0c040200\|h"..selected_subobj.power or "\^jl8\|d\f8\^:081c226b221c0800\|h\-h"..selected_subobj.arms).."\n\|g\f6"..selected_subobj.description
       end
