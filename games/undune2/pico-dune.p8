@@ -73,52 +73,53 @@ function process_click(self, mode)
 end
 
 -- object data
-local obj_data=[[id|obj_spr|map_spr|my|ico_spr|type|w|h|z|trans_col|parent_id|parent2_id|owner|col1|col2|icol1|icol2|ico_w|ico_h|req_id|req_level|req_faction|max|cost|power|arms|hitpoint|speed|range|fire_type|fire_size|fire_rate|fire_sfx|death_sfx|norotate|altframe|framecount|life|process|spent|fire_cooldown|hit|flash_count|col_cycle_pos|col_cycle_src|storage|capacity|is_repairable|ai_build|ai_priority|moves|tracked|onfoot|is_building|is_unit|is_dockable|capturable|can_capture|can_smoke|soldiers_on_destroy|shad_w|shad_h|col_cycle|name|description|func_draw|func_onclick
-1|64|64||170|2|2|2|0||nil|||||||2|2|1|1|||100|0|nil|1600|0||||||53|nil|||0|0|0|0|0|1|1||0|nil|1|nil|30|nil||nil|1|nil|nil|1||1|1||||cONSTRUCTION yARD|aLL STRUCTURES ARE~BUILT BY THE~CONSTRUCTION YARD.||factory_click
-2|22|22||162|2|2|2|0||1|||||7|5|2|2|1|4|||20|0|nil|0|0|||||||nil|||0|0|0|0|0|1|1||0|nil|nil|nil|0.5|nil||nil|1|nil|nil|nil||1|nil||||lARGE cONCRETE sLAB|uSE CONCRETE TO MAKE A~STURDY FOUNDATION FOR~YOUR STRUCTURES.||
-3|22|22||162|2|1|1|0||1|||||6|6|2|2|1|1|||5|0|nil|0|0|||||||nil|||0|0|0|0|0|1|1||0|nil|nil|nil|1|nil||nil|1|nil|nil|nil||1|nil||||sMALL cONCRETE sLAB|uSE CONCRETE TO MAKE A~STURDY FOUNDATION FOR~YOUR STRUCTURES.||
-4|133|133||164|2|1|1|0||1|||||||2|2|7|4|||50|0|nil|200|0||||||53|nil|||0|0|0|0|0|1|1||0|nil|nil|nil|3|nil||nil|1|nil|nil|nil||nil|nil||||dEFENSIVE wALL|tHE wALL IS USED FOR~PASSIVE DEFENSE.||
-5|66|66||172|2|2|2|0||1|||||||2|2|1|1|||300|-100|nil|800|0||||||53|nil||4|0|0|0|0|0|1|1|11|0|nil|1|nil|30|nil||nil|1|nil|nil|1||1|1|||12,12,12,12,12,12,12,12,12,12,13,1,0,0,0,0,0,0,0,0,1,13|wINDTRAP|tHE WINDTRAP SUPPLIES~POWER TO YOUR BASE.~wITHOUT POWER YOUR~STRUCTURES WILL DECAY.||
-6|68|68||174|2|3|2|0||1|||||||2|2|5|1|||400|30|nil|1800|0||||||53|nil||8|0|0|0|0|0|1|1|11|1000|nil|1|nil|30|nil||nil|1|nil|1|1||1|1|||11,10,8,8|sPICE rEFINERY|tHE rEFINERY CONVERTS~SPICE INTO CREDITS.|draw_refinery|
-7|106|106||136|2|2|2|0||1|||||||2|2|5|2|||400|30|nil|2000|0||||||53|nil||4|0|0|0|0|0|1|1|11|0|nil|1|nil|27.5|nil||nil|1|nil|nil|nil||1|1|||8,0,8,0,0,0|rADAR oUTPOST|tHE oUTPOST PROVIDES~RADAR AND AIDS CONTROL~OF DISTANT VEHICLES.||
-8|104|104||134|2|2|2|0||1|||||||2|2|6|2|||150|5|nil|600|0||||||53|nil|||0|0|0|0|0|1|1||1000|nil|1|nil|15|nil||nil|1|nil|nil|1||1|1||||sPICE sTORAGE sILO|tHE sPICE SILO IS USED ~TO STORE REFINED SPICE.||
-9|108|108||168|2|2|2|0||1|||||11|3|2|2|7|2|-3||300|10|nil|1200|0||||||53|nil|||0|0|0|0|0|1|1||0|nil|1|nil|10|nil||nil|1|nil|nil|nil||1|1||||bARRACKS|tHE bARRACKS IS USED TO~TRAIN YOUR lIGHT ~INFANTRY.||factory_click
-10|110|110||138|2|2|2|0||1|||||||2|2|7|2|-1||400|10|nil|1600|0||||||53|nil|||0|0|0|0|0|1|1||0|nil|1|nil|17.5|nil||nil|1|nil|nil|nil||1|1||||wor tROOPER fACILITY|wor IS USED TO TRAIN~YOUR hEAVY INFANTRY.||factory_click
-11|96|96||140|2|2|2|0||1|||||||2|2|6|2|||400|20|nil|1400|0||||||53|nil|||0|0|0|0|0|1|1||0|nil|1|nil|20|nil||nil|1|nil|nil|1||1|1||||lIGHT vEHICLE fACTORY|tHE lIGHT fACTORY~PRODUCES LIGHT ATTACK~VEHICLES.||factory_click
-12|98|98||142|2|3|2|0||1|||||||2|2|11|3|||600|20|nil|800|0||||||53|nil|||0|0|0|0|0|1|1||0|nil|1|nil|60|nil||nil|1|nil|nil|1||1|1||||hEAVY vEHICLE fACTORY|tHE hEAVY fACTORY~PRODUCES HEAVY ATTACK~VEHICLES.||factory_click
-13|101|101||166|2|3|2|0||1|||||||2|2|12|5|||500|35|nil|1600|0||||||53|nil|||0|0|0|0|0|1|1||0|nil|1|nil|20|nil||nil|1|nil|nil|1||1|1||||hI-tECH fACTORY|tHE hI-tECH fACTORY~PRODUCES FLYING~VEHICLES.||factory_click
-14|128|128||230|2|3|2|0||1|||||||2|2|12|5|||700|20|nil|800|0||||||53|nil||2|0|0|0|0|0|1|1|8|0|nil|1|nil|60|nil||nil|1|nil|1|1||1|1|||0|rEPAIR fACILITY|tHE rEPAIR fACILITY~IS USED TO REPAIR YOUR~VEHICLES.||
-15|71|71|0|232|1|1|1|1|11|1|||||||2|2|7|5|||125|10|80|800|0|5|1|0|27|58|53|nil|||0|0|0|0|0|1|1||0|nil|1|nil|15|nil||nil|1|1|nil|1||1|1|6|6||cANNON tURRET|tHE cANNON tURRET IS~USED FOR SHORT RANGE~ACTIVE DEFENSE.||
-16|87|87|2|234|1|1|1|1|11|1|||||||2|2|7|6|||250|20|240|800|0|10|2|1.9|40|59|53|nil|||0|0|0|0|0|1|1||0|nil|1|nil|7.5|nil||nil|1|1|nil|1||1|1|6|6||rOCKET tURRET|tHE rOCKET TURRET IS~USED FOR MEDIUM RANGE~ACTIVE DEFENSE.||
-17|61|61||228|2|3|3|0||1|||||11|3|2|2|6|6||1|500|50|nil|2000|0||||||53|nil||8|0|0|0|0|0|1|1|11|0|nil|1|nil|25|nil||nil|1|nil|nil|1||1|1|||11,10,8,8|sTARPORT|tHE sTARPORT IS USED TO~ORDER AND RECEIVE~SHIPMENTS FROM~c.h.o.a.m.|draw_refinery|factory_click
-18|131|131||224|2|2|2|0||1|||||||2|2|12|7|||500|40|nil|1600|0||||||53|nil|||0|0|0|0|0|1|1||0|nil|1|nil|10|nil||nil|1|nil|nil|nil||1|1||||hOUSE OF ix|tHE ix rESEARCH~fACILITY ADVANCES YOUR~hOUSE'S TECHNOLOGY.||
-19|58|58||226|2|3|3|0||1|||||||2|2|17|8||1|999|80|nil|4000|0||||2,400||53|nil|||0|0|0|0|0|1|1||0|nil|1|nil|40|nil||nil|1|nil|nil|nil||1|1||||pALACE|tHIS IS YOUR pALACE.||
-20|49|49||236|1|0.5|0.5|1|11|9|||||15|3|2|2|9|2|-3||60|0|24|80|0.05|3|1|0|15|60|57|1|48|16|0|0|0|0|0|1|1||0|nil|nil|1|1|1|nil|1|nil|1|nil||1|nil|nil||||iNFANTRY sOLDIER|iNFANTRY ARE LIGHTLY~ARMOURED FOOTSOLDIERS,~WITH LIMITED FIRING~RANGE AND SPEED.||
-21|48|48||236|1|1|1|1|11|9|||||15|3|2|2|9|2|-3||100|0|16|200|0.03|3|1|0|15|60|57|1|49|16|0|0|0|0|0|1|1||0|nil|nil|1|2|1|nil|1|nil|1|nil||1|nil|nil||||iNFANTRY sQUAD|iNFANTRY ARE LIGHTLY~ARMOURED FOOTSOLDIERS,~WITH LIMITED FIRING~RANGE AND SPEED.||
-22|49|111||194|1|0.5|0.5|1|11|10|||||||2|2|10|3|-1||100|0|16|180|0.07|7|2|1|17|59|57|1|48|16|0|0|0|0|0|1|1||0|nil|nil|1|3|1|nil|1|nil|1|nil||1|nil|nil||||hEAVY tROOPER|tROOPERS ARE HEAVILY~ARMOURED FOOTSOLDIERS,~WITH IMPROVED FIRING~RANGE AND SPEED.||
-23|48|127||194|1|1|1|1|11|10|||||||2|2|10|3|-1||200|0|32|440|0.1|7|2|1|17|59|57|1|49|16|0|0|0|0|0|1|1||0|nil|nil|1|5|1|nil|1|nil|1|nil||1|nil|nil||||hEAVY tROOPERS|tROOPERS ARE HEAVILY~ARMOURED FOOTSOLDIERS,~WITH IMPROVED FIRING~RANGE AND SPEED.||
-24|48|253||236|1|1|1|1|11|||0|9|4|9|1|2|2||8|1||0|0|64|440|0.1|4|1|0|17|60|57|1|49|16|0|0|0|0|0|1|1||0|nil|nil|nil|0|1|nil|1|nil|1|nil||nil|nil|nil||||fREMEN|tHE fREMEN ARE NATIVE~TO dUNE. eLITE FIGHTERS~IN ALLIANCE WITH THE~aTREIDES.||
-25|48|48||236|1|0.5|0.5|1|11|||0|1|0|13|1|2|2||8|2||0|0|1600|40|0.27|1|1|0|800|60|57|1|49|8|0|0|0|0|0|1|1||0|nil|nil|nil|70|1|nil|1|nil|1|nil||nil|nil|nil||||sABOTEUR|tHE sABOTEUR IS A~SPECIAL MILITARY UNIT,~TRAINED AT AN oRDOS~pALACE. cAN DESTROY~ALMOST ANY STRUCTURE OR~VEHICLE.||
-26|48|48||236|1|1|1|1|11|||0|14|2|14|2|2|2||4|||0|0|64|440|0.1|2|2|1|17|59|57|nil|||0|0|0|0|0|1|1||0|nil|nil|nil|5|1|nil|1|nil|1|nil||nil|nil|nil||||tROOPERS|tHE sARDUKAR ARE THE~eMPEROR'S ELITE TROOPS.~WITH SUPERIOR FIREPOWER~AND ARMOUR.||
-27|51|51|4|204|1|1|1|1|11|11|17||||15|4|2|2|11|2|1||150|0|32|400|0.3|4|1|0|17|60|54|nil|||0|0|0|0|0|1|1||0|nil|1|1|5|1|nil|nil|nil|1|nil||nil|1|nil|6|6||tRIKE|tHE tRIKE IS A LIGHTLY-~ARMOURED, 3-WHEELED~VEHICLE, WITH LIMITED~FIRING RANGE, BUT RAPID~SPEED.||
-28|52|52|6|206|1|1|1|1|11|11|17||||||2|2|11|3|||200|0|56|520|0.27|4|1|0|17|60|54|nil|||0|0|0|0|0|1|1||0|nil|1|1|6|1|nil|nil|nil|1|nil||nil|1|nil|6|6||qUAD|tHE qUAD IS A LIGHTLY-~ARMOURED, 4-WHEELED~VEHICLE. sLOWER THAN~THE tRIKE, BUT STRONGER~ARMOUR AND FIREPOWER.||
-29|53|53|8|196|1|1|1|1|11|12|17||||||2|2|7|4|||300|0|100|800|0.17|5|1|0|27|58|54|nil|||0|0|0|0|0|1|1||0|nil|1|1|10|1|1|nil|nil|1|nil||nil|1|nil|7|6||cOMBAT tANK|tHE cOMBAT tANK IS A~MEDIUM ARMOURED TANK,~FIRES HIGH-EXPLOSIVE~ROUNDS.||
-30|55|55|10|198|1|1|1|1|11|12|17||||15|4|2|2|7|6|||600|0|240|1200|0.13|6|1|0|30|58|54|nil|||0|0|0|0|0|1|1||0|nil|1|1|15|1|1|nil|nil|1|nil||nil|1|nil|8|7||sIEGE tANK|tHE sIEGE tANK IS A~HEAVY ARMOURED TANK,~WHICH HAS DUAL CANNONS,~BUT IS SLOW.||
-31|54|54|12|202|1|1|1|1|11|12|17||||15|4|2|2|7|5|||450|0|600|400|0.2|10|2|1.9|40|59|54|nil|||0|0|0|0|0|1|1||0|nil|1|1|15|1|1|nil|nil|1|nil||nil|1|nil|7|6||lAUNCHER|tHE mISSILE tANK IS A~MEDIUM ARMOURED TANK,~WHICH FIRES MISSILES.~lONG-RANGE, BUT~INACCURATE.||
-32|50|50|14|192|1|1|1|1|11|12|17||||12|12|2|2|12|2|||300|0|nil|600|0.13|0|||0||54|nil|||0|0|0|0|0|1|1||0|0|1|1|15|1|1|nil|nil|1|nil||nil|1|nil|8|7||hARVESTER|tHE hARVESTER SEPARATES~SPICE FROM THE SAND &~RETURNS RAW SPICE TO~THE rEFINERY FOR~PROCESSING.||
-33|73|73|16|238|1|1|1|8|11|13|17||||11|3|2|2|13|5|||800|0|nil|400|1.33|0|||0||54|nil|||0|0|0|0|0|1|1||0|nil|nil|nil|1.6|1|nil|nil|nil|1|nil||nil|1|nil|8|7||cARRYALL|tHE cARRYALL IS A~LIGHTLY ARMOURED~AIRCRAFT WITH NO~WEAPONS. mAINLY USED~TO LIFT+TRANSPORT~hARVESTERS.||
-34|20|40|20|160|1|1|1|4|11|13|||||||2|2|18|7|-3||600|0|296|4|1|7|2|1.9|33|59|54|nil|22|8|0|0|0|0|0|1|1||0|nil|nil|1|3|1|nil|nil|nil|1|nil||nil|nil|nil|6|6||oRNITHOPTER|tHE oRNITHOPTER IS A~LIGHTLY ARMOURED~AIRCRAFT THAT FIRES~ROCKETS.hIGHLY~MANOUVERABLE + FASTEST~AIRCRAFT ON dUNE.||
-35|38|38|24|192|1|1|1|1|11|12|17||||0|5|2|2|7|4|||900|0|nil|600|0.13|0|||0||54|nil|||0|0|0|0|0|1|1||0|nil|1|nil|15|1|nil|nil|nil|1|nil||nil|1|nil|8|7||mcv|tHE mcv (mOBILE~cONSTRUCTION vEHICLE)~SCOUT VEHICLE IS USED~TO FIND AND DEPLOY NEW~BASE LOCATIONS.||
-36|57|57|26|198|1|1|1|1|11|12|||||12|9|2|2|18|7|1||600|0|240|440|0.2|9|3|0|27|52|54|nil|||0|0|0|0|0|1|1||0|nil|1|1|11|1|1|nil|nil|1|nil||nil|1|nil|7|6||sONIC tANK|dEVELOPED BY THE~aTREIDES,THIS ENHANCED~TANK FIRES POWERFUL~BLAST WAVES OF SONIC~ENERGY.||
-37|56|56|28|200|1|1|1|1|11|12|||8|12|||2|2|18|8|3||800|0|320|1600|0.07|8|2|1|33|61|54|nil|||0|0|0|0|0|1|1||0|nil|1|1|18|1|1|nil|nil|1|nil||nil|1|nil|8|7||dEVASTATOR|tHE dEVESTATOR IS A~NUCLEAR-POWERED TANK,~WHICH FIRES DUAL PLASMA~CHARGES. mOST POWERFUL~TANK ON dUNE, BUT~POTENTIALLY UNSTABLE~IN COMBAT.||
-38|72|72|30||1|1|1|8|11|||0|||||2|2|13|8|3||0|0|1600|40|0.67|0|20|0|800|59|54|nil|||0|0|0|0|0|1|1||0|nil|nil|nil|0|1|nil|nil|nil|1|nil||nil|nil|nil|6|6||dEATH hAND|tHE dEATH hAND IS A~SPECIAL hARKONNEN~pALACE WEAPON. aN~INACCURATE, BUT VERY~DESTRUCTIVE BALLISTIC~MISSILE.||
-38.5|72|72|30||1|1|1|8|11|||0|||||2|2|13|8|4||0|0|1600|40|0.67|0|20|0|800|59|54|nil|||0|0|0|0|0|1|1||0|nil|nil|nil|0|1|nil|nil|nil|1|nil||nil|nil|nil|6|6||dEATH hAND|tHE dEATH hAND IS A~SPECIAL hARKONNEN~pALACE WEAPON. aN~INACCURATE, BUT VERY~DESTRUCTIVE BALLISTIC~MISSILE.||
-39|51|205|4|204|1|1|1|1|11|11|||||11|1|2|2|11|2|2||150|0|40|320|0.4|4|1|0|17|60|54|nil|||0|0|0|0|0|1|1||0|nil|1|1|6|1|nil|nil|nil|1|nil||nil|1|nil|6|6||rAIDER tRIKE|tHE oRDOS rAIDER IS~SIMILAR TO THE STANDARD~tRIKE, BUT WITH LESS~ARMOUR IN FAVOUR OF~SPEED.||
-40|54|202|12|202|1|1|1|1|11|12|||||11|3|2|2|18|7|2||750|0|0|480|0.2|9|1.9|1.9|60|59|54|nil|||0|0|0|0|0|1|1||0|nil|1|1|17.5|1|1|nil|nil|1|nil||nil|1|nil|7|6||dEVIATOR|tHE oRDOS dEVIATOR IS A~STANDARD mISSILE tANK,~WHICH FIRES UNIQUE~NERVE GAS MISSILES THAT~MAY TEMPORARILY CHANGE~ENEMY LOYALTY.||
-41|88|88|||9|1|1|1|11||||||||2|2||3|||0|0|300|4000|0.35|0|||7|50||nil|||0|0|0|0|0|1|1||0|nil|nil|nil|0|1|nil|nil|nil|nil|nil||nil|nil|nil||||sANDWORM|tHE sAND wORMS ARE~INDIGEONOUS TO dUNE.~aTTRACTED BY VIBRATIONS~ALMOST IMPOSSIBLE TO~DESTROY, WILL CONSUME~ANYTHING THAT MOVES.||
-42|32|32|||1|1|1|1|11|||2|||||1|1||1|||||nil|4|0.1||||||53|1|||0|0|0|0|0|1|1||0|nil|nil|nil|0|nil|nil|nil|nil|nil|nil||nil|nil|nil||||sPICE bLOOM|||
-80|3|3||3|3|1|1|0|11||||||||1|1||1|||||nil|0|0|||||||nil|||0|0|0|0|0|1|1||0|nil|nil|nil||nil|||nil|nil|nil||nil|nil|nil||||rEPAIR||draw_action|action_click
-81|1|1||1|3|1|1|0|11||||||||1|1||1|||||nil|0|0|||||||nil|||0|0|0|0|0|1|1||0|nil|nil|nil||nil|||nil|nil|nil||nil|nil|nil||||lAUNCH||draw_action|action_click]]
+local obj_data=[[id|obj_spr|map_spr|my|ico_spr|type|w|h|z|trans_col|parent_id|parent2_id|owner|col1|col2|icol1|icol2|ico_w|ico_h|req_id|req_level|req_faction|max|cost|power|arms|hitpoint|speed|range|fire_type|fire_size|fire_rate|fire_sfx|death_sfx|norotate|altframe|framecount|life|process|spent|fire_cooldown|hit|flash_count|col_cycle_pos|col_cycle_src|storage|capacity|is_repairable|ai_build|ai_priority|moves|tracked|onfoot|is_building|is_unit|is_dockable|capturable|can_fire|can_capture|can_smoke|soldiers_on_destroy|shad_w|shad_h|col_cycle|name|description|func_draw|func_onclick
+1|64|64||170|2|2|2|0||nil|||||||2|2|1|1|||100|0||1600|0||||||53|nil|||0|0|0|0|0|1|1||0|nil|1|nil|30|nil||nil|1|nil|nil|1|nil||1|1||||cONSTRUCTION yARD|aLL STRUCTURES ARE~BUILT BY THE~CONSTRUCTION YARD.||factory_click
+2|22|22||162|2|2|2|0||1|||||7|5|2|2|1|4|||20|0||0|0|||||||nil|||0|0|0|0|0|1|1||0|nil|nil|nil|0.5|nil||nil|1|nil|nil|nil|nil||1|nil||||lARGE cONCRETE sLAB|uSE CONCRETE TO MAKE A~STURDY FOUNDATION FOR~YOUR STRUCTURES.||
+3|22|22||162|2|1|1|0||1|||||6|6|2|2|1|1|||5|0||0|0|||||||nil|||0|0|0|0|0|1|1||0|nil|nil|nil|1|nil||nil|1|nil|nil|nil|nil||1|nil||||sMALL cONCRETE sLAB|uSE CONCRETE TO MAKE A~STURDY FOUNDATION FOR~YOUR STRUCTURES.||
+4|133|133||164|2|1|1|0||1|||||||2|2|7|4|||50|0||200|0||||||53|nil|||0|0|0|0|0|1|1||0|nil|nil|nil|3|nil||nil|1|nil|nil|nil|nil||nil|nil||||dEFENSIVE wALL|tHE wALL IS USED FOR~PASSIVE DEFENSE.||
+5|66|66||172|2|2|2|0||1|||||||2|2|1|1|||300|-100||800|0||||||53|nil||4|0|0|0|0|0|1|1|11|0|nil|1|nil|30|nil||nil|1|nil|nil|1|nil||1|1|||12,12,12,12,12,12,12,12,12,12,13,1,0,0,0,0,0,0,0,0,1,13|wINDTRAP|tHE WINDTRAP SUPPLIES~POWER TO YOUR BASE.~wITHOUT POWER YOUR~STRUCTURES WILL DECAY.||
+6|68|68||174|2|3|2|0||1|||||||2|2|5|1|||400|30||1800|0||||||53|nil||8|0|0|0|0|0|1|1|11|1000|nil|1|nil|30|nil||nil|1|nil|1|1|nil||1|1|||11,10,8,8|sPICE rEFINERY|tHE rEFINERY CONVERTS~SPICE INTO CREDITS.|draw_refinery|
+7|106|106||136|2|2|2|0||1|||||||2|2|5|2|||400|30||2000|0||||||53|nil||4|0|0|0|0|0|1|1|11|0|nil|1|nil|27.5|nil||nil|1|nil|nil|nil|nil||1|1|||8,0,8,0,0,0|rADAR oUTPOST|tHE oUTPOST PROVIDES~RADAR AND AIDS CONTROL~OF DISTANT VEHICLES.||
+8|104|104||134|2|2|2|0||1|||||||2|2|6|2|||150|5||600|0||||||53|nil|||0|0|0|0|0|1|1||1000|nil|1|nil|15|nil||nil|1|nil|nil|1|nil||1|1||||sPICE sTORAGE sILO|tHE sPICE SILO IS USED ~TO STORE REFINED SPICE.||
+9|108|108||168|2|2|2|0||1|||||11|3|2|2|7|2|-3||300|10||1200|0||||||53|nil|||0|0|0|0|0|1|1||0|nil|1|nil|10|nil||nil|1|nil|nil|nil|nil||1|1||||bARRACKS|tHE bARRACKS IS USED TO~TRAIN YOUR lIGHT ~INFANTRY.||factory_click
+10|110|110||138|2|2|2|0||1|||||||2|2|7|2|-1||400|10||1600|0||||||53|nil|||0|0|0|0|0|1|1||0|nil|1|nil|17.5|nil||nil|1|nil|nil|nil|nil||1|1||||wor tROOPER fACILITY|wor IS USED TO TRAIN~YOUR hEAVY INFANTRY.||factory_click
+11|96|96||140|2|2|2|0||1|||||||2|2|6|2|||400|20||1400|0||||||53|nil|||0|0|0|0|0|1|1||0|nil|1|nil|20|nil||nil|1|nil|nil|1|nil||1|1||||lIGHT vEHICLE fACTORY|tHE lIGHT fACTORY~PRODUCES LIGHT ATTACK~VEHICLES.||factory_click
+12|98|98||142|2|3|2|0||1|||||||2|2|11|3|||600|20||800|0||||||53|nil|||0|0|0|0|0|1|1||0|nil|1|nil|60|nil||nil|1|nil|nil|1|nil||1|1||||hEAVY vEHICLE fACTORY|tHE hEAVY fACTORY~PRODUCES HEAVY ATTACK~VEHICLES.||factory_click
+13|101|101||166|2|3|2|0||1|||||||2|2|12|5|||500|35||1600|0||||||53|nil|||0|0|0|0|0|1|1||0|nil|1|nil|20|nil||nil|1|nil|nil|1|nil||1|1||||hI-tECH fACTORY|tHE hI-tECH fACTORY~PRODUCES FLYING~VEHICLES.||factory_click
+14|128|128||230|2|3|2|0||1|||||||2|2|12|5|||700|20||800|0||||||53|nil||2|0|0|0|0|0|1|1|8|0|nil|1|nil|60|nil||nil|1|nil|1|1|nil||1|1|||0|rEPAIR fACILITY|tHE rEPAIR fACILITY~IS USED TO REPAIR YOUR~VEHICLES.||
+15|71|71|0|232|1|1|1|1|11|1|||||||2|2|7|5|||125|10|80|800|0|5|1|0|27|58|53|nil|||0|0|0|0|0|1|1||0|nil|1|nil|15|nil||nil|1|1|nil|1|1||1|1|6|6||cANNON tURRET|tHE cANNON tURRET IS~USED FOR SHORT RANGE~ACTIVE DEFENSE.||
+16|87|87|2|234|1|1|1|1|11|1|||||||2|2|7|6|||250|20|240|800|0|10|2|1.9|40|59|53|nil|||0|0|0|0|0|1|1||0|nil|1|nil|7.5|nil||nil|1|1|nil|1|1||1|1|6|6||rOCKET tURRET|tHE rOCKET TURRET IS~USED FOR MEDIUM RANGE~ACTIVE DEFENSE.||
+17|61|61||228|2|3|3|0||1|||||11|3|2|2|6|6||1|500|50||2000|0||||||53|nil||8|0|0|0|0|0|1|1|11|0|nil|1|nil|25|nil||nil|1|nil|nil|1|nil||1|1|||11,10,8,8|sTARPORT|tHE sTARPORT IS USED TO~ORDER AND RECEIVE~SHIPMENTS FROM~c.h.o.a.m.|draw_refinery|factory_click
+18|131|131||224|2|2|2|0||1|||||||2|2|12|7|||500|40||1600|0||||||53|nil|||0|0|0|0|0|1|1||0|nil|1|nil|10|nil||nil|1|nil|nil|nil|nil||1|1||||hOUSE OF ix|tHE ix rESEARCH~fACILITY ADVANCES YOUR~hOUSE'S TECHNOLOGY.||
+19|58|58||226|2|3|3|0||1|||||||2|2|17|8||1|999|80||4000|0||||2,400||53|nil|||0|0|0|0|0|1|1||0|nil|1|nil|40|nil||nil|1|nil|nil|nil|nil||1|1||||pALACE|tHIS IS YOUR pALACE.||
+20|49|49||236|1|0.5|0.5|1|11|9|||||15|3|2|2|9|2|-3||60|0|24|80|0.05|3|1|0|15|60|57|1|48|16|0|0|0|0|0|1|1||0|nil|nil|1|1|1|nil|1|nil|1|nil||1|1|nil|nil||||iNFANTRY sOLDIER|iNFANTRY ARE LIGHTLY~ARMOURED FOOTSOLDIERS,~WITH LIMITED FIRING~RANGE AND SPEED.||
+21|48|48||236|1|1|1|1|11|9|||||15|3|2|2|9|2|-3||100|0|16|200|0.03|3|1|0|15|60|57|1|49|16|0|0|0|0|0|1|1||0|nil|nil|1|2|1|nil|1|nil|1|nil||1|1|nil|nil||||iNFANTRY sQUAD|iNFANTRY ARE LIGHTLY~ARMOURED FOOTSOLDIERS,~WITH LIMITED FIRING~RANGE AND SPEED.||
+22|49|111||194|1|0.5|0.5|1|11|10|||||||2|2|10|3|-1||100|0|16|180|0.07|7|2|1|17|59|57|1|48|16|0|0|0|0|0|1|1||0|nil|nil|1|3|1|nil|1|nil|1|nil||1|1|nil|nil||||hEAVY tROOPER|tROOPERS ARE HEAVILY~ARMOURED FOOTSOLDIERS,~WITH IMPROVED FIRING~RANGE AND SPEED.||
+23|48|127||194|1|1|1|1|11|10|||||||2|2|10|3|-1||200|0|32|440|0.1|7|2|1|17|59|57|1|49|16|0|0|0|0|0|1|1||0|nil|nil|1|5|1|nil|1|nil|1|nil||1|1|nil|nil||||hEAVY tROOPERS|tROOPERS ARE HEAVILY~ARMOURED FOOTSOLDIERS,~WITH IMPROVED FIRING~RANGE AND SPEED.||
+24|48|253||236|1|1|1|1|11|||0|9|4|9|1|2|2||8|1||0|0|64|440|0.1|4|1|0|17|60|57|1|49|16|0|0|0|0|0|1|1||0|nil|nil|nil|0|1|nil|1|nil|1|nil||1|nil|nil|nil||||fREMEN|tHE fREMEN ARE NATIVE~TO dUNE. eLITE FIGHTERS~IN ALLIANCE WITH THE~aTREIDES.||
+25|48|48||236|1|0.5|0.5|1|11|||0|1|0|13|1|2|2||8|2||0|0|1600|40|0.27|1|1|0|800|60|57|1|49|8|0|0|0|0|0|1|1||0|nil|nil|nil|70|1|nil|1|nil|1|nil||1|nil|nil|nil||||sABOTEUR|tHE sABOTEUR IS A~SPECIAL MILITARY UNIT,~TRAINED AT AN oRDOS~pALACE. cAN DESTROY~ALMOST ANY STRUCTURE OR~VEHICLE.||
+26|48|48||236|1|1|1|1|11|||0|14|2|14|2|2|2||4|||0|0|64|440|0.1|2|2|1|17|59|57|nil|||0|0|0|0|0|1|1||0|nil|nil|nil|5|1|nil|1|nil|1|nil||1|nil|nil|nil||||tROOPERS|tHE sARDUKAR ARE THE~eMPEROR'S ELITE TROOPS.~WITH SUPERIOR FIREPOWER~AND ARMOUR.||
+27|51|51|4|204|1|1|1|1|11|11|17||||15|4|2|2|11|2|1||150|0|32|400|0.3|4|1|0|17|60|54|nil|||0|0|0|0|0|1|1||0|nil|1|1|5|1|nil|nil|nil|1|nil||1|nil|1|nil|6|6||tRIKE|tHE tRIKE IS A LIGHTLY-~ARMOURED, 3-WHEELED~VEHICLE, WITH LIMITED~FIRING RANGE, BUT RAPID~SPEED.||
+28|52|52|6|206|1|1|1|1|11|11|17||||||2|2|11|3|||200|0|56|520|0.27|4|1|0|17|60|54|nil|||0|0|0|0|0|1|1||0|nil|1|1|6|1|nil|nil|nil|1|nil||1|nil|1|nil|6|6||qUAD|tHE qUAD IS A LIGHTLY-~ARMOURED, 4-WHEELED~VEHICLE. sLOWER THAN~THE tRIKE, BUT STRONGER~ARMOUR AND FIREPOWER.||
+29|53|53|8|196|1|1|1|1|11|12|17||||||2|2|7|4|||300|0|100|800|0.17|5|1|0|27|58|54|nil|||0|0|0|0|0|1|1||0|nil|1|1|10|1|1|nil|nil|1|nil||1|nil|1|nil|7|6||cOMBAT tANK|tHE cOMBAT tANK IS A~MEDIUM ARMOURED TANK,~FIRES HIGH-EXPLOSIVE~ROUNDS.||
+30|55|55|10|198|1|1|1|1|11|12|17||||15|4|2|2|7|6|||600|0|240|1200|0.13|6|1|0|30|58|54|nil|||0|0|0|0|0|1|1||0|nil|1|1|15|1|1|nil|nil|1|nil||1|nil|1|nil|8|7||sIEGE tANK|tHE sIEGE tANK IS A~HEAVY ARMOURED TANK,~WHICH HAS DUAL CANNONS,~BUT IS SLOW.||
+31|54|54|12|202|1|1|1|1|11|12|17||||15|4|2|2|7|5|||450|0|600|400|0.2|10|2|1.9|40|59|54|nil|||0|0|0|0|0|1|1||0|nil|1|1|15|1|1|nil|nil|1|nil||1|nil|1|nil|7|6||lAUNCHER|tHE mISSILE tANK IS A~MEDIUM ARMOURED TANK,~WHICH FIRES MISSILES.~lONG-RANGE, BUT~INACCURATE.||
+32|50|50|14|192|1|1|1|1|11|12|17||||12|12|2|2|12|2|||300|0|0|600|0.13|0|||0||54|nil|||0|0|0|0|0|1|1||0|0|1|1|15|1|1|nil|nil|1|nil||nil|nil|1|nil|8|7||hARVESTER|tHE hARVESTER SEPARATES~SPICE FROM THE SAND &~RETURNS RAW SPICE TO~THE rEFINERY FOR~PROCESSING.||
+33|73|73|16|238|1|1|1|8|11|13|17||||11|3|2|2|13|5|||800|0|0|400|1.33|0|||0||54|nil|||0|0|0|0|0|1|1||0|nil|nil|nil|1.6|1|nil|nil|nil|1|nil||nil|nil|1|nil|8|7||cARRYALL|tHE cARRYALL IS A~LIGHTLY ARMOURED~AIRCRAFT WITH NO~WEAPONS. mAINLY USED~TO LIFT+TRANSPORT~hARVESTERS.||
+34|20|40|20|160|1|1|1|4|11|13|||||||2|2|18|7|-3||600|0|296|4|1|7|2|1.9|33|59|54|nil|22|8|0|0|0|0|0|1|1||0|nil|nil|1|3|1|nil|nil|nil|1|nil||1|nil|nil|nil|6|6||oRNITHOPTER|tHE oRNITHOPTER IS A~LIGHTLY ARMOURED~AIRCRAFT THAT FIRES~ROCKETS.hIGHLY~MANOUVERABLE + FASTEST~AIRCRAFT ON dUNE.||
+35|38|38|24|192|1|1|1|1|11|12|17||||0|5|2|2|7|4|||900|0|0|600|0.13|0|||0||54|nil|||0|0|0|0|0|1|1||0|nil|1|nil|15|1|nil|nil|nil|1|nil||1|nil|1|nil|8|7||mcv|tHE mcv (mOBILE~cONSTRUCTION vEHICLE)~SCOUT VEHICLE IS USED~TO FIND AND DEPLOY NEW~BASE LOCATIONS.||
+36|57|57|26|198|1|1|1|1|11|12|||||12|9|2|2|18|7|1||600|0|240|440|0.2|9|3|0|27|52|54|nil|||0|0|0|0|0|1|1||0|nil|1|1|11|1|1|nil|nil|1|nil||1|nil|1|nil|7|6||sONIC tANK|dEVELOPED BY THE~aTREIDES,THIS ENHANCED~TANK FIRES POWERFUL~BLAST WAVES OF SONIC~ENERGY.||
+37|56|56|28|200|1|1|1|1|11|12|||8|12|||2|2|18|8|3||800|0|320|1600|0.07|8|2|1|33|61|54|nil|||0|0|0|0|0|1|1||0|nil|1|1|18|1|1|nil|nil|1|nil||1|nil|1|nil|8|7||dEVASTATOR|tHE dEVESTATOR IS A~NUCLEAR-POWERED TANK,~WHICH FIRES DUAL PLASMA~CHARGES. mOST POWERFUL~TANK ON dUNE, BUT~POTENTIALLY UNSTABLE~IN COMBAT.||
+38|72|72|30||1|1|1|8|11|||0|||||2|2|13|8|3||0|0|1600|40|0.67|0|20|0|800|59|54|nil|||0|0|0|0|0|1|1||0|nil|nil|nil|0|1|nil|nil|nil|1|nil||1|nil|nil|nil|6|6||dEATH hAND|tHE dEATH hAND IS A~SPECIAL hARKONNEN~pALACE WEAPON. aN~INACCURATE, BUT VERY~DESTRUCTIVE BALLISTIC~MISSILE.||
+38.5|72|72|30||1|1|1|8|11|||0|||||2|2|13|8|4||0|0|1600|40|0.67|0|20|0|800|59|54|nil|||0|0|0|0|0|1|1||0|nil|nil|nil|0|1|nil|nil|nil|1|nil||1|nil|nil|nil|6|6||dEATH hAND|tHE dEATH hAND IS A~SPECIAL hARKONNEN~pALACE WEAPON. aN~INACCURATE, BUT VERY~DESTRUCTIVE BALLISTIC~MISSILE.||
+39|51|205|4|204|1|1|1|1|11|11|||||11|1|2|2|11|2|2||150|0|40|320|0.4|4|1|0|17|60|54|nil|||0|0|0|0|0|1|1||0|nil|1|1|6|1|nil|nil|nil|1|nil||1|nil|1|nil|6|6||rAIDER tRIKE|tHE oRDOS rAIDER IS~SIMILAR TO THE STANDARD~tRIKE, BUT WITH LESS~ARMOUR IN FAVOUR OF~SPEED.||
+40|54|202|12|202|1|1|1|1|11|12|||||11|3|2|2|18|7|2||750|0|0|480|0.2|9|1.9|1.9|60|59|54|nil|||0|0|0|0|0|1|1||0|nil|1|1|17.5|1|1|nil|nil|1|nil||1|nil|1|nil|7|6||dEVIATOR|tHE oRDOS dEVIATOR IS A~STANDARD mISSILE tANK,~WHICH FIRES UNIQUE~NERVE GAS MISSILES THAT~MAY TEMPORARILY CHANGE~ENEMY LOYALTY.||
+41|88|88|||9|1|1|1|11||||||||2|2||3|||0|0|300|4000|0.35|0|||7|50||nil|||0|0|0|0|0|1|1||0|nil|nil|nil|0|1|nil|nil|nil|nil|nil|||nil|nil|nil||||sANDWORM|tHE sAND wORMS ARE~INDIGEONOUS TO dUNE.~aTTRACTED BY VIBRATIONS~ALMOST IMPOSSIBLE TO~DESTROY, WILL CONSUME~ANYTHING THAT MOVES.||
+42|32|32|||1|1|1|1|11|||2|||||1|1||1||||||4|0.1||||||53|1|||0|0|0|0|0|1|1||0|nil|nil|nil|0|nil|nil|nil|nil|nil|nil|||nil|nil|nil||||sPICE bLOOM|||
+80|3|3||3|3|1|1|0|11||||||||1|1||1||||||0|0|||||||nil|||0|0|0|0|0|1|1||0|nil|nil|nil||nil|||nil|nil|nil|||nil|nil|nil||||rEPAIR||draw_action|action_click
+81|1|1||1|3|1|1|0|11||||||||1|1||1||||||0|0|||||||nil|||0|0|0|0|0|1|1||0|nil|nil|nil||nil|||nil|nil|nil|||nil|nil|nil||||lAUNCH||draw_action|action_click]]
+
 
 
 -->8
@@ -136,10 +137,10 @@ function _init()
  for i=2,46 do
   local new_obj={}
   -- properties
-  for j=1,67 do
+  for j=1,68 do
    local val=str_arrays[i][j]
-   if (j<63) val=tonum(val)
-   if j==65 then
+   if (j<64) val=tonum(val)
+   if j==66 then
     --restore new lines
     str_breaks,val=split2d(val,"~"),""
     for line in all(str_breaks) do
@@ -203,10 +204,9 @@ function _init()
 
   if t_%30==0 then
    
-   -- reset music (will set if more attack)
    set_loop(false) -- must stay boolean
    
-   -- update positions of pathfinding "blocker" objects 
+   -- update "blocker" positions
    object_tiles={}
    for unit in all(units) do
     object_tiles[get_tile_pos_index(unit)]=unit
@@ -406,7 +406,7 @@ function m_map_obj_tree(objref, x,y, owner, factory)
     -- unit props
     newobj.r=newobj.norotate!=1 and (xpos%8)*.125
     -- fighting units
-    if newobj.arms then
+    if newobj.can_fire then
      newobj.fire=function(self)
        -- now firing, fire bullet/missile
        self.state,self.bullet_x,self.bullet_y,self.bullet_tx,self.bullet_ty = 4,self.x+4,self.y+4,self.target.x+self.target.w/2,self.target.y+self.target.h/2
@@ -576,7 +576,7 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
        -- lose soldiers
        if (self.obj_spr<=49 and life<100) self.spr_w,self.spr_h=0.5,0.5
        -- can we retaliate (unit/turret)?
-       if (self.arms and self.state==0) do_attack(self, hitby)
+       if (self.can_fire and self.state==0) do_attack(self, hitby)
      end
      -- check for death
      if (in_type<=2 and life<=0 and not self.death_time) self.state,self.death_time,self.cor=5,.25 ssfx(self.death_sfx) shake+=(in_type==2 or self.obj_spr==72) and .25 or 0
@@ -723,7 +723,7 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
 
      -- specific update 
      if self.owner==1 then
-      if (id==5) self.name="wINDTRAP (∧"..power_bal..")"
+      if (id==5) self.name="wINDTRAP (\|f\^:0804061f0c040200\|h"..power_bal..")"
       if (self.storage>0) self.name=ref_obj.name.." ("..flr(strnum/total_storage*100).."%)"
      end
    end
@@ -887,7 +887,7 @@ function _update60()
    local unit=rnd(units)
    if (ai_awake[unit.faction] or t()%5==0) --default=300 (5 mins)
     and unit.owner==2 
-    and unit.arms 
+    and unit.can_fire 
     and unit.state==0 
    then
     attack_rnd_enemy(unit)
@@ -1165,8 +1165,7 @@ function _draw()
  end
 
  -- top/header bar
- rectfill(0,0,127,8,9)
- line(0,9,127,9,4)
+ ?"\^j02\f4\|f\^x3\*z-\*8-\n\^x8\^j00\#9                \^j01\|f                "
  
  -- update/draw message
  msgcount-=1
@@ -1174,7 +1173,6 @@ function _draw()
  -- score
  ?sub("00000", #strnum)..strnum, 103,2, p_col2
 
- -- turn on/off radar
  if hq!=last_hq then
   radar_frame=1
   if last_hq then set_message"pOWER LOW. bUILD wINDTRAP" end
@@ -1183,7 +1181,6 @@ function _draw()
  last_hq=hq
 
   
- -- draw radar data (from user mem)
  local soff=5934
  for moff=17152,17648,16 do  
    memcpy(0x6000+soff, moff, 16)
@@ -1285,7 +1282,7 @@ function _draw()
       if selected_subobj == curr_item then 
         sel_build_item_idx=icount
         ?"\f7\^x3\-f\|c\*6-\n\-d\|d|    \^x4 |\^x3\n\-d\|f|    \^x4 |\^x3\n\-d\|f|    \^x4 |\^x3\n\-d\|d|    \^x4 |\^x3\n\^x3\-f\|d\*6-",9,curr_item.y        
-        ?"\^j87\-f\|a\^h\f7"..selected_subobj.name.."\n\|h\f9\^:041f051f141f0400\-f\|h"..selected_subobj.cost.."\^je8\|d\fd\^:1f1b111b1f0e0400\|h"..selected_subobj.hitpoint.."\^jl8\|d\fa\^:0804061f0c040200\|h"..selected_subobj.power.."\n\|g\f6"..selected_subobj.description
+        ?"\^j87\-f\|a\^h\f7"..selected_subobj.name.."\n\|h\f9\^:041f051f141f0400\-f\|h"..selected_subobj.cost.."\^je8\|d\fd\^:1f1b111b1f0e0400\|h"..selected_subobj.hitpoint..(selected_subobj.is_building and "\^jl8\|d\fa\^:0804061f0c040200\|h"..selected_subobj.power or "\^jl8\|d\f8\^:081c226b221c0800\|h\-h"..selected_subobj.arms).."\n\|g\f6"..selected_subobj.description
       end
       icount+=1
      end
@@ -1353,7 +1350,7 @@ function do_guard(unit, start_state, hold_pos)
     attack_rnd_enemy(self)
      
    -- all other units, be on look-out
-   elseif chance"250" and self.arms and self.state!=8 then
+   elseif chance"250" and self.can_fire and self.state!=8 then
     -- is danger tile?
     local gx,gy = get_tile_pos(self)
     ping(self,gx,gy,
@@ -2270,8 +2267,8 @@ __map__
 0d0d0d0d0e00000a080000000000000c0d0d0d1400000020000000130d0d24240e00000000000000000000000000005724242424240000000000242424242f2f000000000000000000000000000000130d0d0d0d0d1200000a0508000000000000000000040505050505050506000000000000000000000b0b0b040505052d49
 0d0d10100e000000000000000000000c0d0d1400000000000000000000130d240d120000000000000000200000000000000024400049000037000c246e242f2f00000000000000000000110f0000000000000c0d0d0d120000000000000000110f0e000005050509090905050500000000000000000000000000050909092d00
 0d14040505062100000000000000000c0d140000000000000000000000000c240d0e0000000000000000000000000000000024000000000000000c2424242f2f000405050600000000110d0d0000000000000c0d0d0d0d120000001139380f370d14000405050909050505050800000000000000002000000000050909092d95
-0e04050905050506000000000000001314000000000000000000000000001357570e000000000000000000000000040506000c242400000000000c8585852f2f0005090505060000000c0d0d1200000000000c0d0d0d3a0d0f0f0f0d0d0d0d0d0e000000000a05050509051112000000000000000000000000000a0505092d00
-0e05090905050505000000000000000000000000000000000000000000000057570e00000000000000000000000a050505002442000000000000131057372f2f0005050905050000000c0d0d0d00000020000c0d0d0d0d0d0d0d36420dab22420e0000000000000a0505080c0e00000000000000000000000000110e05092d28
+0e04050905050506000000000000001314000000000000000000000000001357570e000000000000000000000000040506000c242400000000000c8585852f2f0005090505060000000c0d0d1200000000000c0d0d3a0d0d440f0f0d0d0d0d0d0e000000000a05050509051112000000000000000000000000000a0505092d00
+0e05090905050505000000000000000000000000000000000000000000000057570e00000000000000000000000a050505002442000000000000131057372f2f0005050905050000000c0d0d0d00000020000c0d0d0d0d0d0d0d0d420dab22420e0000000000000a0505080c0e00000000000000000000000000110e05092d28
 0e0a05050505050800000000000000000000000000000000000000000000110d0d140000000000000000000505050509050057000012000000150000000d2f2f0005090909050000000c0d0d0d12000000110d0d0d0d0d0d0d0d0d0d0d22220d0e000000000000000000000c0d12000000000000000000000000000405052d00
 0d0f0f120a000000000000000000000004050600000000000000000000110d0d14000000000000110f0d0f120509050505002457440000240e00000000132f2f0005090909050000000c0d0d0d0d0f0f0f0d0d0d0d0d3d0d0d0d620d0d6a0d0d37000000000000000000000c0d0d0f1200000000000000000000000a05082d29
 0d0d0d0e00000000000000000000040505050500000000000a00110f0f0d0d14000000000000000c0d0d0d0e0509090905001324000000240000000000002f2f0a05050505080000000c0d0d0d0d0d0d0d0d1400130d0d0d0d0d0d0d0d0d0d0d0e0000000000000000000013100d0d0d12000000000000000000000000002d00
