@@ -156,7 +156,7 @@ function _init()
  for i=-3,66 do
   fow[i]={}
   for l=-3,66 do
-   fow[i][l]=0 --(16 to show all)
+   fow[i][l]=0 --(16 for all)
   end
  end
 
@@ -478,14 +478,13 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
         ovalfill(x+3, y+3, x+self.shad_w, y+self.shad_h, 1)
        end
        if (self.trans_col and in_type<=3) palt(self.trans_col,true)   
-       -- faction? (if not IX)
        if (self.faction and self.id!=18) pal(12,self.col1) pal(14,self.col2)
        
        -- icon mode
        if in_type>3 then
          local this = in_type==5 and self or self.parent
          -- bg
-         rectfill(x-1,y-1,x+16,y+19,0)
+         ?"\#0\-j\|g\^x7  \n\-j  \n\-j  \n\-j\^y2  ",x,y
          -- draw health/progress
          local hp = this.hitpoint
          local val = self.process==1 and this.life/6.666 or 15*(this.life/hp)
@@ -1184,10 +1183,10 @@ function _draw()
    memcpy(0x6000+soff, moff, 16)
    soff+=64
  end
- rect(91,91,123,123,p_col2)
 
- local cx,cy=ceil(92+camx/16),ceil(92+camy/16)
- rect(cx,cy, cx+7,cy+7, 7)
+ ?"\^jnn\|d\-e\^x3\^y4\^h\-f\|c\n|\n|\n|\n|\n|\n|\n|\n|\^jvn\|f\-e\^h\-f\|c\n|\n|\n|\n|\n|\n|\n|\n|\^jnm\-f\|h\*b-\^jnu\^y5\-f\|f\*b_\0",p_col2
+
+ ?"\f7\|e\-f\^x3\^y4\^h\-f\|c\n|\n|\^g\|i\-n\^h\-f\|c\n|\n|\^g\^x2\-a\|e\*4-\^g\^y5\-a\|j\*4_\0",ceil(92+camx/16),ceil(92+camy/16)
 
  if radar_frame>0 and radar_frame<77 then
    -- draw radar anim   
@@ -1196,7 +1195,6 @@ function _draw()
    end
    radar_frame+=1
  end
-
 
  -- object menu icon/buttons? 
  if selected_obj and selected_obj.ico_spr then
@@ -1306,15 +1304,14 @@ function test_tile(x,y)
 	if x>=0 and x<=66 and y>=0 and y<=66 -- bail
   and fow[x][y]!=0 then
   -- figure out bitmask
-		if (fow[x][y-1]>0) mask+=1 -- north
-		if (fow[x-1][y]>0) mask+=2 -- east
-		if (fow[x+1][y]>0) mask+=4 -- south
-		if (fow[x][y+1]>0) mask+=8 -- west
+		if (fow[x][y-1]>0) mask+=1
+		if (fow[x-1][y]>0) mask+=2
+		if (fow[x+1][y]>0) mask+=4
+		if (fow[x][y+1]>0) mask+=8
   fow[x][y]=1 + mask
 	end
- -- finally, update "awake"
+ -- update "awake"
  local obj_tile=get_tile_obj(x,y)
- --mask==15 and 
  if (obj_tile and obj_tile.is_building) ai_awake[obj_tile.faction]=true
 end
 
@@ -1344,7 +1341,6 @@ function do_guard(unit, start_state, hold_pos)
 
    -- ornithopter?
    if self.id==34 then
-    -- (building)
     attack_rnd_enemy(self)
      
    -- all other units, be on look-out
@@ -1392,12 +1388,11 @@ function do_guard(unit, start_state, hold_pos)
       -- found spice?
       if sx and sy then
         unit.last_move_result = move_unit_pos(unit,sx,sy,nil,not unit.last_move_result)
-        -- if stuck and no carryall...
+        -- if stuck + no carryall...
         if not unit.last_move_result and not safe_rnd_has_obj(unit.created_by,33) then
-         -- harvester prob trapped, move to safe spot
+         -- trapped, move to safe spot
          set_pos(self,nearest_space_to_object(self))
         end
-        -- landed on spice tile? switch to harvesting        
         if (is_spice_tile(get_tile_pos(unit))) unit.state=6
       end
 
@@ -1408,10 +1403,8 @@ function do_guard(unit, start_state, hold_pos)
        self.sx,self.sy=get_tile_pos(self) -- remember pos!
        return_to_fact(self,last_fact or safe_rnd_has_obj(unit.created_by,6))
      end
-     -- harvesting spice
     elseif self.state==6 then
      self.newspot=false
-     -- spice clouds
      add_spice_cloud(unit.x, unit.y, unit.r+.75+rnd".2"-.1)
 
      -- update spice tile state
@@ -1429,7 +1422,7 @@ function do_guard(unit, start_state, hold_pos)
        )
        end
       end
-      -- go back to guard (look for more spice to harvest)
+      -- look for more spice to harvest
       self.state=0
      end
      -- move around the spice?
@@ -1805,9 +1798,9 @@ function m_button(x,text,func_onclick,_w)
    return self    
    end,
   draw=function(self)
-    local c=self.hover and 7 or 6
-    if(#text>1)rectfill(x,81,x+self.w,89, c)
-    ?text,x+2,83,#text>1 and 0 or c
+    local c,b=self.hover and 7 or 6,#text>1
+    if(b) ?"\-g\|g\^x2███\^x1█\n\-g\|e\^x2███\^x1█",x,81,c
+    ?text,x+2,83,b and 0 or c
   end,
   func_onclick = func_onclick
  })
