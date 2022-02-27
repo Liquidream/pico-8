@@ -750,7 +750,7 @@ function get_tile_pos(obj)
 end
 
 function deselect_check(obj)
- if(selected_obj==obj) selected_obj=nil
+ selected_obj = selected_obj!=obj and selected_obj
 end
 
 function transact(diff, obj)
@@ -1162,7 +1162,8 @@ function _draw()
  end
 
  -- top/header bar
- ?"\^j02\f4\|f\^x3\*z-\*8-\n\^x8\^j00\#9                \^j01\|f                "
+ rectfill(unpack(split"0,0,127,8,9"))
+ line(unpack(split"0,9,127,9,4"))
  
  msgcount-=1
  ?(msgcount>0 and message or selected_obj and selected_obj.name or ""),2,2,0
@@ -1249,7 +1250,7 @@ function _draw()
  if show_menu then  
   fillp(▒)
   rectfill(unpack(split"0,0,127,127,0"))
-  fillp()  
+  fillp()
   rectfill(3,18,124,92,p_col2)
   rect(3,18,124,92,p_col1) 
 
