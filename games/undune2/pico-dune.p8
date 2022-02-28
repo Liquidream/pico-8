@@ -1604,14 +1604,13 @@ function is_free_tile(unit,x,y)
 end
 
 function move_unit_pos(unit,x,y,dist_to_keep,try_hail,start_state)
-  local gx,gy = unit.x\8,unit.y\8
   -- before moving, can a carryall take us?  
   if try_hail then
    local carryall=safe_rnd_has_obj(unit.created_by,33)
    if carryall and not carryall.link and carryall.faction==unit.faction then
      -- link them + set unit to "moving" to wait for pickup
      carryall.link,unit.link,unit.state, carryall.cor = unit,carryall,2, cocreate(function(unit_c)     
-      move_unit_pos(unit_c,gx,gy)
+      move_unit_pos(unit_c,unit.x\8,unit.y\8)
       deselect_check(unit)
       if unit.life>0 then
        carryall.my=18
@@ -1640,7 +1639,7 @@ function move_unit_pos(unit,x,y,dist_to_keep,try_hail,start_state)
   
   -- (pn-minified/modified) "pathfinder"
   if true then --used to scope locals (free mem!)
-   local start, goal, node_to_id = { x=gx, y=gy}, {x=x, y=y}, function (node) return (node.y<<8) + node.x end
+   local start, goal, node_to_id = { x=unit.x\8, y=unit.y\8}, {x=x, y=y}, function (node) return (node.y<<8) + node.x end
    local shortest, 
    best_table = {
     last = start,
