@@ -36,7 +36,7 @@ _y=mid(1,_y+1,#_bp._eh)
 _5=_bp._eh[_y]
 if(_y>_3+2) _3=min(_3+1,#_bp._eh-2)
 end, 10)
-_f7(32,_bp.id==17 and"order" or"build",function()
+_f7(32,_bp.id==5 and"order" or"build",function()
 _8=nil
 if(_dz) _dz:_b5()
 end)
@@ -69,46 +69,46 @@ local _aj=[[id|_bu|_av|my|ico_spr|type|w|h|z|trans_col|_bn|_bo|_7|col1|_ab|icol1
 1|64|64||170|2|2|2|0||nil|||||||2|2|1|||100|0||1600|0||||||53|nil|||0|0|0|0|0|1|1||0|nil|1|nil|30|nil||nil|1|nil|nil|1|nil||1|1|||1,1,1,1||cONSTRUCTION yARD|aLL STRUCTURES ARE~BUILT BY THE~CONSTRUCTION YARD.||_6
 2|22|22||162|2|2|2|0||1|||||7|5|2|2|1|||20|0||0|0|||||||nil|||0|0|0|0|0|1|1||0|nil|nil|nil|0.5|nil||nil|1|nil|nil|nil|nil||1|nil|||4,4,4,4||lARGE cONCRETE sLAB|uSE CONCRETE TO MAKE A~STURDY FOUNDATION FOR~YOUR STRUCTURES.||
 3|22|22||162|2|1|1|0||1|||||6|6|2|2|1|||5|0||0|0|||||||nil|||0|0|0|0|0|1|1||0|nil|nil|nil|1|nil||nil|1|nil|nil|nil|nil||1|nil|||1,1,1,1||sMALL cONCRETE sLAB|uSE CONCRETE TO MAKE A~STURDY FOUNDATION FOR~YOUR STRUCTURES.||
-4|133|133||164|2|1|1|0||1|||||||2|2|7|||50|0||200|0||||||53|nil|||0|0|0|0|0|1|1||0|nil|nil|nil|3|nil||nil|1|nil|nil|nil|nil||nil|nil|||4,4,4,4||dEFENSIVE wALL|tHE wALL IS USED FOR~PASSIVE DEFENSE.||
-5|66|66||172|2|2|2|0||1|||||||2|2|1|||300|-100||800|0||||||53|nil||4|0|0|0|0|0|1|1|11|0|nil|1|nil|30|nil||nil|1|nil|nil|1|nil||1|1|||1,1,1,1|12,12,12,12,12,12,12,12,12,12,13,1,0,0,0,0,0,0,0,0,1,13|wINDTRAP|tHE WINDTRAP SUPPLIES~POWER TO YOUR BASE.~wITHOUT POWER YOUR~STRUCTURES WILL DECAY.||
-6|68|68||174|2|3|2|0||1|||||||2|2|5|||400|30||1800|0||||||53|nil||8|0|0|0|0|0|1|1|11|1000|nil|1|nil|30|nil||nil|1|nil|1|1|nil||1|1|||1,1,1,1|11,10,8,8|sPICE rEFINERY|tHE rEFINERY CONVERTS~SPICE INTO CREDITS.|_ad|
-7|106|106||136|2|2|2|0||1|||||||2|2|5|||400|30||2000|0||||||53|nil||4|0|0|0|0|0|1|1|11|0|nil|1|nil|27.5|nil||nil|1|nil|nil|nil|nil||1|1|||2,2,2,2|8,0,8,0,0,0|rADAR oUTPOST|tHE oUTPOST PROVIDES~RADAR AND AIDS CONTROL~OF DISTANT VEHICLES.||
-8|104|104||134|2|2|2|0||1|||||||2|2|6|||150|5||600|0||||||53|nil|||0|0|0|0|0|1|1||1000|nil|1|nil|15|nil||nil|1|nil|nil|1|nil||1|1|||2,2,2,2||sPICE sTORAGE sILO|tHE sPICE SILO IS USED ~TO STORE REFINED SPICE.||
-9|108|108||168|2|2|2|0||1|||||11|3|2|2|7|-3||300|10||1200|0||||||53|nil|||0|0|0|0|0|1|1||0|nil|1|nil|10|nil||nil|1|nil|nil|nil|nil||1|1|||2,2,2,2||bARRACKS|tHE bARRACKS IS USED TO~TRAIN YOUR lIGHT ~INFANTRY.||_6
-10|110|110||138|2|2|2|0||1|||||||2|2|7|-1||400|10||1600|0||||||53|nil|||0|0|0|0|0|1|1||0|nil|1|nil|17.5|nil||nil|1|nil|nil|nil|nil||1|1|||5,5,2,5||wor tROOPER fACILITY|wor IS USED TO TRAIN~YOUR hEAVY INFANTRY.||_6
-11|96|96||140|2|2|2|0||1|||||||2|2|6|||400|20||1400|0||||||53|nil|||0|0|0|0|0|1|1||0|nil|1|nil|20|nil||nil|1|nil|nil|1|nil||1|1|||2,2,3,2||lIGHT vEHICLE fACTORY|tHE lIGHT fACTORY~PRODUCES LIGHT ATTACK~VEHICLES.||_6
-12|98|98||142|2|3|2|0||1|||||||2|2|11|||600|20||800|0||||||53|nil|||0|0|0|0|0|1|1||0|nil|1|nil|60|nil||nil|1|nil|nil|1|nil||1|1|||3,3,3,3||hEAVY vEHICLE fACTORY|tHE hEAVY fACTORY~PRODUCES HEAVY ATTACK~VEHICLES.||_6
-13|101|101||166|2|3|2|0||1|||||||2|2|12|||500|35||1600|0||||||53|nil|||0|0|0|0|0|1|1||0|nil|1|nil|20|nil||nil|1|nil|nil|1|nil||1|1|||5,5,5,5||hI-tECH fACTORY|tHE hI-tECH fACTORY~PRODUCES FLYING~VEHICLES.||_6
-14|128|128||230|2|3|2|0||1|||||||2|2|12|||700|20||800|0||||||53|nil||2|0|0|0|0|0|1|1|8|0|nil|1|nil|60|nil||nil|1|nil|1|1|nil||1|1|||5,5,5,5|0|rEPAIR fACILITY|tHE rEPAIR fACILITY~IS USED TO REPAIR YOUR~VEHICLES.||
-15|71|71|0|232|1|1|1|1|11|1|||||||2|2|7|||125|10|80|800|0|5|1|0|27|58|53|nil|||0|0|0|0|0|1|1||0|nil|1|nil|15|nil||nil|1|1|nil|1|1||1|1|6|6|5,5,5,5||cANNON tURRET|tHE cANNON tURRET IS~USED FOR SHORT RANGE~ACTIVE DEFENSE.||
-16|87|87|2|234|1|1|1|1|11|1|||||||2|2|7|||250|20|240|800|0|10|2|1.9|40|59|53|nil|||0|0|0|0|0|1|1||0|nil|1|nil|7.5|nil||nil|1|1|nil|1|1||1|1|6|6|6,6,6,6||rOCKET tURRET|tHE rOCKET TURRET IS~USED FOR MEDIUM RANGE~ACTIVE DEFENSE.||
-17|61|61||228|2|3|3|0||1|||||11|3|2|2|6||1|500|50||2000|0||||||53|nil||8|0|0|0|0|0|1|1|11|0|nil|1|nil|25|nil||nil|1|nil|nil|1|nil||1|1|||6,6,6,6|11,10,8,8|sTARPORT|tHE sTARPORT IS USED TO~ORDER AND RECEIVE~SHIPMENTS FROM~c.h.o.a.m.|_ad|_6
-18|131|131||224|2|2|2|0||1|||||||2|2|12|||500|40||1600|0||||||53|nil|||0|0|0|0|0|1|1||0|nil|1|nil|10|nil||nil|1|nil|nil|nil|nil||1|1|||7,7,7,7||hOUSE OF ix|tHE ix rESEARCH~fACILITY ADVANCES YOUR~hOUSE'S TECHNOLOGY.||
-19|58|58||226|2|3|3|0||1|||||||2|2|17||1|999|80||4000|0||||2,400||53|nil|||0|0|0|0|0|1|1||0|nil|1|nil|40|nil||nil|1|nil|nil|nil|nil||1|1|||8,8,8,8||pALACE|tHIS IS YOUR pALACE.||
-20|49|49||236|1|0.5|0.5|1|11|9|||||15|3|2|2|9|-3||60|0|24|80|0.05|3|1|0|15|60|57|1|48|16|0|0|0|0|0|1|1||0|nil|nil|1|1|1|nil|1|nil|1|nil||1|1|nil|nil|||2,2,2,2||iNFANTRY sOLDIER|iNFANTRY ARE LIGHTLY~ARMOURED FOOTSOLDIERS,~WITH LIMITED FIRING~RANGE AND SPEED.||
-21|48|48||236|1|1|1|1|11|9|||||15|3|2|2|9|-3||100|0|16|200|0.03|3|1|0|15|60|57|1|49|16|0|0|0|0|0|1|1||0|nil|nil|1|2|1|nil|1|nil|1|nil||1|1|nil|nil|||2,2,2,2||iNFANTRY sQUAD|iNFANTRY ARE LIGHTLY~ARMOURED FOOTSOLDIERS,~WITH LIMITED FIRING~RANGE AND SPEED.||
-22|49|111||194|1|0.5|0.5|1|11|10|||||||2|2|10|-1||100|0|16|180|0.07|7|2|1|17|59|57|1|48|16|0|0|0|0|0|1|1||0|nil|nil|1|3|1|nil|1|nil|1|nil||1|1|nil|nil|||3,3,1,3||hEAVY tROOPER|tROOPERS ARE HEAVILY~ARMOURED FOOTSOLDIERS,~WITH IMPROVED FIRING~RANGE AND SPEED.||
-23|48|127||194|1|1|1|1|11|10|||||||2|2|10|-1||200|0|32|440|0.1|7|2|1|17|59|57|1|49|16|0|0|0|0|0|1|1||0|nil|nil|1|5|1|nil|1|nil|1|nil||1|1|nil|nil|||3,3,1,3||hEAVY tROOPERS|tROOPERS ARE HEAVILY~ARMOURED FOOTSOLDIERS,~WITH IMPROVED FIRING~RANGE AND SPEED.||
+13|133|133||164|2|1|1|0||1|||||||2|2|16|||50|0||200|0||||||53|nil|||0|0|0|0|0|1|1||0|nil|nil|nil|3|nil||nil|1|nil|nil|nil|nil||nil|nil|||4,4,4,4||dEFENSIVE wALL|tHE wALL IS USED FOR~PASSIVE DEFENSE.||
+18|66|66||172|2|2|2|0||1|||||||2|2|1|||300|-100||800|0||||||53|nil||4|0|0|0|0|0|1|1|11|0|nil|1|nil|30|nil||nil|1|nil|nil|1|nil||1|1|||1,1,1,1|12,12,12,12,12,12,12,12,12,12,13,1,0,0,0,0,0,0,0,0,1,13|wINDTRAP|tHE WINDTRAP SUPPLIES~POWER TO YOUR BASE.~wITHOUT POWER YOUR~STRUCTURES WILL DECAY.||
+17|68|68||174|2|3|2|0||1|||||||2|2|18|||400|30||1800|0||||||53|nil||8|0|0|0|0|0|1|1|11|1000|nil|1|nil|30|nil||nil|1|nil|1|1|nil||1|1|||1,1,1,1|11,10,8,8|sPICE rEFINERY|tHE rEFINERY CONVERTS~SPICE INTO CREDITS.|_ad|
+16|106|106||136|2|2|2|0||1|||||||2|2|17|||400|30||2000|0||||||53|nil||4|0|0|0|0|0|1|1|11|0|nil|1|nil|27.5|nil||nil|1|nil|nil|nil|nil||1|1|||2,2,2,2|8,0,8,0,0,0|rADAR oUTPOST|tHE oUTPOST PROVIDES~RADAR AND AIDS CONTROL~OF DISTANT VEHICLES.||
+15|104|104||134|2|2|2|0||1|||||||2|2|17|||150|5||600|0||||||53|nil|||0|0|0|0|0|1|1||1000|nil|1|nil|15|nil||nil|1|nil|nil|1|nil||1|1|||2,2,2,2||sPICE sTORAGE sILO|tHE sPICE SILO IS USED ~TO STORE REFINED SPICE.||
+12|108|108||168|2|2|2|0||1|||||11|3|2|2|16|-3||300|10||1200|0||||||53|nil|||0|0|0|0|0|1|1||0|nil|1|nil|10|nil||nil|1|nil|nil|nil|nil||1|1|||2,2,2,2||bARRACKS|tHE bARRACKS IS USED TO~TRAIN YOUR lIGHT ~INFANTRY.||_6
+11|110|110||138|2|2|2|0||1|||||||2|2|16|-1||400|10||1600|0||||||53|nil|||0|0|0|0|0|1|1||0|nil|1|nil|17.5|nil||nil|1|nil|nil|nil|nil||1|1|||4,4,2,4||wor tROOPER fACILITY|wor IS USED TO TRAIN~YOUR hEAVY INFANTRY.||_6
+14|96|96||140|2|2|2|0||1|||||||2|2|17|||400|20||1400|0||||||53|nil|||0|0|0|0|0|1|1||0|nil|1|nil|20|nil||nil|1|nil|nil|1|nil||1|1|||2,2,3,2||lIGHT vEHICLE fACTORY|tHE lIGHT fACTORY~PRODUCES LIGHT ATTACK~VEHICLES.||_6
+7|98|98||142|2|3|2|0||1|||||||2|2|14|||600|20||800|0||||||53|nil|||0|0|0|0|0|1|1||0|nil|1|nil|60|nil||nil|1|nil|nil|1|nil||1|1|||3,3,3,3||hEAVY vEHICLE fACTORY|tHE hEAVY fACTORY~PRODUCES HEAVY ATTACK~VEHICLES.||_6
+6|101|101||166|2|3|2|0||1|||||||2|2|14|||500|35||1600|0||||||53|nil|||0|0|0|0|0|1|1||0|nil|1|nil|20|nil||nil|1|nil|nil|1|nil||1|1|||5,5,5,5||hI-tECH fACTORY|tHE hI-tECH fACTORY~PRODUCES FLYING~VEHICLES.||_6
+9|128|128||230|2|3|2|0||1|||||||2|2|14|||700|20||800|0||||||53|nil||2|0|0|0|0|0|1|1|8|0|nil|1|nil|60|nil||nil|1|nil|1|1|nil||1|1|||5,5,5,5|0|rEPAIR fACILITY|tHE rEPAIR fACILITY~IS USED TO REPAIR YOUR~VEHICLES.||
+10|71|71|0|232|1|1|1|1|11|1|||||||2|2|16|||125|10|80|800|0|5|1|0|27|58|53|nil|||0|0|0|0|0|1|1||0|nil|1|nil|15|nil||nil|1|1|nil|1|1||1|1|6|6|5,5,5,5||cANNON tURRET|tHE cANNON tURRET IS~USED FOR SHORT RANGE~ACTIVE DEFENSE.||
+8|87|87|2|234|1|1|1|1|11|1|||||||2|2|16|||250|20|240|800|0|10|2|1.9|40|59|53|nil|||0|0|0|0|0|1|1||0|nil|1|nil|7.5|nil||nil|1|1|nil|1|1||1|1|6|6|6,6,6,6||rOCKET tURRET|tHE rOCKET TURRET IS~USED FOR MEDIUM RANGE~ACTIVE DEFENSE.||
+5|61|61||228|2|3|3|0||1|||||11|3|2|2|17||1|500|50||2000|0||||||53|nil||8|0|0|0|0|0|1|1|11|0|nil|1|nil|25|nil||nil|1|nil|nil|1|nil||1|1|||6,6,6,6|11,10,8,8|sTARPORT|tHE sTARPORT IS USED TO~ORDER AND RECEIVE~SHIPMENTS FROM~c.h.o.a.m.|_ad|_6
+4|131|131||224|2|2|2|0||1|||||||2|2|16|||500|40||1600|0||||||53|nil|||0|0|0|0|0|1|1||0|nil|1|nil|10|nil||nil|1|nil|nil|nil|nil||1|1|||7,7,7,7||hOUSE OF ix|tHE ix rESEARCH~fACILITY ADVANCES YOUR~hOUSE'S TECHNOLOGY.||
+19|58|58||226|2|3|3|0||1|||||||2|2|5||1|999|80||4000|0||||2,400||53|nil|||0|0|0|0|0|1|1||0|nil|1|nil|40|nil||nil|1|nil|nil|nil|nil||1|1|||8,8,8,8||pALACE|tHIS IS YOUR pALACE.||
+23|49|49||236|1|0.5|0.5|1|11|12|||||15|3|2|2|12|-3||60|0|24|80|0.05|3|1|0|15|60|57|1|48|16|0|0|0|0|0|1|1||0|nil|nil|1|1|1|nil|1|nil|1|nil||1|1|nil|nil|||2,2,2,2||iNFANTRY sOLDIER|iNFANTRY ARE LIGHTLY~ARMOURED FOOTSOLDIERS,~WITH LIMITED FIRING~RANGE AND SPEED.||
+22|48|48||236|1|1|1|1|11|12|||||15|3|2|2|12|-3||100|0|16|200|0.03|3|1|0|15|60|57|1|49|16|0|0|0|0|0|1|1||0|nil|nil|1|2|1|nil|1|nil|1|nil||1|1|nil|nil|||2,2,2,2||iNFANTRY sQUAD|iNFANTRY ARE LIGHTLY~ARMOURED FOOTSOLDIERS,~WITH LIMITED FIRING~RANGE AND SPEED.||
+21|49|111||194|1|0.5|0.5|1|11|11|||||12|9|2|2|11|-1||100|0|16|180|0.07|7|2|1|17|59|57|1|48|16|0|0|0|0|0|1|1||0|nil|nil|1|3|1|nil|1|nil|1|nil||1|1|nil|nil|||3,3,1,3||hEAVY tROOPER|tROOPERS ARE HEAVILY~ARMOURED FOOTSOLDIERS,~WITH IMPROVED FIRING~RANGE AND SPEED.||
+20|48|127||194|1|1|1|1|11|11|||||5|5|2|2|11|-1||200|0|32|440|0.1|7|2|1|17|59|57|1|49|16|0|0|0|0|0|1|1||0|nil|nil|1|5|1|nil|1|nil|1|nil||1|1|nil|nil|||3,3,1,3||hEAVY tROOPERS|tROOPERS ARE HEAVILY~ARMOURED FOOTSOLDIERS,~WITH IMPROVED FIRING~RANGE AND SPEED.||
 24|48|253||236|1|1|1|1|11|||0|9|4|9|1|2|2||1||0|0|64|440|0.1|4|1|0|17|60|57|1|49|16|0|0|0|0|0|1|1||0|nil|nil|nil|0|1|nil|1|nil|1|nil||1|nil|nil|nil|||8,8,8,8||fREMEN|tHE fREMEN ARE NATIVE~TO dUNE. eLITE FIGHTERS~IN ALLIANCE WITH THE~aTREIDES.||
 25|48|48||236|1|0.5|0.5|1|11|||0|1|0|13|1|2|2||2||0|0|1600|40|0.27|1|1|0|800|60|57|1|49|8|0|0|0|0|0|1|1||0|nil|nil|nil|70|1|nil|1|nil|1|nil||1|nil|nil|nil|||8,8,8,8||sABOTEUR|tHE sABOTEUR IS A~SPECIAL MILITARY UNIT,~TRAINED AT AN oRDOS~pALACE. cAN DESTROY~ALMOST ANY STRUCTURE OR~VEHICLE.||
 26|48|48||236|1|1|1|1|11|||0|14|2|14|2|2|2||||0|0|64|440|0.1|2|2|1|17|59|57|nil|||0|0|0|0|0|1|1||0|nil|nil|nil|5|1|nil|1|nil|1|nil||1|nil|nil|nil|||4,4,4,4||tROOPERS|tHE sARDUKAR ARE THE~eMPEROR' S ELITE TROOPS.~WITH SUPERIOR FIREPOWER~AND ARMOUR.||
-27|51|51|4|204|1|1|1|1|11|11|17||||15|4|2|2|1|1||150|0|32|400|0.3|4|1|0|17|60|54|nil|||0|0|0|0|0|1|1||0|nil|1|1|5|1|nil|nil|nil|1|nil||1|nil|1|nil|6|6|2,2,2,2||tRIKE|tHE tRIKE IS A LIGHTLY-~ARMOURED, 3-WHEELED~VEHICLE, WITH LIMITED~FIRING RANGE, BUT RAPID~SPEED.||
-28|52|52|6|206|1|1|1|1|11|11|17||||||2|2|1|||200|0|56|520|0.27|4|1|0|17|60|54|nil|||0|0|0|0|0|1|1||0|nil|1|1|6|1|nil|nil|nil|1|nil||1|nil|1|nil|6|6|3,3,3,3||qUAD|tHE qUAD IS A LIGHTLY-~ARMOURED, 4-WHEELED~VEHICLE. sLOWER THAN~THE tRIKE, BUT STRONGER~ARMOUR AND FIREPOWER.||
-29|53|53|8|196|1|1|1|1|11|12|17||||||2|2|7|||300|0|100|800|0.17|5|1|0|27|58|54|nil|||0|0|0|0|0|1|1||0|nil|1|1|10|1|1|nil|nil|1|nil||1|nil|1|nil|7|6|4,4,4,4||cOMBAT tANK|tHE cOMBAT tANK IS A~MEDIUM ARMOURED TANK,~FIRES HIGH-EXPLOSIVE~ROUNDS.||
-30|55|55|10|198|1|1|1|1|11|12|17||||15|4|2|2|7|||600|0|240|1200|0.13|6|1|0|30|58|54|nil|||0|0|0|0|0|1|1||0|nil|1|1|15|1|1|nil|nil|1|nil||1|nil|1|nil|8|7|6,6,6,6||sIEGE tANK|tHE sIEGE tANK IS A~HEAVY ARMOURED TANK,~WHICH HAS DUAL CANNONS,~BUT IS SLOW.||
-31|54|54|12|202|1|1|1|1|11|12|17||||15|4|2|2|7|||450|0|600|400|0.2|10|2|1.9|40|59|54|nil|||0|0|0|0|0|1|1||0|nil|1|1|15|1|1|nil|nil|1|nil||1|nil|1|nil|7|6|5,5,5,5||lAUNCHER|tHE mISSILE tANK IS A~MEDIUM ARMOURED TANK,~WHICH FIRES MISSILES.~lONG-RANGE, BUT~INACCURATE.||
-32|50|50|14|192|1|1|1|1|11|12|17||||12|12|2|2|6|||300|0|0|600|0.13|0|||0||54|nil|||0|0|0|0|0|1|1||0|0|1|1|15|1|1|nil|nil|1|nil||nil|nil|1|nil|8|7|2,2,2,2||hARVESTER|tHE hARVESTER SEPARATES~SPICE FROM THE SAND &~RETURNS RAW SPICE TO~THE rEFINERY FOR~PROCESSING.||
-33|73|73|16|238|1|1|1|8|11|13|17||||11|3|2|2|6|||800|0|0|400|1.33|0|||0||54|nil|||0|0|0|0|0|1|1||0|nil|nil|nil|1.6|1|nil|nil|nil|1|nil||nil|nil|1|nil|8|7|5,5,5,5||cARRYALL|tHE cARRYALL IS A~LIGHTLY ARMOURED~AIRCRAFT WITH NO~WEAPONS. mAINLY USED~TO LIFT+TRANSPORT~hARVESTERS.||
-34|20|40|20|160|1|1|1|4|11|13|||||||2|2|18|-3||600|0|148|4|0.80|4|2|1.9|33|59|54|nil|22|8|0|0|0|0|0|1|1||0|nil|nil|1|3|1|nil|nil|nil|1|nil||1|nil|nil|nil|6|6|7,7,7,7||oRNITHOPTER|tHE oRNITHOPTER IS A~LIGHTLY ARMOURED~AIRCRAFT THAT FIRES~ROCKETS.hIGHLY~MANOUVERABLE + FASTEST~AIRCRAFT ON dUNE.||
-35|38|38|24|192|1|1|1|1|11|12|17||||0|5|2|2|7|||900|0|0|600|0.13|0|||0||54|nil|||0|0|0|0|0|1|1||0|nil|1|nil|15|1|nil|nil|nil|1|nil||1|nil|1|nil|8|7|4,4,4,4||mcv|tHE mcv (mOBILE~cONSTRUCTION vEHICLE)~SCOUT VEHICLE IS USED~TO FIND AND DEPLOY NEW~BASE LOCATIONS.||
-36|57|57|26|198|1|1|1|1|11|12|||||12|9|2|2|18|1||600|0|240|440|0.2|9|3|0|27|52|54|nil|||0|0|0|0|0|1|1||0|nil|1|1|11|1|1|nil|nil|1|nil||1|nil|1|nil|7|6|7,7,7,7||sONIC tANK|dEVELOPED BY THE~aTREIDES,THIS ENHANCED~TANK FIRES POWERFUL~BLAST WAVES OF SONIC~ENERGY.||
-37|56|56|28|200|1|1|1|1|11|12|||8|12|||2|2|18|3||800|0|320|1600|0.07|8|2|1|33|61|54|nil|||0|0|0|0|0|1|1||0|nil|1|1|18|1|1|nil|nil|1|nil||1|nil|1|nil|8|7|8,8,8,8||dEVASTATOR|tHE dEVESTATOR IS A~NUCLEAR-POWERED TANK,~WHICH FIRES DUAL PLASMA~CHARGES. mOST POWERFUL~TANK ON dUNE, BUT~POTENTIALLY UNSTABLE~IN COMBAT.||
-38|72|72|30||1|1|1|8|11|||0|||||2|2||3||0|0|1600|40|0.67|0|20|0|800|59|54|nil|||0|0|0|0|0|1|1||0|nil|nil|nil|0|1|nil|nil|nil|1|nil||1|nil|nil|nil|6|6|8,8,8,8||dEATH hAND|tHE dEATH hAND IS A~SPECIAL hARKONNEN~pALACE WEAPON. aN~INACCURATE, BUT VERY~DESTRUCTIVE BALLISTIC~MISSILE.||
-38.5|72|72|30||1|1|1|8|11|||0|||||2|2||4||0|0|1600|40|0.67|0|20|0|800|59|54|nil|||0|0|0|0|0|1|1||0|nil|nil|nil|0|1|nil|nil|nil|1|nil||1|nil|nil|nil|6|6|8,8,8,8||dEATH hAND|tHE dEATH hAND IS A~SPECIAL hARKONNEN~pALACE WEAPON. aN~INACCURATE, BUT VERY~DESTRUCTIVE BALLISTIC~MISSILE.||
-39|51|205|4|204|1|1|1|1|11|11|||||11|1|2|2|1|2||150|0|40|320|0.4|4|1|0|17|60|54|nil|||0|0|0|0|0|1|1||0|nil|1|1|6|1|nil|nil|nil|1|nil||1|nil|1|nil|6|6|2,2,2,2||rAIDER tRIKE|tHE oRDOS rAIDER IS~SIMILAR TO THE STANDARD~tRIKE, BUT WITH LESS~ARMOUR IN FAVOUR OF~SPEED.||
-40|54|202|12|202|1|1|1|1|11|12|||||11|3|2|2|18|2||750|0|0|480|0.2|9|1.9|1.9|60|59|54|nil|||0|0|0|0|0|1|1||0|nil|1|1|17.5|1|1|nil|nil|1|nil||1|nil|1|nil|7|6|7,7,7,7||dEVIATOR|tHE oRDOS dEVIATOR IS A~STANDARD mISSILE tANK,~WHICH FIRES UNIQUE~NERVE GAS MISSILES THAT~MAY TEMPORARILY CHANGE~ENEMY LOYALTY.||
-41|88|88|||9|1|1|1|11||||||||2|2||||0|0|300|4000|0.35|0|||7|50||nil|||0|0|0|0|0|1|1||0|nil|nil|nil|0|1|nil|nil|nil|nil|nil|||nil|nil|nil|||3,3,3,3||sANDWORM|tHE sAND wORMS ARE~INDIGEONOUS TO dUNE.~aTTRACTED BY VIBRATIONS~ALMOST IMPOSSIBLE TO~DESTROY, WILL CONSUME~ANYTHING THAT MOVES.||
-42|32|32|||1|1|1|1|11|||2|||||1|1|||||||4|0.1||||||53|1|||0|0|0|0|0|1|1||0|nil|nil|nil|0|nil|nil|nil|nil|nil|nil|||nil|nil|nil|||1,1,1,1||sPICE bLOOM|||
+42|51|51|4|204|1|1|1|1|11|14|5||||15|4|2|2|1|1||150|0|32|400|0.3|4|1|0|17|60|54|nil|||0|0|0|0|0|1|1||0|nil|1|1|5|1|nil|nil|nil|1|nil||1|nil|1|nil|6|6|2,2,2,2||tRIKE|tHE tRIKE IS A LIGHTLY-~ARMOURED, 3-WHEELED~VEHICLE, WITH LIMITED~FIRING RANGE, BUT RAPID~SPEED.||
+41|52|52|6|206|1|1|1|1|11|14|5||||||2|2|1|||200|0|56|520|0.27|4|1|0|17|60|54|nil|||0|0|0|0|0|1|1||0|nil|1|1|6|1|nil|nil|nil|1|nil||1|nil|1|nil|6|6|3,3,3,3||qUAD|tHE qUAD IS A LIGHTLY-~ARMOURED, 4-WHEELED~VEHICLE. sLOWER THAN~THE tRIKE, BUT STRONGER~ARMOUR AND FIREPOWER.||
+36|53|53|8|196|1|1|1|1|11|7|5||||||2|2|17|||300|0|100|800|0.17|5|1|0|27|58|54|nil|||0|0|0|0|0|1|1||0|nil|1|1|10|1|1|nil|nil|1|nil||1|nil|1|nil|7|6|4,4,4,4||cOMBAT tANK|tHE cOMBAT tANK IS A~MEDIUM ARMOURED TANK,~FIRES HIGH-EXPLOSIVE~ROUNDS.||
+35|55|55|10|198|1|1|1|1|11|7|5||||15|4|2|2|17|||600|0|240|1200|0.13|6|1|0|30|58|54|nil|||0|0|0|0|0|1|1||0|nil|1|1|15|1|1|nil|nil|1|nil||1|nil|1|nil|8|7|6,6,6,6||sIEGE tANK|tHE sIEGE tANK IS A~HEAVY ARMOURED TANK,~WHICH HAS DUAL CANNONS,~BUT IS SLOW.||
+34|54|54|12|202|1|1|1|1|11|7|5||||15|4|2|2|17|-2||450|0|600|400|0.2|10|2|1.9|40|59|54|nil|||0|0|0|0|0|1|1||0|nil|1|1|15|1|1|nil|nil|1|nil||1|nil|1|nil|7|6|5,5,5,5||lAUNCHER|tHE mISSILE tANK IS A~MEDIUM ARMOURED TANK,~WHICH FIRES MISSILES.~lONG-RANGE, BUT~INACCURATE.||
+38|50|50|14|192|1|1|1|1|11|7|5||||12|12|2|2|17|||300|0|0|600|0.13|0|||0||54|nil|||0|0|0|0|0|1|1||0|0|1|1|15|1|1|nil|nil|1|nil||nil|nil|1|nil|8|7|2,2,2,2||hARVESTER|tHE hARVESTER SEPARATES~SPICE FROM THE SAND &~RETURNS RAW SPICE TO~THE rEFINERY FOR~PROCESSING.||
+39|73|73|16|238|1|1|1|8|11|6|5||||11|3|2|2|17|||800|0|0|400|1.33|0|||0||54|nil|||0|0|0|0|0|1|1||0|nil|nil|nil|1.6|1|nil|nil|nil|1|nil||nil|nil|1|nil|8|7|5,5,5,5||cARRYALL|tHE cARRYALL IS A~LIGHTLY ARMOURED~AIRCRAFT WITH NO~WEAPONS. mAINLY USED~TO LIFT+TRANSPORT~hARVESTERS.||
+33|20|40|20|160|1|1|1|4|11|6|||||||2|2|4|-3||600|0|148|4|0.80|4|2|1.9|33|59|54|nil|22|8|0|0|0|0|0|1|1||0|nil|nil|1|3|1|nil|nil|nil|1|nil||1|nil|nil|nil|6|6|7,7,7,7||oRNITHOPTER|tHE oRNITHOPTER IS A~LIGHTLY ARMOURED~AIRCRAFT THAT FIRES~ROCKETS.hIGHLY~MANOUVERABLE + FASTEST~AIRCRAFT ON dUNE.||
+37|38|38|24|192|1|1|1|1|11|7|5||||0|5|2|2|17|||900|0|0|600|0.13|0|||0||54|nil|||0|0|0|0|0|1|1||0|nil|1|nil|15|1|nil|nil|nil|1|nil||1|nil|1|nil|8|7|4,4,4,4||mcv|tHE mcv (mOBILE~cONSTRUCTION vEHICLE)~SCOUT VEHICLE IS USED~TO FIND AND DEPLOY NEW~BASE LOCATIONS.||
+30|57|57|26|198|1|1|1|1|11|7|||||12|9|2|2|4|1||600|0|240|440|0.2|9|3|0|27|52|54|nil|||0|0|0|0|0|1|1||0|nil|1|1|11|1|1|nil|nil|1|nil||1|nil|1|nil|7|6|7,7,7,7||sONIC tANK|dEVELOPED BY THE~aTREIDES,THIS ENHANCED~TANK FIRES POWERFUL~BLAST WAVES OF SONIC~ENERGY.||
+32|56|56|28|200|1|1|1|1|11|7|||8|12|||2|2|4|3||800|0|320|1600|0.07|8|2|1|33|61|54|nil|||0|0|0|0|0|1|1||0|nil|1|1|18|1|1|nil|nil|1|nil||1|nil|1|nil|8|7|8,8,8,8||dEVASTATOR|tHE dEVESTATOR IS A~NUCLEAR-POWERED TANK,~WHICH FIRES DUAL PLASMA~CHARGES. mOST POWERFUL~TANK ON dUNE, BUT~POTENTIALLY UNSTABLE~IN COMBAT.||
+50|72|72|30||1|1|1|8|11|||0|||||2|2||3||0|0|1600|40|0.67|0|20|0|800|59|54|nil|||0|0|0|0|0|1|1||0|nil|nil|nil|0|1|nil|nil|nil|1|nil||1|nil|nil|nil|6|6|8,8,8,8||dEATH hAND|tHE dEATH hAND IS A~SPECIAL hARKONNEN~pALACE WEAPON. aN~INACCURATE, BUT VERY~DESTRUCTIVE BALLISTIC~MISSILE.||
+50.5|72|72|30||1|1|1|8|11|||0|||||2|2||4||0|0|1600|40|0.67|0|20|0|800|59|54|nil|||0|0|0|0|0|1|1||0|nil|nil|nil|0|1|nil|nil|nil|1|nil||1|nil|nil|nil|6|6|8,8,8,8||dEATH hAND|tHE dEATH hAND IS A~SPECIAL hARKONNEN~pALACE WEAPON. aN~INACCURATE, BUT VERY~DESTRUCTIVE BALLISTIC~MISSILE.||
+40|51|205|4|204|1|1|1|1|11|14|||||11|1|2|2|1|2||150|0|40|320|0.4|4|1|0|17|60|54|nil|||0|0|0|0|0|1|1||0|nil|1|1|6|1|nil|nil|nil|1|nil||1|nil|1|nil|6|6|2,2,2,2||rAIDER tRIKE|tHE oRDOS rAIDER IS~SIMILAR TO THE STANDARD~tRIKE, BUT WITH LESS~ARMOUR IN FAVOUR OF~SPEED.||
+31|54|202|12|202|1|1|1|1|11|7|||||11|3|2|2|4|2||750|0|0|480|0.2|9|1.9|1.9|60|59|54|nil|||0|0|0|0|0|1|1||0|nil|1|1|17.5|1|1|nil|nil|1|nil||1|nil|1|nil|7|6|7,7,7,7||dEVIATOR|tHE oRDOS dEVIATOR IS A~STANDARD mISSILE tANK,~WHICH FIRES UNIQUE~NERVE GAS MISSILES THAT~MAY TEMPORARILY CHANGE~ENEMY LOYALTY.||
+61|88|88|||9|1|1|1|11||||||||2|2||||0|0|300|4000|0.35|0|||7|50||nil|||0|0|0|0|0|1|1||0|nil|nil|nil|0|1|nil|nil|nil|nil|nil|||nil|nil|nil|||3,3,3,3||sANDWORM|tHE sAND wORMS ARE~INDIGEONOUS TO dUNE.~aTTRACTED BY VIBRATIONS~ALMOST IMPOSSIBLE TO~DESTROY, WILL CONSUME~ANYTHING THAT MOVES.||
+62|32|32|||1|1|1|1|11|||2|||||1|1|||||||4|0.1||||||53|1|||0|0|0|0|0|1|1||0|nil|nil|nil|0|nil|nil|nil|nil|nil|nil|||nil|nil|nil|||1,1,1,1||sPICE bLOOM|||
 80|3|3||3|3|1|1|0|11||||||||1|1|||||||0|0|||||||nil|||0|0|0|0|0|1|1||0|nil|nil|nil||nil|||nil|nil|nil|||nil|nil|nil|||1,1,1,1||rEPAIR||_ac|action_click
 81|1|1||1|3|1|1|0|11||||||||1|1|||||||0|0|||||||nil|||0|0|0|0|0|1|1||0|nil|nil|nil||nil|||nil|nil|nil|||nil|nil|nil|||1,1,1,1||lAUNCH||_ac|action_click]]
 function _init()
@@ -179,7 +179,7 @@ end
 end
 _az,_a0,_a1,_o=0,0,{0,0},{{},{}}
 for building in all(_i) do
-if building.id!=4 then
+if building.id!=13 then
 if building._7==1 or hq and _gk(building) then
 _ax[(building.x\16).."," ..building.y\16]=building.col1
 end
@@ -198,7 +198,7 @@ _ax[(_cv.x\16).."," .._cv.y\16]=_cv.col1
 end
 if(_cv._bq>0) _gs(_o[_cv._bq], _cv.id, _cv)
 end
-hq,_l=_o[1][7] and _az>0,_ax
+hq,_l=_o[1][16] and _az>0,_ax
 local _a2,_a3=0
 for yy=0,30 do
 for xx=0,31 do
@@ -288,7 +288,7 @@ end
 end
 end
 if(not _bt) add(_i,_bh)
-if _bh.id==6 and not _bh._b2 then
+if _bh.id==17 and not _bh._b2 then
 _d0(_bh)
 end
 else
@@ -308,7 +308,7 @@ else
 _fe(_br,_bs,_bh._7==1 and 2 or 133)
 end
 end
-if(_bf and _bf.id==6) _bh._cb=_bf
+if(_bf and _bf.id==17) _bh._cb=_bf
 add(_j,_bh)
 _ep(_bh, nil, true)
 end
@@ -338,7 +338,7 @@ if _ch then
 ovalfill(x+3, y+3, x+self.shad_w, y+self.shad_h, 1)
 end
 if(self.trans_col and _b1<=3) palt(self.trans_col,true)
-if(self._e5 and self.id!=18) pal(12,self.col1) pal(14,self._ab)
+if(self._e5 and self.id!=4) pal(12,self.col1) pal(14,self._ab)
 if _b1>3 then
 local _ci=_b1==5 and self or self._b2
 ?"\#0\-j\|g\^x7  \n\-j  \n\-j  \n\-j\^y2  ",x,y
@@ -353,7 +353,6 @@ end
 if(flr(self._cs)%2==0) pal(split"7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7")
 if(_b4) _b4(self)
 if _ch then
-if not self.death_time then
 local cs,ss,_cj,_ck,cx,cy,dx,dy=cos(_ch),sin(_ch),126.7,self.my-0.3,127.5,self.my+.5,x+3.5,y-self.z+3.5
 _ck -=cy
 _cj -=cx
@@ -361,7 +360,6 @@ local sx,sy,_cl=cs*_cj+cx,-ss*_cj+cy,-_cj*8
 for py=dy-_cl, dy+_cl do
 tline(dx-_cl,py,dx+_cl,py,sx+ss*_ck,sy+cs*_ck,cs/8,-ss/8)
 _ck+=.125
-end
 end
 else
 if _b1>2 then
@@ -372,7 +370,7 @@ fillp"0XAFAF" rectfill(x+15,y+15,x+15-(self._cd*2),y+15-(self._ce*2),245)
 fillp()
 end
 if self._ag and not _8 then
-?"\^jsc\f0\^:⁶:00666666666666\f8\vt\^:⁶:00666666666666" 
+?"\^jsc\f0\^:⁶:00666666666666\f8\vt\^:⁶:00666666666666"
 end
 end
 else
@@ -400,7 +398,7 @@ self._cs=max(self._cs-.4,1)
 if self._cr>0 and self._bq>0 and id!=42 then
 _go(true)
 if(stat"54" >5) music"0"
-if(self.is_repairable and self.moves and _cp<99 and self._ct<=6) _gh(self,_gv(self._bq,14) or self._cb)
+if(self.is_repairable and self.moves and _cp<99 and self._ct<=6) _gh(self,_gv(self._bq,9) or self._cb)
 if(self._bu<=49 and _cp<100) self._cd,self._ce=0.5,0.5
 if(self.can_fire and self._ct==0) _e0(self, _cq)
 end
@@ -412,7 +410,7 @@ if _b1==2 then
 for xx=0,self._cd-1 do
 for yy=0,self._ce-1 do
 _fe(self.x/8+xx, self.y/8+yy, 21)
-if(self.soldiers_on_destroy and #_j<75) _be(_aj[rnd{20,22}],self.x+xx*8,self.y+yy*8,self._7,self)
+if(self.soldiers_on_destroy and #_j<75) _be(_aj[rnd{21,23}],self.x+xx*8,self.y+yy*8,self._7,self)
 end
 end
 del(_i,self)
@@ -422,7 +420,7 @@ local gx,gy=_c4(self)
 if(_fd(gx,gy)==0) _fe(gx,gy,33)
 if(id<=16) _fe(gx,gy,21)
 if(self._cb) self._cb._ah=false
-if(self._et and self._et.id==14) self._et._cf={0}
+if(self._et and self._et.id==9) self._et._cf={0}
 _dw(self)
 if id==42 then
 _e9(self,gx,gy,function (_cv,x,y)
@@ -474,7 +472,7 @@ end
 if self._af>0
 and not self._ag
 and not self._cz then
-if self._af==1 and self.spent>self._ek then
+if self._af==1 and self.spent>=self._ek then
 self._cz=true
 if(self._b2._7==1) _gm"56" _f9"cONSTRUCTION cOMPLETE"
 if _b0.is_unit
@@ -500,7 +498,7 @@ end
 end
 self._c1=max(self._c1-.1)
 if self._7==1 then
-if(id==5) self._by="wINDTRAP (\|f\^:0804061f0c040200\|h\-f" .._az..")"
+if(id==18) self._by="wINDTRAP (\|f\^:0804061f0c040200\|h\-f" .._az..")"
 if(self.storage>0) self._by=_b0._by.." (" ..flr(_dm/_a0*100).."%)" end
 end
 }
@@ -670,7 +668,7 @@ else
 _dv(cx,cy)
 local _dt=_bp and _bp._ai
 if _dt
-and _dt._cp>=100
+and _dt._cz
 and _eb then
 _be(_dt._b7,cx*8,cy*8,1)
 _gc(_dt)
@@ -702,13 +700,13 @@ return false
 end
 function _dw(_cv)
 del(_j,_cv)
-if _cv.id==32 and #_o[_cv._bq][32]<=1 then
-_d2=_gv(_cv._bq,6)
+if _cv.id==38 and #_o[_cv._bq][38]<=1 then
+_d2=_gv(_cv._bq,17)
 if(_d2) _d0(_d2)
 end
 end
 function _d0(_d1)
-local _d3=_be(_aj[32],_d1.x,_d1.y,_d1._7,_d1)
+local _d3=_be(_aj[38],_d1.x,_d1.y,_d1._7,_d1)
 _d3._ct=9
 end
 function _draw()
@@ -771,7 +769,8 @@ local _dt=_bp and _bp._ai
 if _dt
 and (_dt.type==5
 and not _dt.moves)
-and _dt._cp>=100 then
+and _dt._cz
+then
 local _d7,_d8=(_di+_at)\8, (_dj+_au)\8
 local _d9,_ea,w,h=_d7*8-_at,_d8*8-_au,_dt._cd,_dt._ce
 _eb,_ec,_bi=false,false,false
@@ -831,10 +830,10 @@ _ef:_ap()
 end
 if(_bp.id==19
 and _bp._c1<=0)
-or _bp.id==35
+or _bp.id==37
 then
 _eg=_bz(_aj[81], 107,29, 3, {}, nil, _ac, function()
-if _dy.id!=35 then
+if _dy.id!=37 then
 _f9"pICK tARGET" _du=true
 else
 local mx,my=_c4(_dy)
@@ -856,14 +855,14 @@ rectfill(unpack(split"0,0,127,127,0"))
 fillp()
 rectfill(3,18,124,92,_d)
 rect(3,18,124,92,_c)
-if _bp.build_objs then
 _bp._eh={}
 rectfill(unpack(split"6,21,27,89,0"))
 local _ei=1
 for i=1,#_bp.build_objs do
 local _ej=_bp.build_objs[i]
+_ej.x=-20
 if(_o[_bp._bq][_ej.req_id])
-and split(_ej.req_level)[dget"6"]<=_a
+and split(_ej.req_level)[dget"6" ]<=_a
 and _bb(_ej,dget"6")
 then
 _bp._eh[_ei]=_ej
@@ -874,12 +873,11 @@ end
 _5=_5 or _bp._eh[1]
 if _5==_ej then
 _y=_ei
-if(_bp.id==17) srand(t_\3600) _5._ek=_5._b7._ek \ (rnd"0.533" +0.8)
+if(_bp.id==5) srand(t_\3600) _5._ek=_5._b7._ek \ (rnd"0.533" +0.8)
 ?"\f7\^x3\-f\|c\*6-\n\-d\|d|    \^x4 |\^x3\n\-d\|f|    \^x4 |\^x3\n\-d\|f|    \^x4 |\^x3\n\-d\|d|    \^x4 |\^x3\n\^x3\-f\|d\*6-",9,_ej.y
 ?"\^j87\-f\|a\^h\f7" .._5._by.."\n\|h\f9\^:041f051f141f0400\-f\|h" .._5._ek.."\^je8\|d\fd\^:1f1b111b1f0e0400\|h" .._5._b8..(_5.is_building and"\^jl8\|d\fa\^:0804061f0c040200\|h" .._5.power or"\^jl8\|d\f8\^:081c226b221c0800\|h\-h" .._5._e3).."\n\|g\f6" .._5.description
 end
 _ei+=1
-end
 end
 end
 foreach(_4, function(c) c:_ap() end)
@@ -911,20 +909,20 @@ while true do
 if self._cg then
 _fh(self,mid(flr(self._b9+rnd"32")-16,64),mid(flr(self._ca+rnd"32")-16,64))
 end
-if self.id==34 then
+if self.id==33 then
 _gj(self)
 elseif _gx"250" and self.can_fire and self._ct!=8 then
 local gx,gy=_c4(self)
 _e9(self,gx,gy,function (_cv,x,y)
 local _cx=_f6(x,y)
-if _cx and _cx._bq!=_cv._bq and _w[x][y]==16 and (not _cx._cg or _cv.id==16) then
+if _cx and _cx._bq!=_cv._bq and _w[x][y]==16 and (not _cx._cg or _cv.id==8) then
 _e0(_cv,_cx)
 return true
 end
 end,max(4,self.range))
 end
 local _cb=self._et or self._cb
-if self.id==32 then
+if self.id==38 then
 self._by="hARVESTER (" ..(self.capacity\15).."%)"
 if self._ct==0 or self._ct==9 then
 if self.capacity<1500
@@ -944,7 +942,7 @@ end,20)
 end
 if sx and sy then
 _cv._eu=_fh(_cv,sx,sy,nil,not _cv._eu)
-if not _cv._eu and not _gv(_cv._bq,33) then
+if not _cv._eu and not _gv(_cv._bq,39) then
 _c2(self,_ey(self))
 end
 if(_eo(_c4(_cv))) _cv._ct=6
@@ -952,7 +950,7 @@ end
 elseif self.capacity >=1500
 and self._ct<7 then
 self.sx,self.sy=_c4(self)
-_gh(self,_cb or _gv(_cv._bq,6))
+_gh(self,_cb or _gv(_cv._bq,17))
 end
 elseif self._ct==6 then
 self._ev=false
@@ -974,13 +972,13 @@ end
 if(self.capacity%300==0) self._ev=true self._ct=0
 end
 end
-if self.id>26 then
+if self.id>=30 then
 if self._ct==9 then
 if _cb._cp>0 and not _cb._ex and self._cp>0 then
 _cb._ah,self._ct,self.r=false,8,.25
 _c2(self,_cb.x+16,_cb.y+4)
 _c5(self)
-if self.capacity and _cb.id==6 then
+if self.capacity and _cb.id==17 then
 _cb._ex=self
 while self.capacity>0 do
 self.capacity-=1
@@ -1054,7 +1052,7 @@ _e6(_cx, _cv)
 if(_cx._ex) _e6(_cx._ex, _cv)
 _cv._cp=0
 elseif _cv._c1<=0 and not _cv._cy and _cx._cp>0
-and (_e4>=20 or id!=31) then
+and (_e4>=20 or id!=34) then
 _cv._bv(_cv)
 _cv._c1=_cv.fire_rate
 end
@@ -1062,14 +1060,14 @@ elseif _cv.is_building then
 _ep(_cv)
 end
 yield()
-if(id==40 or id==34 or _cx._e5==_cv._e5 or _cx._es) break
+if(id==31 or id==33 or _cx._e5==_cv._e5 or _cx._es) break
 end
 ::exit_attack::
 if(not _e1) _fh(_cv,_cv.gx\8,_cv.gy\8)
 _ep(_cv, nil, true)
 end)
 else
-_e0(_be(_aj[({24,25,38,38.5})[_cv._e5]], _cv.x,_cv.y, _cv._7, _cv), _cx)
+_e0(_be(_aj[({24,25,50,50.5})[_cv._e5]], _cv.x,_cv.y, _cv._7, _cv), _cx)
 _cv._c1=583
 end
 end
@@ -1096,11 +1094,14 @@ end
 function _fg(_cv,x,y)
 local _en=_f6(x,y)
 return not fget(_fd(x,y),0)
-and (not _en or _en==_cv or _en._cg or (_en.on_foot and _cv.tracked and _en._bq!=_cv._bq))
+and (not _en
+or _en==_cv
+or _en._cg
+or (_en.on_foot and _cv and _cv.tracked and _en._bq!=_cv._bq))
 end
 function _fh(_cv,x,y,_fi,_fj,_eq)
 if _fj then
-local _fk=_gv(_cv._bq,33)
+local _fk=_gv(_cv._bq,39)
 if _fk and not _fk._es and _fk._e5==_cv._e5 then
 _fk._es,_cv._es,_cv._ct, _fk._cu=_cv,_fk,2, cocreate(function(unit_c)
 _fh(unit_c,_cv.x\8,_cv.y\8)
@@ -1205,7 +1206,7 @@ for i=0, _f1/_f0-1 do
 _k[nx.."," ..ny]=_cv
 _cv.x+=_f2
 _cv.y+=_f3
-if _cv.id==33 then
+if _cv.id==39 then
 if _cv._es then
 local d=_gw(_cv.x,_cv.y,_cv.tx,_cv.ty)
 if(d<32) _cv.z=d/4
@@ -1245,7 +1246,7 @@ function _f9(_ga)
 _gb,_v=_ga,500
 end
 function _gc(_b6)
-_b6._cp,_b6._af,_b6.spent,_b6._cz=0,0,0,false
+_b6._cp,_b6._af,_b6.spent,_b6._cz=0,0,0
 if(_b6._b2) _b6._b2._ah=false
 end
 function _gd(_b6)
@@ -1262,8 +1263,8 @@ else
 if(_b6.type<=2 and _w[cx][cy]==0 or _b6._ct==8) return
 if _bp
 and _dy
-and (_b6.id==6 and _dy.id==32
-or _b6.id==14 and _dy.id>26)
+and (_b6.id==17 and _dy.id==38
+or _b6.id==9 and _dy.id>=30)
 and _b6._7==1 and _dy._7==1
 then
 _gh(_dy,_b6)
@@ -1278,7 +1279,7 @@ end
 function _gh(_cv,_d1)
 local _d1,_gi,_fj=_d1 or _gv(_cv._bq,1) or _cv
 _cv._ct,_d1._ah,_cv._et=7,true,_d1
-if(_cv.id!=32 or _d1.id==6) _cv._cb=_d1
+if(_cv.id!=38 or _d1.id==17) _cv._cb=_d1
 _cv._cu=cocreate(function(_cv)
 if(_d1.is_dockable) _gi,_fj=9,true
 _fh(_cv, (_d1.x+16)/8, _d1.y/8, 0, _fj, _gi or 0)
@@ -1462,13 +1463,13 @@ cccccccccbbcbcccccccccccccccccccccccccccccccccccdddddddddddddddddddddddddddddddd
 ccccccccbbcc3cccccccccccccccccccccccccccccccccccddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddcccccccccccccccc
 cccccccbbcc33cccccccccccccccccccccccccccccccccccddddddddddddddddddddddddddddddddddddddd70dddddddddddddddddddddddcccccccccccccccc
 ccccccbbccccccccccccccf7ccccccccccccccccccccccccddddddddddddddddddddddddddddddddddddddbb70ddddddddddddddddddddddcccccccccccccccc
-cccc7755555555ccccccc5f01cccccccccccccccccccccccddddddddddddddddddddddddddddddddddddbbb53dddddddddddddddddddddddcccccc006ccccccc
-ccc76753355335cccccc055ffccccccccccccc4ff75550ccdddddddd7773330ddddd28888dc660dddd3bb53dddddddddddddd7bbd355550dccc7f000005550cc
-cc76667555dd555ccccc0f7557ccccccccccc4ffff7fccccddddd4bbbb75550dddd2888888dcddddddd53dddddbb5ddddddd33bbbb3ddddd4fffffffff4ccccc
-cd66d6755dddd55ccccc0f7fff7ccccccc54454444444f7cdd45444444444ddddd5225222222287ddd35555dd3bbbbdddd50005333533ddd45005444455005cc
-c5dd66655555555ccccc0ff000550cccc555fffffffff55cd54bbbbbbbbbbb5dd55588888888855dd53bbbbbbbbbbb5dd5000005bbbb505d5016054ff501605c
-9166660001110009cccc00df00cccccc950600000000065995040000000004599506000000000659950360000000635995000005999300095061052995061059
-f90500000444000999999900ff999999995555255555559999555555555555999955555555555599995555555555559999500052222250599500522222500599
+cccc7755555555ccbcccc5f01ccccccbccccccccccccccccddddddddddddddddddddddddddddddddddddbbb53dddddddddddddddddddddddcccccc006ccccccc
+ccc76753355335ccbccc055ffcccccbbcccccc4ff75550ccdddddddd7773330ddddd28888dc660dddd3bb53dddddddddddddd7bbd355550dccc7f000005550cc
+cc76667555dd555cbbcc0f7557ccccbbccccc4ffff7fccccddddd4bbbb75550dddd2888888dcddddddd53dddddbb5ddddddd33bbbb3ddddd4fffffffff4ccccc
+cd66d6755dddd55cbbbc0f7fff7cccbbcc54454444444f7cdd45444444444ddddd5225222222287ddd35555dd3bbbbdddd50005333533ddd45005444455005cc
+c5dd66655555555cbccc0ff000550ccbc555fffffffff55cd54bbbbbbbbbbb5dd55588888888855dd53bbbbbbbbbbb5dd5000005bbbb505d5016054ff501605c
+9166660001110009bccc00df00cccccb950600000000065995040000000004599506000000000659950360000000635995000005999300095061052995061059
+f90500000444000939999900ff999993995555255555559999555555555555999955555555555599995555555555559999500052222250599500522222500599
 999999999999999f44999df9dff9f999f99999999999999f9999999999999999f99999999999999f9999999999999999f99999999999999f99999999999999ff
 9f9ff9999f9999994444df449df999f9999999f999999999f99f99f99999f99f999999f999999999f99f99f99999f99f999999999f99999999999999f9999999
 99999999999999f999945559455599999ff9999999fff999999999999ff999999ff9999999fff999999999999ff99999999fff9999999ff999fff9999999ff99
@@ -1623,8 +1624,8 @@ __gff__
 040018008c8c8c8c8c8c8c0e2828282828282828282a180b4b4b4b4b4b4b4b4b060e0e000800000000000000000100280000000000000000000001010101010101010001000102010000010101020201011101000001020101010101010202010101010101010101010101010101010101010101010101010101010101010101
 0101010101090000000001010000000001010101010000000000010100000000000000000000000001010000000000000000000000000000010100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 __map__
-05050505064400006800680042000d0d140405050506131014040505061344000068004200000000008565000000000000000011120000004940000d0d0d2d2d0000000405050505090909090500000000000000000a00000000000000000000000000000000000000110d0d14070600000000000000000a0505050508002d47
-050505050a0000000000000000000405050505080505050505050505050600000000000000000000002400000012000000000042004200420000001404052d2d0000000505050509090909050500000000000000000000000000000000000000000000000000000000130d140000000000000000000000000000000000002d00
+05050505064400006800680042000d0d140405050506131014040505061344000068004200000000008565000000000000000011120000004940000d0d0d2d2d0000000405050505090909090500000000000000000a00000000000038000000003400000000000000110d0d14070600000000000000000a0505050508002d47
+050505050a0000000000000000000405050505080505050505050505050600000000000000000000002400000012000000000042004200420000001404052d2d0000000505050509090909050500000000000000000000000000000000003300000000000000000000130d140000000000000000000000000000000000002d00
 05050506858542004200650000000a050508110f120a050909050505050557858585858557000000002462000024000000001100000000000085850405052d2d12000405090505050909090505050600000000000a00000000000000000000000000000000000000000000000000000000000000000000000000000000002d57
 0505050613850000000000000085000a081124242412050509090505050585242424242485120000002400000024000000005785858585858585040505052d2d140005090905050909050509090905000000000000000a0000110f0d0f12000000110f0d0f1200000000000000000000000000000b0b0b000000000000002d00
 05050505068585858585858585851249113a00002424120a05050505050585243a00002485240000008585858585000000242410101010101404050505052d2d00000a05050a0505050505090905050600000000000000110f0d0d0d0d0d0000110d0d0d0d0d0f1200000000000000000000000b0b0b0b0b0000000000002d33
@@ -1634,21 +1635,21 @@ __map__
 0000000a05080024ca050905051385000085858585850000850d120000000057858585570d101014000005050885242424000505050505050811440000242d2d0d0d0d1d0d0d0d140505050509090909050000000000130d14000000000000000c0d0d0d0d10100d0d0d0d1014000000050505090505050b0b0b0b0000002d35
 00000000000000240e050509050a858585850d100d858585850d0d120000040505060c0d0e00000000000a08118585855700050505ca05081136000000242d2d0d1d0d0d0d0d14040505050505050909050000000000000000000011120000000c0d0d0d0e0000000000000000000000050505090905080b0b0b0b0000002d00
 12000000000057570e05050508000c570d0e000000130d0d57240d0e0004050905050c0d0e000000000000110d0d0d0d0e00040505050885850d858585242d2d0d0d0d1010140405050509050509090505000011120000040506110d0d1200000c0d0d0d0e00000000000000000000000a05090905080b0b0b0b000000002d37
-0e000000000057571405050500000c0d0d0e0000000013101024380d120a050909050c0d0e0000000000110d0d370d0d0d12000a37110f856000650000242d2d0d1014000004050909050505050509090506110d0e00040505050c37360d0000130d0d0d0e0000000000000000000000000a050508000b0b0b00000000002d00
-0d120000000004050505050500000c0d370e000000000000002424ca0d12050905080c0d0d12000000110d0d0d0d0d5724242412000a13850000000000242d2d1400000000000a05050800050505050508110d0d0e0005090905130d0d140000000c3934391200000000000000000000000000000000000b0b00000000002d36
-0d0d1200000005090909050500000c0d0d0d12000000000000001324240e0a0508110d0d0d0d0f0f0f0d0d100d0d0d243a000024000000008585858585852d2d00000000000000000000000a05050508110d0d0d0e000509090505060000370000130d0d0d0d12000000000000000000000000000000000b0b00000000002d00
+0e000000000057571405050500000c0d0d0e0000000013101024380d120a050909050c0d0e0000000000110d0d370d0d0d12000a37110f856000650000242d2d0d1014000004050909050505050509090506110d0e00040505050c0d0d0d0000130d0d0d0e0000000000000000000000000a050508000b0b0b00000000002d00
+0d120000000004050505050500000c0d370e000000000000002424ca0d12050905080c0d0d12000000110d0d0d0d0d5724242412000a13850000000000242d2d1400000000000a05050800050505050508110d0d0e0005090905130d0d140000000c0d0d0d1200000000000000000000000000000000000b0b00000000002d36
+0d0d1200000005090909050500000c0d0d0d12000000000000001324240e0a0508110d0d0d0d0f0f0f0d0d100d0d0d243a000024000000008585858585852d2d00000000000000000000000a05050508110d0d0d0e000509090505060000000000130d0d0d0d12000000000000000000000000000000000b0b00000000002d00
 0d0d0d1200000a05090505050000130d0d0d0d12000000000000000c24240f1200000000130d0d0d0d14000000130d2400000024123700000013856200002d2d0000000000000000000000000000110f0d0d0d0d0e0005050909050500000000000000130d0d0d0f12000000000000000000000000000b0b0b0b0b0000002d32
-0d0d0d0d12000005050505080000000c0d0d0d0e000000000000000c0d24240d120000000000130d1400000000001324000000240e0000000000850000002d2d000000000000000000000000002f100d0d0d0d0d0e00000a05050508000000000000000000130d101407000000000000000000000000000b0b0b000004052d00
+0d0d0d0d12000005050505080000000c0d0d0d0e000000000000000c0d24240d120028000000130d1400000000001324000000240e0000000000850000002d2d000000000000000000000000002f100d0d0d0d0d0e00000a05050508000000000000000000130d101407000000000000000000000000000b0b0b000004052d00
 0d0d0d0d0e00000a080000000000000c0d0d0d1400000020000000130d0d24240e00000000000000000000000000005724242424240000000000242424242d2d000000000000000000000000000000130d0d0d0d0d1200000a0508000000000000000000040505050505050506000000000000000000000b0b0b040505052d49
-0d0d10100e000000000000000000000c0d0d1400000000000000000000130d240d120000000000000000200028282800000024400049000037000c246e242d2d00000000000000000000110f0000000000000c0d0d0d120000000000000000575757000005050509090905050500000000000000000000000000050909092d00
-0d14040505062f00000000000000000c0d140000000000000000000000000c240d0e0000000000000000000000000000000024000000000000000c2424242d2d000405050600000000110d0d0000000000000c0d0d0d0d1200000057620f0f600d14000405050909050505050800000000000000002000000000050909092d95
-0e04050905050506000000000000001314000000000000000000000000001357570e000000000000000000000000040506000c242400000000000c8585852d2d0005090505060000000c0d0d1200000000000c0d0d0d0d0d0f0f0f0d0d0d0d0d0e000000000a05050509051112000000000000000000000000000a0505092d00
-0e05090905050505000000000000000000000000000000000000000000000057570e00000000000000000000000a050505002442000000000000131057372d2d0005050905050000000c0d0d0d00000020000c0d0d0d0d0d420d3d0d0dab22420e0000000000000a0505080c0e000000000000000000000000000c0e05092d28
+0d0d10100e000000000000000000000c0d0d1400000000000000000000130d240d120000000000000000200000000000000024400049000037000c246e242d2d00000000000000000000110f0000000000000c0d0d0d120000000000000000110f0e000005050509090905050500000000000000000000000000050909092d00
+0d14040505062f00000000000000000c0d140000000000000000000000000c240d0e0000000000000000000000000000000024000000000000000c2424242d2d000405050600000000110d0d0000000000000c0d0d0d0d1200000011575757570d14000405050909050505050800000000000000002000000000050909092d95
+0e04050905050506000000000000001314000000000000000000000000001357570e000000000000000000000000040506000c242400000000000c8585852d2d0005090505060000000c0d0d1200000000000c0d0d0d0d0d0f0f0f370d0d0d0d0e000000000a05050509051112000000000000000000000000000a0505092d00
+0e05090905050505000000000000000000000000000000000000000000000057570e00000000000000000000000a050505002442000000000000131057372d2d0005050905050000000c0d0d0d00000020000c0d420d420d830d3d0d0dab2242ca0000000000000a0505080c0e000000000000000000000000000c0e05092d28
 0e0a05050505050800000000000000000000000000000000000000000000110d0d1400000000000000000005050505090500570000120000002f0000000d2d2d0005090909050000000c0d0d0d12000000110d0d0d0d0d0d0d0d0d0d0d22220d0e000000000000000000000c0d1200000000000000000000002f000405052d00
-0d0f0f120a000000000000000000000004050600000000000000000000110d0d14000000000000110f0d0f120509050505002457440000240e00000000132d2d0005090909050000000c0d0d0d0d0f0f0f0d0d0d0d0d0d800d0d0d0d0d0d440d0e000000000000000000000c0d0d0f1200000000000000002f00000a05082d29
-0d0d0d0e00000000000000000000040505050500000000000a00110f0f0d0d14000000000000000c0d0d0d0e0509090905001324000000240000000000002d2d0a05050505080000000c0d0d0d0d0d0d0d0d1400130d0d0d0d0d6a0d0d0d0d0d0e0000000000000000000013100d0d0d12000000000000000000000000002d00
-1010101400000000000000000405050909090500000000000000130d10101400000000000000000c0d0d1014050509050800000c140000000000000000002d2d0000000000000000000c0d0d0d0d0d1014000000000c0d0d0d0d100d0d0d440d0e000000000000000000000000130d0d0e000000000000000000000000002d26
-0000000000000000000000000509090905050506000000070000000000000000000000000000000c0d1400040505050800000000000000000000000000002d2d0000000000000000000c0d0d0d0d14000000000000130d0d0d14000000130d0d0e00000000000000000000000406130d0e000000000000000000000000002d00
+0d0f0f120a000000000000000000000004050600000000000000000000110d0d14000000000000110f0d0f120509050505002457440000240e00000000132d2d0005090909050000000c0d0d0d0d0f0f0f0d0d0d0d0d0d620d0d0d0d0d0d440d37000000000000000000000c0d0d0f1200000000000000002f00000a05082d29
+0d0d0d0e00000000000000000000040505050500000000000a00110f0f0d0d14000000000000000c0d0d0d0e0509090905001324000000240000000000002d2d0a05050505080000000c0d0d0d0d0d0d0d0d1400130d0d0d0d0d600d6a0d0d0d0e0000000000000000000013100d0d0d12000000000000000000000000002d00
+1010101400000000000000000405050909090500000000000000130d10101400000000000000000c0d0d1014050509050800000c140000000000000000002d2d0000000000000000000c0d0d0d0d0d1014000000000c7f0d0d0d100d0d0d38390e000000000000000000000000130d0d0e000000000000000000000000002d26
+0000000000000000000000000509090905050506000000070000000000000000000000000000000c0d1400040505050800000000000000000000000000002d2d0000000000000000000c0d0d0d0d14000000000000130d7f0d14000049130d6e0e00000000000000000000000406130d0e000000000000000000000000002d00
 0000000000000000000000000a05090905080b0b000000050000000000000000000000000000110d140000000a050800000000000a0000040506000000002d2d000000000000000000130d0d0d1400000000000000000c0d140000000000130d14000000000000110e040505050506130d0f1200000000000000000000002d39
 000000000000000000000000000a0505080b0b0b000000050600000000000000000000110d0d0d0e000000000000000000000000000405050505050506002d2d00110f0e0000000000001310140000000000000000001314000000000000000004050a0000000000000509050505050506130d0e000000000000000000002d00
 0000000000000000000000000000000b0b0b0000000000000000000000000000000000130d0d0d14000004050505060000000000000005090905050505062d2d00000000000000000000000000000000000000000000000000000000000005050505050600000000040509090509090905000000000000000000000000002d38
