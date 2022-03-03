@@ -21,26 +21,26 @@ _h[j]=dget(i*5+j)
 end
 add(_f,_h)
 end
-local g_,_i,_j,_k,_l,_m,_n,_o,_p,t_,_q,_r,_s,_t,hq,_u,_v,_w,_x,_y={},{},{},{},{},{},{},{{},{}},t(),0,{0,0},{0,0},0,0,false,0,0,{},_e*8-128,0
+local g_,_i,_j,_k,_l,_m,_n,_o,_p,t_,_q,_r,_s,_t,hq,_u,_v,_w,_x,_y={},{},{},{},{},{},{},{{},{}},t(),1,{0,0},{0,0},0,0,false,0,0,{},_e*8-128,0
 local _z,_0,_1,_2=hq,{0,0},{},0
 g_._6=function(self)
 if self._b2._7==1 then
 _3,_4,_5=1,{}
-_f6(6,"⬆️",function()
-_y=mid(1,_y-1,#_bp._eg)
-_5=_bp._eg[_y]
+_f5(6,"⬆️",function()
+_y=mid(1,_y-1,#_bp._ef)
+_5=_bp._ef[_y]
 if(_y<_3) _3-=1
 end, 10)
-_f6(17,"⬇️",function()
-_y=mid(1,_y+1,#_bp._eg)
-_5=_bp._eg[_y]
-if(_y>_3+2) _3=min(_3+1,#_bp._eg-2)
+_f5(17,"⬇️",function()
+_y=mid(1,_y+1,#_bp._ef)
+_5=_bp._ef[_y]
+if(_y>_3+2) _3=min(_3+1,#_bp._ef-2)
 end, 10)
-_f6(32,_bp.id==5 and"order" or"build",function()
+_f5(32,_bp.id==5 and"order" or"build",function()
 _8=nil
-if(_dy) _dy:_b5()
+if(_dx) _dx:_b5()
 end)
-_f6(96,"close",function()
+_f5(96,"close",function()
 _8=nil
 end)
 _8=self
@@ -61,11 +61,11 @@ pal(7,8)
 if(self.id==80 and _bp._af==2 and not _bp._ag) pal(7,11)
 end
 function _9(self, _aa)
-self._cz,self.last_process,self._af=0,self._af,_aa
+self.procstep,self.last_process,self._af=0,self._af,_aa
 if(self.last_process>0) self._ag=not self._ag
 if(_aa==1) self._b2._ah=true self._b2._ai=self
 end
-local _aj=[[id|_bu|_av|my|ico_spr|type|w|h|z|trans_col|_bn|_bo|_7|col1|_ab|icol1|icol2|ico_w|ico_h|req_id|req_faction|max|_ej|power|_e2|_b8|_f4|range|_cm|fire_size|fire_rate|fire_sfx|death_sfx|norotate|altframe|_cw|_cp|_af|spent|_c0|_cr|_cs|_ae|col_cycle_src|storage|capacity|is_repairable|ai_build|ai_priority|moves|tracked|on_foot|is_building|is_unit|is_dockable|capturable|can_fire|can_capture|can_smoke|soldiers_on_destroy|shad_w|shad_h|req_level|_cf|_by|description|_b4|_b5
+local _aj=[[id|_bu|_av|my|ico_spr|type|w|h|z|trans_col|_bn|_bo|_7|col1|_ab|icol1|icol2|ico_w|ico_h|req_id|req_faction|max|_ei|power|_e1|_b8|_f3|range|_cm|fire_size|fire_rate|fire_sfx|death_sfx|norotate|altframe|_cw|_cp|_af|spent|_cz|_cr|_cs|_ae|col_cycle_src|storage|capacity|is_repairable|ai_build|ai_priority|moves|tracked|on_foot|is_building|is_unit|is_dockable|capturable|can_fire|can_capture|can_smoke|soldiers_on_destroy|shad_w|shad_h|req_level|_cf|_by|description|_b4|_b5
 1|64|64||170|2|2|2|0||nil|||||||2|2|1|||100|0||400|0||||||53|nil|||0|0|0|0|0|1|1||0|nil|1|nil|30|nil||nil|1|nil|nil|1|nil||1|1|||1,1,1,1||cONSTRUCTION yARD|aLL STRUCTURES ARE~BUILT BY THE~CONSTRUCTION YARD.||_6
 2|22|22||162|2|2|2|0||1|||||7|5|2|2|1|||20|0||0|0|||||||nil|||0|0|0|0|0|1|1||0|nil|nil|nil|0.5|nil||nil|1|nil|nil|nil|nil||1|nil|||4,4,4,4||lARGE cONCRETE sLAB|uSE CONCRETE TO MAKE A~STURDY FOUNDATION FOR~YOUR STRUCTURES.||
 3|22|22||162|2|1|1|0||1|||||6|6|2|2|1|||5|0||0|0|||||||nil|||0|0|0|0|0|1|1||0|nil|nil|nil|1|nil||nil|1|nil|nil|nil|nil||1|nil|||1,1,1,1||sMALL cONCRETE sLAB|uSE CONCRETE TO MAKE A~STURDY FOUNDATION FOR~YOUR STRUCTURES.||
@@ -113,7 +113,7 @@ local _aj=[[id|_bu|_av|my|ico_spr|type|w|h|z|trans_col|_bn|_bo|_7|col1|_ab|icol1
 81|1|1||1|3|1|1|0|11||||||||1|1|||||||0|0|||||||nil|||0|0|0|0|0|1|1||0|nil|nil|nil||nil|||nil|nil|nil|||nil|nil|nil|||1,1,1,1||lAUNCH||_ac|action_click]]
 function _init()
 poke(0x5f2d, 0x5)
-local _ak=_gq(_aj,"|","\n")
+local _ak=_gp(_aj,"|","\n")
 _aj={}
 for i=2,46 do
 local _al={}
@@ -121,7 +121,7 @@ for j=1,68 do
 local _am=_ak[i][j]
 if(j<63) _am=tonum(_am)
 if j==66 then
-_an,_am=_gq(_am,"~"),"" for line in all(_an) do
+_an,_am=_gp(_am,"~"),"" for line in all(_an) do
 _am..=line.."\n" end
 end
 _al[_ak[1][j]]=_am
@@ -137,10 +137,10 @@ end
 cursor={
 w=8,h=8,_ao=function(self)
 return {
-x=self.x+(_dr and 0 or _at),y=self.y+(_dr and 0 or _au),w=0,h=0
+x=self.x+(_dq and 0 or _at),y=self.y+(_dq and 0 or _au),w=0,h=0
 }
 end,_ap=function(self)
-local _aq=(_bp and _bp.is_unit and _bp._7==1 or _dt) and 3 or 0
+local _aq=(_bp and _bp.is_unit and _bp._7==1 or _ds) and 3 or 0
 spr(_aq/3, self.x-_aq, self.y-_aq)
 end
 }
@@ -154,7 +154,7 @@ end
 if _as and _ar>=32 then
 local ox,oy=mx,my
 if(ox>63) oy+=32 ox-=64
-mset(mx,my,_fc(mx,my+1))
+mset(mx,my,_fb(mx,my+1))
 _be(_as, ox*8, oy*8)
 end
 end
@@ -162,16 +162,16 @@ end
 _aw=cocreate(function()
 while true do
 if t_%30==0 then
-_go(false)
+_gn(false)
 _k={}
 for _cv in all(_j) do
-_k[_c2(_cv)]=_cv
+_k[_c1(_cv)]=_cv
 end
 local _ax={}
 if hq then
 for i=0,62,2 do
 for l=0,62,2 do
-local _ay=_fc(i,l)*8
+local _ay=_fb(i,l)*8
 if(_w[i][l]==16) _ax[(i/2).."," ..(l/2)]=_ay>0 and sget(_ay%128+3, _ay\128*8+3) or 15
 end
 yield()
@@ -180,7 +180,7 @@ end
 _az,_a0,_a1,_o=0,0,{0,0},{{},{}}
 for building in all(_i) do
 if building.id!=13 then
-if building._7==1 or hq and _gk(building) then
+if building._7==1 or hq and _gj(building) then
 _ax[(building.x\16).."," ..building.y\16]=building.col1
 end
 if building._7==1 then
@@ -188,15 +188,15 @@ _az-=building.power
 _a0+=building.storage
 end
 _a1[building._7]+=1
-_gs(_o[building._bq], building.id, building)
-_k[_c2(building)]=building
+_gr(_o[building._bq], building.id, building)
+_k[_c1(building)]=building
 end
 end
 for _cv in all(_j) do
-if hq and (_cv._7==1 or _gk(_cv) and not _cv._cg) then
+if hq and (_cv._7==1 or _gj(_cv) and not _cv._cg) then
 _ax[(_cv.x\16).."," .._cv.y\16]=_cv.col1
 end
-if(_cv._bq>0) _gs(_o[_cv._bq], _cv.id, _cv)
+if(_cv._bq>0) _gr(_o[_cv._bq], _cv.id, _cv)
 end
 hq,_l=_o[1][16] and _az>0,_ax
 local _a2,_a3=0
@@ -246,14 +246,14 @@ _bh._bj,_h=1,_f[1]
 else
 local _bk=9999
 for i=1,#_f do
-local _bl=_gw(x,y,_f[i][4],_f[i][5])
+local _bl=_gv(x,y,_f[i][4],_f[i][5])
 if(_bl<_bk) _bh._bj,_bh._7,_bk=i,min(i,2),_bl
 end
 end
 end
 _bh._bq,_bh.build_objs,_h=_7 or _bh._7,{},_f[_bh._bj or _bf._bj]
 _bm=_h[1]
-_bh._e4,_bh.col1,_bh._ab=_bm,_h[2],_h[3]
+_bh._e3,_bh.col1,_bh._ab=_bm,_h[2],_h[3]
 if(not _bb(_bh,_bm)) return
 for o in all(_aj) do
 if o._bn
@@ -267,7 +267,7 @@ else
 if self.is_building and #_i<150 or self.is_unit and #_j<75 then
 _9(self, 1)
 elseif _bh._bq==1 then
-_f8"uNABLE TO CREATE MORE" end
+_f7"uNABLE TO CREATE MORE" end
 end
 end)
 )
@@ -282,14 +282,14 @@ if _as.is_building and not _as.is_unit then
 local _bt=_as._bu==22
 for xx=0,_as.w-1 do
 for yy=0,_as.h-1 do
-if not _bt or fget(_fc(_br+xx, _bs+yy),5) then
-_fd(_br+xx, _bs+yy, _bt and 22 or _bh._7==1 and 81 or 103)
+if not _bt or fget(_fb(_br+xx, _bs+yy),5) then
+_fc(_br+xx, _bs+yy, _bt and 22 or _bh._7==1 and 81 or 103)
 end
 end
 end
 if(not _bt) add(_i,_bh)
 if _bh.id==17 and not _bh._b2 then
-_dz(_bh)
+_dy(_bh)
 end
 else
 _bh.r=not _bh.norotate and (_br%8)*.125
@@ -299,20 +299,20 @@ self._ct,self._cy,self.bullet_y,self.bullet_tx,self._bw=4,self.x+4,self.y+4,self
 local dx,dy=self.bullet_tx-self._cy,self._bw-self.bullet_y
 local d=sqrt(dx*dx+dy*dy)
 self.bullet_dx,self._bx=dx/d,dy/d
-_gm(self.fire_sfx)
-_c9(self)
+_gl(self.fire_sfx)
+_c8(self)
 end
 if _bh.moves then
-_bh._by=split"aTREIDES,oRDOS,hARKONNEN,sARDAUKAR" [_bh._e4].." " .._bh._by
+_bh._by=split"aTREIDES,oRDOS,hARKONNEN,sARDAUKAR" [_bh._e3].." " .._bh._by
 else
-_fd(_br,_bs,_bh._7==1 and 2 or 133)
+_fc(_br,_bs,_bh._7==1 and 2 or 133)
 end
 end
 if(_bf and _bf.id==17) _bh._cb=_bf
 add(_j,_bh)
-_eo(_bh, nil, true)
+_en(_bh, nil, true)
 end
-_c9(_bh)
+_c8(_bh)
 return _bh
 end
 function _bz(_b0, x,y, _b1, _b2, _b3, _b4, _b5)
@@ -338,7 +338,7 @@ if _ch then
 ovalfill(x+3, y+3, x+self.shad_w, y+self.shad_h, 1)
 end
 if(self.trans_col and _b1<=3) palt(self.trans_col,true)
-if(self._e4 and self.id!=4) pal(12,self.col1) pal(14,self._ab)
+if(self._e3 and self.id!=4) pal(12,self.col1) pal(14,self._ab)
 if _b1>3 then
 local _ci=_b1==5 and self or self._b2
 ?"\#0\-j\|g\^x7  \n\-j  \n\-j  \n\-j\^y2  ",x,y
@@ -384,54 +384,54 @@ if self._cm==1 then
 pset(self._cy,self.bullet_y, rnd{8,9})
 else
 local _cn=self._cm<=2
-_g2(
+_g1(
 self._cy, self.bullet_y,self.fire_size,
 0, 0, _cn and -.3 or 1,0,_cn and 10 or 2.5,_cn and split"7,10,9,8,2" or {15})
 end
 end
-if((self._bu==72 or self._cp<self._b8/2 and self.can_smoke) and _gx"7") _g2(x+3.5,y+3.5-self.z, 1, .1,-.02,.05, -.002, 80,split"10,9,8,6")
+if((self._bu==72 or self._cp<self._b8/2 and self.can_smoke) and _gw"7") _g1(x+3.5,y+3.5-self.z, 1, .1,-.02,.05, -.002, 80,split"10,9,8,6")
 self._cr=0
 end
 end,_co=function(self)
 local _cp,id,_cq=self._cp,self.id,self._cq
 self._cs=max(self._cs-.4,1)
 if self._cr>0 and self._bq>0 and id!=42 then
-_go(true)
+_gn(true)
 if(stat"54" >5) music"0"
-if(self.is_repairable and self.moves and _cp<99 and self._ct<=6) _gh(self,_gv(self._bq,9) or self._cb)
+if(self.is_repairable and self.moves and _cp<99 and self._ct<=6) _gg(self,_gu(self._bq,9) or self._cb)
 if(self._bu<=49 and _cp<100) self._cd,self._ce=0.5,0.5
-if(self.can_fire and self._ct==0) _ez(self, _cq)
+if(self.can_fire and self._ct==0) _ey(self, _cq)
 end
-if(_b1<=2 and _cp<=0 and not self.death_time) self._ct,self.death_time,self._cu=5,.25 _gm(self.death_sfx) _a6+=(_b1==2 or self._bu==72) and .25 or 0
+if(_b1<=2 and _cp<=0 and not self.death_time) self._ct,self.death_time,self._cu=5,.25 _gl(self.death_sfx) _a6+=(_b1==2 or self._bu==72) and .25 or 0
 if self.death_time then
 self.death_time-=.025
 if self.death_time<=0 then
 if _b1==2 then
 for xx=0,self._cd-1 do
 for yy=0,self._ce-1 do
-_fd(self.x/8+xx, self.y/8+yy, 21)
+_fc(self.x/8+xx, self.y/8+yy, 21)
 if(self.soldiers_on_destroy and #_j<75) _be(_aj[rnd{21,23}],self.x+xx*8,self.y+yy*8,self._7,self)
 end
 end
 del(_i,self)
 _q[_cq._bq]+=1
 else
-local gx,gy=_c3(self)
-if(_fc(gx,gy)==0) _fd(gx,gy,33)
-if(id<=16) _fd(gx,gy,21)
+local gx,gy=_c2(self)
+if(_fb(gx,gy)==0) _fc(gx,gy,33)
+if(id<=16) _fc(gx,gy,21)
 if(self._cb) self._cb._ah=false
-if(self._es and self._es.id==9) self._es._cf={0}
-_dv(self)
+if(self._er and self._er.id==9) self._er._cf={0}
+_du(self)
 if id==42 then
-_e8(self,gx,gy,function (_cv,x,y)
-if(_fc(x,y)==0) _fd(x,y,10)
+_e7(self,gx,gy,function (_cv,x,y)
+if(_fb(x,y)==0) _fc(x,y,10)
 end,4, true)
 end
 if(_cq) _r[_cq._bq]+=1
 end
-_c4(self)
+_c3(self)
 else
-if(_gx(1) and not self.on_foot) _c7(self.x+rnd(self.w),self.y+rnd(self.h))
+if(_gw(1) and not self.on_foot) _c6(self.x+rnd(self.w),self.y+rnd(self.h))
 end
 end
 if self._cw then
@@ -447,23 +447,23 @@ end
 if self._cy then
 self._cy+=self.bullet_dx*2
 self.bullet_y+=self._bx*2
-if _gw(
+if _gv(
 self._cy,self.bullet_y,self.bullet_tx,self._bw) < 2
 then
-_c7(self._cy, self.bullet_y, self._cm, self.fire_size)
+_c6(self._cy, self.bullet_y, self._cm, self.fire_size)
 local _cx=self._cx
-if _gw(
+if _gv(
 self._cy,self.bullet_y,_cx.x+_cx.w/2,_cx.y+_cx.h/2) < 4
 then
-_cx._cp-=self._e2*rnd"1" _cx._cr,_cx._cq=self._cm,self
-if id==40 and _cx.moves and _gx"5" then
-_e5(_cx, self)
-_eo(self)
+_cx._cp-=self._e1*rnd"1" _cx._cr,_cx._cq=self._cm,self
+if id==40 and _cx.moves and _gw"5" then
+_e4(_cx, self)
+_en(self)
 elseif _cx.old_fact_data then
-_cx._e4,_cx._7,_cx._bq,_cx.col1,_cx._ab,_cx.old_fact_data
+_cx._e3,_cx._7,_cx._bq,_cx.col1,_cx._ab,_cx.old_fact_data
 =
 unpack(_cx.old_fact_data)
-_eo(_cx)
+_en(_cx)
 end
 end
 self._cy=nil
@@ -471,35 +471,33 @@ end
 end
 if self._af>0
 and not self._ag
-and not self._gd then
-if self._af==1 and self.spent>=self._ej then
-self._gd,self._cp=true,100
-if(self._b2._7==1) _gm"56" _f8"cONSTRUCTION cOMPLETE"
+and not self._gc then
+if self._af==1 and self.spent>=self._ei then
+self._gc,self._cp=true,100
+if(self._b2._7==1) _gl"56" _f7"cONSTRUCTION cOMPLETE"
 if _b0.is_unit
 and self._bn !=1 then
-local ux,uy=_ex(self._b2)
+local ux,uy=_ew(self._b2)
 _be(_b0,ux,uy,self._b2._7,self._b2)
-_gb(self)
+_ga(self)
 end
 elseif self._af==2 and _cp>self._b8 then
 self._af=0
 if self.is_unit and self.moves then
-self._es._cf,self._ct={0},0
-_c1(self,_ex(self))
+self._er._cf,self._ct={0},0
+_c0(self,_ew(self))
 end
 else
-if self._cz>=8 then
-if(_c5(-4,self._af==1 and self._b2 or self)) self._cz=0 self.spent+=4
-else
-self._cz+=1
-self._cp=(self._af==1 and (self.spent/self._ej)*100 or _cp+2)
+if _c4(-.25,self._af==1 and self._b2 or self) then
+self.spent+=.25
+self._cp=self._af==1 and (self.spent/self._ei)*100 or _cp+2
 end
 end
 end
-self._c0=max(self._c0-.1)
+self._cz=max(self._cz-.1)
 if self._7==1 then
 if(id==18) self._by="wINDTRAP (\|f\^:0804061f0c040200\|h\-f" .._az..")"
-if(self.storage>0) self._by=_b0._by.." (" ..flr(_dl/_a0*100).."%)" end
+if(self.storage>0) self._by=_b0._by.." (" ..flr(_dk/_a0*100).."%)" end
 end
 }
 for k,v in pairs(_b0) do
@@ -509,81 +507,81 @@ end
 end
 return _b6
 end
-function _c1(_b6,x,y)
+function _c0(_b6,x,y)
 _b6.x,_b6.y=x,y
 end
-function _c2(self)
-local x,y=_c3(self)
+function _c1(self)
+local x,y=_c2(self)
 return x.."," ..y
 end
-function _c3(_b6)
+function _c2(_b6)
 return (_b6.x+4)\8,(_b6.y+4)\8
 end
-function _c4(_b6)
+function _c3(_b6)
 _bp=_bp!=_b6 and _bp
 end
-function _c5(_c6, _b6)
-if(_g[_b6._7]+_c6<0) return false
-_g[_b6._7]+=_c6
-if _b6._7==1 then _gm"63" end
+function _c4(_c5, _b6)
+if(_g[_b6._7]+_c5<0) return false
+_g[_b6._7]+=_c5
+if _b6._7==1 and _g[1]%5==0 then _gl"63" end
 return true
 end
-function _c7(x,y,_c8)
-_g2(x, y, 2,0, 0, .1, -.01, _c8==1 and 5 or 20, _c8==1.9 and split"3,11,3" or split"5,7,5,7,10,8,9,2")
+function _c6(x,y,_c7)
+_g1(x, y, 2,0, 0, .1, -.01, _c7==1 and 5 or 20, _c7==1.9 and split"3,11,3" or split"5,7,5,7,10,8,9,2")
 end
-function _c9(_da)
-if(_da._7!=1 and _da._ct!=4) return
-local _db=_da.type+1
-for xx=-_db,_db do
-for yy=-_db,_db do
-local _dc,_dd=_da.x\8+xx,_da.y\8+yy
-_w[_dc][_dd]=16
-_ek(_dc,_dd)
+function _c8(_c9)
+if(_c9._7!=1 and _c9._ct!=4) return
+local _da=_c9.type+1
+for xx=-_da,_da do
+for yy=-_da,_da do
+local _db,_dc=_c9.x\8+xx,_c9.y\8+yy
+_w[_db][_dc]=16
+_ej(_db,_dc)
 for dy=-1,1 do
 for dx=-1,1 do
-_ek(_dc+dx,_dd+dy)
+_ej(_db+dx,_dc+dy)
 end
 end
 end
 end
 end
 function _update60()
-local _de,_df,_dg=stat"32",stat"33",stat"34"
+local _dd,_de,_df=stat"32",stat"33",stat"34"
 left_button_clicked,right_button_clicked
 =
-(_dg==1 and _dw !=_dg) or btnp"5",(_dg==2 and _dw !=_dg) or btnp"4"
-if not _dh then
-_dh,_di=64,64
-elseif _de==_dj and _df==_dk then
+(_df==1 and _dv !=_df) or btnp"5",(_df==2 and _dv !=_df) or btnp"4"
+if not _dg then
+_dg,_dh=64,64
+elseif _dd==_di and _de==_dj then
 b=btn()
-_dh+=b\2%2-b%2
-_di+=b\8%2-b\4%2
+_dg+=b\2%2-b%2
+_dh+=b\8%2-b\4%2
 else
-_dh,_di=_de,_df
+_dg,_dh=_dd,_de
 end
-_dh,_di=mid(_dh,127),mid(_di,127)
-cursor.x,cursor.y,_dj,_dk=_dh,_di,_de,_df
-cx,cy=(_at+_dh)\8,(_au+_di)\8
+_dg,_dh=mid(_dg,127),mid(_dh,127)
+cursor.x,cursor.y,_di,_dj=_dg,_dh,_dd,_de
+cx,cy=(_at+_dg)\8,(_au+_dh)\8
 _2+=1
 if not _8 then
-if(_dh<2) _at-=2
-if(_dh>125) _at+=2
-if(_di<2) _au-=2
-if(_di>125) _au+=2
-_at,_au,_dl=mid(_at,_x),mid(-10,_au,_x),tostr(_g[1])
+if(_dg<2) _at-=2
+if(_dg>125) _at+=2
+if(_dh<2) _au-=2
+if(_dh>125) _au+=2
+_at,_au,_dk=mid(_at,_x),mid(-10,_au,_x),tostr(flr(_g[1]))
 if t_%6==0 and _ba==0 then
-if(_gx"18") _a9=rnd".04" -.02
-_dm,_dn=_a7[#_a7][1],_a7[#_a7][2]
-add(_a7,{_dm+sin(_a8),_dn-cos(_a8)})
+if(_gw"18") _a9=rnd".04" -.02
+_dl,_dm=_a7[#_a7][1],_a7[#_a7][2]
+add(_a7,{_dl+sin(_a8),_dm-cos(_a8)})
 _a8+=_a9
-local _cv=_f5((_dm+4)\8,(_dn+4)\8)
-if _cv and not _cv._cg and fget(_fc(_c3(_cv)),2) then
-_dv(_cv)
+local _cv=_f4((_dl+4)\8,(_dm+4)\8)
+if _cv and not _cv._cg and fget(_fb(_c2(_cv)),2) then
+_du(_cv)
 _ba=1
-_gm"50" end
+_gl"50" end
 end
 if(#_a7>30) del(_a7,_a7[1])
-if(_ba>0) _ba+=1 _ey(_dm,_dn,rnd"1")
+if(_ba>0) _ba+=1 _ex(_dl,_dm,rnd"1")
 _ba%=200
 for _cv in all(_j) do
 if(_cv._cu) then
@@ -591,123 +589,123 @@ if(not coresume(_cv._cu, _cv)) _cv._cu=nil
 end
 end
 for p in all(_n) do
-p.dy +=p._g3
+p.dy +=p._g2
 p.x +=p.dx
 p.y +=p.dy
 p.r +=p.dr
 p._cp +=1
-if(p._cp>=p._g7) del(_n,p)
+if(p._cp>=p._g6) del(_n,p)
 end
 if t_%_b==0 then
 local _cv=rnd(_j)
-if(_1[_cv._e4] or t_%18000==0)
+if(_1[_cv._e3] or t_%18000==0)
 and _cv._7==2
 and _cv.can_fire
 and _cv._ct==0
 then
-_gj(_cv)
+_gi(_cv)
 end
-local _do=rnd(_i)
-if _do._7==2
-and (not _do._ai or _do._ai._af!=1)
+local _dn=rnd(_i)
+if _dn._7==2
+and (not _dn._ai or _dn._ai._af!=1)
 and t()>300
 then
-local u=rnd(_do.build_objs)
+local u=rnd(_dn.build_objs)
 if u and u.ai_build then
 u:_b5()
 end
-if _do._cp<_do._b8 and _do._af!=2 then
-_9(_do, 2)
+if _dn._cp<_dn._b8 and _dn._af!=2 then
+_9(_dn, 2)
 end
 end
-local _dp=_gv(2,19)
-if _dp
-and _1[_dp._e4]
-and _dp._c0<=0
+local _do=_gu(2,19)
+if _do
+and _1[_do._e3]
+and _do._cz<=0
 then
-_gj(_dp)
+_gi(_do)
 end
 end
 coresume(_aw)
 end
-_dq=false
+_dp=false
 if _bp then
-_dr=true
-_gc(_ee)
-_gc(_ef)
-if(_bp.ico_obj and not _8 and not _dq) _gc(_bp.ico_obj) _gc(_bp._ai)
-if(_8) foreach(_bp.build_objs, _gc) foreach(_4, _gc)
-_dr=false
+_dq=true
+_gb(_ed)
+_gb(_ee)
+if(_bp.ico_obj and not _8 and not _dp) _gb(_bp.ico_obj) _gb(_bp._ai)
+if(_8) foreach(_bp.build_objs, _gb) foreach(_4, _gb)
+_dq=false
 end
 if not _8
-and not _dq then
-foreach(_j, _gc)
-foreach(_i, _gc)
+and not _dp then
+foreach(_j, _gb)
+foreach(_i, _gb)
 end
 if(stat"34" >0 or left_button_clicked or right_button_clicked)
 and not _8
-and _dh>91 and _dh<123
-and _di>91 and _di<123 then
-_bp=_dx
-if(stat"34" ==1 or left_button_clicked) and _du((_dh-91)*2, (_di-91)*2) then
+and _dg>91 and _dg<123
+and _dh>91 and _dh<123 then
+_bp=_dw
+if(stat"34" ==1 or left_button_clicked) and _dt((_dg-91)*2, (_dh-91)*2) then
 elseif _2>10 then
-_at,_au=mid((_dh-96)*16, _x),mid(-10,(_di-97)*16, _x)
+_at,_au=mid((_dg-96)*16, _x),mid(-10,(_dh-97)*16, _x)
 end
 elseif left_button_clicked then
-if _dq then
+if _dp then
 if(_bp) _v=0
 if not _8 and _bp._b2 then
 if(_bp._b5) _bp:_b5()
-_bp=_dx
+_bp=_dw
 goto skip_collisions
 end
-if(_8 and _5._f7 and _5._b5) _5:_b5()
-if(_bp._7==1 and _bp.is_unit and _bp!=_dx and _bp.moves) _gm"62"
-if(_bp._bq!=1 and _dx and (_dx.is_unit or (_dx.id==19 and _dt)) and _dx._7==1) _bp._cs=10 _ez(_dx, _bp, true) _bp=nil
+if(_8 and _5._f6 and _5._b5) _5:_b5()
+if(_bp._7==1 and _bp.is_unit and _bp!=_dw and _bp.moves) _gl"62"
+if(_bp._bq!=1 and _dw and (_dw.is_unit or (_dw.id==19 and _ds)) and _dw._7==1) _bp._cs=10 _ey(_dw, _bp, true) _bp=nil
 else
-_du(cx,cy)
-local _ds=_bp and _bp._ai
-if _ds
-and _ds._gd
-and _ea then
-_be(_ds._b7,cx*8,cy*8,1)
-_gb(_ds)
-_gm"61" end
+_dt(cx,cy)
+local _dr=_bp and _bp._ai
+if _dr
+and _dr._gc
+and _d9 then
+_be(_dr._b7,cx*8,cy*8,1)
+_ga(_dr)
+_gl"61" end
 end
-_dt=false
+_ds=false
 elseif right_button_clicked and not _8 then
-_dt,_bp=false
+_ds,_bp=false
 end
 ::skip_collisions::
-_dw,_dx,_dy=_dg,_bp,_5
+_dv,_dw,_dx=_df,_bp,_5
 t_+=1
 end
-function _du(x,y)
+function _dt(x,y)
 if _bp
 and _bp._7==1
 and _bp.moves
 and _bp._ct!=7
 then
 _bp._cu=cocreate(function(_cv)
-_fg(_cv, x, y)
-_eo(_cv, nil, true)
+_ff(_cv, x, y)
+_en(_cv, nil, true)
 end)
-_c4(_bp)
+_c3(_bp)
 _2=0
 return true
 end
 return false
 end
-function _dv(_cv)
+function _du(_cv)
 del(_j,_cv)
 if _cv.id==38 and #_o[_cv._bq][38]<=1 then
-_d1=_gv(_cv._bq,17)
-if(_d1) _dz(_d1)
+_d0=_gu(_cv._bq,17)
+if(_d0) _dy(_d0)
 end
 end
-function _dz(_d0)
-local _d2=_be(_aj[38],_d0.x,_d0.y,_d0._7,_d0)
-_d2._ct=9
+function _dy(_dz)
+local _d1=_be(_aj[38],_dz.x,_dz.y,_dz._7,_dz)
+_d1._ct=9
 end
 function _draw()
 cls"15"
@@ -723,7 +721,7 @@ palt(11,true)
 palt(0,false)
 map(0,0,  0,0,   64,32, 0x8)
 map(64,0, 0,256, 64,32, 0x8)
-if(_ba>0) spr(88+_ba\100, _dm, _dn)
+if(_ba>0) spr(88+_ba\100, _dl, _dm)
 for building in all(_i) do
 if not _8
 then
@@ -745,19 +743,19 @@ end
 end
 pal()
 for p in all(_n) do
-if(p._g5) fillp(p._g5)
-circfill(p.x,p.y,p.r,p._g4[ flr((#p._g4/p._g7)*p._cp)+1 ])
+if(p._g4) fillp(p._g4)
+circfill(p.x,p.y,p.r,p._g3[ flr((#p._g3/p._g6)*p._cp)+1 ])
 fillp()
 end
-local _d3,_d4=_at\8,_au\8
+local _d2,_d3=_at\8,_au\8
 palt(0,false)
 palt(11,true)
-for xx=_d3-1,_d3+16 do
-for yy=_d4-1,_d4+16 do
-local gx,gy,_d5=xx*8,yy*8,_w[xx][yy]
-if _d5!=0 and _d5!=16 then
-spr(_d5+31,gx,gy)
-elseif _d5<16 then
+for xx=_d2-1,_d2+16 do
+for yy=_d3-1,_d3+16 do
+local gx,gy,_d4=xx*8,yy*8,_w[xx][yy]
+if _d4!=0 and _d4!=16 then
+spr(_d4+31,gx,gy)
+elseif _d4<16 then
 rectfill(gx, gy, gx+7, gy+7, 0)
 end
 end
@@ -765,43 +763,43 @@ end
 camera()
 pal()
 palt(0,false)
-local _ds=_bp and _bp._ai
-if _ds
-and (_ds.type==5
-and not _ds.moves)
-and _ds._gd
+local _dr=_bp and _bp._ai
+if _dr
+and (_dr.type==5
+and not _dr.moves)
+and _dr._gc
 then
-local _d6,_d7=(_dh+_at)\8, (_di+_au)\8
-local _d8,_d9,w,h=_d6*8-_at,_d7*8-_au,_ds._cd,_ds._ce
-_ea,_eb,_bi=false,false,false
+local _d5,_d6=(_dg+_at)\8, (_dh+_au)\8
+local _d7,_d8,w,h=_d5*8-_at,_d6*8-_au,_dr._cd,_dr._ce
+_d9,_ea,_bi=false,false,false
 for xx=-1,w do
 for yy=-1,h do
-local _am=_fc(_d6+xx, _d7+yy)
+local _am=_fb(_d5+xx, _d6+yy)
 if xx==-1 or xx==w or yy==-1 or yy==h then
-if(fget(_am,4)) _ea=true
+if(fget(_am,4)) _d9=true
 else
 if(fget(_am,5)) _bi=true
-if(not _ff(nil,_d6+xx,_d7+yy) or _am==0 or _am<=11 or _am>=23) _eb=true
+if(not _fe(nil,_d5+xx,_d6+yy) or _am==0 or _am<=11 or _am>=23) _ea=true
 end
 end
 end
-if(_eb and _ds._b7._bu!=22) _ea=false
-fillp"0b1110110110110111.1" rectfill(_d8, _d9,_d8+_ds.w, _d9+_ds.h, _ea and 11 or 8)
+if(_ea and _dr._b7._bu!=22) _d9=false
+fillp"0b1110110110110111.1" rectfill(_d7, _d8,_d7+_dr.w, _d8+_dr.h, _d9 and 11 or 8)
 fillp()
 end
 ?"\^j02\f4\|f\^x3\*z-\*8-\n\^xz\^j00\#9   \^xn \^j01\|j\^xz\^y2   \^xn "
 _v-=1
-?(_v>0 and _ga or _bp and _bp._by or""),2,2,0
-?sub("00000", #_dl).._dl, 103,2, _d
+?(_v>0 and _f9 or _bp and _bp._by or""),2,2,0
+?sub("00000", #_dk).._dk, 103,2, _d
 if hq!=_z then
 _u=1
-if _z then _f8"pOWER LOW. bUILD wINDTRAP" end
-_gm"55" end
+if _z then _f7"pOWER LOW. bUILD wINDTRAP" end
+_gl"55" end
 _z=hq
-local _ec=5934
-for _ed=17152,17632,16 do
-memcpy(0x6000+_ec, _ed, 16)
-_ec+=64
+local _eb=5934
+for _ec=17152,17632,16 do
+memcpy(0x6000+_eb, _ec, 16)
+_eb+=64
 end
 ?"\^jnn\|e\-e\^x3\^y5\^h\-f\|c\n|\n|\n|\n|\n|\n|\^y1\n|\^jvn\^y5\|j\-e\^h\-f\|c\n|\n|\n|\n|\n|\n|\^y1\n|\^jnm\-g\|j\^y1\^x2\*5▤゛\^jnv\|f\^y1\^x2\*5▤゛\^g",_d
 ?"\f7\|e\-f\^x3\^y4\^h\-f\|c\n|\n|\^g\|i\-n\^h\-f\|c\n|\n|\^g\^x2\-a\|e\*4-\^g\^y5\-a\|j\*4_\0",ceil(92+_at/16),ceil(92+_au/16)
@@ -812,39 +810,39 @@ end
 _u+=1
 end
 if _bp and _bp.ico_spr then
-_c1(_bp.ico_obj,107,20)
+_c0(_bp.ico_obj,107,20)
 _bp.ico_obj:_ap()
-_ee,_ef=nil
+_ed,_ee=nil
 if _bp._7==1 then
-if _ds then
-_c1(_ds,107,44)
-_ds:_ap()
+if _dr then
+_c0(_dr,107,44)
+_dr:_ap()
 end
 if _bp._cp<_bp._b8
 and _bp.is_repairable
 and _bp.is_building then
-_ee=_bz(_aj[80], 115,28, 3, {}, nil, _ac, function()
-_9(_dx, 2)
+_ed=_bz(_aj[80], 115,28, 3, {}, nil, _ac, function()
+_9(_dw, 2)
 end)
-_ee:_ap()
+_ed:_ap()
 end
 if(_bp.id==19
-and _bp._c0<=0)
+and _bp._cz<=0)
 or _bp.id==37
 then
-_ef=_bz(_aj[81], 107,29, 3, {}, nil, _ac, function()
-if _dx.id!=37 then
-_f8"pICK tARGET" _dt=true
+_ee=_bz(_aj[81], 107,29, 3, {}, nil, _ac, function()
+if _dw.id!=37 then
+_f7"pICK tARGET" _ds=true
 else
-local mx,my=_c3(_dx)
-local _am=_fc(mx,my)
+local mx,my=_c2(_dw)
+local _am=_fb(mx,my)
 if _am>=12 and _am<=22 then
-_dx._cp,_dx=0
+_dw._cp,_dw=0
 _be(_aj[1],mx*8,my*8,1)
-_gm"61" end
+_gl"61" end
 end
 end)
-_ef:_ap()
+_ee:_ap()
 end
 end
 end
@@ -855,29 +853,29 @@ rectfill(unpack(split"0,0,127,127,0"))
 fillp()
 rectfill(3,18,124,92,_d)
 rect(3,18,124,92,_c)
-_bp._eg={}
+_bp._ef={}
 rectfill(unpack(split"6,21,27,89,0"))
-local _eh=1
+local _eg=1
 for i=1,#_bp.build_objs do
-local _ei=_bp.build_objs[i]
-_ei.x=-20
-if(_o[_bp._bq][_ei.req_id])
-and split(_ei.req_level)[dget"6" ]<=_a
-and _bb(_ei,dget"6")
+local _eh=_bp.build_objs[i]
+_eh.x=-20
+if(_o[_bp._bq][_eh.req_id])
+and split(_eh.req_level)[dget"6" ]<=_a
+and _bb(_eh,dget"6")
 then
-_bp._eg[_eh]=_ei
-if _eh>=_3 and _eh<=_3+2 then
-_c1(_ei, 9, 24+(_eh-_3)*20)
-_ei:_ap()
+_bp._ef[_eg]=_eh
+if _eg>=_3 and _eg<=_3+2 then
+_c0(_eh, 9, 24+(_eg-_3)*20)
+_eh:_ap()
 end
-_5=_5 or _bp._eg[1]
-if _5==_ei then
-_y=_eh
-if(_bp.id==5) srand(t_\3600) _5._ej=_5._b7._ej \ (rnd"0.533" +0.8)
-?"\f7\^x3\-f\|c\*6-\n\-d\|d|    \^x4 |\^x3\n\-d\|f|    \^x4 |\^x3\n\-d\|f|    \^x4 |\^x3\n\-d\|d|    \^x4 |\^x3\n\^x3\-f\|d\*6-",9,_ei.y
-?"\^j87\-f\|a\^h\f7" .._5._by.."\n\|h\f9\^:041f051f141f0400\-f\|h" .._5._ej.."\^je8\|d\fd\^:1f1b111b1f0e0400\|h" .._5._b8..(_5.is_building and"\^jl8\|d\fa\^:0804061f0c040200\|h" .._5.power or"\^jl8\|d\f8\^:081c226b221c0800\|h\-h" .._5._e2).."\n\|g\f6" .._5.description
+_5=_5 or _bp._ef[1]
+if _5==_eh then
+_y=_eg
+if(_bp.id==5) srand(t_\3600) _5._ei=_5._b7._ei \ (rnd"0.533" +0.8)
+?"\f7\^x3\-f\|c\*6-\n\-d\|d|    \^x4 |\^x3\n\-d\|f|    \^x4 |\^x3\n\-d\|f|    \^x4 |\^x3\n\-d\|d|    \^x4 |\^x3\n\^x3\-f\|d\*6-",9,_eh.y
+?"\^j87\-f\|a\^h\f7" .._5._by.."\n\|h\f9\^:041f051f141f0400\-f\|h" .._5._ei.."\^je8\|d\fd\^:1f1b111b1f0e0400\|h" .._5._b8..(_5.is_building and"\^jl8\|d\fa\^:0804061f0c040200\|h" .._5.power or"\^jl8\|d\f8\^:081c226b221c0800\|h\-h" .._5._e1).."\n\|g\f6" .._5.description
 end
-_eh+=1
+_eg+=1
 end
 end
 foreach(_4, function(c) c:_ap() end)
@@ -885,120 +883,118 @@ end
 palt(11,true)
 cursor:_ap()
 end
-function _ek(x,y)
-local _el=0
+function _ej(x,y)
+local _ek=0
 if x>=0 and x<=66 and y>=0 and y<=66
 and _w[x][y]!=0 then
-if(_w[x][y-1]>0) _el+=1
-if(_w[x-1][y]>0) _el+=2
-if(_w[x+1][y]>0) _el+=4
-if(_w[x][y+1]>0) _el+=8
-_w[x][y]=1 + _el
+if(_w[x][y-1]>0) _ek+=1
+if(_w[x-1][y]>0) _ek+=2
+if(_w[x+1][y]>0) _ek+=4
+if(_w[x][y+1]>0) _ek+=8
+_w[x][y]=1 + _ek
 end
-local _em=_f5(x,y)
-if(_em and _em.is_building) _1[_em._e4]=true
+local _el=_f4(x,y)
+if(_el and _el.is_building) _1[_el._e3]=true
 end
-function _en(x,y)
-return fget(_fc(x,y),7)
+function _em(x,y)
+return fget(_fb(x,y),7)
 end
-function _eo(_cv, _ep, _eq)
-_cv._ct,_cv._et,_cv._er=_ep or 0,true
-if(_eq) _cv.gx,_cv.gy=_cv.x,_cv.y
+function _en(_cv, _eo, _ep)
+_cv._ct,_cv._es,_cv._eq=_eo or 0,true
+if(_ep) _cv.gx,_cv.gy=_cv.x,_cv.y
 _cv._cu=cocreate(function(self)
 while true do
 if self._cg then
-_fg(self,mid(flr(self._b9+rnd"32")-16,64),mid(flr(self._ca+rnd"32")-16,64))
+_ff(self,mid(flr(self._b9+rnd"32")-16,64),mid(flr(self._ca+rnd"32")-16,64))
 end
 if self.id==33 then
-_gj(self)
-elseif _gx"250" and self.can_fire and self._ct!=8 then
-local gx,gy=_c3(self)
-_e8(self,gx,gy,function (_cv,x,y)
-local _cx=_f5(x,y)
+_gi(self)
+elseif _gw"250" and self.can_fire and self._ct!=8 then
+local gx,gy=_c2(self)
+_e7(self,gx,gy,function (_cv,x,y)
+local _cx=_f4(x,y)
 if _cx and _cx._bq!=_cv._bq and _w[x][y]==16 and (not _cx._cg or _cv.id==8) then
-_ez(_cv,_cx)
+_ey(_cv,_cx)
 return true
 end
 end,max(4,self.range))
 end
-local _cb=self._es or self._cb
+local _cb=self._er or self._cb
 if self.id==38 then
 self._by="hARVESTER (" ..(self.capacity\14).."%)"
 if self._ct==0 or self._ct==9 then
 if self.capacity<1400
 and self._ct!=7 and self._ct!=9 then
-self._es=nil
+self._er=nil
 local sx,sy
-local tx,ty=_c3(self)
-if _en(tx,ty) and not self._eu then
+local tx,ty=_c2(self)
+if _em(tx,ty) and not self._et then
 sx,sy=tx,ty
 else
-_e8(self,tx,ty,function(_cv,x,y)
-if _en(x,y) then
+_e7(self,tx,ty,function(_cv,x,y)
+if _em(x,y) then
 sx,sy=x,y
 return true
 end
 end,20)
 end
 if sx and sy then
-_cv._et=_fg(_cv,sx,sy,nil,not _cv._et)
-if not _cv._et and not _gv(_cv._bq,39) then
-_c1(self,_ex(self))
+_cv._es=_ff(_cv,sx,sy,nil,not _cv._es)
+if not _cv._es and not _gu(_cv._bq,39) then
+_c0(self,_ew(self))
 end
-if(_en(_c3(_cv))) _cv._ct=6
+if(_em(_c2(_cv))) _cv._ct=6
 end
 elseif self.capacity >=1400
 and self._ct<7 then
-self.sx,self.sy=_c3(self)
-_gh(self,_cb or _gv(_cv._bq,17))
+self.sx,self.sy=_c2(self)
+_gg(self,_cb or _gu(_cv._bq,17))
 end
 elseif self._ct==6 then
-self._eu=false
-_ey(_cv.x, _cv.y, _cv.r+.75+rnd".2" -.1)
-local _ev=_c2(_cv)
+self._et=false
+_ex(_cv.x, _cv.y, _cv.r+.75+rnd".2" -.1)
+local _eu=_c1(_cv)
 self.capacity+=.25
-_m[_ev]=(_m[_ev] or 1000)-.5
-if _m[_ev] <=0 then
-local _br,_bs=_c3(self)
+_m[_eu]=(_m[_eu] or 1000)-.5
+if _m[_eu] <=0 then
+local _br,_bs=_c2(self)
 for yy=-1,1 do
 for xx=-1,1 do
-_am=_fc(_br+xx,_bs+yy)
-_fd(_br+xx,_bs+yy,(xx==0 and yy==0) and 0 or ((_am>3 and _am<10) and 10 or _am)
+_am=_fb(_br+xx,_bs+yy)
+_fc(_br+xx,_bs+yy,(xx==0 and yy==0) and 0 or ((_am>3 and _am<10) and 10 or _am)
 )
 end
 end
 self._ct=0
 end
-if(self.capacity%350==0) self._eu=true self._ct=0
+if(self.capacity%350==0) self._et=true self._ct=0
 end
 end
 if self.id>=30 then
 if self._ct==9 then
-if _cb._cp>0 and not _cb._ew and self._cp>0 then
+if _cb._cp>0 and not _cb._ev and self._cp>0 then
 _cb._ah,self._ct,self.r=false,8,.25
-_c1(self,_cb.x+16,_cb.y+4)
-_c4(self)
+_c0(self,_cb.x+16,_cb.y+4)
+_c3(self)
 if self.capacity and _cb.id==17 then
-_cb._ew=self
+_cb._ev=self
 while self.capacity>0 do
 self.capacity-=1
-if flr(self.capacity)%8==0 then
 _0[self._7]+=.5
-if tonum(_dl)<_a0 then
-_c5(4,self)
+if tonum(_dk)<_a0 then
+_c4(.5,self)
 elseif self._7==1 then
-_f8"sPICE LOST. bUILD sILOS" end
-end
+_f7"sPICE LOST. bUILD sILOS" end
 yield()
 end
-self.capacity,self._ct,_cb._ew=0,0
+self.capacity,self._ct,_cb._ev=0,0
 if self.sx then
-_fg(self, self.sx, self.sy, 0, true)
+_ff(self, self.sx, self.sy, 0, true)
 else
-_c1(self,_ex(self))
+_c0(self,_ew(self))
 end
 else
-self._af,self._cz,_cb.col_cycle_src,_cb._cf=2,0,8,split"7,10,0,0,7,0,0" end
+self._af,self.procstep,_cb.col_cycle_src,_cb._cf=2,0,8,split"7,10,0,0,7,0,0" end
 end
 end
 end
@@ -1007,30 +1003,30 @@ yield()
 end
 end)
 end
-function _ex(_cx)
-local ux,uy=_e8(_cx,(_cx.x+8)\8, (_cx.y+8)\8, _ff, 99, true)
+function _ew(_cx)
+local ux,uy=_e7(_cx,(_cx.x+8)\8, (_cx.y+8)\8, _fe, 99, true)
 return ux*8,uy*8
 end
-function _ey(x,y,r)
-if(_gx"10") _g2(x+ sin(r)*5.5 +3.5,y- cos(r)*5.5 +3.5, rnd"2", .15,0,.1, -.01, 25,split"2,4,9,15")
+function _ex(x,y,r)
+if(_gw"10") _g1(x+ sin(r)*5.5 +3.5,y- cos(r)*5.5 +3.5, rnd"2", .15,0,.1, -.01, 25,split"2,4,9,15")
 end
-function _ez(_cv, _cx, _e0)
+function _ey(_cv, _cx, _ez)
 local id=_cv.id
 if id!=19 then
-local _e1=_cv.range*5
+local _e0=_cv.range*5
 _cv._ct,_cv._cx,_cv._cu=3,_cx,cocreate(function(self)
 while _cx._cp>0 and _cx._ct!=8 do
-if _gw(_cv.x,_cv.y,_cx.x,_cx.y) > _e1
+if _gv(_cv.x,_cv.y,_cx.x,_cx.y) > _e0
 and _cv.moves then
-if not _e0 and _gw(_cv.x,_cv.y,_cv.gx,_cv.gy) > _e1 then
+if not _ez and _gv(_cv.x,_cv.y,_cv.gx,_cv.gy) > _e0 then
 goto exit_attack
 end
-if _fg(_cv,(_cx.x+rnd(_cx.w))\8,(_cx.y+rnd(_cx.h))\8,_e1)
-and _cv._e2==1600
+if _ff(_cv,(_cx.x+rnd(_cx.w))\8,(_cx.y+rnd(_cx.h))\8,_e0)
+and _cv._e1==1600
 then
 _cv._cp=0
 for i=1,15 do
-_c7(_cv.x+rnd"32" -16,_cv.y+rnd"32" -16, 2)
+_c6(_cv.x+rnd"32" -16,_cv.y+rnd"32" -16, 2)
 end
 _cx._cp-=(1000+rnd"600")
 _cx._cq=_cv
@@ -1040,143 +1036,143 @@ end
 if not _cv.norotate then
 local a=atan2(_cv.x-_cx.x, _cv.y-_cx.y)
 while (_cv.r !=a) do
-_gz(_cv, a)
+_gy(_cv, a)
 end
 end
-local _e3=_gw(_cv.x,_cv.y,_cx.x,_cx.y)
-if _e3<=_e1 then
-if _e0 and _cx.capturable and _cv.can_capture and _cx._cp<=_cx._b8/3
+local _e2=_gv(_cv.x,_cv.y,_cx.x,_cx.y)
+if _e2<=_e0 then
+if _ez and _cx.capturable and _cv.can_capture and _cx._cp<=_cx._b8/3
 then
-_fg(_cv,_cx.x\8,_cx.y\8,0)
-_e5(_cx, _cv)
-if(_cx._ew) _e5(_cx._ew, _cv)
+_ff(_cv,_cx.x\8,_cx.y\8,0)
+_e4(_cx, _cv)
+if(_cx._ev) _e4(_cx._ev, _cv)
 _cv._cp=0
-elseif _cv._c0<=0 and not _cv._cy and _cx._cp>0
-and (_e3>=20 or id!=34) then
+elseif _cv._cz<=0 and not _cv._cy and _cx._cp>0
+and (_e2>=20 or id!=34) then
 _cv._bv(_cv)
-_cv._c0=_cv.fire_rate
+_cv._cz=_cv.fire_rate
 end
 elseif _cv.is_building then
-_eo(_cv)
+_en(_cv)
 end
 yield()
-if(id==31 or id==33 or _cx._e4==_cv._e4 or _cx._er) break
+if(id==31 or id==33 or _cx._e3==_cv._e3 or _cx._eq) break
 end
 ::exit_attack::
-if(not _e0) _fg(_cv,_cv.gx\8,_cv.gy\8)
-_eo(_cv, nil, true)
+if(not _ez) _ff(_cv,_cv.gx\8,_cv.gy\8)
+_en(_cv, nil, true)
 end)
 else
-_ez(_be(_aj[({24,25,50,50.5})[_cv._e4]], _cv.x,_cv.y, _cv._7, _cv), _cx)
-_cv._c0=583
+_ey(_be(_aj[({24,25,50,50.5})[_cv._e3]], _cv.x,_cv.y, _cv._7, _cv), _cx)
+_cv._cz=583
 end
 end
-function _e5(_e6, _e7)
-_e6.old_fact_data,_e6._e4,_e6._7,_e6._bq,_e6._bj,_e6.col1,_e6._ab
+function _e4(_e5, _e6)
+_e5.old_fact_data,_e5._e3,_e5._7,_e5._bq,_e5._bj,_e5.col1,_e5._ab
 =
-{_e6._e4,_e6._7,_e6._bq,_e6.col1,_e6._ab},_e7._e4,_e7._7,_e7._bq,_e7._bj,_e7.col1,_e7._ab
+{_e5._e3,_e5._7,_e5._bq,_e5.col1,_e5._ab},_e6._e3,_e6._7,_e6._bq,_e6._bj,_e6.col1,_e6._ab
 end
-function _e8(_cv,x,y,_e9,_fa,_fb)
-for t=rnd"1",_fa or 4,.075 do
+function _e7(_cv,x,y,_e8,_e9,_fa)
+for t=rnd"1",_e9 or 4,.075 do
 local xx,yy=mid(flr(x+t*cos(t)),61),mid(flr(y+t*sin(t)),61)
-if(_e9(_cv,xx,yy)) return xx,yy
-if(not _fb) yield()
+if(_e8(_cv,xx,yy)) return xx,yy
+if(not _fa) yield()
 end
 end
-function _fc(mx,my)
+function _fb(mx,my)
 if(my>31)mx+=64 my-=32
 return mget(mx,my)
 end
-function _fd(mx,my,_fe)
+function _fc(mx,my,_fd)
 if(my>31)mx+=64 my-=32
-mset(mx,my,_fe)
+mset(mx,my,_fd)
 end
-function _ff(_cv,x,y)
-local _em=_f5(x,y)
-return not fget(_fc(x,y),0)
-and (not _em
-or _em==_cv
-or _em._cg
-or (_em.on_foot and _cv and _cv.tracked and _em._bq!=_cv._bq))
+function _fe(_cv,x,y)
+local _el=_f4(x,y)
+return not fget(_fb(x,y),0)
+and (not _el
+or _el==_cv
+or _el._cg
+or (_el.on_foot and _cv and _cv.tracked and _el._bq!=_cv._bq))
 end
-function _fg(_cv,x,y,_fh,_fi,_ep)
-if _fi then
-local _fj=_gv(_cv._bq,39)
-if _fj and not _fj._er and _fj._e4==_cv._e4 then
-_fj._er,_cv._er,_cv._ct, _fj._cu=_cv,_fj,2, cocreate(function(unit_c)
-_fg(unit_c,_cv.x\8,_cv.y\8)
-_c4(_cv)
+function _ff(_cv,x,y,_fg,_fh,_eo)
+if _fh then
+local _fi=_gu(_cv._bq,39)
+if _fi and not _fi._eq and _fi._e3==_cv._e3 then
+_fi._eq,_cv._eq,_cv._ct, _fi._cu=_cv,_fi,2, cocreate(function(unit_c)
+_ff(unit_c,_cv.x\8,_cv.y\8)
+_c3(_cv)
 if _cv._cp>0 then
-_fj.my=18
+_fi.my=18
 del(_j,_cv)
-_fg(_fj,x,y)
-_c1(_cv,_fj.x,_fj.y)
+_ff(_fi,x,y)
+_c0(_cv,_fi.x,_fi.y)
 add(_j, _cv)
-_eo(_cv,_ep)
+_en(_cv,_eo)
 end
-_fj.my=16
-_eo(_fj)
+_fi.my=16
+_en(_fi)
 end)
 return
 end
 end
 ::restart_move_unit::
-if not _cv._cg and not _ff(_cv,x,y) then
-x,y=_e8(_cv,x,y,_ff)
+if not _cv._cg and not _fe(_cv,x,y) then
+x,y=_e7(_cv,x,y,_fe)
 end
-_cv.tx,_cv.ty,_cv.prev_state,_cv._ct,_cv._fk=x*8,y*8,_cv._ct,1
+_cv.tx,_cv.ty,_cv.prev_state,_cv._ct,_cv._fj=x*8,y*8,_cv._ct,1
 if true then
-local start, goal, _fm={ x=_cv.x\8, y=_cv.y\8}, {x=x, y=y}, function (_fl) return (_fl.y<<8) + _fl.x end
-local _ft,_fn={
-_fo=start,_fp=0,_fq=_g1(start, goal)
+local start, goal, _fl={ x=_cv.x\8, y=_cv.y\8}, {x=x, y=y}, function (_fk) return (_fk.y<<8) + _fk.x end
+local _fs,_fm={
+_fn=start,_fo=0,_fp=_g0(start, goal)
 }, {}
-_fn[_fm(start)]=_ft
-local frontier, frontier_len, goal_id, max_number, count={_ft}, 1, _fm(goal), 32767.99, 0
+_fm[_fl(start)]=_fs
+local frontier, frontier_len, goal_id, max_number, count={_fs}, 1, _fl(goal), 32767.99, 0
 while frontier_len > 0 do
-local _ej=max_number
+local _ei=max_number
 for i=1, frontier_len do
-local _fr=frontier[i]._fp + frontier[i]._fq
-if(_fr <=_ej) _fs,_ej=i,_fr
+local _fq=frontier[i]._fo + frontier[i]._fp
+if(_fq <=_ei) _fr,_ei=i,_fq
 end
-_ft=frontier[_fs]
-frontier[_fs], _ft._fu=frontier[frontier_len], true
+_fs=frontier[_fr]
+frontier[_fr], _fs._ft=frontier[frontier_len], true
 frontier_len -=1
-local p=_ft._fo
-if _fm(p)==goal_id then
+local p=_fs._fn
+if _fl(p)==goal_id then
 p={goal}
-while _ft._fy do
-_ft=_fn[_fm(_ft._fy)]
-add(p, _ft._fo)
+while _fs._fx do
+_fs=_fm[_fl(_fs._fx)]
+add(p, _fs._fn)
 end
-_cv._fk=p
+_cv._fj=p
 goto end_pathfinding
 end
-local _fv={}
+local _fu={}
 for xx=-1, 1 do
 for yy=-1, 1 do
 local nx,ny=p.x+xx,p.y+yy
-local _em=_f5(nx,ny)
+local _el=_f4(nx,ny)
 if(xx!=0 or yy!=0)
-and _cv._cg or (not fget(_fc(nx,ny),0) or _cv.on_foot and fget(_fc(nx,ny),1))
-and _ff(_cv,nx,ny)
+and _cv._cg or (not fget(_fb(nx,ny),0) or _cv.on_foot and fget(_fb(nx,ny),1))
+and _fe(_cv,nx,ny)
 and nx>=0 and ny>=0 and nx<=63 and ny<=63 then
-add(_fv, {x=nx, y=ny})
+add(_fu, {x=nx, y=ny})
 end
 end
 end
-for n in all(_fv) do
-local id=_fm(n)
-local _fx, _fw=
-_fn[id],_ft._fp + ((p.x !=n.x and p.y !=n.y) and 1.2 or 1)
-if not _fx then
-_fx={
-_fo=n,_fp=max_number,_fq=_g1(n, goal)
+for n in all(_fu) do
+local id=_fl(n)
+local _fw, _fv=
+_fm[id],_fs._fo + ((p.x !=n.x and p.y !=n.y) and 1.2 or 1)
+if not _fw then
+_fw={
+_fn=n,_fo=max_number,_fp=_g0(n, goal)
 }
 frontier_len +=1
-frontier[frontier_len], _fn[id]=_fx, _fx
+frontier[frontier_len], _fm[id]=_fw, _fw
 end
-if not _fx._fu and _fx._fp > _fw then
-_fx._fp, _fx._fy=_fw, p
+if not _fw._ft and _fw._fo > _fv then
+_fw._fo, _fw._fx=_fv, p
 end
 end
 count+=1
@@ -1186,40 +1182,40 @@ end
 end
 ::end_pathfinding::
 _cv.prev_state,_cv._ct=_cv._ct,2
-if _cv._fk then
-for i=#_cv._fk-1,1,-1 do
-local _fl=_cv._fk[i]
-local nx,ny,ux,uy=_fl.x,_fl.y,_cv.x,_cv.y
+if _cv._fj then
+for i=#_cv._fj-1,1,-1 do
+local _fk=_cv._fj[i]
+local nx,ny,ux,uy=_fk.x,_fk.y,_cv.x,_cv.y
 local mx,my=nx*8,ny*8
 if not _cv.norotate then
 local a=atan2(ux-mx, uy-my)
 while (_cv.r !=a) do
-_gz(_cv, a)
+_gy(_cv, a)
 end
 end
-if(not _cv._cg and not _ff(_cv,nx,ny)) goto restart_move_unit
-local _fz,_f0=_cv._f4, _gw(mx,my,ux,uy)
-local _f1,_f2=_fz * (mx-ux) / _f0, _fz * (my-uy) / _f0
-local _f3=_f5(nx,ny)
-if(_f3 and _f3.on_foot and _cv.tracked) _f3._cp=0
-for i=0, _f0/_fz-1 do
+if(not _cv._cg and not _fe(_cv,nx,ny)) goto restart_move_unit
+local _fy,_fz=_cv._f3, _gv(mx,my,ux,uy)
+local _f0,_f1=_fy * (mx-ux) / _fz, _fy * (my-uy) / _fz
+local _f2=_f4(nx,ny)
+if(_f2 and _f2.on_foot and _cv.tracked) _f2._cp=0
+for i=0, _fz/_fy-1 do
 _k[nx.."," ..ny]=_cv
-_cv.x+=_f1
-_cv.y+=_f2
+_cv.x+=_f0
+_cv.y+=_f1
 if _cv.id==39 then
-if _cv._er then
-local d=_gw(_cv.x,_cv.y,_cv.tx,_cv.ty)
+if _cv._eq then
+local d=_gv(_cv.x,_cv.y,_cv.tx,_cv.ty)
 if(d<32) _cv.z=d/4
 end
 _cv.z=mid(2,_cv.z+0.1,8)
-_cv._f4=_cv.z/10
+_cv._f3=_cv.z/10
 end
 yield()
 end
-_c1(_cv,mx,my)
+_c0(_cv,mx,my)
 _k[nx.."," ..ny]=_cv
-_c9(_cv)
-if(_gw(_cv.x,_cv.y,_cv.tx,_cv.ty) <=(_fh or 0)) break
+_c8(_cv)
+if(_gv(_cv.x,_cv.y,_cv.tx,_cv.ty) <=(_fg or 0)) break
 end
 else
 _cv._ct=0
@@ -1228,139 +1224,139 @@ end
 _cv._ct=0
 return true
 end
-function _f5(tx,ty)
+function _f4(tx,ty)
 return _k[tx.."," ..ty]
 end
-function _f6(x,_f7,_b5,_w)
+function _f5(x,_f6,_b5,_w)
 add(_4,{
-x=x,y=81,w=_w or 22,h=8,_f7=_f7,_ao=function(self)
+x=x,y=81,w=_w or 22,h=8,_f6=_f6,_ao=function(self)
 return self
 end,_ap=function(self)
-local c,b=self._gg and 7 or 6,#_f7>1
+local c,b=self._gf and 7 or 6,#_f6>1
 if(b) ?"\-g\|g\^x2███\^x1█\n\-g\|e\^x2███\^x1█",x,81,c
-?_f7,x+2,83,b and 0 or c
+?_f6,x+2,83,b and 0 or c
 end,_b5=_b5
 })
 end
-function _f8(_f9)
-_ga,_v=_f9,500
+function _f7(_f8)
+_f9,_v=_f8,500
 end
-function _gb(_b6)
-_b6._cp,_b6._af,_b6.spent,_b6._gd=0,0,0
+function _ga(_b6)
+_b6._cp,_b6._af,_b6.spent,_b6._gc=0,0,0
 if(_b6._b2) _b6._b2._ah=false
 end
-function _gc(_b6)
+function _gb(_b6)
 if(not _b6) return
-local _ge,_gf=cursor:_ao(),_b6:_ao()
-_b6._gg=_ge.x <=_gf.x + _gf.w and
-_ge.x + _ge.w >=_gf.x and
-_ge.y <=_gf.y + _gf.h and
-_ge.y + _ge.h >=_gf.y
-if left_button_clicked and _b6._gg then
+local _gd,_ge=cursor:_ao(),_b6:_ao()
+_b6._gf=_gd.x <=_ge.x + _ge.w and
+_gd.x + _gd.w >=_ge.x and
+_gd.y <=_ge.y + _ge.h and
+_gd.y + _gd.h >=_ge.y
+if left_button_clicked and _b6._gf then
 if _8 then
 _5=_b6
 else
 if(_b6.type<=2 and _w[cx][cy]==0 or _b6._ct==8) return
 if _bp
-and _dx
-and (_b6.id==17 and _dx.id==38
-or _b6.id==9 and _dx.id>=30)
-and _b6._7==1 and _dx._7==1
+and _dw
+and (_b6.id==17 and _dw.id==38
+or _b6.id==9 and _dw.id>=30)
+and _b6._7==1 and _dw._7==1
 then
-_gh(_dx,_b6)
+_gg(_dw,_b6)
 return
 else
 _bp=_b6
 end
 end
-_dq=true
+_dp=true
 end
 end
-function _gh(_cv,_d0)
-local _d0,_gi,_fi=_d0 or _gv(_cv._bq,1) or _cv
-_cv._ct,_d0._ah,_cv._es=7,true,_d0
-if(_cv.id!=38 or _d0.id==17) _cv._cb=_d0
+function _gg(_cv,_dz)
+local _dz,_gh,_fh=_dz or _gu(_cv._bq,1) or _cv
+_cv._ct,_dz._ah,_cv._er=7,true,_dz
+if(_cv.id!=38 or _dz.id==17) _cv._cb=_dz
 _cv._cu=cocreate(function(_cv)
-if(_d0.is_dockable) _gi,_fi=9,true
-_fg(_cv, (_d0.x+16)/8, _d0.y/8, 0, _fi, _gi or 0)
-if(not _cv._er) _eo(_cv, _gi)
+if(_dz.is_dockable) _gh,_fh=9,true
+_ff(_cv, (_dz.x+16)/8, _dz.y/8, 0, _fh, _gh or 0)
+if(not _cv._eq) _en(_cv, _gh)
 end)
 end
-function _gj(_b6)
-local _gl,_cx=0
+function _gi(_b6)
+local _gk,_cx=0
 for building in all(_i) do
 if building._bq!=_b6._bq
-and _gk(building)
-and building.ai_priority > _gl
+and _gj(building)
+and building.ai_priority > _gk
 then
-_cx,_gl=building,building.ai_priority
+_cx,_gk=building,building.ai_priority
 end
 end
-if(_cx) _ez(_b6, _cx, true)
+if(_cx) _ey(_b6, _cx, true)
 end
-function _gk(_b6)
-local x,y=_c3(_b6)
+function _gj(_b6)
+local x,y=_c2(_b6)
 return _w[x][y]==16
 end
-function _gm(_gn)
-sfx(_gn,3)
+function _gl(_gm)
+sfx(_gm,3)
 end
-function _go(_gp)
+function _gn(_go)
 local _am=peek(0x3115)
-if(_am & 128 > 0 !=_gp) _am=_am^^128
+if(_am & 128 > 0 !=_go) _am=_am^^128
 poke(0x3115, _am)
 end
-function _gq(_gr,d,dd)
+function _gp(_gq,d,dd)
 d=d or","
-if(dd) _gr=split(_gr,dd)
-if type(_gr)=="table" then
+if(dd) _gq=split(_gq,dd)
+if type(_gq)=="table" then
 local t={}
-while #_gr>0 do
-local s=_gr[1]
+while #_gq>0 do
+local s=_gq[1]
 add(t,split(s,d))
-del(_gr,s)
+del(_gq,s)
 end
 return t
 else
-return split(_gr,d)
+return split(_gq,d)
 end
 end
-function _gs(_gt,_gu,_da)
-if(not _gt[_gu]) _gt[_gu]={}
-add(_gt[_gu],_da)
+function _gr(_gs,_gt,_c9)
+if(not _gs[_gt]) _gs[_gt]={}
+add(_gs[_gt],_c9)
 end
-function _gv(_bq,id)
-local _gt=_o[_bq][id]
-if(_gt) return rnd(_gt)
+function _gu(_bq,id)
+local _gs=_o[_bq][id]
+if(_gs) return rnd(_gs)
 end
-function _gw(x1,y1,x2,y2)
+function _gv(x1,y1,x2,y2)
 return sqrt(((x1-x2)>>10)^2+((y1-y2)>>10)^2)<<10
 end
-function _gx(_gy)
-return rnd(_gy)<1
+function _gw(_gx)
+return rnd(_gx)<1
 end
-function _gz(_cv, _g0)
-local _c6=_g0-_cv.r
-if _c6 > 0.5 then
-_c6 -=1
-elseif _c6 < -0.5 then
-_c6 +=1
+function _gy(_cv, _gz)
+local _c5=_gz-_cv.r
+if _c5 > 0.5 then
+_c5 -=1
+elseif _c5 < -0.5 then
+_c5 +=1
 end
-if _c6 > 0.0087 then
+if _c5 > 0.0087 then
 _cv.r +=0.0087
-elseif _c6 < -0.0087 then
+elseif _c5 < -0.0087 then
 _cv.r -=0.0087
 else
-_cv.r=_g0
+_cv.r=_gz
 end
 if(not _cv._cg) yield()
 end
-function _g1(a, b)
+function _g0(a, b)
 return abs(a.x-b.x) + abs(a.y-b.y)
 end
-function _g2(x, y, r, dx, dy, dr, _g3, _cp, _g4)
+function _g1(x, y, r, dx, dy, dr, _g2, _cp, _g3)
 add(_n, {
-x=x,y=y,r=r,dx=dx,dy=dy,dr=dr,_cp=0,_g3=_g3,_g4=_g4, _g5=rnd{0xa5a5.8,0x5a5a.8},_g6=y, _g7=_cp }, 1)
+x=x,y=y,r=r,dx=dx,dy=dy,dr=dr,_cp=0,_g2=_g2,_g3=_g3, _g4=rnd{0xa5a5.8,0x5a5a.8},_g5=y, _g6=_cp }, 1)
 end
 __gfx__
 11bbbbbbbb171bbb577777d5bbbbbbbbbbbbbbbb99b9bb99bbbbbbbbbbbbbbbb9b9b99b99bb9999bb99bbbbbbbb7a9bbbb95555555d555555d155dbbbbbbbbbb
@@ -1649,11 +1645,11 @@ __map__
 0d12000000000000000000000d0d0d1718190d0d0d0d0d0d0d0e05050505080c030300000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000002d29
 0d0e00000000000000000000130d0d1d1b1b196f0d0d0d0d0d0e0a050508110d030300000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000002d00
 0d140000000000000000000000130dcd1d1e1f0d0d0d0d0d0d100f0f0f0f0d0d030300000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000002d26
-1400000000070505070000000000130d330dab0d420d0d143100130d0d0d1400030300000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000002d00
+1400000000070505070000000000130d0d0dab0d0d0d0d143100130d0d0d1400030300000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000002d00
 0000000000050909050700000000000c0d0d0d0d0d0d0e340000000c0d0e0000030300000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000002d39
-00000000000505090505000000006f136a0d440d0d0d0e006f00000c0d0e0000030300000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000002d00
-00000000000405090905000000000031130d0d0dcd330e000000000c0d0e0000030300000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000002d38
-0000000011120505050a000000000000341310100d0d1400000000130d0d1200030300000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000002d00
+00000000000505090505000000006f130d0d0d0d0d0505006f00000c0d0e0000030300000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000002d00
+00000000000405090905000000000031130d0d0d0d0505000000000c0d0e0000030300000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000002d38
+0000000011120505050a0000000000003413050505050500000000130d0d1200030300000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000002d00
 000000110d0d0f0f120000070507000000000000000000000705070000130d0d030300000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000002d48
 0000000c0d0d0d0d0d0d12050505000000000000000000000a0505050507130d030300000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000002d00
 __sfx__
