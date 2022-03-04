@@ -24,7 +24,7 @@ end
 
 
 -- fields
-local g_,buildings,units,object_tiles,radar_data,spice_tiles,particles,has_obj,start_time,t_,build_dest,unit_dest,keyx,keyy,hq,radar_frame,msgcount,fow,cam_max,sel_build_item_idx={},{},{},{},{},{},{},{{},{}},t(),0,{0,0},{0,0},0,0,false,0,0,{},mapsize*8-128,0
+local g_,buildings,units,object_tiles,radar_data,spice_tiles,particles,has_obj,start_time,t_,build_dest,unit_dest,keyx,keyy,hq,radar_frame,msgcount,fow,cam_max,sel_build_item_idx={},{},{},{},{},{},{},{{},{}},t(),1,{0,0},{0,0},0,0,false,0,0,{},mapsize*8-128,0
 local last_hq,total_spice,ai_awake,last_cmd_time=hq,{0,0},{},0
 
 g_.factory_click=function(self)
@@ -703,9 +703,9 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
 
          -- build/repair (only if have money)
          -- note: only reset the procstep if have funds (no free build/upgrades!)
-         if transact(-.25,self.process==1 and self.parent or self) then 
-          self.spent+=.25
-          self.life=self.process==1 and (self.spent/self.cost)*100 or life+2
+         if transact(-.5,self.process==1 and self.parent or self) then 
+          self.spent+=.5
+          self.life=self.process==1 and (self.spent/self.cost)*100 or life+1
         end
       end
      end
@@ -753,7 +753,7 @@ end
 function transact(diff, obj)
  if (credits[obj.owner]+diff<0) return false
  credits[obj.owner]+=diff
- if obj.owner==1 and credits[1]%5==0 then ssfx"63" end
+ if obj.owner==1 and credits[1]%10==0 then ssfx"63" end
  return true
 end
 
@@ -764,8 +764,8 @@ end
 
 function reveal_fow(object)
  
-if(object.owner<=0 or object.id==62) return -- demo mode!
---if(object.owner!=1 and object.state!=4) return
+--if(object.owner<=0 or object.id==62) return -- demo mode!
+if(object.owner!=1 and object.state!=4) return
 
  local size = object.type+1
  for xx=-size,size do
@@ -874,16 +874,18 @@ function _update60()
   if t_%ai_level==0 then
    --printh("update_ai()"..t_)
 
+   local ai_building,unit,ai_palace=rnd(buildings),rnd(units),safe_rnd_has_obj(2,19)
+
    -- build units/repair
    -- 
-   local ai_building=rnd(buildings)
    if ai_building.owner==2    
     and (not ai_building.build_obj or ai_building.build_obj.process!=1)
-    and t()>300 -- give player 5mins
    then
     -- build rnd unit
     local u=rnd(ai_building.build_objs)
-    if u and u.ai_build then
+    if u and u.ai_build 
+     and t()>300 -- give player 5mins head-start
+    then
      u:func_onclick()
     end
 
@@ -892,14 +894,12 @@ function _update60()
      -- auto-repair
      process_click(ai_building, 2)
     end
-
    end
 
     -- attacks
     --
     -- find ai unit and attack player  
-   local unit=rnd(units)
-   if (ai_awake[unit.faction] or t_%18000==0) --default=18000 (5 mins)
+   if (ai_awake[unit.faction] or t_%18000==0) --default=18000 (every 5 mins)
     and unit.owner==2 
     and unit.can_fire 
     and unit.state==0 
@@ -907,13 +907,11 @@ function _update60()
     -- are we under attack?
     if p_attacker then
      do_attack(unit, p_attacker)
+     p_attacker=nil
     else
      attack_rnd_enemy(unit)
     end
-    p_attacker=nil
    end
-
-   local ai_palace = safe_rnd_has_obj(2,19)
    
    if ai_palace
     and ai_awake[ai_palace.faction]
@@ -1021,12 +1019,11 @@ function can_move_selected_unit_pos_with_cor(x,y)
   and selected_obj.moves 
   and selected_obj.state!=7 
  then
-  selected_obj.cor = cocreate(function(unit)
+  selected_obj.cor,last_cmd_time = cocreate(function(unit)
    move_unit_pos(unit, x, y)
    do_guard(unit, nil, true)  
-  end)
+  end), 0
   deselect_check(selected_obj)
-  last_cmd_time=0
   return true
  end
  return false
@@ -1104,7 +1101,7 @@ function _draw()
 
  -- particles
  for p in all(particles) do
-  if (p.pattern) fillp(p.pattern)
+  fillp(p.pattern)
   circfill(p.x,p.y,p.r,p.cols[ flr((#p.cols/p.life_orig)*p.life)+1 ])
   fillp()
  end
@@ -1135,7 +1132,7 @@ function _draw()
  -- placement?
  if sel_build_obj 
   and (sel_build_obj.type==5
-  and not sel_build_obj.moves)
+  and sel_build_obj.is_building)
   and sel_build_obj.done
  then
 
@@ -1743,7 +1740,7 @@ function move_unit_pos(unit,x,y,dist_to_keep,try_hail,start_state)
       local prev_nunit=get_tile_obj(nx,ny)
       if (prev_nunit and prev_nunit.on_foot and unit.tracked) prev_nunit.life=0
 
-      for i = 0, distance/scaled_speed-1 do
+      for i = 1, distance/scaled_speed do
         -- declare intentions
         object_tiles[nx..","..ny]=unit
         unit.x+=step_x
@@ -2262,10 +2259,10 @@ __map__
 0d12000000000000000000000d0d0d1718190d0d0d0d0d0d0d0e05050505080c030300000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000002d29
 0d0e00000000000000000000130d0d1d1b1b19340d0d0d0d0d0e0a050508110d030300000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000002d00
 0d140000000000000000000000130dcd1d1e1f0d0d0d0d0d0d100f0f0f0f0d0d030300000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000002d26
-1400000000070505070000000000130d330dab0d0d0d0d143400130d0d0d1400030300000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000002d00
-0000000000050909050700000000000c0d0d0d0d0d0d0e340000000c0d0e0000030300000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000002d39
-000000000005050905050000000034130d0d0d0d0d0d0e006f00000c0d0e0000030300000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000002d00
-00000000000405090905000000000031130d0d0dcd330e000000000c0d0e0000030300000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000002d38
+1400000000070505070000000000130d330dab0d0d0d0d140505130d0d0d1400030300000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000002d00
+0000000000050909050700000000000c0d0d0d0d0d0d0e050505000c0d0e0000030300000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000002d39
+000000000005050905050000000034130d0d490d0d0d0e050505000c0d0e0000030300000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000002d00
+00000000000405090905000000000031130d0d0dcd330e000005000c0d0e0000030300000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000002d38
 0000000011120505050a000000000000341310100d0d1400000000130d0d1200030300000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000002d00
 000000110d0d0f0f120000070507000000000000000000000705070000130d0d030300000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000002d48
 0000000c0d0d0d0d0d0d12050505000000000000000000000a0505050507130d030300000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000002d00
