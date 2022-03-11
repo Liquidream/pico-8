@@ -159,22 +159,6 @@ function _init()
   end
  end
 
- cursor = {
-  w=8,
-  h=8,
-  get_hitbox=function(self)
-   return {
-    x=self.x+(ui_collision_mode and 0 or camx),
-    y=self.y+(ui_collision_mode and 0 or camy),
-    w=0,
-    h=0
-   }
-  end,
-  draw=function(self)
-   local spr_off=(selected_obj and selected_obj.is_unit and selected_obj.owner==1 or target_mode) and 3 or 0
-   spr(spr_off/3, self.x-spr_off, self.y-spr_off)
-  end
- }
 
  -- discover_objs()
  for my=0,31 do
@@ -797,9 +781,10 @@ function _update60()
  if not cursx then
   -- initial pos
   cursx,cursy=64,64
+
  elseif mouse_x==lastmx and mouse_y==lastmy then
   -- keyboard input
-  b=btn()
+  local b=btn()
   cursx+=b\2%2-b%2
   cursy+=b\8%2-b\4%2
  else
@@ -807,11 +792,9 @@ function _update60()
   cursx,cursy = mouse_x,mouse_y
  end
 
- -- update cursor/mouse pos
- cursx,cursy = mid(cursx,127),mid(cursy,127)
- cursor.x,cursor.y,lastmx,lastmy = cursx,cursy,mouse_x,mouse_y 
- cx,cy=(camx+cursx)\8,(camy+cursy)\8
- 
+ -- update cursor/mouse pos/cmd state
+ cursx,cursy,lastmx,lastmy = mid(cursx,127),mid(cursy,127),mouse_x,mouse_y
+ cx,cy=(camx+cursx)\8,(camy+cursy)\8 
  last_cmd_time+=1
 
  --
@@ -1285,7 +1268,8 @@ function _draw()
 
  -- cursor
  palt(11,true)
- cursor:draw()
+ local spr_off=(selected_obj and selected_obj.is_unit and selected_obj.owner==1 or target_mode) and 3 or 0
+ spr(spr_off/3, cursx-spr_off, cursy-spr_off)
 
 end
 
@@ -1820,7 +1804,13 @@ end
 function check_hover_select(obj)
   if (not obj) return
   --  collide()
-  local hb1,hb2 = cursor:get_hitbox(),obj:get_hitbox()
+  local hb1,hb2 = {
+    x=cursx+(ui_collision_mode and 0 or camx),
+    y=cursy+(ui_collision_mode and 0 or camy),
+    w=0,
+    h=0
+  },obj:get_hitbox()
+
   obj.hover = hb1.x <= hb2.x + hb2.w and
    hb1.x + hb1.w >= hb2.x and
    hb1.y <= hb2.y + hb2.h and
