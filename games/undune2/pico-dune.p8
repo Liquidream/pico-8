@@ -152,9 +152,9 @@ function _init()
  end
 
  -- init fog of war?
- for i=-3,66 do
+ for i=-5,67 do
   fow[i]={}
-  for l=-3,66 do
+  for l=-5,67 do
    fow[i][l]=0 --(16 for all)
   end
  end
@@ -760,7 +760,6 @@ if(object.owner<=0 or object.id==62 or not object.fow_range) return -- demo mode
   for yy=-size,size do
    local posx,posy = x+xx,y+yy
    if (dist(x,y,posx,posy)<size-1.5) then
-    printh(posx..","..posy.." > "..object.name.." > pos="..object.x)
     fow[posx][posy]=16
     for dy=-1,1 do
      for dx=-1,1 do
@@ -1156,7 +1155,7 @@ function _draw()
  msgcount-=1
  ?(msgcount>0 and message or selected_obj and selected_obj.name or ""),2,2,0
  -- score
- --?sub("00000", #strnum)..strnum, 103,2, p_col2
+ ?sub("00000", #strnum)..strnum, 103,2, p_col2
 
  if hq!=last_hq then
   radar_frame=1
@@ -1285,7 +1284,7 @@ end
 
 function test_tile(x,y) 
  local mask=0
-	if x>=0 and x<=66 and y>=0 and y<=66 -- bail
+	if x>=0 and x<=62 and y>=0 and y<=62 -- bail
   and fow[x][y]!=0 then
   -- figure out bitmask
 		if (fow[x][y-1]>0) mask+=1
