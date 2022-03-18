@@ -9,25 +9,19 @@ __lua__
 -- end-credits cart
 -- 
 
-faction_cols = {
- { 12, 1}, -- 1 = Atreides
- { 11, 3}, -- 2 = Ordos
- { 8,  2}, -- 3 = Harkonnen
- { 14, 2}, -- 4 = Emperor
-}
 
-credits=[[ᶜ7
-       ᶜ7BY pAUL nICHOLAS
+credits=[[ᶜe
+       BY pAUL nICHOLAS
 
 
 
           A DEMAKE OF
 
-  ᶜ8dUNE 2 - BY wESTWOOD sTUDIOS
+  ᶜ1dUNE 2 - BY wESTWOOD sTUDIOS
 
 
 
-          ᶜb- credits -ᶜ7
+          ᶜf- credits -ᶜe
 
    cODE & aRT: pAUL nICHOLAS
 
@@ -35,7 +29,27 @@ credits=[[ᶜ7
 
 
 
-   ᶜb- code acknowledgements -ᶜ7
+        ᶜf- additionally -ᶜe
+
+ cOVER aRT: aHMAD aLROMEADHEEN
+
+
+
+        ᶜf- playtesting -ᶜe
+
+       kRYSTIAN mAJEWSKI
+
+        TIMIXRETROPLAYS
+
+         cHRIS dONNELLY
+
+         dYLAN bENNETT
+
+             mAXWEL
+
+
+
+   ᶜf- code acknowledgements -ᶜe
 
    3d+rOTsPR: fREDERIC sOUCHU 
    
@@ -63,15 +77,15 @@ dIALOG tEXT fLOW: dYLAN bENNETT
 
 
 
-       ᶜb- special thanks -ᶜ7
+       ᶜf- special thanks -ᶜe
 
-wESTWOOD sTUDIOS - THE ORIGINAL
+ wESTWOOD sTUDIOS: THE ORIGINAL
 
- Zep - tHE COZIEST DEV PLATFORM
+ zEP: tHE COZIEST DEV PLATFORM
 
 
 
-        ᶜb- supporters -ᶜ7
+         ᶜf- supporters -ᶜe
 
           tHATtOMhALL
           
@@ -117,10 +131,140 @@ wESTWOOD sTUDIOS - THE ORIGINAL
 
 
 
+
      tHANK YOU FOR PLAYING
 
-           ᶜ8uNdune ii
-   ᶜ8tHE dEMAKING OF A dYNASTY
+           ᶜ1uNdune ii
+   tHE dEMAKING OF A dYNASTY
+
+]]
+
+credits_shadow=[[
+       BY pAUL nICHOLAS
+
+
+
+          A DEMAKE OF
+
+  dUNE 2 - BY wESTWOOD sTUDIOS
+
+
+
+          - credits -
+
+   cODE & aRT: pAUL nICHOLAS
+
+  mUSIC & sfx: cHRIS dONNELLY
+
+
+
+        - additionally -
+
+ cOVER aRT: aHMAD aLROMEADHEEN
+
+
+
+        - playtesting -
+
+       kRYSTIAN mAJEWSKI
+
+        TIMIXRETROPLAYS
+
+         cHRIS dONNELLY
+
+         dYLAN bENNETT
+
+             mAXWEL
+
+
+
+   - code acknowledgements -
+
+   3d+rOTsPR: fREDERIC sOUCHU 
+   
+  tline rOT: aNDREA bALDIRAGHI
+  
+   px9 dATA cOMPRESSION: zEP 
+   
+   gem mINIFIER: pAUL hAMMOND
+   
+ pICOTOOL/lUAMIN: dAN sANDERSON
+ 
+    rETROSPECS: jOHN pARKER
+    
+a*pATH+pARTICLES: mORGAN mCgUIRE
+
+   bITMASKING E.G.: bIGASTON
+   
+dIALOG tEXT fLOW: dYLAN bENNETT
+
+    pALETTE-mAKER: 2daRRAY
+    
+  cREDITS: dUNE ii - tHE mAKER
+  
+"uNdune ii" NAME IDEA: tOM hALL
+
+
+
+       - special thanks -
+
+ wESTWOOD sTUDIOS: THE ORIGINAL
+
+ zEP: tHE COZIEST DEV PLATFORM
+
+
+
+         - supporters -
+
+          tHATtOMhALL
+          
+        vITORIO mILIANO
+        
+         aNDREW dICKER
+         
+           kURT kLEMM
+           
+           BBSAMURAI
+           
+         dALJIT cHANDI
+         
+          rOY fIELDING
+          
+          gRAHAM wENZ
+          
+          fRANZ tORMER
+          
+      cHRISTOPHER cASTILLO
+      
+           oLIVER hUNT
+           
+            cODY dILL
+            
+             wILMAN
+             
+        mICHAEL sULLIVAN
+        
+              mANDO
+              
+              UENA
+              
+          sTRIPESBYnw
+          
+          mORGAN bROWN
+
+
+
+
+
+
+
+
+
+
+     tHANK YOU FOR PLAYING
+
+           uNdune ii
+   tHE dEMAKING OF A dYNASTY
 
 ]]
 
@@ -143,7 +287,19 @@ function _init()
  init_credits()
 end
 
+function reset_saved_data()
+ for i=0,63 do
+  dset(i,nil)
+ end
+end
+
 function load_main_cart() 
+ -- was game completed?
+ if p_level > 9 then
+  -- reset game back to start
+  reset_saved_data()
+ end
+ 
  load("pico-dune-main")
 end
 
@@ -160,7 +316,7 @@ end
 
 
 function _draw()
-  if t_>100 then
+  if t_>100 or p_level<=9 then
    draw_credits()
   end
 end
@@ -174,6 +330,11 @@ end
 function load_data()
  -- load saved data to determine current "state"
  p_fact = dget(6)
+ p_level = max(1, dget(0))
+ endstate = dget(40)  -- (0=none, 1=credit target, 2=enemy defeated, 3=player lost)
+
+ printh("p_fact="..p_fact)
+ printh("p_level="..p_level)
  -- play "intro" music
  music(2)
 end
@@ -192,44 +353,16 @@ end
 -- credits screen
 
 function init_credits()
- -- cls()
- -- flip()
- -- -- enable extra cols - reds and blues (render pal)
- -- _pal={129, 128,130,2,136, 140}--,7,8,9,10,11,12,13,14,15}
- -- pal(_pal,1)
-
- -- -- dune cols
- -- pal(6,15,1)
- -- pal(9,143,1)
- -- pal(10,142,1)
- -- pal(14,132,1)
- -- pal(15,128,1)
-
-
-
- -- now swap to initial cols
- --pal({1,2,3,4,5, 15,})
-
- -- define colour "filters"
- map_cols={
-  [-1]={6,5,13},-- orig map
-  [0]={0,0,0},  -- borderline
-  {12,1,0},     -- attreides
-  {11,10,1},    -- ordos
-  {8,2,1,5,5},  -- harkonnen
-  {5,2,0}       -- emperor
- } 
-
- col_atreides=1
- col_ordos=2
- col_harkonnen=3
- col_emperor=4
+ -- vars
  t_=0
-
- planet_anim_col = col_atreides
+ 
+ planet_anim_col = 0
+ if p_level > 9 then
+  planet_anim_col = p_fact
+ end
 
  -- init map anim sequence
- seq_cor=cocreate(play_map_sequence)
+ seq_cor=cocreate(play_sequence)
 end
 
 function update_credits()
@@ -242,29 +375,26 @@ function update_credits()
  end
 end
 
-function draw_credits()
- printh(t_)
- local yoff=100--min(t_/3,610)
+function draw_credits() 
  cls()
+ -- enable extra cols (reds) for title logo
+ pal({8,2,130,136},1)
+
+ local yoff=-40+min(t_/3,905)
  
  srand()
-	for i=1,100 do
+	for i=1,150 do
   pset(rnd(128),rnd(128),rnd{7,8})
 	end
 
-
- --fizzlemap({13,7,20,14,21,22}, map_cols[col_attreides])
-
- -- dune planet
- palt(0,false)
- spr(54,72,56,6,6)
- palt()
+ -- draw planet
+ spr(54,76,51,6,6)
 
  -- logo
  spr(0,4,132-yoff,15,3)
 
- print(credits,0,152-yoff,0)
-
+ print(credits_shadow,0,159-yoff,3)
+ print(credits,0,152-yoff)
 
 end
 
@@ -281,28 +411,24 @@ function hcenter(str)
  --  https://www.lexaloffle.com/bbs/?pid=90285#p )
 end
 
- -- play scripted animated sequence
- -- (typically, one for each level) 
-function play_map_sequence(seqnum)
- printh("play_map_sequence = "..tostr(seqnum))
+ -- play scripted sequence
+function play_sequence(seqnum)
+ printh("play_sequence = "..tostr(seqnum))
 
  cls() 
 
  -- dune planet, stars
- --   1 ,2  ,3  ,4  ,5  ,6,7  ,8  ,9,10,11
- pal({15,143,142,132,128,0,129,140,7,8, 11},1)
+ --   1 ,2  ,3  ,4  ,5  ,6,7  ,8  ,9,10,11,12,13,14,15
+ pal({15,143,142,132,128,0,129,140,9,10,11,12,13,7, 11 },1)
 
  --stars
  srand()
-	for i=1,100 do
+	for i=1,150 do
   pset(rnd(128),rnd(128),rnd{7,8})
 	end
-
-
+ 
  -- initial planet
- spr(48,72,56,6,6)
-
- wait(20)
+ spr(48,76,51,6,6)
 
  if seqnum==0 then
   -- no faction (arrakis)
@@ -312,38 +438,40 @@ function play_map_sequence(seqnum)
   pal(12,132,1)
   pal(13,128,1)
 
- elseif seqnum==col_atreides then
-  -- > atreides 
+ elseif seqnum==1 then
+  -- > atreides
+  wait(20)
   pal(9,139,1)
   pal(10,3,1)
   pal(11,140,1)
   pal(12,1,1)
   pal(13,129,1)
  
- elseif seqnum==col_ordos then
+ elseif seqnum==2 then
   -- > ordos 
+  wait(20)
   pal(9,7,1)
   pal(10,6,1)
   pal(11,13,1)
   pal(12,1,1)
   pal(13,129,1)
 
- elseif seqnum==col_harkonnen then
+ elseif seqnum==3 then
   -- > ordos 
+  wait(20)
   pal(9,8,1)
   pal(10,136,1)
   pal(11,2,1)
   pal(12,128,1)
   pal(13,0,1)
-
+ 
  end
 
- -- transition planet to faction
- fizzlemap(0, {9,10,11,12,13,0,7,8})
-
- -- enable extra cols (reds) for title logo
- --pal({8,130,2,136},1)
- pal({8,2,130,136},1)
+ if p_level > 9 then
+  -- transition planet to faction
+  fizzledraw(0, {9,10,11,12,13,0,7,8})
+ end
+ 
 
 end
 
@@ -364,16 +492,16 @@ function split2d(str,d,dd)
 end
 
 -- filtered-fizzlesspr
-function fizzlemap(trans, cols)
+function fizzledraw(trans, cols)
  sx=0
  sy=20
  sw=48
  sh=48
- dx=72
- dy=56
+ dx=76
+ dy=51
  offx=0
  offy=4 -- if map sprite not 1:1 with screen draw pos
- speed=3
+ speed=2
  num=0
  taps=0x3006
  lfsr=0x3fff

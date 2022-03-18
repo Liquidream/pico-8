@@ -139,8 +139,9 @@ function _init()
  if (mode==levelend_mode)  init_levelend()
  if (mode==levelselect_mode) init_levelselect() 
 
- menuitem(1,"!wipe save data!",reset_saved_data)
+ menuitem(1,"show credits",function() load"pico-dune-credits" end)
  menuitem(2,"level: ⬅️ "..p_level.." ➡️",level_warp)
+ menuitem(3,"!wipe save data!",reset_saved_data)
 end
 
 function level_warp(b)
@@ -526,9 +527,8 @@ function update_levelintro()
    elseif p_level<=9 then
     load_level(p_level)
    else
-    -- reset game back to start
-    reset_saved_data()
-    run()
+    -- load credits
+    load"pico-dune-credits"
    end
   end
  end
@@ -552,7 +552,7 @@ function draw_mentat(pnum)
  --pnum (0=dune,  1=atreides, etc.)
  pal({[0]=0,1,3,4,5,6,9,13,15,128,129,132,10,140,142,143},1) 
  
- -- space bg + window
+ -- space bg+window
  draw_planet(pnum)
  rect(40,36,128,112,7)
 
@@ -578,9 +578,11 @@ function draw_planet(pnum)
 	srand(pnum)--6
  
 	--stars
-	for i=1,50 do
-  pset(40+rnd(88),36+rnd(76),rnd{10,13,1})
+ clip(40,36,88,76)
+	for i=1,150 do
+  pset(rnd(128),rnd(128),rnd{1,13})
 	end
+ clip()
 
  if pnum > -1 then
 	c=(
@@ -590,7 +592,6 @@ function draw_planet(pnum)
 	   {0,9,2,15,6,6,6} --harkonnen
 	  })[pnum]
 	
-	 --spare cols: 2,6,8,15
 	p=({
 [0]={[0]=0,1,3,4,5,6,9,13,15,128,129,132,10,140,142,143},
 				{[0]=0,1,3,4,5,6,12,13,15,128,129,132,10,140,142,139},
