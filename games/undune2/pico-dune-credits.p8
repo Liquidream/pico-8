@@ -339,8 +339,6 @@ function load_data()
  music(2)
 end
 
-
-
 function log_cartdata()
  printh("--- cart data ---------")
  for i=0,63 do
@@ -441,20 +439,20 @@ function play_sequence(seqnum)
  elseif seqnum==1 then
   -- > atreides
   wait(20)
-  pal(9,139,1)
-  pal(10,3,1)
-  pal(11,140,1)
+  pal(9,12,1)
+  pal(10,140,1)
+  pal(11,131,1)
   pal(12,1,1)
   pal(13,129,1)
  
  elseif seqnum==2 then
   -- > ordos 
   wait(20)
-  pal(9,7,1)
-  pal(10,6,1)
-  pal(11,13,1)
-  pal(12,1,1)
-  pal(13,129,1)
+  pal(9,138,1)
+  pal(10,11,1)
+  pal(11,139,1)
+  pal(12,3,1)
+  pal(13,131,1)
 
  elseif seqnum==3 then
   -- > ordos 
