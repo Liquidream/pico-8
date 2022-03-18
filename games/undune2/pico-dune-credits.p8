@@ -300,7 +300,7 @@ function load_main_cart()
   reset_saved_data()
  end
  
- load("pico-dune-main")
+ load("pico-dune-main_min")
 end
 
 function _update60()

@@ -44,8 +44,9 @@ if(_k==_d) _am()
 if(_k==_e)  _au()
 if(_k==_f)  _a9()
 if(_k==_g) _bq()
-menuitem(1,"!wipe save data!",_r)
+menuitem(1,"show credits",function() load"pico-dune-credits" end)
 menuitem(2,"level: ⬅️ " .._o.." ➡️",_n)
+menuitem(3,"!wipe save data!",_r)
 end
 function _n(b)
 if(b&1>0) _o=max(_o-1,1)
@@ -318,9 +319,7 @@ end
 elseif _o<=9 then
 _5(_o)
 else
-_r()
-run()
-end
+load"pico-dune-credits" end
 end
 end
 end
@@ -352,9 +351,11 @@ function _a5(_a4)
 dx=100
 dy=75
 srand(_a4)
-for i=1,50 do
-pset(40+rnd(88),36+rnd(76),rnd{10,13,1})
+clip(40,36,88,76)
+for i=1,150 do
+pset(rnd(128),rnd(128),rnd{1,13})
 end
+clip()
 if _a4 > -1 then
 c=(
 {[0]={0,9,11,14,15,8,8,8},
