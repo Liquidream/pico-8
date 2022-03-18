@@ -588,7 +588,7 @@ and (not _do._ah or _do._ah._ae!=1)
 then
 local u=rnd(_do.build_objs)
 if u and u.ai_build
-and t()>300
+and t()>450
 then
 u:_b1()
 end

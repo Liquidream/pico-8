@@ -876,7 +876,7 @@ function _update60()
     -- build rnd unit
     local u=rnd(ai_building.build_objs)
     if u and u.ai_build 
-     and t()>300 -- give player 5mins head-start
+     and t()>450 -- give player 7.5mins head-start
     then
      u:func_onclick()
     end
