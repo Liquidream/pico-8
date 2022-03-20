@@ -39,7 +39,7 @@ credits=[[ᶜe
 
        kRYSTIAN mAJEWSKI
 
-        TIMIXRETROPLAYS
+           tIM hICKS
 
          cHRIS dONNELLY
 
@@ -168,7 +168,7 @@ credits_shadow=[[
 
        kRYSTIAN mAJEWSKI
 
-        TIMIXRETROPLAYS
+           tIM hICKS
 
          cHRIS dONNELLY
 
