@@ -130,18 +130,22 @@ function _init()
 
  load_data()
 
- -- debug!!!
- --mode = houseselect_mode
- 
  if (mode==title_mode) init_title()
- if (mode==houseselect_mode) init_houseselect()
+ if (mode==houseselect_mode or dget"39">0) init_houseselect() dset(39,0)
  if (mode==levelintro_mode)  init_levelintro() 
  if (mode==levelend_mode)  init_levelend()
  if (mode==levelselect_mode) init_levelselect() 
 
  menuitem(1,"show credits",function() load"pico-dune-credits" end)
  menuitem(2,"level: ⬅️ "..p_level.." ➡️",level_warp)
- menuitem(3,"!wipe save data!",reset_saved_data)
+ menuitem(3,"!start new game!",function()
+  -- reset_saved_data
+  for i=0,63 do
+   dset(i,nil)
+  end
+  dset(39,1)
+  run()  
+ end)
 end
 
 function level_warp(b)
@@ -233,12 +237,6 @@ function _draw()
  
  end 
 
-end
-
-function reset_saved_data()
- for i=0,63 do
-  dset(i,nil)
- end
 end
 
 function input_pressed(test)
