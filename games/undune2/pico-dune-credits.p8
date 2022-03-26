@@ -37,9 +37,9 @@ credits=[[ᶜe
 
         ᶜf- playtesting -ᶜe
 
-       kRYSTIAN mAJEWSKI
-
            tIM hICKS
+
+       kRYSTIAN mAJEWSKI
 
          cHRIS dONNELLY
 
@@ -166,9 +166,9 @@ credits_shadow=[[
 
         - playtesting -
 
-       kRYSTIAN mAJEWSKI
-
            tIM hICKS
+
+       kRYSTIAN mAJEWSKI
 
          cHRIS dONNELLY
 
