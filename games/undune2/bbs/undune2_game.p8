@@ -473,7 +473,7 @@ function m_obj_from_ref(ref_obj, x,y, in_type, parent, func_init, func_draw, fun
        if in_type>3 then
          local this = in_type==5 and self or self.parent
          -- bg
-         ?"\#0\-j\|g\^x7  \n\-j  \n\-j  \n\-j\^y2  ",x,y
+         ?"\#0\-g\|g\^xh \n\-g \n\-g \n\-g\^y2 ",x,y
          -- draw health/progress
          local hp = this.hitpoint
          local val = self.process==1 and this.life/6.666 or 15*(this.life/hp)
@@ -1178,9 +1178,9 @@ function _draw()
    soff+=64
  end
 
- ?"\^jnn\|e\-e\^x3\^y5\^h\-f\|c\n|\n|\n|\n|\n|\n|\^y1\n|\^jvn\^y5\|j\-e\^h\-f\|c\n|\n|\n|\n|\n|\n|\^y1\n|\^jnm\-g\|j\^y1\^x2\*5▤゛\^jnv\|f\^y1\^x2\*5▤゛\^g",p_col2
+ ?"\^jnn\|f\-e\^x3\^y5\^h\-f\|c\n|\n|\n|\n|\n|\n|\^y1\n|\^jvn\^y5\|j\-e\^h\-f\|c\n|\n|\n|\n|\n|\n|\^y1\n|\^jnm\-g\|j\^y1\^x2\*5▤゛\^jnv\|f\^y1\^x2\*5▤゛\^g",p_col2
 
- ?"\f7\|e\-f\^x3\^y4\^h\-f\|c\n|\n|\^g\|i\-n\^h\-f\|c\n|\n|\^g\^x2\-a\|e\*4-\^g\^y5\-a\|j\*4_\0",ceil(92+camx/16),ceil(92+camy/16)
+ ?"\f7\|e\-f\^x3\^y4\^h\-f\|e\n|\n|\^g\|i\-n\^h\-f\|c\n|\n|\^g\^x2\-a\|e\*4-\^g\^y5\-a\|j\*4_\0",ceil(92+camx/16),ceil(92+camy/16)
  
  if radar_frame>0 and radar_frame<77 then
    -- draw radar anim   
